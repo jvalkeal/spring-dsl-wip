@@ -17,7 +17,6 @@ package org.springframework.dsl.lsp.server.result.method;
 
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -35,13 +34,11 @@ import org.springframework.dsl.lsp.server.HandlerMethod;
 import org.springframework.dsl.lsp.server.HandlerResult;
 import org.springframework.dsl.lsp.server.ServerLspExchange;
 import org.springframework.lang.Nullable;
-import org.springframework.util.ClassUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.ReflectionUtils;
 
 import reactor.core.publisher.Mono;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class InvocableHandlerMethod.
  */
@@ -49,16 +46,16 @@ public class InvocableHandlerMethod extends HandlerMethod {
 
 	/** The Constant log. */
 	private static final Log log = LogFactory.getLog(InvocableHandlerMethod.class);
-	
+
 	/** The Constant EMPTY_ARGS. */
 	private static final Mono<Object[]> EMPTY_ARGS = Mono.just(new Object[0]);
-	
+
 	/** The Constant NO_ARG_VALUE. */
 	private static final Object NO_ARG_VALUE = new Object();
-	
+
 	/** The resolvers. */
 	private List<LspHandlerMethodArgumentResolver> resolvers = new ArrayList<>();
-	
+
 	/** The parameter name discoverer. */
 	private ParameterNameDiscoverer parameterNameDiscoverer = new DefaultParameterNameDiscoverer();
 
@@ -240,8 +237,6 @@ public class InvocableHandlerMethod extends HandlerMethod {
 //					"' with arguments " + Arrays.toString(args));
 //		}
 		ReflectionUtils.makeAccessible(getBridgedMethod());
-		Method ddd1 = getBridgedMethod();
-		Object ddd2 = getBean();
 		Object returnValue = getBridgedMethod().invoke(getBean(), args);
 //		if (logger.isTraceEnabled()) {
 //			logger.trace("Method [" + ClassUtils.getQualifiedMethodName(getMethod(), getBeanType()) +

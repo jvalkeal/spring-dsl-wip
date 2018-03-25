@@ -29,12 +29,9 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 
-// TODO: Auto-generated Javadoc
 /**
  * Default implementation of {@link PathContainer}.
  *
- * @author Rossen Stoyanchev
- * @since 5.0
  */
 class DefaultPathContainer implements PathContainer {
 
@@ -67,26 +64,16 @@ class DefaultPathContainer implements PathContainer {
 	}
 
 
-	/* (non-Javadoc)
-	 * @see org.springframework.dsl.lsp.server.support.PathContainer#value()
-	 */
 	@Override
 	public String value() {
 		return this.path;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.springframework.dsl.lsp.server.support.PathContainer#elements()
-	 */
 	@Override
 	public List<Element> elements() {
 		return this.elements;
 	}
 
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(@Nullable Object other) {
 		if (this == other) {
@@ -98,17 +85,11 @@ class DefaultPathContainer implements PathContainer {
 		return this.path.equals(((DefaultPathContainer) other).path);
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return this.path.hashCode();
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return "[path='" + this.path + "\']";
@@ -287,43 +268,26 @@ class DefaultPathContainer implements PathContainer {
 			this.parameters = CollectionUtils.unmodifiableMultiValueMap(params);
 		}
 
-
-		/* (non-Javadoc)
-		 * @see org.springframework.dsl.lsp.server.support.PathContainer.Element#value()
-		 */
 		@Override
 		public String value() {
 			return this.value;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.springframework.dsl.lsp.server.support.PathContainer.PathSegment#valueToMatch()
-		 */
 		@Override
 		public String valueToMatch() {
 			return this.valueToMatch;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.springframework.dsl.lsp.server.support.PathContainer.PathSegment#valueToMatchAsChars()
-		 */
 		@Override
 		public char[] valueToMatchAsChars() {
 			return this.valueToMatchAsChars;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.springframework.dsl.lsp.server.support.PathContainer.PathSegment#parameters()
-		 */
 		@Override
 		public MultiValueMap<String, String> parameters() {
 			return this.parameters;
 		}
 
-
-		/* (non-Javadoc)
-		 * @see java.lang.Object#equals(java.lang.Object)
-		 */
 		@Override
 		public boolean equals(@Nullable Object other) {
 			if (this == other) {
@@ -335,20 +299,14 @@ class DefaultPathContainer implements PathContainer {
 			return this.value.equals(((DefaultPathSegment) other).value);
 		}
 
-		/* (non-Javadoc)
-		 * @see java.lang.Object#hashCode()
-		 */
 		@Override
 		public int hashCode() {
 			return this.value.hashCode();
 		}
 
-		/* (non-Javadoc)
-		 * @see java.lang.Object#toString()
-		 */
+		@Override
 		public String toString() {
 			return "[value='" + this.value + "']"; }
 	}
-
 }
 

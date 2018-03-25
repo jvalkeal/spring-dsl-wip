@@ -17,59 +17,19 @@ package org.springframework.dsl.lsp.server.support;
 
 import org.springframework.dsl.lsp.server.ServerLspResponse;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class GenericServerLspResponse.
  */
 public class GenericServerLspResponse implements ServerLspResponse {
 
-	/** The content format. */
-	private Integer contentFormat;
-	
-	/** The accept. */
-	private Integer accept;
-	
 	/** The request payload. */
 	private Object requestPayload;
 
-//	@Override
-//	public void setContentFormat(Integer contentFormat) {
-//		this.contentFormat = contentFormat;
-//	}
-//
-//	@Override
-//	public void setAccept(Integer accept) {
-//		this.accept = accept;
-//	}
-//
-//	@Override
-//	public void setRequestPayload(byte[] requestPayload) {
-//		this.requestPayload = requestPayload;
-//	}
-//
-//	public Integer getContentFormat() {
-//		return contentFormat;
-//	}
-//
-//	public Integer getAccept() {
-//		return accept;
-//	}
-//
-//	public byte[] getRequestPayload() {
-//		return requestPayload;
-//	}
-
-	/* (non-Javadoc)
- * @see org.springframework.dsl.lsp.LspOutputMessage#getBody()
- */
-@Override
+	@Override
 	public Object getBody() {
 		return requestPayload;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.springframework.dsl.lsp.server.ServerLspResponse#setBody(java.lang.Object)
-	 */
 	@Override
 	public void setBody(Object body) {
 		this.requestPayload = body;

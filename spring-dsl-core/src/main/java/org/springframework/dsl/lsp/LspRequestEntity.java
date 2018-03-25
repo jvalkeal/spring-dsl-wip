@@ -18,7 +18,6 @@ package org.springframework.dsl.lsp;
 import java.lang.reflect.Type;
 import java.net.URI;
 
-// TODO: Auto-generated Javadoc
 /**
  * Extension of {@link LspEntity}.
  *

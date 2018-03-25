@@ -15,7 +15,6 @@
  */
 package org.springframework.dsl.lsp4j;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 

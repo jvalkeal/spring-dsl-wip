@@ -23,7 +23,6 @@ import org.springframework.util.Assert;
 
 import reactor.core.publisher.Mono;
 
-// TODO: Auto-generated Javadoc
 /**
  * Represent the result of the invocation of a handler or a handler method.
  *
@@ -34,13 +33,13 @@ public class HandlerResult {
 
 	/** The handler. */
 	private final Object handler;
-	
+
 	/** The return value. */
 	private final Object returnValue;
-	
+
 	/** The return type. */
 	private final ResolvableType returnType;
-	
+
 	/** The exception handler. */
 	private Function<Throwable, Mono<HandlerResult>> exceptionHandler;
 

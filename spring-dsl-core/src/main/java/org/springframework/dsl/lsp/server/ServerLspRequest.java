@@ -17,9 +17,7 @@ package org.springframework.dsl.lsp.server;
 
 import org.springframework.dsl.lsp.LspInputMessage;
 import org.springframework.dsl.lsp.LspMethod;
-import org.springframework.dsl.lsp.server.support.RequestPath;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface ServerLspRequest.
  */

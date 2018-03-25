@@ -24,7 +24,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -36,19 +35,17 @@ import org.springframework.dsl.lsp.server.HandlerMapping;
 import org.springframework.dsl.lsp.server.HandlerMethod;
 import org.springframework.dsl.lsp.server.ServerLspExchange;
 import org.springframework.dsl.lsp.server.result.method.LspRequestMappingInfo;
-import org.springframework.dsl.lsp.server.support.PathContainer;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
-import org.springframework.util.MultiValueMap;
 
 import reactor.core.publisher.Mono;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class AbstractHandlerMethodMapping.
  *
  * @author Janne Valkealahti
+ *
  */
 public abstract class AbstractHandlerMethodMapping extends ApplicationObjectSupport implements HandlerMapping, InitializingBean {
 
@@ -61,9 +58,6 @@ public abstract class AbstractHandlerMethodMapping extends ApplicationObjectSupp
 	/** The registry. */
 	private Map<LspRequestMappingInfo, HandlerMethod> registry = new HashMap<>();
 
-	/* (non-Javadoc)
-	 * @see org.springframework.dsl.lsp.server.HandlerMapping#getHandler(org.springframework.dsl.lsp.server.ServerLspExchange)
-	 */
 	@Override
 	public Mono<Object> getHandler(ServerLspExchange exchange) {
 		return getHandlerInternal(exchange).map(handler -> {
@@ -93,9 +87,6 @@ public abstract class AbstractHandlerMethodMapping extends ApplicationObjectSupp
 		return Mono.justOrEmpty(handlerMethod);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
-	 */
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		initHandlerMethods();
@@ -126,8 +117,6 @@ public abstract class AbstractHandlerMethodMapping extends ApplicationObjectSupp
 			if (matches.size() > 1) {
 				Match secondBestMatch = matches.get(1);
 				if (comparator.compare(bestMatch, secondBestMatch) == 0) {
-					Method m1 = bestMatch.handlerMethod.getMethod();
-					Method m2 = secondBestMatch.handlerMethod.getMethod();
 					throw new IllegalStateException("Ambiguous handler methods mapped");
 //					throw new IllegalStateException("Ambiguous handler methods mapped for HTTP path '" +
 //							exchange.getRequest().getPath() + "': {" + m1 + ", " + m2 + "}");
@@ -437,9 +426,6 @@ public abstract class AbstractHandlerMethodMapping extends ApplicationObjectSupp
 			this.comparator = comparator;
 		}
 
-		/* (non-Javadoc)
-		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-		 */
 		@Override
 		public int compare(Match match1, Match match2) {
 			return this.comparator.compare(match1.mapping, match2.mapping);
