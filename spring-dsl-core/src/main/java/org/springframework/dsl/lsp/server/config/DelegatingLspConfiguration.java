@@ -22,9 +22,13 @@ import org.springframework.dsl.lsp.server.result.method.annotation.LspRequestMap
 import org.springframework.dsl.lsp.server.result.method.annotation.LspResponseBodyResultHandler;
 import org.springframework.dsl.lsp.server.support.DispatcherHandler;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class DelegatingLspConfiguration.
+ * Generic configuration around {@link DispatcherHandler} and its related
+ * {@link HandlerResultHandler}, {@link HandlerMapping} and
+ * {@link HandlerAdapter}.
+ *
+ * @author Janne Valkealahti
+ *
  */
 @Configuration
 public class DelegatingLspConfiguration {
@@ -68,5 +72,4 @@ public class DelegatingLspConfiguration {
 	public LspRequestMappingHandlerAdapter lspRequestMappingHandlerAdapter() {
 		return new LspRequestMappingHandlerAdapter();
 	}
-
 }

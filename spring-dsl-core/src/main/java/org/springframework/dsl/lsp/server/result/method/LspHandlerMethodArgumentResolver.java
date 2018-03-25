@@ -20,12 +20,12 @@ import org.springframework.dsl.lsp.server.ServerLspExchange;
 
 import reactor.core.publisher.Mono;
 
-// TODO: Auto-generated Javadoc
 /**
  * Strategy to resolve the argument value for a method parameter in the context
- * of the current COAP request.
+ * of the current {@code LSP} request.
  *
  * @author Janne Valkealahti
+ *
  */
 public interface LspHandlerMethodArgumentResolver {
 

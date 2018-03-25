@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.dsl.lsp.annotation.LspRequestMapping;
 import org.springframework.dsl.lsp.server.HandlerAdapter;
 import org.springframework.dsl.lsp.server.HandlerMethod;
 import org.springframework.dsl.lsp.server.HandlerResult;
@@ -29,9 +30,8 @@ import org.springframework.util.Assert;
 
 import reactor.core.publisher.Mono;
 
-// TODO: Auto-generated Javadoc
 /**
- * Supports the invocation of {@code CoapRequestMapping} methods.
+ * Supports the invocation of {@link LspRequestMapping} methods.
  *
  * @author Janne Valkealahti
  *
@@ -41,17 +41,11 @@ public class LspRequestMappingHandlerAdapter implements HandlerAdapter, Initiali
 	/** The method resolver. */
 	private ControllerMethodResolver methodResolver;
 
-	/* (non-Javadoc)
-	 * @see org.springframework.dsl.lsp.server.HandlerAdapter#supports(java.lang.Object)
-	 */
 	@Override
 	public boolean supports(Object handler) {
 		return HandlerMethod.class.equals(handler.getClass());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.springframework.dsl.lsp.server.HandlerAdapter#handle(org.springframework.dsl.lsp.server.ServerLspExchange, java.lang.Object)
-	 */
 	@Override
 	public Mono<HandlerResult> handle(ServerLspExchange exchange, Object handler) {
 		Assert.notNull(handler, "Expected handler");
@@ -60,9 +54,6 @@ public class LspRequestMappingHandlerAdapter implements HandlerAdapter, Initiali
 		return invoke;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
-	 */
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		List<LspHandlerMethodArgumentResolver> requestMappingResolvers = new ArrayList<>();

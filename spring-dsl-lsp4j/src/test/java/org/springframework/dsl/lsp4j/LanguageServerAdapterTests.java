@@ -21,8 +21,6 @@ import static org.junit.Assert.assertThat;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 //import org.eclipse.lsp4j.InitializeParams;
 //import org.eclipse.lsp4j.InitializeResult;
 import org.junit.Test;
@@ -37,9 +35,14 @@ import org.springframework.dsl.lsp.domain.InitializeParams;
 import org.springframework.dsl.lsp.domain.InitializeResult;
 import org.springframework.dsl.lsp.server.config.EnableLanguageServer;
 import org.springframework.dsl.lsp.server.support.DispatcherHandler;
-import org.springframework.dsl.lsp4j.LanguageServerAdapter;
 
-public class Lsp4jTests extends AbstractLspTests {
+/**
+ * Tests for generic functionality around {@link LanguageServerAdapter}.
+ *
+ * @author Janne Valkealahti
+ *
+ */
+public class LanguageServerAdapterTests extends AbstractLspTests {
 
 	@Test
 	public void testInit() throws Exception {
@@ -80,5 +83,4 @@ public class Lsp4jTests extends AbstractLspTests {
 		public void clientDocumentChanged(DidChangeTextDocumentParams params, LanguageClientContext context) {
 		}
 	}
-
 }
