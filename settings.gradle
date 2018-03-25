@@ -1,0 +1,16 @@
+rootProject.name = 'spring-dsl'
+
+include 'spring-dsl-core'
+include 'spring-dsl-lsp4j'
+include 'spring-dsl-antlr'
+include 'spring-dsl-bom'
+
+rootProject.children.find {
+	if (it.name == 'spring-dsl-samples') {
+		it.name = 'spring-dsl-samples-common'
+		it.children.each {
+			it.name = 'spring-dsl-samples-' + it.name
+		}
+	}
+}
+
