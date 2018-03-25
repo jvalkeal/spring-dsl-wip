@@ -1,6 +1,0 @@
-[[iot-metrics]]
-= Metrics
-xxx
-
-== Introduction
-xxx

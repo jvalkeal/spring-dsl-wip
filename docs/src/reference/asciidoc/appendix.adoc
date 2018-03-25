@@ -9,32 +9,20 @@ This appendix provides generic information about used classes and
 material in this reference documentation.
 
 [appendix]
-== Spring IoT Concepts
-This appendix provides generic information about Iot.
+== Spring Dsl Concepts
+This appendix provides generic information about Dsl.
 
 
 [glossary]
 === Glossary
 
-*Pulse Width Modulation*::
+*Something*::
 ddd.
 +
-xxx.
-
-*Pull-up resistor*::
-xxx.
-+
-ddd.
-
-*Pull-down resistor*::
 xxx.
 
 
 [[crashcourse]]
-=== An IOT Course
-This appendix provides generic crash course to IoT concepts.
+=== An Dsl Crash Course
+This appendix provides generic crash course to Dsl concepts.
 
-[[java-operator-bit-tutorial]]
-=== Java Operator and Bit Shifting
-This tutorial tries to make user friendly with basic Java operators
-and expecially introduce concepts of bit shifting.
