@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 the original author or authors.
+ * Copyright 2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import org.springframework.dsl.lsp.server.ServerLspResponse;
 
 import reactor.core.publisher.Mono;
 
+// TODO: Auto-generated Javadoc
 /**
  * {@code HandlerResultHandler} that handles return values from methods annotated
  * with {@code @CoapResponseBody} writing to the body of the request or response.
@@ -34,6 +35,9 @@ import reactor.core.publisher.Mono;
  */
 public class LspResponseBodyResultHandler implements HandlerResultHandler {
 
+	/* (non-Javadoc)
+	 * @see org.springframework.dsl.lsp.server.HandlerResultHandler#supports(org.springframework.dsl.lsp.server.HandlerResult)
+	 */
 	@Override
 	public boolean supports(HandlerResult result) {
 		MethodParameter parameter = result.getReturnTypeSource();
@@ -42,6 +46,9 @@ public class LspResponseBodyResultHandler implements HandlerResultHandler {
 				parameter.getMethodAnnotation(LspResponseBody.class) != null);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.dsl.lsp.server.HandlerResultHandler#handleResult(org.springframework.dsl.lsp.server.ServerLspExchange, org.springframework.dsl.lsp.server.HandlerResult)
+	 */
 	@Override
 	public Mono<Void> handleResult(ServerLspExchange exchange, HandlerResult result) {
 		ServerLspResponse response = exchange.getResponse();

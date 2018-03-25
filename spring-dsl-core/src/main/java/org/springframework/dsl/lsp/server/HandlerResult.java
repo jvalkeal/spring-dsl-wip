@@ -1,11 +1,11 @@
 /*
- * Copyright 2017 the original author or authors.
+ * Copyright 2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,6 +23,7 @@ import org.springframework.util.Assert;
 
 import reactor.core.publisher.Mono;
 
+// TODO: Auto-generated Javadoc
 /**
  * Represent the result of the invocation of a handler or a handler method.
  *
@@ -31,11 +32,25 @@ import reactor.core.publisher.Mono;
  */
 public class HandlerResult {
 
+	/** The handler. */
 	private final Object handler;
+	
+	/** The return value. */
 	private final Object returnValue;
+	
+	/** The return type. */
 	private final ResolvableType returnType;
+	
+	/** The exception handler. */
 	private Function<Throwable, Mono<HandlerResult>> exceptionHandler;
 
+	/**
+	 * Instantiates a new handler result.
+	 *
+	 * @param handler the handler
+	 * @param returnValue the return value
+	 * @param returnType the return type
+	 */
 	public HandlerResult(Object handler, Object returnValue, MethodParameter returnType) {
 		Assert.notNull(handler, "'handler' is required");
 		Assert.notNull(returnType, "'returnType' is required");
@@ -44,6 +59,12 @@ public class HandlerResult {
 		this.returnType = ResolvableType.forMethodParameter(returnType);
 	}
 
+	/**
+	 * Sets the exception handler.
+	 *
+	 * @param function the function
+	 * @return the handler result
+	 */
 	public HandlerResult setExceptionHandler(Function<Throwable, Mono<HandlerResult>> function) {
 		this.exceptionHandler = function;
 		return this;
@@ -71,14 +92,30 @@ public class HandlerResult {
 		return (MethodParameter) this.returnType.getSource();
 	}
 
+	/**
+	 * Checks for exception handler.
+	 *
+	 * @return true, if successful
+	 */
 	public boolean hasExceptionHandler() {
 		return (this.exceptionHandler != null);
 	}
 
+	/**
+	 * Apply exception handler.
+	 *
+	 * @param failure the failure
+	 * @return the mono
+	 */
 	public Mono<HandlerResult> applyExceptionHandler(Throwable failure) {
 		return (hasExceptionHandler() ? this.exceptionHandler.apply(failure) : Mono.error(failure));
 	}
 
+	/**
+	 * Gets the return value.
+	 *
+	 * @return the return value
+	 */
 	public Object getReturnValue() {
 		return this.returnValue;
 	}

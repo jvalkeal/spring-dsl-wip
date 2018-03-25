@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 the original author or authors.
+ * Copyright 2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,30 +21,39 @@ import org.springframework.dsl.lsp.server.ServerLspExchange;
 import org.springframework.dsl.lsp.server.result.condition.LspRequestMethodsRequestCondition;
 import org.springframework.lang.Nullable;
 
+// TODO: Auto-generated Javadoc
 /**
- * Encapsulates the following request mapping conditions:
+ * Encapsulates the following request mapping conditions:.
  *
  * @author Janne Valkealahti
- *
  */
 public class LspRequestMappingInfo implements LspRequestCondition<LspRequestMappingInfo>{
 
+	/** The methods condition. */
 	private final LspRequestMethodsRequestCondition methodsCondition;
 
 	/**
 	 * Instantiates a new coap request mapping info.
+	 *
+	 * @param methods the methods
 	 */
 	public LspRequestMappingInfo(
 			LspRequestMethodsRequestCondition methods) {
 		this.methodsCondition = (methods != null ? methods : new LspRequestMethodsRequestCondition());
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.dsl.lsp.server.LspRequestCondition#combine(java.lang.Object)
+	 */
 	@Override
 	public LspRequestMappingInfo combine(LspRequestMappingInfo other) {
 		LspRequestMethodsRequestCondition methods = this.methodsCondition.combine(other.methodsCondition);
 		return new LspRequestMappingInfo(methods);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.dsl.lsp.server.LspRequestCondition#getMatchingCondition(org.springframework.dsl.lsp.server.ServerLspExchange)
+	 */
 	@Override
 	public LspRequestMappingInfo getMatchingCondition(ServerLspExchange exchange) {
 		LspRequestMethodsRequestCondition methods = methodsCondition.getMatchingCondition(exchange);
@@ -54,11 +63,19 @@ public class LspRequestMappingInfo implements LspRequestCondition<LspRequestMapp
 		return new LspRequestMappingInfo(methods);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.dsl.lsp.server.LspRequestCondition#compareTo(java.lang.Object, org.springframework.dsl.lsp.server.ServerLspExchange)
+	 */
 	@Override
 	public int compareTo(LspRequestMappingInfo other, ServerLspExchange exchange) {
 		return 0;
 	}
 
+	/**
+	 * Gets the methods condition.
+	 *
+	 * @return the methods condition
+	 */
 	public LspRequestMethodsRequestCondition getMethodsCondition() {
 		return methodsCondition;
 	}
@@ -127,56 +144,87 @@ public class LspRequestMappingInfo implements LspRequestCondition<LspRequestMapp
 		LspRequestMappingInfo build();
 	}
 
+	/**
+	 * The Class DefaultBuilder.
+	 */
 	private static class DefaultBuilder implements Builder {
 
+		/** The paths. */
 		private String[] paths;
 
+		/** The methods. */
 		@Nullable
 		private LspMethod[] methods;
 
+		/** The headers. */
 		@Nullable
 		private String[] headers;
 
+		/** The consumes. */
 		@Nullable
 		private String[] consumes;
 
+		/** The produces. */
 		@Nullable
 		private String[] produces;
 
+		/**
+		 * Instantiates a new default builder.
+		 *
+		 * @param paths the paths
+		 */
 		public DefaultBuilder(String... paths) {
 			this.paths = paths;
 		}
 
+		/* (non-Javadoc)
+		 * @see org.springframework.dsl.lsp.server.result.method.LspRequestMappingInfo.Builder#paths(java.lang.String[])
+		 */
 		@Override
 		public Builder paths(String... paths) {
 			this.paths = paths;
 			return this;
 		}
 
+		/* (non-Javadoc)
+		 * @see org.springframework.dsl.lsp.server.result.method.LspRequestMappingInfo.Builder#methods(org.springframework.dsl.lsp.LspMethod[])
+		 */
 		@Override
 		public Builder methods(LspMethod... methods) {
 			this.methods = methods;
 			return this;
 		}
 
+		/* (non-Javadoc)
+		 * @see org.springframework.dsl.lsp.server.result.method.LspRequestMappingInfo.Builder#headers(java.lang.String[])
+		 */
 		@Override
 		public DefaultBuilder headers(String... headers) {
 			this.headers = headers;
 			return this;
 		}
 
+		/* (non-Javadoc)
+		 * @see org.springframework.dsl.lsp.server.result.method.LspRequestMappingInfo.Builder#consumes(java.lang.String[])
+		 */
 		@Override
 		public DefaultBuilder consumes(String... consumes) {
 			this.consumes = consumes;
 			return this;
 		}
 
+		/* (non-Javadoc)
+		 * @see org.springframework.dsl.lsp.server.result.method.LspRequestMappingInfo.Builder#produces(java.lang.String[])
+		 */
 		@Override
 		public DefaultBuilder produces(String... produces) {
 			this.produces = produces;
 			return this;
 		}
 
+		/* (non-Javadoc)
+		 * @see org.springframework.dsl.lsp.server.result.method.LspRequestMappingInfo.Builder#build()
+		 */
 		@Override
 		public LspRequestMappingInfo build() {
 			return new LspRequestMappingInfo(new LspRequestMethodsRequestCondition(methods));

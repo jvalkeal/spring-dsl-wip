@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 the original author or authors.
+ * Copyright 2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,24 +22,48 @@ import org.springframework.dsl.lsp.server.result.method.annotation.LspRequestMap
 import org.springframework.dsl.lsp.server.result.method.annotation.LspResponseBodyResultHandler;
 import org.springframework.dsl.lsp.server.support.DispatcherHandler;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class DelegatingLspConfiguration.
+ */
 @Configuration
 public class DelegatingLspConfiguration {
 
+	/**
+	 * Lsp dispatcher handler.
+	 *
+	 * @return the dispatcher handler
+	 */
 	@Bean
 	public DispatcherHandler lspDispatcherHandler() {
 		return new DispatcherHandler();
 	}
 
+	/**
+	 * Lsp response body result handler.
+	 *
+	 * @return the lsp response body result handler
+	 */
 	@Bean
 	public LspResponseBodyResultHandler lspResponseBodyResultHandler() {
 		return new LspResponseBodyResultHandler();
 	}
 
+	/**
+	 * Lsp request mapping handler mapping.
+	 *
+	 * @return the lsp request mapping handler mapping
+	 */
 	@Bean
 	public LspRequestMappingHandlerMapping lspRequestMappingHandlerMapping() {
 		return new LspRequestMappingHandlerMapping();
 	}
 
+	/**
+	 * Lsp request mapping handler adapter.
+	 *
+	 * @return the lsp request mapping handler adapter
+	 */
 	@Bean
 	public LspRequestMappingHandlerAdapter lspRequestMappingHandlerAdapter() {
 		return new LspRequestMappingHandlerAdapter();

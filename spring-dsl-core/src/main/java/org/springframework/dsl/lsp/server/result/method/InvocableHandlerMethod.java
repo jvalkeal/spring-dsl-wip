@@ -1,11 +1,11 @@
 /*
- * Copyright 2017 the original author or authors.
+ * Copyright 2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -41,14 +41,32 @@ import org.springframework.util.ReflectionUtils;
 
 import reactor.core.publisher.Mono;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class InvocableHandlerMethod.
+ */
 public class InvocableHandlerMethod extends HandlerMethod {
 
+	/** The Constant log. */
 	private static final Log log = LogFactory.getLog(InvocableHandlerMethod.class);
+	
+	/** The Constant EMPTY_ARGS. */
 	private static final Mono<Object[]> EMPTY_ARGS = Mono.just(new Object[0]);
+	
+	/** The Constant NO_ARG_VALUE. */
 	private static final Object NO_ARG_VALUE = new Object();
+	
+	/** The resolvers. */
 	private List<LspHandlerMethodArgumentResolver> resolvers = new ArrayList<>();
+	
+	/** The parameter name discoverer. */
 	private ParameterNameDiscoverer parameterNameDiscoverer = new DefaultParameterNameDiscoverer();
 
+	/**
+	 * Instantiates a new invocable handler method.
+	 *
+	 * @param handlerMethod the handler method
+	 */
 	public InvocableHandlerMethod(HandlerMethod handlerMethod) {
 		super(handlerMethod);
 	}
@@ -73,6 +91,13 @@ public class InvocableHandlerMethod extends HandlerMethod {
 		return this.resolvers;
 	}
 
+	/**
+	 * Invoke.
+	 *
+	 * @param exchange the exchange
+	 * @param providedArgs the provided args
+	 * @return the mono
+	 */
 	public Mono<HandlerResult> invoke(ServerLspExchange exchange, Object... providedArgs) {
 		return resolveArguments(exchange, providedArgs).flatMap(args -> {
 			try {
@@ -89,6 +114,13 @@ public class InvocableHandlerMethod extends HandlerMethod {
 		});
 	}
 
+	/**
+	 * Resolve arguments.
+	 *
+	 * @param exchange the exchange
+	 * @param providedArgs the provided args
+	 * @return the mono
+	 */
 	private Mono<Object[]> resolveArguments(ServerLspExchange exchange, Object... providedArgs) {
 
 		if (ObjectUtils.isEmpty(getMethodParameters())) {
@@ -117,6 +149,13 @@ public class InvocableHandlerMethod extends HandlerMethod {
 		}
 	}
 
+	/**
+	 * Find provided argument.
+	 *
+	 * @param parameter the parameter
+	 * @param providedArgs the provided args
+	 * @return the optional
+	 */
 	private Optional<Object> findProvidedArgument(MethodParameter parameter, Object... providedArgs) {
 		if (ObjectUtils.isEmpty(providedArgs)) {
 			return Optional.empty();
@@ -126,6 +165,12 @@ public class InvocableHandlerMethod extends HandlerMethod {
 				.findFirst();
 	}
 
+	/**
+	 * Find resolver.
+	 *
+	 * @param param the param
+	 * @return the lsp handler method argument resolver
+	 */
 	private LspHandlerMethodArgumentResolver findResolver(MethodParameter param) {
 		return this.resolvers.stream()
 				.filter(r -> r.supportsParameter(param))
@@ -133,6 +178,14 @@ public class InvocableHandlerMethod extends HandlerMethod {
 				.orElseThrow(() -> getArgumentError("No suitable resolver for", param, null));
 	}
 
+	/**
+	 * Resolve arg.
+	 *
+	 * @param resolver the resolver
+	 * @param parameter the parameter
+	 * @param exchange the exchange
+	 * @return the mono
+	 */
 	private Mono<Object> resolveArg(LspHandlerMethodArgumentResolver resolver, MethodParameter parameter,
 			ServerLspExchange exchange) {
 
@@ -150,15 +203,37 @@ public class InvocableHandlerMethod extends HandlerMethod {
 		}
 	}
 
+	/**
+	 * Gets the argument error.
+	 *
+	 * @param text the text
+	 * @param parameter the parameter
+	 * @param ex the ex
+	 * @return the argument error
+	 */
 	private IllegalStateException getArgumentError(String text, MethodParameter parameter, @Nullable Throwable ex) {
 		return new IllegalStateException(getDetailedErrorMessage(text, parameter), ex);
 	}
 
+	/**
+	 * Gets the detailed error message.
+	 *
+	 * @param text the text
+	 * @param param the param
+	 * @return the detailed error message
+	 */
 	private String getDetailedErrorMessage(String text, MethodParameter param) {
 		return text + " argument " + param.getParameterIndex() + " of type '" +
 				param.getParameterType().getName() + "' on " + getBridgedMethod().toGenericString();
 	}
 
+	/**
+	 * Do invoke.
+	 *
+	 * @param args the args
+	 * @return the object
+	 * @throws Exception the exception
+	 */
 	private Object doInvoke(Object[] args) throws Exception {
 //		if (logger.isTraceEnabled()) {
 //			logger.trace("Invoking '" + ClassUtils.getQualifiedMethodName(getMethod(), getBeanType()) +
@@ -175,6 +250,12 @@ public class InvocableHandlerMethod extends HandlerMethod {
 		return returnValue;
 	}
 
+	/**
+	 * Gets the invocation error message.
+	 *
+	 * @param args the args
+	 * @return the invocation error message
+	 */
 	private String getInvocationErrorMessage(Object[] args) {
 		String argumentDetails = IntStream.range(0, args.length)
 				.mapToObj(i -> (args[i] != null ?

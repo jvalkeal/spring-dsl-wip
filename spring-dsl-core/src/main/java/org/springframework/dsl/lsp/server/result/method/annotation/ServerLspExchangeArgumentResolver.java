@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 the original author or authors.
+ * Copyright 2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,14 +21,24 @@ import org.springframework.dsl.lsp.server.result.method.LspHandlerMethodArgument
 
 import reactor.core.publisher.Mono;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class ServerLspExchangeArgumentResolver.
+ */
 public class ServerLspExchangeArgumentResolver implements LspHandlerMethodArgumentResolver {
 
+	/* (non-Javadoc)
+	 * @see org.springframework.dsl.lsp.server.result.method.LspHandlerMethodArgumentResolver#supportsParameter(org.springframework.core.MethodParameter)
+	 */
 	@Override
 	public boolean supportsParameter(MethodParameter parameter) {
 		Class<?> type = parameter.getParameterType();
 		return ServerLspExchange.class.isAssignableFrom(type);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.dsl.lsp.server.result.method.LspHandlerMethodArgumentResolver#resolveArgument(org.springframework.core.MethodParameter, org.springframework.dsl.lsp.server.ServerLspExchange)
+	 */
 	@Override
 	public Mono<Object> resolveArgument(MethodParameter parameter, ServerLspExchange exchange) {
 		Class<?> paramType = parameter.getParameterType();

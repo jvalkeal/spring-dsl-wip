@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 the original author or authors.
+ * Copyright 2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,18 +18,18 @@ package org.springframework.dsl.lsp.server.result.condition;
 import org.springframework.dsl.lsp.server.ServerLspExchange;
 import org.springframework.lang.Nullable;
 
+// TODO: Auto-generated Javadoc
 /**
  * Contract for request mapping conditions.
- *
+ * 
  * <p>Request conditions can be combined via {@link #combine(Object)}, matched to
  * a request via {@link #getMatchingCondition(ServerLspExchange)}, and compared
  * to each other via {@link #compareTo(Object, ServerLspExchange)} to determine
  * which is a closer match for a given request.
  *
+ * @author Janne Valkealahti
  * @param <T> the type of objects that this RequestCondition can be combined
  * with and compared to
- *
- * @author Janne Valkealahti
  */
 public interface LspRequestCondition<T> {
 

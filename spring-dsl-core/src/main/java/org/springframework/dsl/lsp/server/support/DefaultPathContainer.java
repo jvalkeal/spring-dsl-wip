@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 the original author or authors.
+ * Copyright 2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 
+// TODO: Auto-generated Javadoc
 /**
  * Default implementation of {@link PathContainer}.
  *
@@ -37,35 +38,55 @@ import org.springframework.util.StringUtils;
  */
 class DefaultPathContainer implements PathContainer {
 
+	/** The Constant EMPTY_MAP. */
 	private static final MultiValueMap<String, String> EMPTY_MAP = new LinkedMultiValueMap<>(0);
 
+	/** The Constant EMPTY_PATH. */
 	private static final PathContainer EMPTY_PATH = new DefaultPathContainer("", Collections.emptyList());
 
+	/** The Constant SEPARATOR. */
 	private static final PathContainer.Separator SEPARATOR = () -> "/";
 
 
+	/** The path. */
 	private final String path;
 
+	/** The elements. */
 	private final List<Element> elements;
 
 
+	/**
+	 * Instantiates a new default path container.
+	 *
+	 * @param path the path
+	 * @param elements the elements
+	 */
 	private DefaultPathContainer(String path, List<Element> elements) {
 		this.path = path;
 		this.elements = Collections.unmodifiableList(elements);
 	}
 
 
+	/* (non-Javadoc)
+	 * @see org.springframework.dsl.lsp.server.support.PathContainer#value()
+	 */
 	@Override
 	public String value() {
 		return this.path;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.dsl.lsp.server.support.PathContainer#elements()
+	 */
 	@Override
 	public List<Element> elements() {
 		return this.elements;
 	}
 
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(@Nullable Object other) {
 		if (this == other) {
@@ -77,17 +98,29 @@ class DefaultPathContainer implements PathContainer {
 		return this.path.equals(((DefaultPathContainer) other).path);
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		return this.path.hashCode();
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		return "[path='" + this.path + "\']";
 	}
 
 
+	/**
+	 * Creates the from url path.
+	 *
+	 * @param path the path
+	 * @return the path container
+	 */
 	static PathContainer createFromUrlPath(String path) {
 		if (path.equals("")) {
 			return EMPTY_PATH;
@@ -118,6 +151,12 @@ class DefaultPathContainer implements PathContainer {
 		return new DefaultPathContainer(path, elements);
 	}
 
+	/**
+	 * Parses the path segment.
+	 *
+	 * @param segment the segment
+	 * @return the path segment
+	 */
 	private static PathSegment parsePathSegment(String segment) {
 		Charset charset = StandardCharsets.UTF_8;
 		int index = segment.indexOf(';');
@@ -133,6 +172,13 @@ class DefaultPathContainer implements PathContainer {
 		}
 	}
 
+	/**
+	 * Parses the path params.
+	 *
+	 * @param input the input
+	 * @param charset the charset
+	 * @return the multi value map
+	 */
 	private static MultiValueMap<String, String> parsePathParams(String input, Charset charset) {
 		MultiValueMap<String, String> result = new LinkedMultiValueMap<>();
 		int begin = 1;
@@ -148,6 +194,13 @@ class DefaultPathContainer implements PathContainer {
 		return result;
 	}
 
+	/**
+	 * Parses the path param values.
+	 *
+	 * @param input the input
+	 * @param charset the charset
+	 * @param output the output
+	 */
 	private static void parsePathParamValues(String input, Charset charset, MultiValueMap<String, String> output) {
 		if (StringUtils.hasText(input)) {
 			int index = input.indexOf("=");
@@ -170,6 +223,14 @@ class DefaultPathContainer implements PathContainer {
 		}
 	}
 
+	/**
+	 * Sub path.
+	 *
+	 * @param container the container
+	 * @param fromIndex the from index
+	 * @param toIndex the to index
+	 * @return the path container
+	 */
 	static PathContainer subPath(PathContainer container, int fromIndex, int toIndex) {
 		List<Element> elements = container.elements();
 		if (fromIndex == 0 && toIndex == elements.size()) {
@@ -189,19 +250,34 @@ class DefaultPathContainer implements PathContainer {
 	}
 
 
+	/**
+	 * The Class DefaultPathSegment.
+	 */
 	private static class DefaultPathSegment implements PathSegment {
 
+		/** The value. */
 		private final String value;
 
+		/** The value as chars. */
 		private final char[] valueAsChars;
 
+		/** The value to match. */
 		private final String valueToMatch;
 
+		/** The value to match as chars. */
 		private final char[] valueToMatchAsChars;
 
+		/** The parameters. */
 		private final MultiValueMap<String, String> parameters;
 
 
+		/**
+		 * Instantiates a new default path segment.
+		 *
+		 * @param value the value
+		 * @param valueToMatch the value to match
+		 * @param params the params
+		 */
 		DefaultPathSegment(String value, String valueToMatch, MultiValueMap<String, String> params) {
 			Assert.isTrue(!value.contains("/"), () -> "Invalid path segment value: " + value);
 			this.value = value;
@@ -212,27 +288,42 @@ class DefaultPathContainer implements PathContainer {
 		}
 
 
+		/* (non-Javadoc)
+		 * @see org.springframework.dsl.lsp.server.support.PathContainer.Element#value()
+		 */
 		@Override
 		public String value() {
 			return this.value;
 		}
 
+		/* (non-Javadoc)
+		 * @see org.springframework.dsl.lsp.server.support.PathContainer.PathSegment#valueToMatch()
+		 */
 		@Override
 		public String valueToMatch() {
 			return this.valueToMatch;
 		}
 
+		/* (non-Javadoc)
+		 * @see org.springframework.dsl.lsp.server.support.PathContainer.PathSegment#valueToMatchAsChars()
+		 */
 		@Override
 		public char[] valueToMatchAsChars() {
 			return this.valueToMatchAsChars;
 		}
 
+		/* (non-Javadoc)
+		 * @see org.springframework.dsl.lsp.server.support.PathContainer.PathSegment#parameters()
+		 */
 		@Override
 		public MultiValueMap<String, String> parameters() {
 			return this.parameters;
 		}
 
 
+		/* (non-Javadoc)
+		 * @see java.lang.Object#equals(java.lang.Object)
+		 */
 		@Override
 		public boolean equals(@Nullable Object other) {
 			if (this == other) {
@@ -244,11 +335,17 @@ class DefaultPathContainer implements PathContainer {
 			return this.value.equals(((DefaultPathSegment) other).value);
 		}
 
+		/* (non-Javadoc)
+		 * @see java.lang.Object#hashCode()
+		 */
 		@Override
 		public int hashCode() {
 			return this.value.hashCode();
 		}
 
+		/* (non-Javadoc)
+		 * @see java.lang.Object#toString()
+		 */
 		public String toString() {
 			return "[value='" + this.value + "']"; }
 	}

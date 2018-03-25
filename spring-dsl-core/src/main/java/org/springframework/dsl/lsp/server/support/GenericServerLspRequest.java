@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 the original author or authors.
+ * Copyright 2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,17 +20,32 @@ import java.util.Arrays;
 import org.springframework.dsl.lsp.LspMethod;
 import org.springframework.dsl.lsp.server.ServerLspRequest;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class GenericServerLspRequest.
+ */
 public class GenericServerLspRequest implements ServerLspRequest {
 
+	/** The body. */
 	private final Object body;
+	
+	/** The method. */
 	private LspMethod method;
 //	private int contentFormat = -1;
 //	private RequestPath path;
 
-	public GenericServerLspRequest(Object body) {
+	/**
+ * Instantiates a new generic server lsp request.
+ *
+ * @param body the body
+ */
+public GenericServerLspRequest(Object body) {
 		this.body = body;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.dsl.lsp.LspInputMessage#getBody()
+	 */
 	@Override
 	public Object getBody() {
 		return body;
@@ -54,10 +69,18 @@ public class GenericServerLspRequest implements ServerLspRequest {
 //		this.path = path;
 //	}
 
-	public void setMethod(LspMethod method) {
+	/**
+ * Sets the method.
+ *
+ * @param method the new method
+ */
+public void setMethod(LspMethod method) {
 		this.method = method;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.dsl.lsp.server.ServerLspRequest#getMethod()
+	 */
 	@Override
 	public LspMethod getMethod() {
 		return method;

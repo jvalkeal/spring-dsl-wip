@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 the original author or authors.
+ * Copyright 2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,17 @@ package org.springframework.dsl.lsp.server;
 
 import org.springframework.dsl.lsp.LspOutputMessage;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Interface ServerLspResponse.
+ */
 public interface ServerLspResponse extends LspOutputMessage {
 
+	/**
+	 * Sets the body.
+	 *
+	 * @param body the new body
+	 */
 	void setBody(Object body);
 
 }

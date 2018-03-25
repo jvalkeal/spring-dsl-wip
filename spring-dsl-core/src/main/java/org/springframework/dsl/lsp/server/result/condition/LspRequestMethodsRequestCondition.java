@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 the original author or authors.
+ * Copyright 2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,8 +26,13 @@ import org.springframework.dsl.lsp.LspMethod;
 import org.springframework.dsl.lsp.server.ServerLspExchange;
 import org.springframework.lang.Nullable;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class LspRequestMethodsRequestCondition.
+ */
 public class LspRequestMethodsRequestCondition extends AbstractRequestCondition<LspRequestMethodsRequestCondition> {
 
+	/** The methods. */
 	private final Set<LspMethod> methods;
 
 	/**
@@ -39,10 +44,21 @@ public class LspRequestMethodsRequestCondition extends AbstractRequestCondition<
 		this(asList(requestMethods));
 	}
 
+	/**
+	 * Instantiates a new lsp request methods request condition.
+	 *
+	 * @param requestMethods the request methods
+	 */
 	private LspRequestMethodsRequestCondition(Collection<LspMethod> requestMethods) {
 		this.methods = Collections.unmodifiableSet(new LinkedHashSet<>(requestMethods));
 	}
 
+	/**
+	 * As list.
+	 *
+	 * @param requestMethods the request methods
+	 * @return the list
+	 */
 	private static List<LspMethod> asList(LspMethod... requestMethods) {
 		return (requestMethods != null ? Arrays.asList(requestMethods) : Collections.emptyList());
 	}
@@ -56,11 +72,17 @@ public class LspRequestMethodsRequestCondition extends AbstractRequestCondition<
 		return this.methods;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.dsl.lsp.server.result.condition.AbstractRequestCondition#getContent()
+	 */
 	@Override
 	protected Collection<LspMethod> getContent() {
 		return this.methods;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.dsl.lsp.server.result.condition.AbstractRequestCondition#getToStringInfix()
+	 */
 	@Override
 	protected String getToStringInfix() {
 		return " || ";
@@ -69,6 +91,9 @@ public class LspRequestMethodsRequestCondition extends AbstractRequestCondition<
 	/**
 	 * Returns a new instance with a union of the HTTP request methods
 	 * from "this" and the "other" instance.
+	 *
+	 * @param other the other
+	 * @return the lsp request methods request condition
 	 */
 	@Override
 	public LspRequestMethodsRequestCondition combine(LspRequestMethodsRequestCondition other) {
@@ -95,6 +120,12 @@ public class LspRequestMethodsRequestCondition extends AbstractRequestCondition<
 		return matchRequestMethod(exchange.getRequest().getMethod());
 	}
 
+	/**
+	 * Match request method.
+	 *
+	 * @param coapMethod the coap method
+	 * @return the lsp request methods request condition
+	 */
 	@Nullable
 	private LspRequestMethodsRequestCondition matchRequestMethod(@Nullable LspMethod coapMethod) {
 		if (coapMethod != null) {
@@ -117,6 +148,10 @@ public class LspRequestMethodsRequestCondition extends AbstractRequestCondition<
 	 * <p>It is assumed that both instances have been obtained via
 	 * {@link #getMatchingCondition(ServerLspExchange)} and therefore each instance
 	 * contains the matching HTTP request method only or is otherwise empty.
+	 *
+	 * @param other the other
+	 * @param exchange the exchange
+	 * @return the int
 	 */
 	@Override
 	public int compareTo(LspRequestMethodsRequestCondition other, ServerLspExchange exchange) {

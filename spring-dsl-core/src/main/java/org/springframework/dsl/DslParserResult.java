@@ -17,10 +17,11 @@ package org.springframework.dsl;
 
 import java.util.List;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Interface DslParserResult.
  *
  * @author Janne Valkealahti
- *
  * @param <T> the type of a model
  */
 public interface DslParserResult<T> {

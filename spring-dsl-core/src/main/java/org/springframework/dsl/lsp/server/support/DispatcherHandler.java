@@ -1,11 +1,11 @@
 /*
- * Copyright 2017 the original author or authors.
+ * Copyright 2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -35,6 +35,7 @@ import org.springframework.dsl.lsp.server.ServerLspExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+// TODO: Auto-generated Javadoc
 /**
  * Central dispatcher for COAP request handlers/controllers. Dispatches to registered
  * handlers for processing a coap request, providing convenient mapping facilities.
@@ -44,17 +45,30 @@ import reactor.core.publisher.Mono;
  */
 public class DispatcherHandler implements LspHandler, ApplicationContextAware {
 
+	/** The Constant HANDLER_NOT_FOUND_EXCEPTION. */
 	private static final Exception HANDLER_NOT_FOUND_EXCEPTION =
 			new LspServerException("No matching handler");
+	
+	/** The handler mappings. */
 	private List<HandlerMapping> handlerMappings;
+	
+	/** The handler adapters. */
 	private List<HandlerAdapter> handlerAdapters;
+	
+	/** The result handlers. */
 	private List<HandlerResultHandler> resultHandlers;
 
+	/* (non-Javadoc)
+	 * @see org.springframework.context.ApplicationContextAware#setApplicationContext(org.springframework.context.ApplicationContext)
+	 */
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 		initStrategies(applicationContext);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.dsl.lsp.server.LspHandler#handle(org.springframework.dsl.lsp.server.ServerLspExchange)
+	 */
 	@Override
 	public Mono<Void> handle(ServerLspExchange exchange) {
 		return Flux.fromIterable(this.handlerMappings)
@@ -65,6 +79,11 @@ public class DispatcherHandler implements LspHandler, ApplicationContextAware {
 				.flatMap(result -> handleResult(exchange, result));
 	}
 
+	/**
+	 * Inits the strategies.
+	 *
+	 * @param context the context
+	 */
 	protected void initStrategies(ApplicationContext context) {
 		Map<String, HandlerMapping> mappingBeans = BeanFactoryUtils.beansOfTypeIncludingAncestors(
 				context, HandlerMapping.class, true, false);
@@ -85,6 +104,13 @@ public class DispatcherHandler implements LspHandler, ApplicationContextAware {
 		AnnotationAwareOrderComparator.sort(this.resultHandlers);
 	}
 
+	/**
+	 * Invoke handler.
+	 *
+	 * @param exchange the exchange
+	 * @param handler the handler
+	 * @return the mono
+	 */
 	private Mono<HandlerResult> invokeHandler(ServerLspExchange exchange, Object handler) {
 		for (HandlerAdapter handlerAdapter : this.handlerAdapters) {
 			if (handlerAdapter.supports(handler)) {
@@ -94,6 +120,13 @@ public class DispatcherHandler implements LspHandler, ApplicationContextAware {
 		return Mono.error(new IllegalStateException("No HandlerAdapter: " + handler));
 	}
 
+	/**
+	 * Handle result.
+	 *
+	 * @param exchange the exchange
+	 * @param result the result
+	 * @return the mono
+	 */
 	private Mono<Void> handleResult(ServerLspExchange exchange, HandlerResult result) {
 		return getResultHandler(result)
 				.handleResult(exchange, result)
@@ -102,6 +135,12 @@ public class DispatcherHandler implements LspHandler, ApplicationContextAware {
 				.handleResult(exchange, exceptionResult)));
 	}
 
+	/**
+	 * Gets the result handler.
+	 *
+	 * @param handlerResult the handler result
+	 * @return the result handler
+	 */
 	private HandlerResultHandler getResultHandler(HandlerResult handlerResult) {
 		for (HandlerResultHandler resultHandler : this.resultHandlers) {
 			if (resultHandler.supports(handlerResult)) {

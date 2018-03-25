@@ -17,6 +17,7 @@ package org.springframework.dsl;
 
 import java.io.IOException;
 
+// TODO: Auto-generated Javadoc
 /**
  * Generic exception indicating ill-formed dsl or any other dsl related error.
  *
@@ -25,6 +26,7 @@ import java.io.IOException;
  */
 public class DslException extends RuntimeException {
 
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -263338202707005820L;
 
 	/**

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 the original author or authors.
+ * Copyright 2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.springframework.dsl.lsp;
 import java.lang.reflect.Type;
 import java.net.URI;
 
+// TODO: Auto-generated Javadoc
 /**
  * Extension of {@link LspEntity}.
  *
@@ -27,12 +28,22 @@ import java.net.URI;
  */
 public class LspRequestEntity<T> extends LspEntity<T> {
 
+	/** The method. */
 	private final LspMethod method;
 
+	/** The url. */
 	private final URI url;
 
+	/** The type. */
 	private final Type type;
 
+	/**
+	 * Instantiates a new lsp request entity.
+	 *
+	 * @param method the method
+	 * @param url the url
+	 * @param type the type
+	 */
 	public LspRequestEntity(LspMethod method, URI url, Type type) {
 		super();
 		this.method = method;

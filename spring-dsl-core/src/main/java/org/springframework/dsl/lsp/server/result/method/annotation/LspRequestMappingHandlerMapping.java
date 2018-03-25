@@ -1,11 +1,11 @@
 /*
- * Copyright 2017 the original author or authors.
+ * Copyright 2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,6 +26,7 @@ import org.springframework.dsl.lsp.server.result.method.LspRequestMappingInfo;
 import org.springframework.lang.Nullable;
 import org.springframework.util.StringValueResolver;
 
+// TODO: Auto-generated Javadoc
 /**
  * An implementation of {@link HandlerMapping} that creates
  * {@link LspRequestMappingInfo} instances from class-level and method-level
@@ -36,21 +37,31 @@ import org.springframework.util.StringValueResolver;
  */
 public class LspRequestMappingHandlerMapping extends AbstractHandlerMethodMapping implements EmbeddedValueResolverAware {
 
+	/** The embedded value resolver. */
 	@Nullable
 	private StringValueResolver embeddedValueResolver;
 
+	/* (non-Javadoc)
+	 * @see org.springframework.dsl.lsp.server.result.method.annotation.AbstractHandlerMethodMapping#isHandler(java.lang.Class)
+	 */
 	@Override
 	protected boolean isHandler(Class<?> beanType) {
 		return (AnnotatedElementUtils.hasAnnotation(beanType, LspController.class) ||
 				AnnotatedElementUtils.hasAnnotation(beanType, LspRequestMapping.class));
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.dsl.lsp.server.result.method.annotation.AbstractHandlerMethodMapping#createRequestMappingInfo(java.lang.reflect.AnnotatedElement)
+	 */
 	@Override
 	protected LspRequestMappingInfo createRequestMappingInfo(AnnotatedElement element) {
 		LspRequestMapping requestMapping = AnnotatedElementUtils.findMergedAnnotation(element, LspRequestMapping.class);
 		return requestMapping != null ? createRequestMappingInfo(requestMapping) : null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.context.EmbeddedValueResolverAware#setEmbeddedValueResolver(org.springframework.util.StringValueResolver)
+	 */
 	@Override
 	public void setEmbeddedValueResolver(StringValueResolver resolver) {
 		this.embeddedValueResolver = resolver;
@@ -75,6 +86,12 @@ public class LspRequestMappingHandlerMapping extends AbstractHandlerMethodMappin
 		}
 	}
 
+	/**
+	 * Creates the request mapping info.
+	 *
+	 * @param requestMapping the request mapping
+	 * @return the lsp request mapping info
+	 */
 	private LspRequestMappingInfo createRequestMappingInfo(LspRequestMapping requestMapping) {
 		LspRequestMappingInfo.Builder builder = LspRequestMappingInfo
 				.paths(resolveEmbeddedValuesInPatterns(requestMapping.path()))

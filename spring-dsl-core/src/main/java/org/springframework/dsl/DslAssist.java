@@ -17,6 +17,7 @@ package org.springframework.dsl;
 
 import java.util.Collection;
 
+// TODO: Auto-generated Javadoc
 /**
  * Strategy interface for a generic {@code DSL} to request context assist for
  * code completions.
@@ -26,5 +27,11 @@ import java.util.Collection;
  */
 public interface DslAssist {
 
+	/**
+	 * Assist completions.
+	 *
+	 * @param content the content
+	 * @return the collection
+	 */
 	Collection<String> assistCompletions(String content);
 }

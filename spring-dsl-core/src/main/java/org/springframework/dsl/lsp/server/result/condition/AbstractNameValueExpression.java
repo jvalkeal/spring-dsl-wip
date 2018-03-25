@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 the original author or authors.
+ * Copyright 2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,16 +19,30 @@ import org.springframework.dsl.lsp.server.ServerLspExchange;
 import org.springframework.lang.Nullable;
 import org.springframework.util.ObjectUtils;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class AbstractNameValueExpression.
+ *
+ * @param <T> the generic type
+ */
 abstract class AbstractNameValueExpression<T> implements NameValueExpression<T> {
 
+	/** The name. */
 	protected final String name;
 
+	/** The value. */
 	@Nullable
 	protected final T value;
 
+	/** The is negated. */
 	protected final boolean isNegated;
 
 
+	/**
+	 * Instantiates a new abstract name value expression.
+	 *
+	 * @param expression the expression
+	 */
 	AbstractNameValueExpression(String expression) {
 		int separator = expression.indexOf('=');
 		if (separator == -1) {
@@ -44,22 +58,37 @@ abstract class AbstractNameValueExpression<T> implements NameValueExpression<T> 
 	}
 
 
+	/* (non-Javadoc)
+	 * @see org.springframework.dsl.lsp.server.result.condition.NameValueExpression#getName()
+	 */
 	@Override
 	public String getName() {
 		return this.name;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.dsl.lsp.server.result.condition.NameValueExpression#getValue()
+	 */
 	@Override
 	@Nullable
 	public T getValue() {
 		return this.value;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.dsl.lsp.server.result.condition.NameValueExpression#isNegated()
+	 */
 	@Override
 	public boolean isNegated() {
 		return this.isNegated;
 	}
 
+	/**
+	 * Match.
+	 *
+	 * @param exchange the exchange
+	 * @return true, if successful
+	 */
 	public final boolean match(ServerLspExchange exchange) {
 		boolean isMatch;
 		if (this.value != null) {
@@ -72,15 +101,41 @@ abstract class AbstractNameValueExpression<T> implements NameValueExpression<T> 
 	}
 
 
+	/**
+	 * Checks if is case sensitive name.
+	 *
+	 * @return true, if is case sensitive name
+	 */
 	protected abstract boolean isCaseSensitiveName();
 
+	/**
+	 * Parses the value.
+	 *
+	 * @param valueExpression the value expression
+	 * @return the t
+	 */
 	protected abstract T parseValue(String valueExpression);
 
+	/**
+	 * Match name.
+	 *
+	 * @param exchange the exchange
+	 * @return true, if successful
+	 */
 	protected abstract boolean matchName(ServerLspExchange exchange);
 
+	/**
+	 * Match value.
+	 *
+	 * @param exchange the exchange
+	 * @return true, if successful
+	 */
 	protected abstract boolean matchValue(ServerLspExchange exchange);
 
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -97,6 +152,9 @@ abstract class AbstractNameValueExpression<T> implements NameValueExpression<T> 
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		int result = (isCaseSensitiveName() ? this.name : this.name.toLowerCase()).hashCode();
@@ -105,6 +163,9 @@ abstract class AbstractNameValueExpression<T> implements NameValueExpression<T> 
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();

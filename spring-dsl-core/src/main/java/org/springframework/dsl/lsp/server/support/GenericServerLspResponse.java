@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 the original author or authors.
+ * Copyright 2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,19 @@ package org.springframework.dsl.lsp.server.support;
 
 import org.springframework.dsl.lsp.server.ServerLspResponse;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class GenericServerLspResponse.
+ */
 public class GenericServerLspResponse implements ServerLspResponse {
 
+	/** The content format. */
 	private Integer contentFormat;
+	
+	/** The accept. */
 	private Integer accept;
+	
+	/** The request payload. */
 	private Object requestPayload;
 
 //	@Override
@@ -50,11 +59,17 @@ public class GenericServerLspResponse implements ServerLspResponse {
 //		return requestPayload;
 //	}
 
-	@Override
+	/* (non-Javadoc)
+ * @see org.springframework.dsl.lsp.LspOutputMessage#getBody()
+ */
+@Override
 	public Object getBody() {
 		return requestPayload;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.dsl.lsp.server.ServerLspResponse#setBody(java.lang.Object)
+	 */
 	@Override
 	public void setBody(Object body) {
 		this.requestPayload = body;

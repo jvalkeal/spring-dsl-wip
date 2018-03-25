@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 the original author or authors.
+ * Copyright 2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.util.List;
 import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
 
+// TODO: Auto-generated Javadoc
 /**
  * Default implementation of {@link RequestPath}.
  *
@@ -28,25 +29,47 @@ import org.springframework.util.StringUtils;
  */
 class DefaultRequestPath implements RequestPath {
 
+	/** The full path. */
 	private final PathContainer fullPath;
 
+	/** The context path. */
 	private final PathContainer contextPath;
 
+	/** The path within application. */
 	private final PathContainer pathWithinApplication;
 
 
+	/**
+	 * Instantiates a new default request path.
+	 *
+	 * @param uri the uri
+	 * @param contextPath the context path
+	 */
 	DefaultRequestPath(URI uri, @Nullable String contextPath) {
 		this.fullPath = PathContainer.parsePath(uri.getRawPath());
 		this.contextPath = initContextPath(this.fullPath, contextPath);
 		this.pathWithinApplication = extractPathWithinApplication(this.fullPath, this.contextPath);
 	}
 
+	/**
+	 * Instantiates a new default request path.
+	 *
+	 * @param requestPath the request path
+	 * @param contextPath the context path
+	 */
 	private DefaultRequestPath(RequestPath requestPath, String contextPath) {
 		this.fullPath = requestPath;
 		this.contextPath = initContextPath(this.fullPath, contextPath);
 		this.pathWithinApplication = extractPathWithinApplication(this.fullPath, this.contextPath);
 	}
 
+	/**
+	 * Inits the context path.
+	 *
+	 * @param path the path
+	 * @param contextPath the context path
+	 * @return the path container
+	 */
 	private static PathContainer initContextPath(PathContainer path, @Nullable String contextPath) {
 		if (!StringUtils.hasText(contextPath) || "/".equals(contextPath)) {
 			return PathContainer.parsePath("");
@@ -70,6 +93,12 @@ class DefaultRequestPath implements RequestPath {
 				" for requestPath '" + path.value() + "'");
 	}
 
+	/**
+	 * Validate context path.
+	 *
+	 * @param fullPath the full path
+	 * @param contextPath the context path
+	 */
 	private static void validateContextPath(String fullPath, String contextPath) {
 		int length = contextPath.length();
 		if (contextPath.charAt(0) != '/' || contextPath.charAt(length - 1) == '/') {
@@ -86,6 +115,13 @@ class DefaultRequestPath implements RequestPath {
 		}
 	}
 
+	/**
+	 * Extract path within application.
+	 *
+	 * @param fullPath the full path
+	 * @param contextPath the context path
+	 * @return the path container
+	 */
 	private static PathContainer extractPathWithinApplication(PathContainer fullPath, PathContainer contextPath) {
 		return fullPath.subPath(contextPath.elements().size());
 	}
@@ -93,11 +129,17 @@ class DefaultRequestPath implements RequestPath {
 
 	// PathContainer methods..
 
+	/* (non-Javadoc)
+	 * @see org.springframework.dsl.lsp.server.support.PathContainer#value()
+	 */
 	@Override
 	public String value() {
 		return this.fullPath.value();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.dsl.lsp.server.support.PathContainer#elements()
+	 */
 	@Override
 	public List<Element> elements() {
 		return this.fullPath.elements();
@@ -106,22 +148,34 @@ class DefaultRequestPath implements RequestPath {
 
 	// RequestPath methods..
 
+	/* (non-Javadoc)
+	 * @see org.springframework.dsl.lsp.server.support.RequestPath#contextPath()
+	 */
 	@Override
 	public PathContainer contextPath() {
 		return this.contextPath;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.dsl.lsp.server.support.RequestPath#pathWithinApplication()
+	 */
 	@Override
 	public PathContainer pathWithinApplication() {
 		return this.pathWithinApplication;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.dsl.lsp.server.support.RequestPath#modifyContextPath(java.lang.String)
+	 */
 	@Override
 	public RequestPath modifyContextPath(String contextPath) {
 		return new DefaultRequestPath(this, contextPath);
 	}
 
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(@Nullable Object other) {
 		if (this == other) {
@@ -136,6 +190,9 @@ class DefaultRequestPath implements RequestPath {
 				this.pathWithinApplication.equals(that.pathWithinApplication));
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		int result = this.fullPath.hashCode();
@@ -144,6 +201,9 @@ class DefaultRequestPath implements RequestPath {
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		return "DefaultRequestPath[fullPath='" + this.fullPath + "', " +

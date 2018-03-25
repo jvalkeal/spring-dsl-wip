@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 the original author or authors.
+ * Copyright 2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import org.springframework.dsl.lsp.server.LspServer;
 import org.springframework.dsl.lsp.server.LspServerFactory;
 import org.springframework.util.Assert;
 
+// TODO: Auto-generated Javadoc
 /**
  * Class which can be created into application context as bean and will listen
  * {@link ContextRefreshedEvent} to start associated {@link LspServer} and stop
@@ -36,6 +37,7 @@ import org.springframework.util.Assert;
  */
 public class LspServerRefreshListener implements ApplicationListener<ContextRefreshedEvent>, DisposableBean {
 
+	/** The lsp server. */
 	private final LspServer lspServer;
 
 	/**
@@ -48,11 +50,17 @@ public class LspServerRefreshListener implements ApplicationListener<ContextRefr
 		this.lspServer = lspServer;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.context.ApplicationListener#onApplicationEvent(org.springframework.context.ApplicationEvent)
+	 */
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
 		lspServer.start();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.beans.factory.DisposableBean#destroy()
+	 */
 	@Override
 	public void destroy() throws Exception {
 		lspServer.stop();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 the original author or authors.
+ * Copyright 2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package org.springframework.dsl.lsp;
 
+// TODO: Auto-generated Javadoc
 /**
  * Represents an CoAP input message, consisting of
  * a readable {@linkplain #getBody() body}.

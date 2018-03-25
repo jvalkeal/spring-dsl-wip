@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 the original author or authors.
+ * Copyright 2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,19 +44,26 @@ import org.springframework.util.MultiValueMap;
 
 import reactor.core.publisher.Mono;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class AbstractHandlerMethodMapping.
  *
  * @author Janne Valkealahti
- *
  */
 public abstract class AbstractHandlerMethodMapping extends ApplicationObjectSupport implements HandlerMapping, InitializingBean {
 
+	/** The Constant log. */
 	private static final Log log = LogFactory.getLog(AbstractHandlerMethodMapping.class);
 
+	/** The Constant SCOPED_TARGET_NAME_PREFIX. */
 	private static final String SCOPED_TARGET_NAME_PREFIX = "scopedTarget.";
 
+	/** The registry. */
 	private Map<LspRequestMappingInfo, HandlerMethod> registry = new HashMap<>();
 
+	/* (non-Javadoc)
+	 * @see org.springframework.dsl.lsp.server.HandlerMapping#getHandler(org.springframework.dsl.lsp.server.ServerLspExchange)
+	 */
 	@Override
 	public Mono<Object> getHandler(ServerLspExchange exchange) {
 		return getHandlerInternal(exchange).map(handler -> {
@@ -64,6 +71,12 @@ public abstract class AbstractHandlerMethodMapping extends ApplicationObjectSupp
 		});
 	}
 
+	/**
+	 * Gets the handler internal.
+	 *
+	 * @param exchange the exchange
+	 * @return the handler internal
+	 */
 	public Mono<HandlerMethod> getHandlerInternal(ServerLspExchange exchange) {
 		HandlerMethod handlerMethod = null;
 
@@ -80,11 +93,21 @@ public abstract class AbstractHandlerMethodMapping extends ApplicationObjectSupp
 		return Mono.justOrEmpty(handlerMethod);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+	 */
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		initHandlerMethods();
 	}
 
+	/**
+	 * Lookup handler method.
+	 *
+	 * @param exchange the exchange
+	 * @return the handler method
+	 * @throws Exception the exception
+	 */
 	@Nullable
 	protected HandlerMethod lookupHandlerMethod(ServerLspExchange exchange)
 			throws Exception {
@@ -119,10 +142,23 @@ public abstract class AbstractHandlerMethodMapping extends ApplicationObjectSupp
 		}
 	}
 
+	/**
+	 * Gets the mapping comparator.
+	 *
+	 * @param exchange the exchange
+	 * @return the mapping comparator
+	 */
 	protected Comparator<LspRequestMappingInfo> getMappingComparator(final ServerLspExchange exchange) {
 		return (info1, info2) -> info1.compareTo(info2, exchange);
 	}
 
+	/**
+	 * Handle match.
+	 *
+	 * @param info the info
+	 * @param handlerMethod the handler method
+	 * @param exchange the exchange
+	 */
 	protected void handleMatch(LspRequestMappingInfo info, HandlerMethod handlerMethod,
 			ServerLspExchange exchange) {
 
@@ -158,6 +194,13 @@ public abstract class AbstractHandlerMethodMapping extends ApplicationObjectSupp
 //		}
 	}
 
+	/**
+	 * Adds the matching mappings.
+	 *
+	 * @param mappings the mappings
+	 * @param matches the matches
+	 * @param exchange the exchange
+	 */
 	private void addMatchingMappings(Collection<LspRequestMappingInfo> mappings, List<Match> matches, ServerLspExchange exchange) {
 		for (LspRequestMappingInfo mapping : mappings) {
 			LspRequestMappingInfo match = getMatchingMapping(mapping, exchange);
@@ -168,10 +211,20 @@ public abstract class AbstractHandlerMethodMapping extends ApplicationObjectSupp
 		}
 	}
 
+	/**
+	 * Gets the matching mapping.
+	 *
+	 * @param info the info
+	 * @param exchange the exchange
+	 * @return the matching mapping
+	 */
 	protected LspRequestMappingInfo getMatchingMapping(LspRequestMappingInfo info, ServerLspExchange exchange) {
 		return info.getMatchingCondition(exchange);
 	}
 
+	/**
+	 * Inits the handler methods.
+	 */
 	protected void initHandlerMethods() {
 		String[] beanNames = obtainApplicationContext().getBeanNamesForType(Object.class);
 
@@ -194,8 +247,19 @@ public abstract class AbstractHandlerMethodMapping extends ApplicationObjectSupp
 		}
 	}
 
+	/**
+	 * Checks if is handler.
+	 *
+	 * @param beanType the bean type
+	 * @return true, if is handler
+	 */
 	protected abstract boolean isHandler(Class<?> beanType);
 
+	/**
+	 * Detect handler methods.
+	 *
+	 * @param handler the handler
+	 */
 	protected void detectHandlerMethods(final Object handler) {
 		Class<?> handlerType = (handler instanceof String ?
 				obtainApplicationContext().getType((String) handler) : handler.getClass());
@@ -216,11 +280,25 @@ public abstract class AbstractHandlerMethodMapping extends ApplicationObjectSupp
 		}
 	}
 
+	/**
+	 * Register handler method.
+	 *
+	 * @param handler the handler
+	 * @param method the method
+	 * @param mapping the mapping
+	 */
 	protected void registerHandlerMethod(Object handler, Method method, LspRequestMappingInfo mapping) {
 		HandlerMethod handlerMethod = createHandlerMethod(handler, method);
 		registry.put(mapping, handlerMethod);
 	}
 
+	/**
+	 * Creates the handler method.
+	 *
+	 * @param handler the handler
+	 * @param method the method
+	 * @return the handler method
+	 */
 	protected HandlerMethod createHandlerMethod(Object handler, Method method) {
 		HandlerMethod handlerMethod;
 		if (handler instanceof String) {
@@ -235,6 +313,13 @@ public abstract class AbstractHandlerMethodMapping extends ApplicationObjectSupp
 	}
 
 
+	/**
+	 * Gets the mapping for method.
+	 *
+	 * @param method the method
+	 * @param handlerType the handler type
+	 * @return the mapping for method
+	 */
 	protected LspRequestMappingInfo getMappingForMethod(Method method, Class<?> handlerType) {
 		LspRequestMappingInfo info = createRequestMappingInfo(method);
 		if (info != null) {
@@ -246,15 +331,34 @@ public abstract class AbstractHandlerMethodMapping extends ApplicationObjectSupp
 		return info;
 	}
 
+	/**
+	 * Creates the request mapping info.
+	 *
+	 * @param element the element
+	 * @return the lsp request mapping info
+	 */
 	protected abstract LspRequestMappingInfo createRequestMappingInfo(AnnotatedElement element);
 
 
+	/**
+	 * The Class MappingRegistration.
+	 *
+	 * @param <T> the generic type
+	 */
 	private static class MappingRegistration<T> {
 
+		/** The mapping. */
 		private final T mapping;
 
+		/** The handler method. */
 		private final HandlerMethod handlerMethod;
 
+		/**
+		 * Instantiates a new mapping registration.
+		 *
+		 * @param mapping the mapping
+		 * @param handlerMethod the handler method
+		 */
 		public MappingRegistration(T mapping, HandlerMethod handlerMethod) {
 			Assert.notNull(mapping, "Mapping must not be null");
 			Assert.notNull(handlerMethod, "HandlerMethod must not be null");
@@ -262,10 +366,20 @@ public abstract class AbstractHandlerMethodMapping extends ApplicationObjectSupp
 			this.handlerMethod = handlerMethod;
 		}
 
+		/**
+		 * Gets the mapping.
+		 *
+		 * @return the mapping
+		 */
 		public T getMapping() {
 			return this.mapping;
 		}
 
+		/**
+		 * Gets the handler method.
+		 *
+		 * @return the handler method
+		 */
 		public HandlerMethod getHandlerMethod() {
 			return this.handlerMethod;
 		}
@@ -279,15 +393,26 @@ public abstract class AbstractHandlerMethodMapping extends ApplicationObjectSupp
 	 */
 	private class Match {
 
+		/** The mapping. */
 		private final LspRequestMappingInfo mapping;
 
+		/** The handler method. */
 		private final HandlerMethod handlerMethod;
 
+		/**
+		 * Instantiates a new match.
+		 *
+		 * @param mapping the mapping
+		 * @param handlerMethod the handler method
+		 */
 		public Match(LspRequestMappingInfo mapping, HandlerMethod handlerMethod) {
 			this.mapping = mapping;
 			this.handlerMethod = handlerMethod;
 		}
 
+		/* (non-Javadoc)
+		 * @see java.lang.Object#toString()
+		 */
 		@Override
 		public String toString() {
 			return this.mapping.toString();
@@ -295,14 +420,26 @@ public abstract class AbstractHandlerMethodMapping extends ApplicationObjectSupp
 	}
 
 
+	/**
+	 * The Class MatchComparator.
+	 */
 	private class MatchComparator implements Comparator<Match> {
 
+		/** The comparator. */
 		private final Comparator<LspRequestMappingInfo> comparator;
 
+		/**
+		 * Instantiates a new match comparator.
+		 *
+		 * @param comparator the comparator
+		 */
 		public MatchComparator(Comparator<LspRequestMappingInfo> comparator) {
 			this.comparator = comparator;
 		}
 
+		/* (non-Javadoc)
+		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+		 */
 		@Override
 		public int compare(Match match1, Match match2) {
 			return this.comparator.compare(match1.mapping, match2.mapping);

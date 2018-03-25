@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 the original author or authors.
+ * Copyright 2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.springframework.dsl.lsp;
 import java.util.HashMap;
 import java.util.Map;
 
+// TODO: Auto-generated Javadoc
 /**
  * Java enumeration of COAP request methods.
  *
@@ -26,9 +27,13 @@ import java.util.Map;
  */
 public enum LspMethod {
 
+	/** The initialize. */
 	INITIALIZE,
+	
+	/** The didchange. */
 	DIDCHANGE;
 
+	/** The Constant mappings. */
 	private static final Map<String, LspMethod> mappings = new HashMap<String, LspMethod>(4);
 
 	static {

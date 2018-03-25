@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 the original author or authors.
+ * Copyright 2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,17 @@ import org.springframework.dsl.lsp.LspInputMessage;
 import org.springframework.dsl.lsp.LspMethod;
 import org.springframework.dsl.lsp.server.support.RequestPath;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Interface ServerLspRequest.
+ */
 public interface ServerLspRequest extends LspInputMessage {
 
 
+	/**
+	 * Gets the method.
+	 *
+	 * @return the method
+	 */
 	LspMethod getMethod();
 }

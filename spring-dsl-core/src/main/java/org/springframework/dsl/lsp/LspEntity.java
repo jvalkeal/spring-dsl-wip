@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 the original author or authors.
+ * Copyright 2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package org.springframework.dsl.lsp;
 
+// TODO: Auto-generated Javadoc
 /**
  * Represents an CoAP request or response entity, consisting of headers and body.
  *
@@ -24,18 +25,33 @@ package org.springframework.dsl.lsp;
  */
 public class LspEntity<T> {
 
+	/** The Constant EMPTY. */
 	public static final LspEntity<?> EMPTY = new LspEntity<>();
 
+	/** The body. */
 	private final T body;
 
+	/**
+	 * Instantiates a new lsp entity.
+	 */
 	public LspEntity() {
 		this(null);
 	}
 
+	/**
+	 * Instantiates a new lsp entity.
+	 *
+	 * @param body the body
+	 */
 	public LspEntity(T body) {
 		this.body = body;
 	}
 
+	/**
+	 * Gets the body.
+	 *
+	 * @return the body
+	 */
 	public T getBody() {
 		return body;
 	}

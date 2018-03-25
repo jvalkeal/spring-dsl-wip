@@ -1,11 +1,11 @@
 /*
- * Copyright 2017 the original author or authors.
+ * Copyright 2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,20 +28,36 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class HandlerMethod.
+ */
 public class HandlerMethod {
 
+	/** The bean. */
 	private final Object bean;
 
+	/** The bean factory. */
 	private final BeanFactory beanFactory;
 
+	/** The bean type. */
 	private final Class<?> beanType;
 
+	/** The method. */
 	private final Method method;
 
+	/** The bridged method. */
 	private final Method bridgedMethod;
 
+	/** The parameters. */
 	private final MethodParameter[] parameters;
 
+	/**
+	 * Instantiates a new handler method.
+	 *
+	 * @param bean the bean
+	 * @param method the method
+	 */
 	public HandlerMethod(Object bean, Method method) {
 		Assert.notNull(bean, "Bean is required");
 		Assert.notNull(method, "Method is required");
@@ -54,6 +70,13 @@ public class HandlerMethod {
 //		evaluateResponseStatus();
 	}
 
+	/**
+	 * Instantiates a new handler method.
+	 *
+	 * @param beanName the bean name
+	 * @param beanFactory the bean factory
+	 * @param method the method
+	 */
 	public HandlerMethod(String beanName, BeanFactory beanFactory, Method method) {
 		Assert.hasText(beanName, "Bean name is required");
 		Assert.notNull(beanFactory, "BeanFactory is required");
@@ -69,6 +92,11 @@ public class HandlerMethod {
 	}
 
 
+	/**
+	 * Instantiates a new handler method.
+	 *
+	 * @param handlerMethod the handler method
+	 */
 	protected HandlerMethod(HandlerMethod handlerMethod) {
 		Assert.notNull(handlerMethod, "HandlerMethod is required");
 		this.bean = handlerMethod.bean;
@@ -82,6 +110,12 @@ public class HandlerMethod {
 //		this.resolvedFromHandlerMethod = handlerMethod.resolvedFromHandlerMethod;
 	}
 
+	/**
+	 * Instantiates a new handler method.
+	 *
+	 * @param handlerMethod the handler method
+	 * @param handler the handler
+	 */
 	private HandlerMethod(HandlerMethod handlerMethod, Object handler) {
 		Assert.notNull(handlerMethod, "HandlerMethod is required");
 		Assert.notNull(handler, "Handler object is required");
@@ -155,8 +189,8 @@ public class HandlerMethod {
 	 *
 	 * @param <A> the generic type
 	 * @param annotationType the annotation type to look for
-	 * @see AnnotatedElementUtils#hasAnnotation
 	 * @return true, if successful
+	 * @see AnnotatedElementUtils#hasAnnotation
 	 */
 	public <A extends Annotation> boolean hasMethodAnnotation(Class<A> annotationType) {
 		return AnnotatedElementUtils.hasAnnotation(this.method, annotationType);
@@ -181,6 +215,11 @@ public class HandlerMethod {
 		return this.parameters;
 	}
 
+	/**
+	 * Creates the with resolved bean.
+	 *
+	 * @return the handler method
+	 */
 	public HandlerMethod createWithResolvedBean() {
 		Object handler = this.bean;
 		if (this.bean instanceof String) {
@@ -195,35 +234,62 @@ public class HandlerMethod {
 	 */
 	protected class HandlerMethodParameter extends SynthesizingMethodParameter {
 
+		/**
+		 * Instantiates a new handler method parameter.
+		 *
+		 * @param index the index
+		 */
 		public HandlerMethodParameter(int index) {
 			super(HandlerMethod.this.bridgedMethod, index);
 		}
 
+		/**
+		 * Instantiates a new handler method parameter.
+		 *
+		 * @param original the original
+		 */
 		protected HandlerMethodParameter(HandlerMethodParameter original) {
 			super(original);
 		}
 
+		/* (non-Javadoc)
+		 * @see org.springframework.core.MethodParameter#getContainingClass()
+		 */
 		@Override
 		public Class<?> getContainingClass() {
 			return HandlerMethod.this.getBeanType();
 		}
 
+		/* (non-Javadoc)
+		 * @see org.springframework.core.MethodParameter#getMethodAnnotation(java.lang.Class)
+		 */
 		@Override
 		public <T extends Annotation> T getMethodAnnotation(Class<T> annotationType) {
 			return HandlerMethod.this.getMethodAnnotation(annotationType);
 		}
 
+		/* (non-Javadoc)
+		 * @see org.springframework.core.MethodParameter#hasMethodAnnotation(java.lang.Class)
+		 */
 		@Override
 		public <T extends Annotation> boolean hasMethodAnnotation(Class<T> annotationType) {
 			return HandlerMethod.this.hasMethodAnnotation(annotationType);
 		}
 
+		/* (non-Javadoc)
+		 * @see org.springframework.core.annotation.SynthesizingMethodParameter#clone()
+		 */
 		@Override
 		public HandlerMethodParameter clone() {
 			return new HandlerMethodParameter(this);
 		}
 	}
 
+	/**
+	 * Inits the method parameters.
+	 *
+	 * @return the method parameter[]
+	 */
 	private MethodParameter[] initMethodParameters() {
 		int count = this.bridgedMethod.getParameterCount();
 		MethodParameter[] result = new MethodParameter[count];

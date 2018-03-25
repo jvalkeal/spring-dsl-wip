@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 the original author or authors.
+ * Copyright 2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,34 @@ package org.springframework.dsl.lsp.server.result.condition;
 
 import org.springframework.lang.Nullable;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Interface NameValueExpression.
+ *
+ * @param <T> the generic type
+ */
 public interface NameValueExpression<T> {
 
+	/**
+	 * Gets the name.
+	 *
+	 * @return the name
+	 */
 	String getName();
 
+	/**
+	 * Gets the value.
+	 *
+	 * @return the value
+	 */
 	@Nullable
 	T getValue();
 
+	/**
+	 * Checks if is negated.
+	 *
+	 * @return true, if is negated
+	 */
 	boolean isNegated();
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 the original author or authors.
+ * Copyright 2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.springframework.dsl.lsp.server.result.condition;
 import java.util.Collection;
 import java.util.Iterator;
 
+// TODO: Auto-generated Javadoc
 /**
  * A base class for {@link LspRequestCondition} types providing implementations of
  * {@link #equals(Object)}, {@link #hashCode()}, and {@link #toString()}.
@@ -28,6 +29,9 @@ import java.util.Iterator;
  */
 public abstract class AbstractRequestCondition<T extends AbstractRequestCondition<T>> implements LspRequestCondition<T> {
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -40,11 +44,17 @@ public abstract class AbstractRequestCondition<T extends AbstractRequestConditio
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		return getContent().hashCode();
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder("[");

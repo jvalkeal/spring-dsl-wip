@@ -15,6 +15,9 @@
  */
 package org.springframework.dsl.lsp;
 
+/**
+ * The Interface LanguageClientContext.
+ */
 public interface LanguageClientContext {
 
 }
