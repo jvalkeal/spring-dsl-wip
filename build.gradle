@@ -190,6 +190,16 @@ configure(sampleProjects()) {
 	build.dependsOn bootJar
 }
 
+project('spring-dsl-samples-common') {
+	description = "Spring Dsl Samples Common"
+	configurations.archives.artifacts.removeAll { it.archiveTask.is jar }
+	tasks.findByPath("artifactoryPublish")?.enabled = false
+	dependencies {
+		compile project(":spring-dsl-core")
+		compile "org.springframework.boot:spring-boot-starter"
+	}
+}
+
 configure(rootProject) {
 	apply plugin: 'org.asciidoctor.gradle.asciidoctor'
 	apply plugin: "docbook-reference"

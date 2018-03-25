@@ -1,0 +1,18 @@
+description = 'Spring Dsl Samples Common'
+
+project('spring-dsl-samples-simpledsleditor') {
+	description = 'Spring Dsl Simple Editor Sample'
+	dependencies {
+		compile project(":spring-dsl-lsp4j")
+		compile("org.springframework.boot:spring-boot-starter-websocket")
+	}
+}
+
+project('spring-dsl-samples-simpledslserver') {
+	description = 'Spring Dsl Simple Lsp Server Sample'
+	dependencies {
+		compile project(":spring-dsl-lsp4j")
+		compile ("org.springframework.boot:spring-boot-starter")
+	}
+}
+

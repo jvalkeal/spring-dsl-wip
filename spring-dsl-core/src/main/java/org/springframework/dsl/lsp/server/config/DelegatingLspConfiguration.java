@@ -17,6 +17,9 @@ package org.springframework.dsl.lsp.server.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.dsl.lsp.server.HandlerAdapter;
+import org.springframework.dsl.lsp.server.HandlerMapping;
+import org.springframework.dsl.lsp.server.HandlerResultHandler;
 import org.springframework.dsl.lsp.server.result.method.annotation.LspRequestMappingHandlerAdapter;
 import org.springframework.dsl.lsp.server.result.method.annotation.LspRequestMappingHandlerMapping;
 import org.springframework.dsl.lsp.server.result.method.annotation.LspResponseBodyResultHandler;
