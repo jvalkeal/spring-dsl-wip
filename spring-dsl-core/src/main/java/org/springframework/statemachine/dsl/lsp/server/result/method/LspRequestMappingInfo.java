@@ -33,12 +33,6 @@ public class LspRequestMappingInfo implements LspRequestCondition<LspRequestMapp
 
 	/**
 	 * Instantiates a new coap request mapping info.
-	 *
-	 * @param patterns the patterns
-	 * @param methods the methods
-	 * @param headers the headers
-	 * @param consumes the consumes
-	 * @param produces the produces
 	 */
 	public LspRequestMappingInfo(
 			LspRequestMethodsRequestCondition methods) {

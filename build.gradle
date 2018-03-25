@@ -86,8 +86,6 @@ configure(subprojects) { subproject ->
 	}
 
 	dependencies {
-		compileOnly("com.google.code.findbugs:jsr305")
-		testCompileOnly("com.google.code.findbugs:jsr305")
 	}
 
 	task sourcesJar(type: Jar, dependsOn:classes) {

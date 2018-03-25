@@ -17,7 +17,6 @@ package org.springframework.statemachine.dsl.lsp;
 
 /**
  * Represents an CoAP input message, consisting of
- * a readable {@linkplain #setRequestPayload(byte[]) payload}.
  *
  * @author Janne Valkealahti
  *
