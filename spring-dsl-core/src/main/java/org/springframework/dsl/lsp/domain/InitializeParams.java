@@ -15,13 +15,15 @@
  */
 package org.springframework.dsl.lsp.domain;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class InitializeParams.
- */
 public class InitializeParams {
 
-	/** The process id. */
 	private Integer processId;
 
+	private String rootUri;
+
+	private Object initializationOptions;
+
+	private ClientCapabilities capabilities;
+
+	private String trace;
 }

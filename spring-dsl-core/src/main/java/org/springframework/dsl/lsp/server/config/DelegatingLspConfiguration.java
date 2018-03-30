@@ -15,14 +15,18 @@
  */
 package org.springframework.dsl.lsp.server.config;
 
+import java.util.List;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dsl.lsp.server.HandlerAdapter;
 import org.springframework.dsl.lsp.server.HandlerMapping;
 import org.springframework.dsl.lsp.server.HandlerResultHandler;
+import org.springframework.dsl.lsp.server.result.method.LspHandlerMethodArgumentResolver;
 import org.springframework.dsl.lsp.server.result.method.annotation.LspRequestMappingHandlerAdapter;
 import org.springframework.dsl.lsp.server.result.method.annotation.LspRequestMappingHandlerMapping;
 import org.springframework.dsl.lsp.server.result.method.annotation.LspResponseBodyResultHandler;
+import org.springframework.dsl.lsp.server.result.method.annotation.ServerLspExchangeArgumentResolver;
 import org.springframework.dsl.lsp.server.support.DispatcherHandler;
 
 /**
@@ -66,13 +70,18 @@ public class DelegatingLspConfiguration {
 		return new LspRequestMappingHandlerMapping();
 	}
 
+	@Bean
+	public ServerLspExchangeArgumentResolver serverLspExchangeArgumentResolver() {
+		return new ServerLspExchangeArgumentResolver();
+	}
+
 	/**
 	 * Lsp request mapping handler adapter.
 	 *
 	 * @return the lsp request mapping handler adapter
 	 */
 	@Bean
-	public LspRequestMappingHandlerAdapter lspRequestMappingHandlerAdapter() {
-		return new LspRequestMappingHandlerAdapter();
+	public LspRequestMappingHandlerAdapter lspRequestMappingHandlerAdapter(List<LspHandlerMethodArgumentResolver> resolvers) {
+		return new LspRequestMappingHandlerAdapter(resolvers);
 	}
 }

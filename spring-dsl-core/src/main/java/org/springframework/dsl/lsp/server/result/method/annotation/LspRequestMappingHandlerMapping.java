@@ -26,7 +26,6 @@ import org.springframework.dsl.lsp.server.result.method.LspRequestMappingInfo;
 import org.springframework.lang.Nullable;
 import org.springframework.util.StringValueResolver;
 
-// TODO: Auto-generated Javadoc
 /**
  * An implementation of {@link HandlerMapping} that creates
  * {@link LspRequestMappingInfo} instances from class-level and method-level
@@ -41,27 +40,18 @@ public class LspRequestMappingHandlerMapping extends AbstractHandlerMethodMappin
 	@Nullable
 	private StringValueResolver embeddedValueResolver;
 
-	/* (non-Javadoc)
-	 * @see org.springframework.dsl.lsp.server.result.method.annotation.AbstractHandlerMethodMapping#isHandler(java.lang.Class)
-	 */
 	@Override
 	protected boolean isHandler(Class<?> beanType) {
 		return (AnnotatedElementUtils.hasAnnotation(beanType, LspController.class) ||
 				AnnotatedElementUtils.hasAnnotation(beanType, LspRequestMapping.class));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.springframework.dsl.lsp.server.result.method.annotation.AbstractHandlerMethodMapping#createRequestMappingInfo(java.lang.reflect.AnnotatedElement)
-	 */
 	@Override
 	protected LspRequestMappingInfo createRequestMappingInfo(AnnotatedElement element) {
 		LspRequestMapping requestMapping = AnnotatedElementUtils.findMergedAnnotation(element, LspRequestMapping.class);
 		return requestMapping != null ? createRequestMappingInfo(requestMapping) : null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.springframework.context.EmbeddedValueResolverAware#setEmbeddedValueResolver(org.springframework.util.StringValueResolver)
-	 */
 	@Override
 	public void setEmbeddedValueResolver(StringValueResolver resolver) {
 		this.embeddedValueResolver = resolver;

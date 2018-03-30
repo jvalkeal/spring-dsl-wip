@@ -15,9 +15,13 @@
  */
 package org.springframework.dsl.lsp4j;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -25,6 +29,9 @@ import java.util.concurrent.TimeUnit;
 //import org.eclipse.lsp4j.InitializeResult;
 import org.junit.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.support.ConversionServiceFactoryBean;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.dsl.lsp.LanguageClientContext;
 import org.springframework.dsl.lsp.annotation.LspController;
 import org.springframework.dsl.lsp.annotation.LspDidChange;
@@ -33,8 +40,14 @@ import org.springframework.dsl.lsp.annotation.LspResponseBody;
 import org.springframework.dsl.lsp.domain.DidChangeTextDocumentParams;
 import org.springframework.dsl.lsp.domain.InitializeParams;
 import org.springframework.dsl.lsp.domain.InitializeResult;
+import org.springframework.dsl.lsp.domain.TextDocumentContentChangeEvent;
+import org.springframework.dsl.lsp.model.Document;
 import org.springframework.dsl.lsp.server.config.EnableLanguageServer;
 import org.springframework.dsl.lsp.server.support.DispatcherHandler;
+import org.springframework.dsl.lsp4j.converter.GenericLsp4jObjectConverter;
+import org.springframework.dsl.lsp4j.result.method.annotation.Lsp4jDomainArgumentResolver;
+
+import reactor.core.publisher.Mono;
 
 /**
  * Tests for generic functionality around {@link LanguageServerAdapter}.
@@ -50,13 +63,15 @@ public class LanguageServerAdapterTests extends AbstractLspTests {
 		context.refresh();
 
 		DispatcherHandler dispatcherHandler = context.getBean(DispatcherHandler.class);
+		ConversionService conversionService = context.getBean(ConversionService.class);
 
-		LanguageServerAdapter languageServerAdapter = new LanguageServerAdapter(dispatcherHandler);
+		LanguageServerAdapter languageServerAdapter = new LanguageServerAdapter(dispatcherHandler, conversionService);
 
 		org.eclipse.lsp4j.InitializeParams lsp4jInitializeParams = new org.eclipse.lsp4j.InitializeParams();
+		lsp4jInitializeParams.setProcessId(1);
 		CompletableFuture<org.eclipse.lsp4j.InitializeResult> lsp4jInitializeResultFuture = languageServerAdapter.initialize(lsp4jInitializeParams);
 
-		org.eclipse.lsp4j.InitializeResult lsp4jInitializeResult = lsp4jInitializeResultFuture.get(1, TimeUnit.SECONDS);
+		org.eclipse.lsp4j.InitializeResult lsp4jInitializeResult = lsp4jInitializeResultFuture.get(3, TimeUnit.SECONDS);
 		assertThat(lsp4jInitializeResult, notNullValue());
 
 	}
@@ -68,6 +83,21 @@ public class LanguageServerAdapterTests extends AbstractLspTests {
 
 	@EnableLanguageServer
 	private static class Config1 {
+
+		@Bean
+		public ConversionServiceFactoryBean lspConversionService() {
+			ConversionServiceFactoryBean factoryBean = new ConversionServiceFactoryBean();
+			Set<Object> converters = new HashSet<>();
+			converters.add(new GenericLsp4jObjectConverter());
+			factoryBean.setConverters(converters);
+			return factoryBean;
+		}
+
+
+		@Bean
+		public Lsp4jDomainArgumentResolver lsp4jDomainArgumentResolver() {
+			return new Lsp4jDomainArgumentResolver();
+		}
 	}
 
 	@LspController
@@ -81,6 +111,10 @@ public class LanguageServerAdapterTests extends AbstractLspTests {
 
 		@LspDidChange
 		public void clientDocumentChanged(DidChangeTextDocumentParams params, LanguageClientContext context) {
+		}
+
+		// @OnDocumentChange
+		public void xxx(Document document, List<TextDocumentContentChangeEvent> changes) {
 		}
 	}
 }

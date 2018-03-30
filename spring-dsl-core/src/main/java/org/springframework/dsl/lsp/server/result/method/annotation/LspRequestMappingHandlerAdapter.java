@@ -41,6 +41,12 @@ public class LspRequestMappingHandlerAdapter implements HandlerAdapter, Initiali
 	/** The method resolver. */
 	private ControllerMethodResolver methodResolver;
 
+	private List<LspHandlerMethodArgumentResolver> resolvers;
+
+	public LspRequestMappingHandlerAdapter(List<LspHandlerMethodArgumentResolver> resolvers) {
+		this.resolvers = resolvers;
+	}
+
 	@Override
 	public boolean supports(Object handler) {
 		return HandlerMethod.class.equals(handler.getClass());
@@ -57,7 +63,8 @@ public class LspRequestMappingHandlerAdapter implements HandlerAdapter, Initiali
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		List<LspHandlerMethodArgumentResolver> requestMappingResolvers = new ArrayList<>();
-		requestMappingResolvers.add(new ServerLspExchangeArgumentResolver());
+//		requestMappingResolvers.add(new ServerLspExchangeArgumentResolver());
+		requestMappingResolvers.addAll(this.resolvers);
 		this.methodResolver = new ControllerMethodResolver(requestMappingResolvers);
 	}
 }

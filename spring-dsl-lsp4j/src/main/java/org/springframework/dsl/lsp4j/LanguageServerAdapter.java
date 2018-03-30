@@ -48,6 +48,7 @@ import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.services.LanguageServer;
 import org.eclipse.lsp4j.services.TextDocumentService;
 import org.eclipse.lsp4j.services.WorkspaceService;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.dsl.lsp.LspMethod;
 import org.springframework.dsl.lsp.server.LspHandler;
 import org.springframework.dsl.lsp.server.ServerLspExchange;
@@ -62,14 +63,17 @@ public class LanguageServerAdapter implements LanguageServer {
 
 	private final LspHandler lspHandler;
 
-	public LanguageServerAdapter(LspHandler lspHandler) {
+	private ConversionService conversionService;
+
+	public LanguageServerAdapter(LspHandler lspHandler, ConversionService conversionService) {
 		Assert.notNull(lspHandler, "lspHandler must be set");
 		this.lspHandler = lspHandler;
+		this.conversionService = conversionService;
 	}
 
-	private ServerLspExchange createExchange(LspMethod lspMethod) {
+	private ServerLspExchange createExchange(LspMethod lspMethod, Object body) {
 
-		GenericServerLspRequest request = new GenericServerLspRequest(null);
+		GenericServerLspRequest request = new GenericServerLspRequest(body);
 		request.setMethod(lspMethod);
 
 		GenericServerLspResponse response = new GenericServerLspResponse();
@@ -78,18 +82,10 @@ public class LanguageServerAdapter implements LanguageServer {
 
 	@Override
 	public CompletableFuture<InitializeResult> initialize(InitializeParams params) {
-
-		ServerLspExchange exchange = createExchange(LspMethod.INITIALIZE);
+		ServerLspExchange exchange = createExchange(LspMethod.INITIALIZE, params);
 
 		Mono<Void> handle = lspHandler.handle(exchange);
-
-		CompletableFuture<InitializeResult> completableFuture =
-				handle.flatMap(f -> Mono.just(new InitializeResult()))
-			.doOnSuccess(c -> {
-			}).toFuture();
-
-
-		return completableFuture;
+		return handle.then(Mono.fromSupplier(() -> conversionService.convert(exchange.getResponse().getBody(), InitializeResult.class))).toFuture();
 	}
 
 	@Override

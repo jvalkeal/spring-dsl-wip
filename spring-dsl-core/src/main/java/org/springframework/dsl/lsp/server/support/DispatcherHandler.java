@@ -35,10 +35,9 @@ import org.springframework.dsl.lsp.server.ServerLspExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-// TODO: Auto-generated Javadoc
 /**
- * Central dispatcher for COAP request handlers/controllers. Dispatches to registered
- * handlers for processing a coap request, providing convenient mapping facilities.
+ * Central dispatcher for {@code LSP} request handlers/controllers. Dispatches to registered
+ * handlers for processing a {@code LSP} request, providing convenient mapping facilities.
  *
  * @author Janne Valkealahti
  *
@@ -48,27 +47,21 @@ public class DispatcherHandler implements LspHandler, ApplicationContextAware {
 	/** The Constant HANDLER_NOT_FOUND_EXCEPTION. */
 	private static final Exception HANDLER_NOT_FOUND_EXCEPTION =
 			new LspServerException("No matching handler");
-	
+
 	/** The handler mappings. */
 	private List<HandlerMapping> handlerMappings;
-	
+
 	/** The handler adapters. */
 	private List<HandlerAdapter> handlerAdapters;
-	
+
 	/** The result handlers. */
 	private List<HandlerResultHandler> resultHandlers;
 
-	/* (non-Javadoc)
-	 * @see org.springframework.context.ApplicationContextAware#setApplicationContext(org.springframework.context.ApplicationContext)
-	 */
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 		initStrategies(applicationContext);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.springframework.dsl.lsp.server.LspHandler#handle(org.springframework.dsl.lsp.server.ServerLspExchange)
-	 */
 	@Override
 	public Mono<Void> handle(ServerLspExchange exchange) {
 		return Flux.fromIterable(this.handlerMappings)
