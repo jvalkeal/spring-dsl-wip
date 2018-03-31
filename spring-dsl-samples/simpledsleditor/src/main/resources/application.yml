@@ -1,4 +1,5 @@
 spring:
   dsl:
-    server:
-      mode: websocket
+    lsp:
+      server:
+        mode: websocket

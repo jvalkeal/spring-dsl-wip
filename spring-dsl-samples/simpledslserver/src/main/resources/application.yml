@@ -1,5 +1,5 @@
 spring:
   dsl:
-    server:
-      mode: std
-
+    lsp:
+      server:
+        mode: std
