@@ -59,42 +59,57 @@ import org.springframework.util.Assert;
 
 import reactor.core.publisher.Mono;
 
-public class LanguageServerAdapter implements LanguageServer {
+/**
+ * Adapter implementing {@code LSP4J} {@link LanguageServer} and dispatching
+ * operations to {@link LspHandler}.
+ * <p>
+ * There are two types of methods called from {@code LSP4J}, firstly a simple
+ * request/response methods where request always expects an response, secondly
+ * request methods which server may optionally response something.
+ * <p>
+ * This adapter implementation is used to hide all {@code LSP4J} api methods so
+ * that we're able to fully work with our own {@code LSP} classes. Essentially
+ * we don't want to expose or require implementors to use any {@code LSP4J}
+ * classes giving a change to replace {@code LSP4J} without any changes in a
+ * user level code.
+ *
+ * @author Janne Valkealahti
+ *
+ */
+public class Lsp4jLanguageServerAdapter implements LanguageServer {
 
 	private final LspHandler lspHandler;
+	private final ConversionService conversionService;
 
-	private ConversionService conversionService;
-
-	public LanguageServerAdapter(LspHandler lspHandler, ConversionService conversionService) {
+	/**
+	 * Instantiates a new lsp4j language server adapter.
+	 *
+	 * @param lspHandler the lsp handler
+	 * @param conversionService the conversion service
+	 */
+	public Lsp4jLanguageServerAdapter(LspHandler lspHandler, ConversionService conversionService) {
 		Assert.notNull(lspHandler, "lspHandler must be set");
+		Assert.notNull(conversionService, "conversionService must be set");
 		this.lspHandler = lspHandler;
 		this.conversionService = conversionService;
-	}
-
-	private ServerLspExchange createExchange(LspMethod lspMethod, Object body) {
-
-		GenericServerLspRequest request = new GenericServerLspRequest(body);
-		request.setMethod(lspMethod);
-
-		GenericServerLspResponse response = new GenericServerLspResponse();
-		return new DefaultServerCoapExchange(request, response);
 	}
 
 	@Override
 	public CompletableFuture<InitializeResult> initialize(InitializeParams params) {
 		ServerLspExchange exchange = createExchange(LspMethod.INITIALIZE, params);
-
-		Mono<Void> handle = lspHandler.handle(exchange);
-		return handle.then(Mono.fromSupplier(() -> conversionService.convert(exchange.getResponse().getBody(), InitializeResult.class))).toFuture();
+		return lspHandler.handle(exchange)
+				.then(convert(exchange, InitializeResult.class, conversionService))
+				.toFuture();
 	}
 
 	@Override
 	public CompletableFuture<Object> shutdown() {
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public void exit() {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -103,137 +118,115 @@ public class LanguageServerAdapter implements LanguageServer {
 
 			@Override
 			public CompletableFuture<SignatureHelp> signatureHelp(TextDocumentPositionParams position) {
-				// TODO Auto-generated method stub
-				return null;
+				throw new UnsupportedOperationException();
 			}
 
 			@Override
 			public CompletableFuture<CompletionItem> resolveCompletionItem(CompletionItem unresolved) {
-				// TODO Auto-generated method stub
-				return null;
+				throw new UnsupportedOperationException();
 			}
 
 			@Override
 			public CompletableFuture<CodeLens> resolveCodeLens(CodeLens unresolved) {
-				// TODO Auto-generated method stub
-				return null;
+				throw new UnsupportedOperationException();
 			}
 
 			@Override
 			public CompletableFuture<WorkspaceEdit> rename(RenameParams params) {
-				// TODO Auto-generated method stub
-				return null;
+				throw new UnsupportedOperationException();
 			}
 
 			@Override
 			public CompletableFuture<List<? extends Location>> references(ReferenceParams params) {
-				// TODO Auto-generated method stub
-				return null;
+				throw new UnsupportedOperationException();
 			}
 
 			@Override
 			public CompletableFuture<List<? extends TextEdit>> rangeFormatting(DocumentRangeFormattingParams params) {
-				// TODO Auto-generated method stub
-				return null;
+				throw new UnsupportedOperationException();
 			}
 
 			@Override
 			public CompletableFuture<List<? extends TextEdit>> onTypeFormatting(DocumentOnTypeFormattingParams params) {
-				// TODO Auto-generated method stub
-				return null;
+				throw new UnsupportedOperationException();
 			}
 
 			@Override
 			public CompletableFuture<Hover> hover(TextDocumentPositionParams position) {
-				// TODO Auto-generated method stub
-				return null;
+				throw new UnsupportedOperationException();
 			}
 
 			@Override
 			public CompletableFuture<List<? extends TextEdit>> formatting(DocumentFormattingParams params) {
-				// TODO Auto-generated method stub
-				return null;
+				throw new UnsupportedOperationException();
 			}
 
 			@Override
 			public CompletableFuture<List<? extends SymbolInformation>> documentSymbol(DocumentSymbolParams params) {
-				// TODO Auto-generated method stub
-				return null;
+				throw new UnsupportedOperationException();
 			}
 
 			@Override
 			public CompletableFuture<List<? extends DocumentHighlight>> documentHighlight(TextDocumentPositionParams position) {
-				// TODO Auto-generated method stub
-				return null;
+				throw new UnsupportedOperationException();
 			}
 
 			@Override
 			public void didSave(DidSaveTextDocumentParams params) {
-				// TODO Auto-generated method stub
-
+				throw new UnsupportedOperationException();
 			}
 
 			@Override
 			public void didOpen(DidOpenTextDocumentParams params) {
-				// TODO Auto-generated method stub
-
+				throw new UnsupportedOperationException();
 			}
 
 			@Override
 			public void didClose(DidCloseTextDocumentParams params) {
-				// TODO Auto-generated method stub
-
+				throw new UnsupportedOperationException();
 			}
 
 			@Override
 			public void didChange(DidChangeTextDocumentParams params) {
-
+				lspHandler.handle(createExchange(LspMethod.DIDCHANGE, params)).subscribe();
 			}
 
 			@Override
 			public CompletableFuture<List<? extends Location>> definition(TextDocumentPositionParams position) {
-				// TODO Auto-generated method stub
-				return null;
+				throw new UnsupportedOperationException();
 			}
 
 			@Override
 			public CompletableFuture<Either<List<CompletionItem>, CompletionList>> completion(
 					TextDocumentPositionParams position) {
-				// TODO Auto-generated method stub
-				return null;
+				throw new UnsupportedOperationException();
 			}
 
 			@Override
 			public CompletableFuture<List<? extends CodeLens>> codeLens(CodeLensParams params) {
-				// TODO Auto-generated method stub
-				return null;
+				throw new UnsupportedOperationException();
 			}
 
 			@Override
 			public CompletableFuture<List<? extends Command>> codeAction(CodeActionParams params) {
-				// TODO Auto-generated method stub
-				return null;
+				throw new UnsupportedOperationException();
 			}
 		};
 	}
 
 	@Override
 	public WorkspaceService getWorkspaceService() {
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
-//	private void handleRequest() {
-//
-//		ServerLspExchange exchange = createExchange();
-//
-//		Mono<Void> handle = lspHandler.handle(exchange);
-//
-//		handle.onErrorResume(e -> {
-//			return Mono.empty();
-//		}).doOnSuccess(c -> {
-//
-//		}).subscribe();
-//	}
+	private static ServerLspExchange createExchange(LspMethod lspMethod, Object body) {
+		GenericServerLspRequest request = new GenericServerLspRequest(body);
+		request.setMethod(lspMethod);
+		GenericServerLspResponse response = new GenericServerLspResponse();
+		return new DefaultServerCoapExchange(request, response);
+	}
 
-
+	private static <T> Mono<T> convert(ServerLspExchange exchange, Class<T> clazz, ConversionService conversionService) {
+		return Mono.fromSupplier(() -> conversionService.convert(exchange.getResponse().getBody(), clazz));
+	}
 }

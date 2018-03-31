@@ -23,6 +23,7 @@ import org.springframework.dsl.lsp.server.HandlerAdapter;
 import org.springframework.dsl.lsp.server.HandlerMapping;
 import org.springframework.dsl.lsp.server.HandlerResultHandler;
 import org.springframework.dsl.lsp.server.result.method.LspHandlerMethodArgumentResolver;
+import org.springframework.dsl.lsp.server.result.method.annotation.LspNoResponseBodyResultHandler;
 import org.springframework.dsl.lsp.server.result.method.annotation.LspRequestMappingHandlerAdapter;
 import org.springframework.dsl.lsp.server.result.method.annotation.LspRequestMappingHandlerMapping;
 import org.springframework.dsl.lsp.server.result.method.annotation.LspResponseBodyResultHandler;
@@ -58,6 +59,11 @@ public class DelegatingLspConfiguration {
 	@Bean
 	public LspResponseBodyResultHandler lspResponseBodyResultHandler() {
 		return new LspResponseBodyResultHandler();
+	}
+
+	@Bean
+	public LspNoResponseBodyResultHandler lspNoResponseBodyResultHandler() {
+		return new LspNoResponseBodyResultHandler();
 	}
 
 	/**

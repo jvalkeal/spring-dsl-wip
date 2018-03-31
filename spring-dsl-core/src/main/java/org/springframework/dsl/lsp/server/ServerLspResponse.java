@@ -17,7 +17,6 @@ package org.springframework.dsl.lsp.server;
 
 import org.springframework.dsl.lsp.LspOutputMessage;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface ServerLspResponse.
  */

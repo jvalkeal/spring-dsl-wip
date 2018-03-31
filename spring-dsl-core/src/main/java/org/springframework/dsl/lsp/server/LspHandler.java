@@ -17,7 +17,6 @@ package org.springframework.dsl.lsp.server;
 
 import reactor.core.publisher.Mono;
 
-// TODO: Auto-generated Javadoc
 /**
  * Contract to handle a {@code LSP} request. This happens in a contract of a
  * {@link ServerLspExchange} which gives access to both request and response

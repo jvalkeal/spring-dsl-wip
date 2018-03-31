@@ -13,24 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package demo.simpledslserver;
-
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-import demo.simpledsl.EnableSimpleLanguage;
+package org.springframework.dsl.lsp.model;
 
 /**
- * {@code LSP} server implementing support for a {@code simple} sample language.
+ * Enumeration of a severity in a {@link ProblemType}.
  *
+ * @author Kris De Volder
  * @author Janne Valkealahti
  *
  */
-@EnableSimpleLanguage
-@SpringBootApplication
-public class Application {
+public enum ProblemSeverity {
 
-	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);
-	}
+	IGNORE, INFO, WARNING, HINT, ERROR;
 }

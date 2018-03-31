@@ -15,14 +15,16 @@
  */
 package org.springframework.dsl.lsp.server;
 
+import org.springframework.dsl.lsp.LspClientContext;
 import org.springframework.dsl.lsp.LspInputMessage;
 import org.springframework.dsl.lsp.LspMethod;
 
 /**
- * The Interface ServerLspRequest.
+ *
+ * @author Janne Valkealahti
+ *
  */
 public interface ServerLspRequest extends LspInputMessage {
-
 
 	/**
 	 * Gets the method.
@@ -30,4 +32,6 @@ public interface ServerLspRequest extends LspInputMessage {
 	 * @return the method
 	 */
 	LspMethod getMethod();
+
+	LspClientContext getContext();
 }

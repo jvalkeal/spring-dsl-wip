@@ -15,7 +15,11 @@
  */
 package org.springframework.dsl.lsp.server.result.method.annotation;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.MethodParameter;
+import org.springframework.dsl.lsp.LspClient;
+import org.springframework.dsl.lsp.LspClientContext;
 import org.springframework.dsl.lsp.server.ServerLspExchange;
 import org.springframework.dsl.lsp.server.result.method.LspHandlerMethodArgumentResolver;
 
@@ -23,17 +27,20 @@ import reactor.core.publisher.Mono;
 
 /**
  * Implementation of a {@link LspHandlerMethodArgumentResolver} working with a
- * {@link ServerLspExchange}.
+ * {@link ServerLspExchange}. This implementation is able to resolve various
+ * parameters available directly from {@link ServerLspExchange}.
  *
  * @author Janne Valkealahti
  *
  */
 public class ServerLspExchangeArgumentResolver implements LspHandlerMethodArgumentResolver {
 
+	private static final Logger log = LoggerFactory.getLogger(ServerLspExchangeArgumentResolver.class);
+
 	@Override
 	public boolean supportsParameter(MethodParameter parameter) {
 		Class<?> type = parameter.getParameterType();
-		return ServerLspExchange.class.isAssignableFrom(type);
+		return ServerLspExchange.class.isAssignableFrom(type) || LspClientContext.class.isAssignableFrom(type);
 	}
 
 	@Override
@@ -41,6 +48,21 @@ public class ServerLspExchangeArgumentResolver implements LspHandlerMethodArgume
 		Class<?> paramType = parameter.getParameterType();
 		if (ServerLspExchange.class.isAssignableFrom(paramType)) {
 			return Mono.just(exchange);
+		} else if (LspClientContext.class.isAssignableFrom(paramType)){
+			return Mono.just(new LspClientContext() {
+
+				@Override
+				public LspClient getClient() {
+					return new LspClient() {
+
+						@Override
+						public Mono<Void> send(Object message) {
+							log.info("XXXX client send {}", message);
+							return Mono.empty();
+						}
+					};
+				}
+			});
 		} else {
 			// should never happen
 			throw new IllegalArgumentException(

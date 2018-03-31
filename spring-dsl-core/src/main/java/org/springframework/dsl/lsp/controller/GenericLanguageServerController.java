@@ -13,11 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.lsp;
+package org.springframework.dsl.lsp.controller;
+
+import org.springframework.dsl.lsp.annotation.LspController;
 
 /**
- * The Interface LanguageClientContext.
+ * A generic {@code LSP Controller} implementation providing most common
+ * features what {@code Language Server} should provide.
+ *
+ * @author Janne Valkealahti
+ *
  */
-public interface LanguageClientContext {
+@LspController
+public class GenericLanguageServerController {
 
 }

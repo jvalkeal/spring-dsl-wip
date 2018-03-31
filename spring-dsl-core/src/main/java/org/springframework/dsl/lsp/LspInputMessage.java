@@ -15,9 +15,8 @@
  */
 package org.springframework.dsl.lsp;
 
-// TODO: Auto-generated Javadoc
 /**
- * Represents an CoAP input message, consisting of
+ * Represents an {@code LSP} input message, consisting of
  * a readable {@linkplain #getBody() body}.
  *
  * @author Janne Valkealahti

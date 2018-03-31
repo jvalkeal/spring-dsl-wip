@@ -1,6 +1,7 @@
 package org.springframework.dsl.lsp4j.result.method.annotation;
 
 import org.springframework.core.MethodParameter;
+import org.springframework.dsl.lsp.domain.DidChangeTextDocumentParams;
 import org.springframework.dsl.lsp.domain.InitializeParams;
 import org.springframework.dsl.lsp.server.ServerLspExchange;
 import org.springframework.dsl.lsp.server.result.method.LspHandlerMethodArgumentResolver;
@@ -13,13 +14,19 @@ public class Lsp4jDomainArgumentResolver implements LspHandlerMethodArgumentReso
 	@Override
 	public boolean supportsParameter(MethodParameter parameter) {
 		Class<?> type = parameter.getParameterType();
-		return InitializeParams.class.isAssignableFrom(type);
+		return InitializeParams.class.isAssignableFrom(type)
+				|| DidChangeTextDocumentParams.class.isAssignableFrom(type);
 	}
 
 	@Override
 	public Mono<Object> resolveArgument(MethodParameter parameter, ServerLspExchange exchange) {
-		if (ClassUtils.isAssignable(org.eclipse.lsp4j.InitializeParams.class, exchange.getRequest().getBody().getClass())) {
+		if (ClassUtils.isAssignable(org.eclipse.lsp4j.InitializeParams.class,
+				exchange.getRequest().getBody().getClass())) {
 			InitializeParams params = new InitializeParams();
+			return Mono.just(params);
+		} else if (ClassUtils.isAssignable(org.eclipse.lsp4j.DidChangeTextDocumentParams.class,
+				exchange.getRequest().getBody().getClass())) {
+			DidChangeTextDocumentParams params = new DidChangeTextDocumentParams();
 			return Mono.just(params);
 		} else {
 			return Mono.empty();

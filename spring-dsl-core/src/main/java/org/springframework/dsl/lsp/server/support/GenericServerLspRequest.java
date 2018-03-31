@@ -15,6 +15,7 @@
  */
 package org.springframework.dsl.lsp.server.support;
 
+import org.springframework.dsl.lsp.LspClientContext;
 import org.springframework.dsl.lsp.LspMethod;
 import org.springframework.dsl.lsp.server.ServerLspRequest;
 
@@ -29,12 +30,14 @@ public class GenericServerLspRequest implements ServerLspRequest {
 	/** The method. */
 	private LspMethod method;
 
+	private LspClientContext context;
+
 	/**
- * Instantiates a new generic server lsp request.
- *
- * @param body the body
- */
-public GenericServerLspRequest(Object body) {
+	 * Instantiates a new generic server lsp request.
+	 *
+	 * @param body the body
+	 */
+	public GenericServerLspRequest(Object body) {
 		this.body = body;
 	}
 
@@ -56,5 +59,14 @@ public GenericServerLspRequest(Object body) {
 	@Override
 	public LspMethod getMethod() {
 		return method;
+	}
+
+	public void setContext(LspClientContext context) {
+		this.context = context;
+	}
+
+	@Override
+	public LspClientContext getContext() {
+		return context;
 	}
 }

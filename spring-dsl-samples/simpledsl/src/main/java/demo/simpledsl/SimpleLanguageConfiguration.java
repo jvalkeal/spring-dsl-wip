@@ -13,25 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl;
+package demo.simpledsl;
 
-import java.util.Collection;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.dsl.lsp.service.Reconciler;
 
-// TODO: Auto-generated Javadoc
 /**
- * Strategy interface for a generic {@code DSL} to request context assist for
- * code completions.
+ * Configuration for a {@code simple} sample language.
  *
  * @author Janne Valkealahti
  *
  */
-public interface DslAssist {
+@Configuration
+public class SimpleLanguageConfiguration {
 
-	/**
-	 * Assist completions.
-	 *
-	 * @param content the content
-	 * @return the collection
-	 */
-	Collection<String> assistCompletions(String content);
+	@Bean
+	public Reconciler simpleLanguageReconciler() {
+		return new SimpleLanguageReconciler();
+	}
 }

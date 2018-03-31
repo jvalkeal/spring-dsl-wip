@@ -17,35 +17,25 @@ package org.springframework.dsl.lsp.server.result.method.annotation;
 
 import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.dsl.lsp.annotation.LspResponseBody;
+import org.springframework.dsl.lsp.annotation.LspNoResponseBody;
 import org.springframework.dsl.lsp.server.HandlerResult;
 import org.springframework.dsl.lsp.server.HandlerResultHandler;
 import org.springframework.dsl.lsp.server.ServerLspExchange;
-import org.springframework.dsl.lsp.server.ServerLspResponse;
 
 import reactor.core.publisher.Mono;
 
-/**
- * {@link HandlerResultHandler} that handles return values from methods annotated
- * with {@link LspResponseBody} writing to the body of the request or response.
- *
- * @author Janne Valkealahti
- *
- */
-public class LspResponseBodyResultHandler implements HandlerResultHandler {
+public class LspNoResponseBodyResultHandler implements HandlerResultHandler {
 
 	@Override
 	public boolean supports(HandlerResult result) {
 		MethodParameter parameter = result.getReturnTypeSource();
 		Class<?> containingClass = parameter.getContainingClass();
-		return (AnnotationUtils.findAnnotation(containingClass, LspResponseBody.class) != null ||
-				parameter.getMethodAnnotation(LspResponseBody.class) != null);
+		return (AnnotationUtils.findAnnotation(containingClass, LspNoResponseBody.class) != null ||
+				parameter.getMethodAnnotation(LspNoResponseBody.class) != null);
 	}
 
 	@Override
 	public Mono<Void> handleResult(ServerLspExchange exchange, HandlerResult result) {
-		ServerLspResponse response = exchange.getResponse();
-		response.setBody(result.getReturnValue());
 		return Mono.empty();
 	}
 }

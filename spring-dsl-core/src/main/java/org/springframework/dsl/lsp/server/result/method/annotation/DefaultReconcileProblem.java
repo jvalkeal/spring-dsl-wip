@@ -13,24 +13,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package demo.simpledslserver;
+package org.springframework.dsl.lsp.server.result.method.annotation;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-import demo.simpledsl.EnableSimpleLanguage;
+import org.springframework.dsl.lsp.model.ProblemType;
+import org.springframework.dsl.lsp.model.ReconcileProblem;
 
 /**
- * {@code LSP} server implementing support for a {@code simple} sample language.
+ * Default implementation of a {@link ReconcileProblem}.
  *
+ * @author Kris De Volder
  * @author Janne Valkealahti
  *
  */
-@EnableSimpleLanguage
-@SpringBootApplication
-public class Application {
+public class DefaultReconcileProblem implements ReconcileProblem {
 
-	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);
+	@Override
+	public ProblemType getType() {
+		return null;
+	}
+
+	@Override
+	public String getMessage() {
+		return null;
+	}
+
+	@Override
+	public int getOffset() {
+		return 0;
+	}
+
+	@Override
+	public int getLength() {
+		return 0;
+	}
+
+	@Override
+	public String getCode() {
+		return null;
 	}
 }

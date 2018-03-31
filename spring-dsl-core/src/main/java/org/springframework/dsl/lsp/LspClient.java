@@ -13,24 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package demo.simpledslserver;
+package org.springframework.dsl.lsp;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import reactor.core.publisher.Mono;
 
-import demo.simpledsl.EnableSimpleLanguage;
+public interface LspClient {
 
-/**
- * {@code LSP} server implementing support for a {@code simple} sample language.
- *
- * @author Janne Valkealahti
- *
- */
-@EnableSimpleLanguage
-@SpringBootApplication
-public class Application {
+	Mono<Void> send(Object message);
 
-	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);
-	}
 }

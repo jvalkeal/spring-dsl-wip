@@ -13,24 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package demo.simpledslserver;
+package demo.simpledsl;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.dsl.lsp.model.Document;
+import org.springframework.dsl.lsp.model.ReconcileProblem;
+import org.springframework.dsl.lsp.service.Reconciler;
 
-import demo.simpledsl.EnableSimpleLanguage;
+import reactor.core.publisher.Flux;
 
 /**
- * {@code LSP} server implementing support for a {@code simple} sample language.
+ * A {@link Reconciler} implementation for a {@code simple} sample language.
  *
  * @author Janne Valkealahti
  *
  */
-@EnableSimpleLanguage
-@SpringBootApplication
-public class Application {
+public class SimpleLanguageReconciler implements Reconciler {
 
-	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);
+	@Override
+	public Flux<ReconcileProblem> reconcile(Document document) {
+		return Flux.empty();
 	}
 }

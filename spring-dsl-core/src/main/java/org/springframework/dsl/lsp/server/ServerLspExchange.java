@@ -15,11 +15,10 @@
  */
 package org.springframework.dsl.lsp.server;
 
-// TODO: Auto-generated Javadoc
 /**
- * Contract for a COAP request-response interaction. Provides access to the COAP
- * request and response and also exposes additional server-side processing
- * related properties and features such as request attributes.
+ * Contract for a {@code LSP} request-response interaction. Provides access to
+ * the {@code LSP} request and response and also exposes additional server-side
+ * processing related properties and features such as request attributes.
  *
  * @author Janne Valkealahti
  *

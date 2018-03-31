@@ -25,14 +25,13 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.Token;
-import org.springframework.dsl.DslAssist;
 import org.springframework.dsl.DslException;
 import org.springframework.dsl.antlr.AntlrFactory;
 import org.springframework.dsl.assist.AbstractDslAssist;
 import org.springframework.util.Assert;
 
 /**
- * Base abstract implementation of a {@link DslAssist} providing common shared
+ * Base abstract implementation providing common shared
  * features using {@code ANTLR}.
  *
  * @author Janne Valkealahti

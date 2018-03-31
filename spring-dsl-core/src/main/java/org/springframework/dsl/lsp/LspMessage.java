@@ -16,7 +16,12 @@
 package org.springframework.dsl.lsp;
 
 /**
- * The Interface LspMessage.
+ * Empty marker interface representing highest level of {@code LSP} messaging.
+ * This interface would come into play when framework needs to dispatch messages
+ * around itself instead of delegating to existing system like {@code LSP4J}.
+ *
+ * @author Janne Valkealahti
+ *
  */
 public interface LspMessage {
 

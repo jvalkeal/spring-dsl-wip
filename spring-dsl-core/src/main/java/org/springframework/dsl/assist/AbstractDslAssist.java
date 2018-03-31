@@ -15,23 +15,13 @@
  */
 package org.springframework.dsl.assist;
 
-import java.util.Collection;
-
-import org.springframework.dsl.DslAssist;
-
-// TODO: Auto-generated Javadoc
 /**
- * Base abstract implementation of a {@link DslAssist} providing common shared
+ * Base abstract implementation  providing common shared
  * features.
  *
  * @author Janne Valkealahti
  *
  */
-public abstract class AbstractDslAssist implements DslAssist {
+public abstract class AbstractDslAssist {
 
-	/* (non-Javadoc)
-	 * @see org.springframework.dsl.DslAssist#assistCompletions(java.lang.String)
-	 */
-	@Override
-	public abstract Collection<String> assistCompletions(String content);
 }

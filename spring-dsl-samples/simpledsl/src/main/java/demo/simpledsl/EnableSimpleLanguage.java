@@ -13,24 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package demo.simpledslserver;
+package demo.simpledsl;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import demo.simpledsl.EnableSimpleLanguage;
+import org.springframework.context.annotation.Import;
+import org.springframework.dsl.lsp.server.config.EnableLanguageServer;
 
 /**
- * {@code LSP} server implementing support for a {@code simple} sample language.
+ * Meta annotation for enabling all needed services for a {@code simple} sample
+ * language.
  *
  * @author Janne Valkealahti
  *
  */
-@EnableSimpleLanguage
-@SpringBootApplication
-public class Application {
-
-	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);
-	}
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+@Documented
+@Import(SimpleLanguageConfiguration.class)
+@EnableLanguageServer
+public @interface EnableSimpleLanguage {
 }

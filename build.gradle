@@ -109,13 +109,21 @@ project('spring-dsl-core') {
 	description = "Spring Dsl Core"
 
 	dependencies {
-		compile('org.springframework:spring-context')
-		compile('org.springframework:spring-web')
-		compile('org.slf4j:slf4j-api')
-		compile('io.projectreactor:reactor-core')
-		optional('com.google.code.gson:gson')
-		testCompile('org.springframework.boot:spring-boot-starter-test')
-		testRuntime('org.springframework.boot:spring-boot-starter')
+		compile 'org.springframework:spring-context'
+		compile 'org.springframework:spring-web'
+		compile 'org.slf4j:slf4j-api'
+		compile 'io.projectreactor:reactor-core'
+		optional 'com.google.code.gson:gson'
+		testCompile 'org.springframework.boot:spring-boot-starter-test'
+		testRuntime 'org.springframework.boot:spring-boot-starter'
+	}
+}
+
+project('spring-dsl-autoconfigure') {
+	description = "Spring Dsl Autoconfigure"
+
+	dependencies {
+		compile 'org.springframework.boot:spring-boot-autoconfigure'
 	}
 }
 
@@ -123,8 +131,8 @@ project('spring-dsl-antlr') {
 	description = "Spring Dsl Antlr"
 
 	dependencies {
-		compile project(":spring-dsl-core")
-		compile "org.antlr:antlr4-runtime"
+		compile project(':spring-dsl-core')
+		compile 'org.antlr:antlr4-runtime'
 	}
 }
 
@@ -133,12 +141,12 @@ project('spring-dsl-lsp4j') {
 
 	dependencies {
 		compile project(":spring-dsl-core")
-		compile "org.eclipse.lsp4j:org.eclipse.lsp4j"
-		testCompile "org.hamcrest:hamcrest-core"
-		testCompile "org.hamcrest:hamcrest-library"
-		testCompile "junit:junit"
-		testRuntime('org.springframework.boot:spring-boot-starter-test')
-		testRuntime "org.apache.logging.log4j:log4j-core"
+		compile 'org.eclipse.lsp4j:org.eclipse.lsp4j'
+		testCompile 'org.hamcrest:hamcrest-core'
+		testCompile 'org.hamcrest:hamcrest-library'
+		testCompile 'junit:junit'
+		testRuntime 'org.springframework.boot:spring-boot-starter-test'
+		testRuntime 'org.apache.logging.log4j:log4j-core'
 	}
 }
 
@@ -186,9 +194,7 @@ project('spring-dsl-bom') {
 }
 
 configure(sampleProjects()) {
-	apply plugin: 'org.springframework.boot'
 	tasks.findByPath("artifactoryPublish")?.enabled = false
-	build.dependsOn bootJar
 }
 
 project('spring-dsl-samples-common') {
@@ -196,8 +202,8 @@ project('spring-dsl-samples-common') {
 	configurations.archives.artifacts.removeAll { it.archiveTask.is jar }
 	tasks.findByPath("artifactoryPublish")?.enabled = false
 	dependencies {
-		compile project(":spring-dsl-core")
-		compile "org.springframework.boot:spring-boot-starter"
+		compile project(':spring-dsl-core')
+		compile 'org.springframework.boot:spring-boot-starter'
 	}
 }
 
