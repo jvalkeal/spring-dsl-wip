@@ -5,17 +5,23 @@ buildscript {
 		antlr4Version = '4.7.1'
 		lsp4jVersion = '0.3.0'
 		xtendVersion = '2.13.0'
+		mooworkVersion = '1.2.0'
+		propdepsVersion = '0.0.8'
+		asciidoctorVersion = '1.5.3'
+		docbookRererenceVersion = '0.3.1'
 	}
 	repositories {
 		mavenCentral()
-		maven { url 'http://repo.spring.io/plugins-release' }
-		maven { url 'http://repo.spring.io/plugins-snapshot' }
+		maven { url 'https://repo.spring.io/plugins-release' }
+		maven { url 'https://repo.spring.io/plugins-snapshot' }
+		maven { url 'https://plugins.gradle.org/m2/' }
 	}
 	dependencies {
-		classpath("io.spring.gradle:propdeps-plugin:0.0.8")
-		classpath('org.asciidoctor:asciidoctor-gradle-plugin:1.5.3')
-		classpath("io.spring.gradle:docbook-reference-plugin:0.3.1")
+		classpath("io.spring.gradle:propdeps-plugin:${propdepsVersion}")
+		classpath("org.asciidoctor:asciidoctor-gradle-plugin:${asciidoctorVersion}")
+		classpath("io.spring.gradle:docbook-reference-plugin:${docbookRererenceVersion}")
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+		classpath("com.moowork.gradle:gradle-node-plugin:${mooworkVersion}")
 	}
 }
 
@@ -43,7 +49,7 @@ configure(allprojects) {
 
 	repositories {
 		mavenCentral()
-		maven { url 'http://repo.spring.io/libs-snapshot' }
+		maven { url 'https://repo.spring.io/libs-snapshot' }
 		maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
 		// for californium snapshots
 		maven { url 'https://repo.eclipse.org/content/repositories/californium' }
@@ -124,6 +130,15 @@ project('spring-dsl-autoconfigure') {
 
 	dependencies {
 		compile 'org.springframework.boot:spring-boot-autoconfigure'
+	}
+}
+
+project('spring-dsl-websocket') {
+	description = "Spring Dsl Websocket"
+
+	dependencies {
+		compile project(':spring-dsl-core')
+		compile 'org.springframework.boot:spring-boot-starter-websocket'
 	}
 }
 

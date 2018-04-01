@@ -9,13 +9,43 @@ project('spring-dsl-samples-simpledsl') {
 
 project('spring-dsl-samples-simpledsleditor') {
 	apply plugin: 'org.springframework.boot'
+	apply plugin: 'com.moowork.node'
+	
 	description = 'Spring Dsl Simple Editor Sample'
+	
 	dependencies {
 		compile project(':spring-dsl-lsp4j')
 		compile project(':spring-dsl-autoconfigure')
 		compile project(':spring-dsl-samples-common:spring-dsl-samples-simpledsl')
 		compile 'org.springframework.boot:spring-boot-starter-websocket'
 	}
+	
+	node {
+		version = "8.9.4"
+		download = false
+		nodeModulesDir = file("ui")
+	}
+
+	task buildClientDev(type: NpmTask, dependsOn: 'npmInstall') {
+		group = 'build'
+		description = 'Compile client side folder for development'
+		args = ['run','buildDev']
+	}
+
+	task buildClient(type:NpmTask, dependsOn:'npmInstall') {
+		group = 'build'
+		description = "Compile client side folder for production"
+		args = ['run','build']
+	}
+
+	task buildClientWatch(type: NpmTask, dependsOn: 'npmInstall') {
+		group = 'application'
+		description = "Build and watches the client side assets for rebuilding"
+		args = ['run','buildWatch']
+	}
+
+	bootRun.dependsOn(buildClientDev)
+	jar.dependsOn(buildClient)
 	build.dependsOn bootJar
 }
 
