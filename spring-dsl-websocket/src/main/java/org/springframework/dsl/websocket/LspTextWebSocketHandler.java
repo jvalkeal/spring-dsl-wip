@@ -16,6 +16,7 @@
 package org.springframework.dsl.websocket;
 
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,12 +25,20 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import reactor.core.publisher.Mono;
+
+/**
+ *
+ *
+ * @author Janne Valkealahti
+ *
+ */
 public class LspTextWebSocketHandler extends TextWebSocketHandler {
 
 	private static final Logger log = LoggerFactory.getLogger(LspTextWebSocketHandler.class);
-	private final Consumer<byte[]> consumer;
+	private final Function<byte[], Mono<String>> consumer;
 
-	public LspTextWebSocketHandler(Consumer<byte[]> consumer) {
+	public LspTextWebSocketHandler(Function<byte[], Mono<String>> consumer) {
 		this.consumer = consumer;
 	}
 
@@ -43,8 +52,10 @@ public class LspTextWebSocketHandler extends TextWebSocketHandler {
 		log.debug("handleTextMessage {} {}", session.getId(), message.getPayload());
 
 		byte[] payload = message.getPayload().getBytes();
-		consumer.accept(payload);
-		// send to StreamMessageProducerAdapter.handlePayload
+
+		Mono<String> response = consumer.apply(payload);
+		session.sendMessage(new TextMessage(response.block().getBytes()));
+
 	}
 
 	@Override

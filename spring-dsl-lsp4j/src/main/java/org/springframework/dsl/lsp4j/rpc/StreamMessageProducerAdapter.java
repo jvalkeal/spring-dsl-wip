@@ -16,12 +16,11 @@
 package org.springframework.dsl.lsp4j.rpc;
 
 import java.io.ByteArrayInputStream;
-import java.util.LinkedHashMap;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import org.eclipse.lsp4j.jsonrpc.MessageConsumer;
 import org.eclipse.lsp4j.jsonrpc.RemoteEndpoint;
-import org.eclipse.lsp4j.jsonrpc.json.JsonRpcMethod;
 import org.eclipse.lsp4j.jsonrpc.json.MessageJsonHandler;
 import org.eclipse.lsp4j.jsonrpc.json.StreamMessageProducer;
 import org.eclipse.lsp4j.jsonrpc.services.ServiceEndpoints;
@@ -29,13 +28,16 @@ import org.eclipse.lsp4j.services.LanguageServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class StreamMessageProducerAdapter extends StreamMessageProducer implements Consumer<byte[]> {
+import reactor.core.publisher.Mono;
+
+public class StreamMessageProducerAdapter extends StreamMessageProducer implements Function<byte[], Mono<String>> {
 
 	private static final Logger log = LoggerFactory.getLogger(StreamMessageProducerAdapter.class);
 
 	private final LanguageServer languageServer;
 	private MessageConsumer messageConsumer;
 	private MessageJsonHandler jsonHandler;
+	private StreamMessageConsumerAdapter streamMessageConsumerAdapter;
 
 	public StreamMessageProducerAdapter(MessageJsonHandler jsonHandler, LanguageServer languageServer) {
 		super(new ByteArrayInputStream(new byte[0]), jsonHandler);
@@ -52,13 +54,13 @@ public class StreamMessageProducerAdapter extends StreamMessageProducer implemen
 	}
 
 	@Override
-	public void accept(byte[] t) {
+	public Mono<String> apply(byte[] t) {
 		handlePayload(t);
+		return Mono.just(streamMessageConsumerAdapter.getCurrentPayload());
 	}
 
 	private void xxx() {
-		StreamMessageConsumerAdapter streamMessageConsumerAdapter = new StreamMessageConsumerAdapter(jsonHandler);
-
+		streamMessageConsumerAdapter = new StreamMessageConsumerAdapter(jsonHandler);
 		RemoteEndpoint serverEndpoint = new RemoteEndpoint(streamMessageConsumerAdapter, ServiceEndpoints.toEndpoint(languageServer));
 		this.messageConsumer = serverEndpoint;
 		jsonHandler.setMethodProvider(serverEndpoint);

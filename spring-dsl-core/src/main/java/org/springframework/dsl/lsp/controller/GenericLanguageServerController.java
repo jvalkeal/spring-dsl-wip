@@ -24,8 +24,8 @@ import org.springframework.dsl.lsp.domain.InitializeResult;
 import org.springframework.dsl.lsp.service.Reconciler;
 
 /**
- * A generic {@code LSP Controller} implementation providing most common
- * features what {@code Language Server} should provide.
+ * A generic {@code LspController} implementation providing common higher level
+ * features what a {@code Language Server} should provide.
  *
  * @author Janne Valkealahti
  *

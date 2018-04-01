@@ -27,6 +27,8 @@ public class StreamMessageConsumerAdapter extends StreamMessageConsumer {
 
 	private static final Logger log = LoggerFactory.getLogger(StreamMessageConsumerAdapter.class);
 
+	private String currentPayload = null;
+
 	public StreamMessageConsumerAdapter(MessageJsonHandler jsonHandler) {
 		super(new ByteArrayOutputStream(), jsonHandler);
 	}
@@ -35,11 +37,11 @@ public class StreamMessageConsumerAdapter extends StreamMessageConsumer {
 	public void consume(Message message) {
 		log.debug("Consume message {}", message);
 		super.consume(message);
-		String payload = getOutput().toString();
-		log.debug("Payload {}", payload);
+		currentPayload = getOutput().toString();
 		setOutput(new ByteArrayOutputStream());
-
-		// ws should consume payload
 	}
 
+	public String getCurrentPayload() {
+		return currentPayload;
+	}
 }
