@@ -15,14 +15,77 @@
  */
 package demo.simpledsleditor;
 
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Set;
+
+import org.eclipse.lsp4j.jsonrpc.json.JsonRpcMethod;
+import org.eclipse.lsp4j.jsonrpc.json.MessageJsonHandler;
+import org.eclipse.lsp4j.jsonrpc.services.ServiceEndpoints;
+import org.eclipse.lsp4j.services.LanguageClient;
+import org.eclipse.lsp4j.services.LanguageServer;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.support.ConversionServiceFactoryBean;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.dsl.lsp.controller.GenericLanguageServerController;
+import org.springframework.dsl.lsp.server.LspHandler;
+import org.springframework.dsl.lsp.server.config.EnableLanguageServer;
+import org.springframework.dsl.lsp4j.Lsp4jLanguageServerAdapter;
+import org.springframework.dsl.lsp4j.converter.GenericLsp4jObjectConverter;
+import org.springframework.dsl.lsp4j.result.method.annotation.Lsp4jDomainArgumentResolver;
+import org.springframework.dsl.lsp4j.rpc.StreamMessageProducerAdapter;
+import org.springframework.dsl.websocket.LspTextWebSocketHandler;
+import org.springframework.dsl.websocket.LspWebSocketConfig;
 
 import demo.simpledsl.EnableSimpleLanguage;
 
+@EnableLanguageServer
 @EnableSimpleLanguage
+@Import({ LspWebSocketConfig.class, GenericLanguageServerController.class })
 @SpringBootApplication
 public class Application {
+
+	@Bean
+	public ConversionServiceFactoryBean lspConversionService() {
+		ConversionServiceFactoryBean factoryBean = new ConversionServiceFactoryBean();
+		Set<Object> converters = new HashSet<>();
+		converters.add(new GenericLsp4jObjectConverter());
+		factoryBean.setConverters(converters);
+		return factoryBean;
+	}
+
+	@Bean
+	public Lsp4jDomainArgumentResolver lsp4jDomainArgumentResolver() {
+		return new Lsp4jDomainArgumentResolver();
+	}
+
+	@Bean
+	public MessageJsonHandler messageJsonHandler() {
+		LinkedHashMap<String, JsonRpcMethod> supportedMethods = new LinkedHashMap<String, JsonRpcMethod>();
+		supportedMethods.putAll(ServiceEndpoints.getSupportedMethods(LanguageClient.class));
+		supportedMethods.putAll(ServiceEndpoints.getSupportedMethods(LanguageServer.class));
+		MessageJsonHandler jsonHandler = new MessageJsonHandler(supportedMethods);
+		return jsonHandler;
+	}
+
+	@Bean
+	public LspTextWebSocketHandler lspTextWebSocketHandler(StreamMessageProducerAdapter streamMessageProducerAdapter) {
+		return new LspTextWebSocketHandler(streamMessageProducerAdapter);
+	}
+
+	@Bean
+	public StreamMessageProducerAdapter streamMessageProducerAdapter(MessageJsonHandler jsonHandler, LanguageServer languageServer) {
+		return new StreamMessageProducerAdapter(jsonHandler, languageServer);
+	}
+
+	@Bean
+	public Lsp4jLanguageServerAdapter languageServer(LspHandler lspHandler, @Qualifier("lspConversionService") ConversionService conversionService) {
+		return new Lsp4jLanguageServerAdapter(lspHandler, conversionService);
+	}
 
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);

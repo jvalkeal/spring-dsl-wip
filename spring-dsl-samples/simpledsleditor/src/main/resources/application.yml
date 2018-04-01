@@ -1,3 +1,7 @@
+logging:
+  level:
+    org.springframework.dsl: debug
+    org.eclipse.lsp4j: debug
 spring:
   dsl:
     lsp:

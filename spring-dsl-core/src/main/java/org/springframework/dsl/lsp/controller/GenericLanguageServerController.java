@@ -15,7 +15,13 @@
  */
 package org.springframework.dsl.lsp.controller;
 
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.dsl.lsp.annotation.LspController;
+import org.springframework.dsl.lsp.annotation.LspInitialize;
+import org.springframework.dsl.lsp.annotation.LspResponseBody;
+import org.springframework.dsl.lsp.domain.InitializeParams;
+import org.springframework.dsl.lsp.domain.InitializeResult;
+import org.springframework.dsl.lsp.service.Reconciler;
 
 /**
  * A generic {@code LSP Controller} implementation providing most common
@@ -27,4 +33,15 @@ import org.springframework.dsl.lsp.annotation.LspController;
 @LspController
 public class GenericLanguageServerController {
 
+	private final ObjectProvider<Reconciler> reconcilerProvider;
+
+	public GenericLanguageServerController(ObjectProvider<Reconciler> reconcilerProvider) {
+		this.reconcilerProvider = reconcilerProvider;
+	}
+
+	@LspInitialize
+	@LspResponseBody
+	public InitializeResult clientInit(InitializeParams params) {
+		return new InitializeResult();
+	}
 }

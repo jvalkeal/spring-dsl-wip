@@ -48,6 +48,8 @@ import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.services.LanguageServer;
 import org.eclipse.lsp4j.services.TextDocumentService;
 import org.eclipse.lsp4j.services.WorkspaceService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.dsl.lsp.LspMethod;
 import org.springframework.dsl.lsp.server.LspHandler;
@@ -78,6 +80,8 @@ import reactor.core.publisher.Mono;
  */
 public class Lsp4jLanguageServerAdapter implements LanguageServer {
 
+	private static final Logger log = LoggerFactory.getLogger(Lsp4jLanguageServerAdapter.class);
+
 	private final LspHandler lspHandler;
 	private final ConversionService conversionService;
 
@@ -96,6 +100,7 @@ public class Lsp4jLanguageServerAdapter implements LanguageServer {
 
 	@Override
 	public CompletableFuture<InitializeResult> initialize(InitializeParams params) {
+		log.debug("initialize {}", params);
 		ServerLspExchange exchange = createExchange(LspMethod.INITIALIZE, params);
 		return lspHandler.handle(exchange)
 				.then(convert(exchange, InitializeResult.class, conversionService))
@@ -216,7 +221,7 @@ public class Lsp4jLanguageServerAdapter implements LanguageServer {
 
 	@Override
 	public WorkspaceService getWorkspaceService() {
-		throw new UnsupportedOperationException();
+		return null;
 	}
 
 	private static ServerLspExchange createExchange(LspMethod lspMethod, Object body) {
