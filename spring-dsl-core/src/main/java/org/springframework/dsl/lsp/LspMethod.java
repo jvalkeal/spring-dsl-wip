@@ -18,20 +18,23 @@ package org.springframework.dsl.lsp;
 import java.util.HashMap;
 import java.util.Map;
 
-// TODO: Auto-generated Javadoc
 /**
- * Java enumeration of COAP request methods.
+ * Java enumeration of {@code LSP} request methods.
  *
  * @author Janne Valkealahti
  *
  */
 public enum LspMethod {
 
-	/** The initialize. */
 	INITIALIZE,
-	
-	/** The didchange. */
-	DIDCHANGE;
+
+	DIDOPEN,
+
+	DIDCHANGE,
+
+	DIDSAVE,
+
+	DIDCLOSE;
 
 	/** The Constant mappings. */
 	private static final Map<String, LspMethod> mappings = new HashMap<String, LspMethod>(4);

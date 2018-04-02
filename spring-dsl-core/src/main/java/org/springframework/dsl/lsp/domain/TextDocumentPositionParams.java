@@ -15,28 +15,6 @@
  */
 package org.springframework.dsl.lsp.domain;
 
-/**
- * {@code LSP} domain object for a specification {@code InitializeResult}.
- *
- * @author Janne Valkealahti
- *
- */
-public class InitializeResult {
+public class TextDocumentPositionParams {
 
-	private ServerCapabilities capabilities;
-
-	public InitializeResult() {
-	}
-
-	public InitializeResult(ServerCapabilities capabilities) {
-		this.capabilities = capabilities;
-	}
-
-	public ServerCapabilities getCapabilities() {
-		return capabilities;
-	}
-
-	public void setCapabilities(ServerCapabilities capabilities) {
-		this.capabilities = capabilities;
-	}
 }

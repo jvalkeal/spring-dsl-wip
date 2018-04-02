@@ -27,7 +27,7 @@ module.exports = ""
 /***/ "./src/app/app.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<!--The content below is only a placeholder and can be replaced.-->\n<div style=\"text-align:center\">\n  <h1>\n    Welcome to {{ title }}!\n  </h1>\n  <img width=\"300\" alt=\"Angular Logo\" src=\"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg==\">\n</div>\n<app-lsp4j></app-lsp4j>\n<h2>Here are some links to help you start: </h2>\n<ul>\n  <li>\n    <h2><a target=\"_blank\" rel=\"noopener\" href=\"https://angular.io/tutorial\">Tour of Heroes</a></h2>\n  </li>\n  <li>\n    <h2><a target=\"_blank\" rel=\"noopener\" href=\"https://github.com/angular/angular-cli/wiki\">CLI Documentation</a></h2>\n  </li>\n  <li>\n    <h2><a target=\"_blank\" rel=\"noopener\" href=\"https://blog.angular.io/\">Angular blog</a></h2>\n  </li>\n</ul>\n\n"
+module.exports = "<!--The content below is only a placeholder and can be replaced.-->\n<div style=\"text-align:center\">\n  <h1>\n    Welcome to {{ title }}!\n  </h1>\n</div>\n<app-lsp4j></app-lsp4j>\n"
 
 /***/ }),
 
@@ -46,7 +46,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 
 var AppComponent = /** @class */ (function () {
     function AppComponent() {
-        this.title = 'app';
+        this.title = 'Spring DLS LSP Demo';
     }
     AppComponent = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({
@@ -120,7 +120,7 @@ module.exports = ""
 /***/ "./src/app/lsp4j/lsp4j.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div>\n  lsp4j works!\n</div>\n<div>\n  <ngx-monaco-editor [options]=\"editorOptions\" [(ngModel)]=\"code\" (onInit)=\"onInit($event)\"></ngx-monaco-editor>\n  <!--<ngx-monaco-editor [options]=\"editorOptions\"></ngx-monaco-editor>-->\n</div>\n"
+module.exports = "<div>\n  Use below monaco editor to play with simple dummy language.\n</div>\n<div>\n  <ngx-monaco-editor [options]=\"editorOptions\" [(ngModel)]=\"code\" (onInit)=\"onInit($event)\"></ngx-monaco-editor>\n</div>\n"
 
 /***/ }),
 
@@ -156,8 +156,10 @@ var ReconnectingWebSocket = __webpack_require__("./node_modules/reconnecting-web
 var Lsp4jComponent = /** @class */ (function () {
     // private xxx: monaco.editor.IStandaloneCodeEditor;
     function Lsp4jComponent() {
-        this.editorOptions = { theme: 'vs-dark', language: 'json' };
-        this.code = 'function x() {\nconsole.log("Hello world!");\n}';
+        // editorOptions = {theme: 'vs-dark', language: 'text/plain'};
+        // editorOptions = {model: null, theme: 'vs-dark'};
+        this.editorOptions = { theme: 'vs', language: 'javascript' };
+        this.code = 'int=1\nlong=100\ndouble=1.0\nstring=hello\n';
     }
     Lsp4jComponent.prototype.onInit = function (xxx) {
         var _this = this;
@@ -196,7 +198,7 @@ var Lsp4jComponent = /** @class */ (function () {
             name: 'Sample Language Client',
             clientOptions: {
                 // use a language id as a document selector
-                documentSelector: ['json'],
+                documentSelector: ['javascript'],
                 synchronize: {},
                 // disable the default error handler
                 errorHandler: {

@@ -15,6 +15,8 @@
  */
 package demo.simpledsl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dsl.lsp.model.Document;
 import org.springframework.dsl.lsp.model.ReconcileProblem;
 import org.springframework.dsl.lsp.service.Reconciler;
@@ -25,12 +27,16 @@ import reactor.core.publisher.Flux;
  * A {@link Reconciler} implementation for a {@code simple} sample language.
  *
  * @author Janne Valkealahti
+ * @see EnableSimpleLanguage
  *
  */
 public class SimpleLanguageReconciler implements Reconciler {
 
+	private static final Logger log = LoggerFactory.getLogger(SimpleLanguageReconciler.class);
+
 	@Override
 	public Flux<ReconcileProblem> reconcile(Document document) {
+		log.debug("Starting reconciling document {}", document);
 		return Flux.empty();
 	}
 }

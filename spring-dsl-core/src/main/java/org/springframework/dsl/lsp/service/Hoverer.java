@@ -13,30 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.lsp.domain;
+package org.springframework.dsl.lsp.service;
+
+import org.springframework.dsl.lsp.domain.TextDocumentPositionParams;
+import org.springframework.dsl.lsp.model.Hover;
+
+import reactor.core.publisher.Mono;
 
 /**
- * {@code LSP} domain object for a specification {@code InitializeResult}.
+ * Strategy interface providing {@link Hover} info for current position.
  *
+ * @author Kris De Volder
  * @author Janne Valkealahti
  *
  */
-public class InitializeResult {
+public interface Hoverer {
 
-	private ServerCapabilities capabilities;
-
-	public InitializeResult() {
-	}
-
-	public InitializeResult(ServerCapabilities capabilities) {
-		this.capabilities = capabilities;
-	}
-
-	public ServerCapabilities getCapabilities() {
-		return capabilities;
-	}
-
-	public void setCapabilities(ServerCapabilities capabilities) {
-		this.capabilities = capabilities;
-	}
+	/**
+	 * Provide hover for a given position.
+	 *
+	 * @param params the position in a text document
+	 * @return a {@link Mono} completing as {@link Hover}
+	 */
+	Mono<Hover> hover(TextDocumentPositionParams params);
 }

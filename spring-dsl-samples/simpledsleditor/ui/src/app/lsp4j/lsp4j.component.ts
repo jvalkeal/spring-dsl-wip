@@ -24,8 +24,10 @@ const ReconnectingWebSocket = require('reconnecting-websocket');
 })
 export class Lsp4jComponent implements OnInit {
 
-  editorOptions = {theme: 'vs-dark', language: 'json'};
-  code = 'function x() {\nconsole.log("Hello world!");\n}';
+  // editorOptions = {theme: 'vs-dark', language: 'text/plain'};
+  // editorOptions = {model: null, theme: 'vs-dark'};
+  editorOptions = {theme: 'vs', language: 'javascript'};
+  code = 'int=1\nlong=100\ndouble=1.0\nstring=hello\n';
   private xxx: any;
   // private xxx: monaco.editor.IStandaloneCodeEditor;
 
@@ -74,7 +76,7 @@ export class Lsp4jComponent implements OnInit {
       name: 'Sample Language Client',
       clientOptions: {
         // use a language id as a document selector
-        documentSelector: ['json'],
+        documentSelector: ['javascript'],
         synchronize: {
         },
         // disable the default error handler

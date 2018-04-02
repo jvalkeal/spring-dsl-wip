@@ -16,16 +16,43 @@
 package org.springframework.dsl.lsp.controller;
 
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.dsl.lsp.LspClientContext;
 import org.springframework.dsl.lsp.annotation.LspController;
+import org.springframework.dsl.lsp.annotation.LspDidChange;
+import org.springframework.dsl.lsp.annotation.LspDidClose;
+import org.springframework.dsl.lsp.annotation.LspDidOpen;
+import org.springframework.dsl.lsp.annotation.LspDidSave;
 import org.springframework.dsl.lsp.annotation.LspInitialize;
+import org.springframework.dsl.lsp.annotation.LspNoResponseBody;
 import org.springframework.dsl.lsp.annotation.LspResponseBody;
+import org.springframework.dsl.lsp.domain.CompletionOptions;
+import org.springframework.dsl.lsp.domain.DidChangeTextDocumentParams;
 import org.springframework.dsl.lsp.domain.InitializeParams;
 import org.springframework.dsl.lsp.domain.InitializeResult;
+import org.springframework.dsl.lsp.domain.ServerCapabilities;
+import org.springframework.dsl.lsp.domain.TextDocumentSyncKind;
+import org.springframework.dsl.lsp.model.Document;
+import org.springframework.dsl.lsp.service.Completioner;
+import org.springframework.dsl.lsp.service.Hoverer;
 import org.springframework.dsl.lsp.service.Reconciler;
 
 /**
  * A generic {@code LspController} implementation providing common higher level
  * features what a {@code Language Server} should provide.
+ * <p>
+ * We extensively use {@link ObjectProvider} to see if particular services are
+ * defined in an {@code Application Context}. This allows us to prepare a
+ * response to {@code LSP Client}'s {@code initialize} request based on defined
+ * services.
+ * <p>
+ * There are services in a context of a {@code LSP} which alter a response
+ * message to {@code LSP Client}'s {@code initialize} request, while some
+ * services are optional. For example {@code Spring DSL} provides higher level
+ * {@link Reconciler} service which is not required by a {@code LSP} but will
+ * respond to {@code Client}'s {@code LspDidChange} requests by providing
+ * diagnostics back to a client. As {@code LspDidChange} is a one-way request,
+ * response is not needed but server may response multiple diagnostics messages
+ * back to a client to i.e. to tell what is wrong in a current {@link Document}.
  *
  * @author Janne Valkealahti
  *
@@ -34,14 +61,52 @@ import org.springframework.dsl.lsp.service.Reconciler;
 public class GenericLanguageServerController {
 
 	private final ObjectProvider<Reconciler> reconcilerProvider;
+	private final ObjectProvider<Completioner> completionerProvider;
+	private final ObjectProvider<Hoverer> hovererProvider;
 
-	public GenericLanguageServerController(ObjectProvider<Reconciler> reconcilerProvider) {
+	public GenericLanguageServerController(ObjectProvider<Reconciler> reconcilerProvider,
+			ObjectProvider<Completioner> completionerProvider, ObjectProvider<Hoverer> hovererProvider) {
 		this.reconcilerProvider = reconcilerProvider;
+		this.completionerProvider = completionerProvider;
+		this.hovererProvider = hovererProvider;
 	}
 
 	@LspInitialize
 	@LspResponseBody
 	public InitializeResult clientInit(InitializeParams params) {
-		return new InitializeResult();
+		ServerCapabilities serverCapabilities = new ServerCapabilities();
+		serverCapabilities.setHoverProvider(hovererProvider.getIfAvailable() != null);
+		serverCapabilities.setTextDocumentSyncKind(TextDocumentSyncKind.Full);
+		if (completionerProvider.getIfAvailable() != null) {
+			serverCapabilities.setCompletionProvider(new CompletionOptions());
+		}
+		return new InitializeResult(serverCapabilities);
+	}
+
+	@LspDidOpen
+	@LspNoResponseBody
+	public void clientDocumentOpened() {
+		// TODO: implement method params and do something useful
+	}
+
+	@LspDidChange
+	@LspNoResponseBody
+	public void clientDocumentChanged(DidChangeTextDocumentParams params, LspClientContext context) {
+		Reconciler reconciler = reconcilerProvider.getIfAvailable();
+		if (reconciler != null) {
+
+		}
+	}
+
+	@LspDidClose
+	@LspNoResponseBody
+	public void clientDocumentClosed() {
+		// TODO: implement method params and do something useful
+	}
+
+	@LspDidSave
+	@LspNoResponseBody
+	public void clientDocumentSaved() {
+		// TODO: implement method params and do something useful
 	}
 }

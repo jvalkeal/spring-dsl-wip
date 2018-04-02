@@ -13,30 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.lsp.domain;
+package demo.simpledsl;
+
+import org.springframework.dsl.lsp.domain.TextDocumentPositionParams;
+import org.springframework.dsl.lsp.model.Hover;
+import org.springframework.dsl.lsp.service.Hoverer;
+
+import reactor.core.publisher.Mono;
 
 /**
- * {@code LSP} domain object for a specification {@code InitializeResult}.
+ * A {@link Hoverer} implementation for a {@code simple} sample language.
  *
  * @author Janne Valkealahti
+ * @see EnableSimpleLanguage
  *
  */
-public class InitializeResult {
+public class SimpleLanguageHoverer implements Hoverer {
 
-	private ServerCapabilities capabilities;
-
-	public InitializeResult() {
-	}
-
-	public InitializeResult(ServerCapabilities capabilities) {
-		this.capabilities = capabilities;
-	}
-
-	public ServerCapabilities getCapabilities() {
-		return capabilities;
-	}
-
-	public void setCapabilities(ServerCapabilities capabilities) {
-		this.capabilities = capabilities;
+	@Override
+	public Mono<Hover> hover(TextDocumentPositionParams params) {
+		return Mono.empty();
 	}
 }

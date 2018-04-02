@@ -13,30 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.lsp.domain;
+package org.springframework.dsl.lsp.model;
 
-/**
- * {@code LSP} domain object for a specification {@code InitializeResult}.
- *
- * @author Janne Valkealahti
- *
- */
-public class InitializeResult {
+public class Hover {
 
-	private ServerCapabilities capabilities;
-
-	public InitializeResult() {
-	}
-
-	public InitializeResult(ServerCapabilities capabilities) {
-		this.capabilities = capabilities;
-	}
-
-	public ServerCapabilities getCapabilities() {
-		return capabilities;
-	}
-
-	public void setCapabilities(ServerCapabilities capabilities) {
-		this.capabilities = capabilities;
-	}
 }

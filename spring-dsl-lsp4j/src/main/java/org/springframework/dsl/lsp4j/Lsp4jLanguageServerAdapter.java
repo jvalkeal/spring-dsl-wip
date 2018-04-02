@@ -109,12 +109,14 @@ public class Lsp4jLanguageServerAdapter implements LanguageServer {
 
 	@Override
 	public CompletableFuture<Object> shutdown() {
+		// TODO: should dispatch this to some sort of a bean to clean up
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public void exit() {
-		throw new UnsupportedOperationException();
+		// TODO: if we're in a process mode, this should exit jvm. If we're in embedded mode, like websocket
+		//       should not do anything.
 	}
 
 	@Override
@@ -178,17 +180,17 @@ public class Lsp4jLanguageServerAdapter implements LanguageServer {
 
 			@Override
 			public void didSave(DidSaveTextDocumentParams params) {
-				throw new UnsupportedOperationException();
+				lspHandler.handle(createExchange(LspMethod.DIDSAVE, params)).subscribe();
 			}
 
 			@Override
 			public void didOpen(DidOpenTextDocumentParams params) {
-				throw new UnsupportedOperationException();
+				lspHandler.handle(createExchange(LspMethod.DIDOPEN, params)).subscribe();
 			}
 
 			@Override
 			public void didClose(DidCloseTextDocumentParams params) {
-				throw new UnsupportedOperationException();
+				lspHandler.handle(createExchange(LspMethod.DIDCLOSE, params)).subscribe();
 			}
 
 			@Override

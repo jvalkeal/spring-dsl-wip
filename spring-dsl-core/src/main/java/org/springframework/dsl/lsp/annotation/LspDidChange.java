@@ -23,9 +23,6 @@ import java.lang.annotation.Target;
 
 import org.springframework.dsl.lsp.LspMethod;
 
-/**
- * The Interface LspDidChange.
- */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

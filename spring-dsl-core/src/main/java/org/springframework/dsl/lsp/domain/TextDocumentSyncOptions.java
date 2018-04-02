@@ -16,27 +16,44 @@
 package org.springframework.dsl.lsp.domain;
 
 /**
- * {@code LSP} domain object for a specification {@code InitializeResult}.
+ * {@code LSP} domain object for a specification {@code TextDocumentSyncOptions}.
  *
  * @author Janne Valkealahti
  *
  */
-public class InitializeResult {
+public class TextDocumentSyncOptions {
 
-	private ServerCapabilities capabilities;
+	private Boolean openClose;
 
-	public InitializeResult() {
+	// change?: number;
+
+	private Boolean willSave;
+
+	private Boolean willSaveWaitUntil;
+
+	// save?: SaveOptions;
+
+	public Boolean getOpenClose() {
+		return openClose;
 	}
 
-	public InitializeResult(ServerCapabilities capabilities) {
-		this.capabilities = capabilities;
+	public void setOpenClose(Boolean openClose) {
+		this.openClose = openClose;
 	}
 
-	public ServerCapabilities getCapabilities() {
-		return capabilities;
+	public Boolean getWillSave() {
+		return willSave;
 	}
 
-	public void setCapabilities(ServerCapabilities capabilities) {
-		this.capabilities = capabilities;
+	public void setWillSave(Boolean willSave) {
+		this.willSave = willSave;
+	}
+
+	public Boolean getWillSaveWaitUntil() {
+		return willSaveWaitUntil;
+	}
+
+	public void setWillSaveWaitUntil(Boolean willSaveWaitUntil) {
+		this.willSaveWaitUntil = willSaveWaitUntil;
 	}
 }

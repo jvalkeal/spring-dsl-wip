@@ -15,28 +15,15 @@
  */
 package org.springframework.dsl.lsp.domain;
 
-/**
- * {@code LSP} domain object for a specification {@code InitializeResult}.
- *
- * @author Janne Valkealahti
- *
- */
-public class InitializeResult {
+public class SaveOptions {
 
-	private ServerCapabilities capabilities;
+	private Boolean includeText;
 
-	public InitializeResult() {
+	public Boolean getIncludeText() {
+		return includeText;
 	}
 
-	public InitializeResult(ServerCapabilities capabilities) {
-		this.capabilities = capabilities;
-	}
-
-	public ServerCapabilities getCapabilities() {
-		return capabilities;
-	}
-
-	public void setCapabilities(ServerCapabilities capabilities) {
-		this.capabilities = capabilities;
+	public void setIncludeText(Boolean includeText) {
+		this.includeText = includeText;
 	}
 }

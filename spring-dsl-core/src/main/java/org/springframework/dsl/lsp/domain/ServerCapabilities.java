@@ -16,8 +16,68 @@
 package org.springframework.dsl.lsp.domain;
 
 /**
- * The Class ServerCapabilities.
+ * {@code LSP} domain object for a specification {@code ServerCapabilities}.
+ * <p>
+ * In a spec field {@code textDocumentSync} can be either
+ * {@code TextDocumentSyncOptions} matching {@link TextDocumentSyncOptions} or a
+ * number matching ordinal in an enum {@link TextDocumentSyncKind}.
+ *
+ * @author Janne Valkealahti
+ * @see TextDocumentSyncOptions
+ * @see TextDocumentSyncKind
+ *
  */
 public class ServerCapabilities {
+
+	private TextDocumentSyncOptions textDocumentSyncOptions;
+
+	private TextDocumentSyncKind textDocumentSyncKind;
+
+	private Boolean hoverProvider;
+
+	private CompletionOptions completionProvider;
+
+	public ServerCapabilities() {
+	}
+
+	public ServerCapabilities(TextDocumentSyncKind textDocumentSyncKind) {
+		this.textDocumentSyncKind = textDocumentSyncKind;
+	}
+
+	public ServerCapabilities(TextDocumentSyncOptions textDocumentSyncOptions) {
+		this.textDocumentSyncOptions = textDocumentSyncOptions;
+	}
+
+	public TextDocumentSyncOptions getTextDocumentSyncOptions() {
+		return textDocumentSyncOptions;
+	}
+
+	public void setTextDocumentSyncOptions(TextDocumentSyncOptions textDocumentSyncOptions) {
+		this.textDocumentSyncOptions = textDocumentSyncOptions;
+	}
+
+	public TextDocumentSyncKind getTextDocumentSyncKind() {
+		return textDocumentSyncKind;
+	}
+
+	public void setTextDocumentSyncKind(TextDocumentSyncKind textDocumentSyncKind) {
+		this.textDocumentSyncKind = textDocumentSyncKind;
+	}
+
+	public Boolean getHoverProvider() {
+		return hoverProvider;
+	}
+
+	public void setHoverProvider(Boolean hoverProvider) {
+		this.hoverProvider = hoverProvider;
+	}
+
+	public CompletionOptions getCompletionProvider() {
+		return completionProvider;
+	}
+
+	public void setCompletionProvider(CompletionOptions completionProvider) {
+		this.completionProvider = completionProvider;
+	}
 
 }

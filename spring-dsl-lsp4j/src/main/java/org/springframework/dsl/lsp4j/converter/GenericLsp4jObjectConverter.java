@@ -21,9 +21,9 @@ public class GenericLsp4jObjectConverter implements GenericConverter {
 	@Override
 	public Object convert(Object source, TypeDescriptor sourceType, TypeDescriptor targetType) {
 		if (ClassUtils.isAssignable(InitializeResult.class, sourceType.getType())) {
-			return new org.eclipse.lsp4j.InitializeResult();
+			return ConverterUtils.toInitializeResult((InitializeResult)source);
 		} else if (ClassUtils.isAssignable(org.eclipse.lsp4j.InitializeResult.class, sourceType.getType())) {
-			return new InitializeResult();
+			return ConverterUtils.toInitializeResult((org.eclipse.lsp4j.InitializeResult)source);
 		}
 		throw new IllegalArgumentException();
 	}

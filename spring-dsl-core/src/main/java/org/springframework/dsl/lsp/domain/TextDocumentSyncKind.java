@@ -16,27 +16,31 @@
 package org.springframework.dsl.lsp.domain;
 
 /**
- * {@code LSP} domain object for a specification {@code InitializeResult}.
+ * {@code LSP} domain object for a specification {@code TextDocumentSyncKind}.
+ * <p>
+ * Order of enum fields is important as those directly map to
+ * {@code textDocumentSync} as number field in {@link ServerCapabilities} if
+ * this enum is used.
  *
  * @author Janne Valkealahti
+ * @see ServerCapabilities
  *
  */
-public class InitializeResult {
+public enum TextDocumentSyncKind {
 
-	private ServerCapabilities capabilities;
+	/**
+	 * Documents should not be synced at all.
+	 */
+	None,
 
-	public InitializeResult() {
-	}
+	/**
+	 * Documents are synced by always sending the full content of the document.
+	 */
+	Full,
 
-	public InitializeResult(ServerCapabilities capabilities) {
-		this.capabilities = capabilities;
-	}
-
-	public ServerCapabilities getCapabilities() {
-		return capabilities;
-	}
-
-	public void setCapabilities(ServerCapabilities capabilities) {
-		this.capabilities = capabilities;
-	}
+	/**
+	 * Documents are synced by sending the full content on open. After that only
+	 * incremental updates to the document are send.
+	 */
+	Incremental;
 }
