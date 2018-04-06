@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package demo.simpledslserver;
+package demo.simpledslprocessserver;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -50,19 +50,19 @@ import demo.simpledsl.EnableSimpleLanguage;
 @SpringBootApplication
 public class Application {
 
-	@Bean
-	public ConversionServiceFactoryBean lspConversionService() {
-		ConversionServiceFactoryBean factoryBean = new ConversionServiceFactoryBean();
-		Set<Object> converters = new HashSet<>();
-		converters.add(new GenericLsp4jObjectConverter());
-		factoryBean.setConverters(converters);
-		return factoryBean;
-	}
-
-	@Bean
-	public Lsp4jDomainArgumentResolver lsp4jDomainArgumentResolver() {
-		return new Lsp4jDomainArgumentResolver();
-	}
+//	@Bean
+//	public ConversionServiceFactoryBean lspConversionService() {
+//		ConversionServiceFactoryBean factoryBean = new ConversionServiceFactoryBean();
+//		Set<Object> converters = new HashSet<>();
+//		converters.add(new GenericLsp4jObjectConverter());
+//		factoryBean.setConverters(converters);
+//		return factoryBean;
+//	}
+//
+//	@Bean
+//	public Lsp4jDomainArgumentResolver lsp4jDomainArgumentResolver() {
+//		return new Lsp4jDomainArgumentResolver();
+//	}
 
 	@Bean
 	public Lsp4jLanguageServerAdapter languageServer(LspHandler lspHandler,

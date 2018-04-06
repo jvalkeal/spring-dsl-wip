@@ -31,6 +31,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.support.ConversionServiceFactoryBean;
@@ -125,8 +126,9 @@ public class Lsp4jLanguageServerAdapterTests extends AbstractLspTests {
 		}
 
 		@Bean
-		public Lsp4jDomainArgumentResolver lsp4jDomainArgumentResolver() {
-			return new Lsp4jDomainArgumentResolver();
+		public Lsp4jDomainArgumentResolver lsp4jDomainArgumentResolver(
+				@Qualifier("lspConversionService") ConversionService conversionService) {
+			return new Lsp4jDomainArgumentResolver(conversionService);
 		}
 
 		@Bean

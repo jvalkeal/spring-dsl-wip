@@ -1,9 +1,0 @@
-logging:
-  file: simpledslserver.log
-spring:
-  main:
-    banner-mode: "off"
-  dsl:
-    lsp:
-      server:
-        mode: std

@@ -39,4 +39,29 @@ public class InitializeResult {
 	public void setCapabilities(ServerCapabilities capabilities) {
 		this.capabilities = capabilities;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((capabilities == null) ? 0 : capabilities.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		InitializeResult other = (InitializeResult) obj;
+		if (capabilities == null) {
+			if (other.capabilities != null)
+				return false;
+		} else if (!capabilities.equals(other.capabilities))
+			return false;
+		return true;
+	}
 }

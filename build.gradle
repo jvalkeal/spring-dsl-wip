@@ -1,7 +1,7 @@
 buildscript {
 	ext {
-		springVersion = '5.0.0.RELEASE'
-		springBootVersion = '2.0.0.RELEASE'
+		springVersion = '5.0.5.RELEASE'
+		springBootVersion = '2.0.1.RELEASE'
 		antlr4Version = '4.7.1'
 		lsp4jVersion = '0.3.0'
 		xtendVersion = '2.13.0'
@@ -129,6 +129,11 @@ project('spring-dsl-autoconfigure') {
 	description = "Spring Dsl Autoconfigure"
 
 	dependencies {
+		compile project(':spring-dsl-core')
+		optional project(':spring-dsl-lsp4j')
+		optional project(':spring-dsl-antlr')
+		optional project(':spring-dsl-websocket')
+		optional 'org.springframework.boot:spring-boot-configuration-processor'
 		compile 'org.springframework.boot:spring-boot-autoconfigure'
 	}
 }
@@ -139,6 +144,7 @@ project('spring-dsl-websocket') {
 	dependencies {
 		compile project(':spring-dsl-core')
 		compile 'org.springframework.boot:spring-boot-starter-websocket'
+		compile 'org.springframework.boot:spring-boot-starter-webflux'
 	}
 }
 
@@ -160,7 +166,7 @@ project('spring-dsl-lsp4j') {
 		testCompile 'org.hamcrest:hamcrest-core'
 		testCompile 'org.hamcrest:hamcrest-library'
 		testCompile 'junit:junit'
-		testRuntime 'org.springframework.boot:spring-boot-starter-test'
+		testCompile 'org.springframework.boot:spring-boot-starter-test'
 		testRuntime 'org.apache.logging.log4j:log4j-core'
 	}
 }

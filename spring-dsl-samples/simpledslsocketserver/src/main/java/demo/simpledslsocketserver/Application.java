@@ -13,15 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package demo.simpledsleditor;
+package demo.simpledslsocketserver;
 
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.Set;
 
-import org.eclipse.lsp4j.jsonrpc.json.JsonRpcMethod;
-import org.eclipse.lsp4j.jsonrpc.json.MessageJsonHandler;
-import org.eclipse.lsp4j.jsonrpc.services.ServiceEndpoints;
+import org.eclipse.lsp4j.jsonrpc.Launcher;
+import org.eclipse.lsp4j.launch.LSPLauncher;
 import org.eclipse.lsp4j.services.LanguageClient;
 import org.eclipse.lsp4j.services.LanguageServer;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -37,15 +35,18 @@ import org.springframework.dsl.lsp.server.config.EnableLanguageServer;
 import org.springframework.dsl.lsp4j.Lsp4jLanguageServerAdapter;
 import org.springframework.dsl.lsp4j.converter.GenericLsp4jObjectConverter;
 import org.springframework.dsl.lsp4j.result.method.annotation.Lsp4jDomainArgumentResolver;
-import org.springframework.dsl.lsp4j.rpc.StreamMessageProducerAdapter;
-import org.springframework.dsl.websocket.LspTextWebSocketHandler;
-import org.springframework.dsl.websocket.LspWebSocketConfig;
 
 import demo.simpledsl.EnableSimpleLanguage;
 
+/**
+ * {@code LSP} server implementing support for a {@code simple} sample language.
+ *
+ * @author Janne Valkealahti
+ *
+ */
 @EnableLanguageServer
 @EnableSimpleLanguage
-@Import({ LspWebSocketConfig.class, GenericLanguageServerController.class })
+@Import({ GenericLanguageServerController.class })
 @SpringBootApplication
 public class Application {
 
@@ -64,27 +65,14 @@ public class Application {
 //	}
 
 	@Bean
-	public MessageJsonHandler messageJsonHandler() {
-		LinkedHashMap<String, JsonRpcMethod> supportedMethods = new LinkedHashMap<String, JsonRpcMethod>();
-		supportedMethods.putAll(ServiceEndpoints.getSupportedMethods(LanguageClient.class));
-		supportedMethods.putAll(ServiceEndpoints.getSupportedMethods(LanguageServer.class));
-		MessageJsonHandler jsonHandler = new MessageJsonHandler(supportedMethods);
-		return jsonHandler;
-	}
-
-	@Bean
-	public LspTextWebSocketHandler lspTextWebSocketHandler(StreamMessageProducerAdapter streamMessageProducerAdapter) {
-		return new LspTextWebSocketHandler(streamMessageProducerAdapter);
-	}
-
-	@Bean
-	public StreamMessageProducerAdapter streamMessageProducerAdapter(MessageJsonHandler jsonHandler, LanguageServer languageServer) {
-		return new StreamMessageProducerAdapter(jsonHandler, languageServer);
-	}
-
-	@Bean
-	public Lsp4jLanguageServerAdapter languageServer(LspHandler lspHandler, @Qualifier("lspConversionService") ConversionService conversionService) {
+	public Lsp4jLanguageServerAdapter languageServer(LspHandler lspHandler,
+			@Qualifier("lspConversionService") ConversionService conversionService) {
 		return new Lsp4jLanguageServerAdapter(lspHandler, conversionService);
+	}
+
+	@Bean(initMethod = "startListening")
+	public Launcher<LanguageClient> lspServerLauncher(LanguageServer languageServer) {
+		return LSPLauncher.createServerLauncher(languageServer, System.in, System.out);
 	}
 
 	public static void main(String[] args) {

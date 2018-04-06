@@ -80,4 +80,43 @@ public class ServerCapabilities {
 		this.completionProvider = completionProvider;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((completionProvider == null) ? 0 : completionProvider.hashCode());
+		result = prime * result + ((hoverProvider == null) ? 0 : hoverProvider.hashCode());
+		result = prime * result + ((textDocumentSyncKind == null) ? 0 : textDocumentSyncKind.hashCode());
+		result = prime * result + ((textDocumentSyncOptions == null) ? 0 : textDocumentSyncOptions.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ServerCapabilities other = (ServerCapabilities) obj;
+		if (completionProvider == null) {
+			if (other.completionProvider != null)
+				return false;
+		} else if (!completionProvider.equals(other.completionProvider))
+			return false;
+		if (hoverProvider == null) {
+			if (other.hoverProvider != null)
+				return false;
+		} else if (!hoverProvider.equals(other.hoverProvider))
+			return false;
+		if (textDocumentSyncKind != other.textDocumentSyncKind)
+			return false;
+		if (textDocumentSyncOptions == null) {
+			if (other.textDocumentSyncOptions != null)
+				return false;
+		} else if (!textDocumentSyncOptions.equals(other.textDocumentSyncOptions))
+			return false;
+		return true;
+	}
 }

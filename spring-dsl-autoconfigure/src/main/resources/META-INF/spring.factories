@@ -1,3 +1,4 @@
 # Auto Configure
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.springframework.autoconfigure.LspAutoConfiguration
+org.springframework.dsl.autoconfigure.DslAutoConfiguration,\
+org.springframework.dsl.autoconfigure.Lsp4jAutoConfiguration

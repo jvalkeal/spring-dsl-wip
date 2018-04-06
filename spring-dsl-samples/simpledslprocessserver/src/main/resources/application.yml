@@ -1,9 +1,12 @@
 logging:
+  file: simpledslprocessserver.log
   level:
     org.springframework.dsl: debug
     org.eclipse.lsp4j: debug
 spring:
+  main:
+    banner-mode: "off"
   dsl:
     lsp:
       server:
-        mode: WEBSOCKET
+        mode: PROCESS

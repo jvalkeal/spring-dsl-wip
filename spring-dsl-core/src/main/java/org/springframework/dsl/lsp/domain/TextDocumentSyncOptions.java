@@ -56,4 +56,41 @@ public class TextDocumentSyncOptions {
 	public void setWillSaveWaitUntil(Boolean willSaveWaitUntil) {
 		this.willSaveWaitUntil = willSaveWaitUntil;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((openClose == null) ? 0 : openClose.hashCode());
+		result = prime * result + ((willSave == null) ? 0 : willSave.hashCode());
+		result = prime * result + ((willSaveWaitUntil == null) ? 0 : willSaveWaitUntil.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		TextDocumentSyncOptions other = (TextDocumentSyncOptions) obj;
+		if (openClose == null) {
+			if (other.openClose != null)
+				return false;
+		} else if (!openClose.equals(other.openClose))
+			return false;
+		if (willSave == null) {
+			if (other.willSave != null)
+				return false;
+		} else if (!willSave.equals(other.willSave))
+			return false;
+		if (willSaveWaitUntil == null) {
+			if (other.willSaveWaitUntil != null)
+				return false;
+		} else if (!willSaveWaitUntil.equals(other.willSaveWaitUntil))
+			return false;
+		return true;
+	}
 }

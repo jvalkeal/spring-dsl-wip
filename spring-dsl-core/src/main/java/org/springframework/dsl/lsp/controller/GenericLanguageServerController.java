@@ -27,6 +27,9 @@ import org.springframework.dsl.lsp.annotation.LspNoResponseBody;
 import org.springframework.dsl.lsp.annotation.LspResponseBody;
 import org.springframework.dsl.lsp.domain.CompletionOptions;
 import org.springframework.dsl.lsp.domain.DidChangeTextDocumentParams;
+import org.springframework.dsl.lsp.domain.DidCloseTextDocumentParams;
+import org.springframework.dsl.lsp.domain.DidOpenTextDocumentParams;
+import org.springframework.dsl.lsp.domain.DidSaveTextDocumentParams;
 import org.springframework.dsl.lsp.domain.InitializeParams;
 import org.springframework.dsl.lsp.domain.InitializeResult;
 import org.springframework.dsl.lsp.domain.ServerCapabilities;
@@ -85,8 +88,7 @@ public class GenericLanguageServerController {
 
 	@LspDidOpen
 	@LspNoResponseBody
-	public void clientDocumentOpened() {
-		// TODO: implement method params and do something useful
+	public void clientDocumentOpened(DidOpenTextDocumentParams params) {
 	}
 
 	@LspDidChange
@@ -100,13 +102,11 @@ public class GenericLanguageServerController {
 
 	@LspDidClose
 	@LspNoResponseBody
-	public void clientDocumentClosed() {
-		// TODO: implement method params and do something useful
+	public void clientDocumentClosed(DidCloseTextDocumentParams params) {
 	}
 
 	@LspDidSave
 	@LspNoResponseBody
-	public void clientDocumentSaved() {
-		// TODO: implement method params and do something useful
+	public void clientDocumentSaved(DidSaveTextDocumentParams params) {
 	}
 }

@@ -251,33 +251,21 @@ public class HandlerMethod {
 			super(original);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.springframework.core.MethodParameter#getContainingClass()
-		 */
 		@Override
 		public Class<?> getContainingClass() {
 			return HandlerMethod.this.getBeanType();
 		}
 
-		/* (non-Javadoc)
-		 * @see org.springframework.core.MethodParameter#getMethodAnnotation(java.lang.Class)
-		 */
 		@Override
 		public <T extends Annotation> T getMethodAnnotation(Class<T> annotationType) {
 			return HandlerMethod.this.getMethodAnnotation(annotationType);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.springframework.core.MethodParameter#hasMethodAnnotation(java.lang.Class)
-		 */
 		@Override
 		public <T extends Annotation> boolean hasMethodAnnotation(Class<T> annotationType) {
 			return HandlerMethod.this.hasMethodAnnotation(annotationType);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.springframework.core.annotation.SynthesizingMethodParameter#clone()
-		 */
 		@Override
 		public HandlerMethodParameter clone() {
 			return new HandlerMethodParameter(this);

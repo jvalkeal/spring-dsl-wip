@@ -16,18 +16,31 @@
 package org.springframework.dsl.lsp4j.converter;
 
 import org.springframework.dsl.lsp.domain.CompletionOptions;
+import org.springframework.dsl.lsp.domain.DidChangeTextDocumentParams;
+import org.springframework.dsl.lsp.domain.InitializeParams;
 import org.springframework.dsl.lsp.domain.InitializeResult;
 import org.springframework.dsl.lsp.domain.ServerCapabilities;
 import org.springframework.dsl.lsp.domain.TextDocumentSyncKind;
 import org.springframework.dsl.lsp.domain.TextDocumentSyncOptions;
 
 /**
- * Utilities to convert between {@code LSP4J} and {@code Spring DSL} {@code LSP} domain objects.
+ * Utilities to convert {@code POJO}s between {@code LSP4J} and
+ * {@code Spring DSL} {@code LSP} domain objects.
  *
  * @author Janne Valkealahti
  *
  */
 public final class ConverterUtils {
+
+	public static InitializeParams toInitializeParams(org.eclipse.lsp4j.InitializeParams from) {
+		InitializeParams to = new InitializeParams();
+		return to;
+	}
+
+	public static org.eclipse.lsp4j.InitializeParams toInitializeParams(InitializeParams from) {
+		org.eclipse.lsp4j.InitializeParams to = new org.eclipse.lsp4j.InitializeParams();
+		return to;
+	}
 
 	public static InitializeResult toInitializeResult(org.eclipse.lsp4j.InitializeResult from) {
 		InitializeResult to = new InitializeResult();
@@ -56,7 +69,21 @@ public final class ConverterUtils {
 		org.eclipse.lsp4j.ServerCapabilities to = new org.eclipse.lsp4j.ServerCapabilities();
 		to.setHoverProvider(from.getHoverProvider());
 		to.setCompletionProvider(toCompletionOptions(from.getCompletionProvider()));
-		to.setTextDocumentSync(toTextDocumentSyncKind(from.getTextDocumentSyncKind()));
+		if (from.getTextDocumentSyncOptions() != null) {
+			to.setTextDocumentSync(toTextDocumentSyncOptions(from.getTextDocumentSyncOptions()));
+		} else if (from.getTextDocumentSyncKind() != null) {
+			to.setTextDocumentSync(toTextDocumentSyncKind(from.getTextDocumentSyncKind()));
+		}
+		return to;
+	}
+
+	public static TextDocumentSyncOptions toTextDocumentSyncOptions(org.eclipse.lsp4j.TextDocumentSyncOptions from) {
+		TextDocumentSyncOptions to = new TextDocumentSyncOptions();
+		return to;
+	}
+
+	public static org.eclipse.lsp4j.TextDocumentSyncOptions toTextDocumentSyncOptions(TextDocumentSyncOptions from) {
+		org.eclipse.lsp4j.TextDocumentSyncOptions to = new org.eclipse.lsp4j.TextDocumentSyncOptions();
 		return to;
 	}
 
@@ -86,6 +113,16 @@ public final class ConverterUtils {
 			return null;
 		}
 		return new org.eclipse.lsp4j.CompletionOptions();
+	}
+
+	public static DidChangeTextDocumentParams toDidChangeTextDocumentParams(org.eclipse.lsp4j.DidChangeTextDocumentParams from) {
+		DidChangeTextDocumentParams to = new DidChangeTextDocumentParams();
+		return to;
+	}
+
+	public static org.eclipse.lsp4j.DidChangeTextDocumentParams toDidChangeTextDocumentParams(DidChangeTextDocumentParams from) {
+		org.eclipse.lsp4j.DidChangeTextDocumentParams to = new org.eclipse.lsp4j.DidChangeTextDocumentParams();
+		return to;
 	}
 
 }
