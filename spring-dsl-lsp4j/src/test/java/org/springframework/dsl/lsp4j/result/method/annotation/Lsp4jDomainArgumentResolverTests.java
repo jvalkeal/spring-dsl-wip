@@ -26,11 +26,16 @@ import org.junit.Test;
 import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.SynthesizingMethodParameter;
+import org.springframework.dsl.lsp.LspMethod;
 import org.springframework.dsl.lsp.domain.DidChangeTextDocumentParams;
 import org.springframework.dsl.lsp.domain.DidCloseTextDocumentParams;
 import org.springframework.dsl.lsp.domain.DidOpenTextDocumentParams;
 import org.springframework.dsl.lsp.domain.DidSaveTextDocumentParams;
 import org.springframework.dsl.lsp.domain.InitializeParams;
+import org.springframework.dsl.lsp.server.ServerLspExchange;
+import org.springframework.dsl.lsp.server.support.DefaultServerCoapExchange;
+import org.springframework.dsl.lsp.server.support.GenericServerLspRequest;
+import org.springframework.dsl.lsp.server.support.GenericServerLspResponse;
 import org.springframework.dsl.lsp4j.converter.GenericLsp4jObjectConverter;
 
 /**
@@ -72,6 +77,14 @@ public class Lsp4jDomainArgumentResolverTests {
 		assertThat(resolver.supportsParameter(paramDidSaveTextDocumentParams)).isTrue();
 	}
 
+	@Test
+	public void testConversions() {
+		ServerLspExchange exchange = createExchange(LspMethod.DIDSAVE,
+				new org.eclipse.lsp4j.DidSaveTextDocumentParams());
+		Object object = this.resolver.resolveArgument(paramDidSaveTextDocumentParams, exchange).block();
+		assertThat(object).isInstanceOf(DidSaveTextDocumentParams.class);
+	}
+
 	@SuppressWarnings("unused")
 	private void testMethod(InitializeParams p1, DidChangeTextDocumentParams p2, DidCloseTextDocumentParams p3,
 			DidOpenTextDocumentParams p4, DidSaveTextDocumentParams p5) {
@@ -83,6 +96,13 @@ public class Lsp4jDomainArgumentResolverTests {
 		converters.add(new GenericLsp4jObjectConverter());
 		factoryBean.setConverters(converters);
 		return factoryBean;
+	}
+
+	private static ServerLspExchange createExchange(LspMethod lspMethod, Object body) {
+		GenericServerLspRequest request = new GenericServerLspRequest(body);
+		request.setMethod(lspMethod);
+		GenericServerLspResponse response = new GenericServerLspResponse();
+		return new DefaultServerCoapExchange(request, response);
 	}
 
 }

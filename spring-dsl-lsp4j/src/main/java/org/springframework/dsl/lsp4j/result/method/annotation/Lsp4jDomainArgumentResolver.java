@@ -33,7 +33,8 @@ import reactor.core.publisher.Mono;
 /**
  * A {@link LspHandlerMethodArgumentResolver} implementation resolving
  * {@code LSP} domain objects based on a {@code body} in a
- * {@link LspInputMessage}. Dispatches to
+ * {@link LspInputMessage}. Dispatches conversion of an argument type to
+ * {@link ConversionService}.
  *
  * @author Janne Valkealahti
  *
@@ -70,39 +71,51 @@ public class Lsp4jDomainArgumentResolver implements LspHandlerMethodArgumentReso
 //
 //		if (conversionService.)
 
-		if (ClassUtils.isAssignable(org.eclipse.lsp4j.InitializeParams.class,
-				exchange.getRequest().getBody().getClass())) {
-			return Mono.just(conversionService.convert(body, InitializeParams.class));
-		} else if (ClassUtils.isAssignable(DidChangeTextDocumentParams.class,
-				exchange.getRequest().getBody().getClass())) {
-			return Mono.just(conversionService.convert(body, DidChangeTextDocumentParams.class));
-		} else if (ClassUtils.isAssignable(DidCloseTextDocumentParams.class,
-				exchange.getRequest().getBody().getClass())) {
-			return Mono.just(conversionService.convert(body, DidCloseTextDocumentParams.class));
-		} else if (ClassUtils.isAssignable(DidOpenTextDocumentParams.class,
-				exchange.getRequest().getBody().getClass())) {
-			return Mono.just(conversionService.convert(body, DidOpenTextDocumentParams.class));
-		} else if (ClassUtils.isAssignable(DidSaveTextDocumentParams.class,
-				exchange.getRequest().getBody().getClass())) {
-			return Mono.just(conversionService.convert(body, DidSaveTextDocumentParams.class));
-		} else if (ClassUtils.isAssignable(org.eclipse.lsp4j.DidSaveTextDocumentParams.class,
-				exchange.getRequest().getBody().getClass())) {
-			return Mono.just(conversionService.convert(body, org.eclipse.lsp4j.DidSaveTextDocumentParams.class));
-		} else if (ClassUtils.isAssignable(org.eclipse.lsp4j.DidSaveTextDocumentParams.class,
-				exchange.getRequest().getBody().getClass())) {
-			return Mono.just(conversionService.convert(body, org.eclipse.lsp4j.DidSaveTextDocumentParams.class));
-		} else if (ClassUtils.isAssignable(org.eclipse.lsp4j.DidSaveTextDocumentParams.class,
-				exchange.getRequest().getBody().getClass())) {
-			return Mono.just(conversionService.convert(body, org.eclipse.lsp4j.DidSaveTextDocumentParams.class));
-		} else if (ClassUtils.isAssignable(org.eclipse.lsp4j.DidSaveTextDocumentParams.class,
-				exchange.getRequest().getBody().getClass())) {
-			return Mono.just(conversionService.convert(body, org.eclipse.lsp4j.DidSaveTextDocumentParams.class));
-		} else if (ClassUtils.isAssignable(org.eclipse.lsp4j.DidSaveTextDocumentParams.class,
-				exchange.getRequest().getBody().getClass())) {
-			return Mono.just(conversionService.convert(body, org.eclipse.lsp4j.DidSaveTextDocumentParams.class));
-		} else {
-			return Mono.empty();
-		}
+
+		Class<?> clazz = parameter.getParameterType();
+		return Mono.just(conversionService.convert(body, clazz));
+
+
+//		if (ClassUtils.isAssignable(org.eclipse.lsp4j.InitializeParams.class,
+//				exchange.getRequest().getBody().getClass())) {
+//			return Mono.just(conversionService.convert(body, InitializeParams.class));
+//		} else if (ClassUtils.isAssignable(DidChangeTextDocumentParams.class,
+//				exchange.getRequest().getBody().getClass())) {
+//			return Mono.just(conversionService.convert(body, DidChangeTextDocumentParams.class));
+//		} else if (ClassUtils.isAssignable(DidCloseTextDocumentParams.class,
+//				exchange.getRequest().getBody().getClass())) {
+//			return Mono.just(conversionService.convert(body, DidCloseTextDocumentParams.class));
+//		} else if (ClassUtils.isAssignable(DidOpenTextDocumentParams.class,
+//				exchange.getRequest().getBody().getClass())) {
+//			return Mono.just(conversionService.convert(body, DidOpenTextDocumentParams.class));
+//		} else if (ClassUtils.isAssignable(DidSaveTextDocumentParams.class,
+//				exchange.getRequest().getBody().getClass())) {
+//			return Mono.just(conversionService.convert(body, DidSaveTextDocumentParams.class));
+//
+//
+//		} else if (ClassUtils.isAssignable(org.eclipse.lsp4j.DidSaveTextDocumentParams.class,
+//				exchange.getRequest().getBody().getClass())) {
+//			return Mono.just(conversionService.convert(body, org.eclipse.lsp4j.DidSaveTextDocumentParams.class));
+//
+//		} else if (ClassUtils.isAssignable(org.eclipse.lsp4j.DidSaveTextDocumentParams.class,
+//				exchange.getRequest().getBody().getClass())) {
+//			return Mono.just(conversionService.convert(body, org.eclipse.lsp4j.DidSaveTextDocumentParams.class));
+//
+//		} else if (ClassUtils.isAssignable(org.eclipse.lsp4j.DidSaveTextDocumentParams.class,
+//				exchange.getRequest().getBody().getClass())) {
+//			return Mono.just(conversionService.convert(body, org.eclipse.lsp4j.DidSaveTextDocumentParams.class));
+//
+//		} else if (ClassUtils.isAssignable(org.eclipse.lsp4j.DidSaveTextDocumentParams.class,
+//				exchange.getRequest().getBody().getClass())) {
+//			return Mono.just(conversionService.convert(body, org.eclipse.lsp4j.DidSaveTextDocumentParams.class));
+//
+//		} else if (ClassUtils.isAssignable(org.eclipse.lsp4j.DidSaveTextDocumentParams.class,
+//				exchange.getRequest().getBody().getClass())) {
+//			return Mono.just(conversionService.convert(body, org.eclipse.lsp4j.DidSaveTextDocumentParams.class));
+//
+//		} else {
+//			return Mono.empty();
+//		}
 	}
 
 }

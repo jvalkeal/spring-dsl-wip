@@ -21,6 +21,9 @@ import java.util.Set;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.core.convert.converter.GenericConverter;
 import org.springframework.dsl.lsp.domain.DidChangeTextDocumentParams;
+import org.springframework.dsl.lsp.domain.DidCloseTextDocumentParams;
+import org.springframework.dsl.lsp.domain.DidOpenTextDocumentParams;
+import org.springframework.dsl.lsp.domain.DidSaveTextDocumentParams;
 import org.springframework.dsl.lsp.domain.InitializeParams;
 import org.springframework.dsl.lsp.domain.InitializeResult;
 import org.springframework.util.ClassUtils;
@@ -34,20 +37,49 @@ import org.springframework.util.ClassUtils;
  */
 public class GenericLsp4jObjectConverter implements GenericConverter {
 
+	private final static Class<?>[] typePairs = new Class[] {
+			InitializeParams.class, org.eclipse.lsp4j.InitializeParams.class,
+			InitializeResult.class, org.eclipse.lsp4j.InitializeResult.class,
+			DidChangeTextDocumentParams.class, org.eclipse.lsp4j.DidChangeTextDocumentParams.class,
+			DidCloseTextDocumentParams.class, org.eclipse.lsp4j.DidCloseTextDocumentParams.class,
+			DidOpenTextDocumentParams.class, org.eclipse.lsp4j.DidOpenTextDocumentParams.class,
+			DidSaveTextDocumentParams.class, org.eclipse.lsp4j.DidSaveTextDocumentParams.class
+			};
+
 	@Override
 	public Set<ConvertiblePair> getConvertibleTypes() {
 		Set<ConvertiblePair> convertiblePairs = new HashSet<ConvertiblePair>();
 
-		convertiblePairs.add(new ConvertiblePair(InitializeParams.class, org.eclipse.lsp4j.InitializeParams.class));
-		convertiblePairs.add(new ConvertiblePair(org.eclipse.lsp4j.InitializeParams.class, InitializeParams.class));
+		for (int i = 0; i < typePairs.length; i += 2) {
+			convertiblePairs.add(new ConvertiblePair(typePairs[i], typePairs[i + 1]));
+			convertiblePairs.add(new ConvertiblePair(typePairs[i + 1], typePairs[i]));
+		}
 
-		convertiblePairs.add(new ConvertiblePair(InitializeResult.class, org.eclipse.lsp4j.InitializeResult.class));
-		convertiblePairs.add(new ConvertiblePair(org.eclipse.lsp4j.InitializeResult.class, InitializeResult.class));
-
-		convertiblePairs.add(new ConvertiblePair(DidChangeTextDocumentParams.class,
-				org.eclipse.lsp4j.DidChangeTextDocumentParams.class));
-		convertiblePairs.add(new ConvertiblePair(org.eclipse.lsp4j.DidChangeTextDocumentParams.class,
-				DidChangeTextDocumentParams.class));
+//		convertiblePairs.add(new ConvertiblePair(InitializeParams.class, org.eclipse.lsp4j.InitializeParams.class));
+//		convertiblePairs.add(new ConvertiblePair(org.eclipse.lsp4j.InitializeParams.class, InitializeParams.class));
+//
+//		convertiblePairs.add(new ConvertiblePair(InitializeResult.class, org.eclipse.lsp4j.InitializeResult.class));
+//		convertiblePairs.add(new ConvertiblePair(org.eclipse.lsp4j.InitializeResult.class, InitializeResult.class));
+//
+//		convertiblePairs.add(new ConvertiblePair(DidChangeTextDocumentParams.class,
+//				org.eclipse.lsp4j.DidChangeTextDocumentParams.class));
+//		convertiblePairs.add(new ConvertiblePair(org.eclipse.lsp4j.DidChangeTextDocumentParams.class,
+//				DidChangeTextDocumentParams.class));
+//
+//		convertiblePairs.add(new ConvertiblePair(DidCloseTextDocumentParams.class,
+//				org.eclipse.lsp4j.DidCloseTextDocumentParams.class));
+//		convertiblePairs.add(new ConvertiblePair(org.eclipse.lsp4j.DidCloseTextDocumentParams.class,
+//				DidCloseTextDocumentParams.class));
+//
+//		convertiblePairs.add(new ConvertiblePair(DidOpenTextDocumentParams.class,
+//				org.eclipse.lsp4j.DidOpenTextDocumentParams.class));
+//		convertiblePairs.add(new ConvertiblePair(org.eclipse.lsp4j.DidOpenTextDocumentParams.class,
+//				DidOpenTextDocumentParams.class));
+//
+//		convertiblePairs.add(new ConvertiblePair(DidSaveTextDocumentParams.class,
+//				org.eclipse.lsp4j.DidSaveTextDocumentParams.class));
+//		convertiblePairs.add(new ConvertiblePair(org.eclipse.lsp4j.DidSaveTextDocumentParams.class,
+//				DidSaveTextDocumentParams.class));
 
 		return convertiblePairs;
 	}
@@ -60,9 +92,30 @@ public class GenericLsp4jObjectConverter implements GenericConverter {
 			return ConverterUtils.toInitializeParams((InitializeParams) source);
 		} else if (ClassUtils.isAssignable(DidChangeTextDocumentParams.class, sourceType.getType())) {
 			return ConverterUtils.toDidChangeTextDocumentParams((DidChangeTextDocumentParams) source);
+		} else if (ClassUtils.isAssignable(DidSaveTextDocumentParams.class, sourceType.getType())) {
+			return ConverterUtils.toDidSaveTextDocumentParams((DidSaveTextDocumentParams) source);
+
 		} else if (ClassUtils.isAssignable(org.eclipse.lsp4j.InitializeParams.class, sourceType.getType())) {
 			return ConverterUtils.toInitializeParams((org.eclipse.lsp4j.InitializeParams) source);
 		}
+
+
+		if (ClassUtils.isAssignable(org.eclipse.lsp4j.DidChangeTextDocumentParams.class, sourceType.getType())) {
+			return ConverterUtils.toDidChangeTextDocumentParams((org.eclipse.lsp4j.DidChangeTextDocumentParams) source);
+		}
+
+		if (ClassUtils.isAssignable(org.eclipse.lsp4j.DidCloseTextDocumentParams.class, sourceType.getType())) {
+			return ConverterUtils.toDidCloseTextDocumentParams((org.eclipse.lsp4j.DidCloseTextDocumentParams) source);
+		}
+
+		if (ClassUtils.isAssignable(org.eclipse.lsp4j.DidOpenTextDocumentParams.class, sourceType.getType())) {
+			return ConverterUtils.toDidOpenTextDocumentParams((org.eclipse.lsp4j.DidOpenTextDocumentParams) source);
+		}
+
+		if (ClassUtils.isAssignable(org.eclipse.lsp4j.DidSaveTextDocumentParams.class, sourceType.getType())) {
+			return ConverterUtils.toDidSaveTextDocumentParams((org.eclipse.lsp4j.DidSaveTextDocumentParams) source);
+		}
+
 		throw new IllegalArgumentException();
 	}
 }

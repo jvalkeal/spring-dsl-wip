@@ -17,6 +17,9 @@ package org.springframework.dsl.lsp4j.converter;
 
 import org.springframework.dsl.lsp.domain.CompletionOptions;
 import org.springframework.dsl.lsp.domain.DidChangeTextDocumentParams;
+import org.springframework.dsl.lsp.domain.DidCloseTextDocumentParams;
+import org.springframework.dsl.lsp.domain.DidOpenTextDocumentParams;
+import org.springframework.dsl.lsp.domain.DidSaveTextDocumentParams;
 import org.springframework.dsl.lsp.domain.InitializeParams;
 import org.springframework.dsl.lsp.domain.InitializeResult;
 import org.springframework.dsl.lsp.domain.ServerCapabilities;
@@ -122,6 +125,36 @@ public final class ConverterUtils {
 
 	public static org.eclipse.lsp4j.DidChangeTextDocumentParams toDidChangeTextDocumentParams(DidChangeTextDocumentParams from) {
 		org.eclipse.lsp4j.DidChangeTextDocumentParams to = new org.eclipse.lsp4j.DidChangeTextDocumentParams();
+		return to;
+	}
+
+	public static DidCloseTextDocumentParams toDidCloseTextDocumentParams(org.eclipse.lsp4j.DidCloseTextDocumentParams from) {
+		DidCloseTextDocumentParams to = new DidCloseTextDocumentParams();
+		return to;
+	}
+
+	public static org.eclipse.lsp4j.DidCloseTextDocumentParams toDidCloseTextDocumentParams(DidCloseTextDocumentParams from) {
+		org.eclipse.lsp4j.DidCloseTextDocumentParams to = new org.eclipse.lsp4j.DidCloseTextDocumentParams();
+		return to;
+	}
+
+	public static DidOpenTextDocumentParams toDidOpenTextDocumentParams(org.eclipse.lsp4j.DidOpenTextDocumentParams from) {
+		DidOpenTextDocumentParams to = new DidOpenTextDocumentParams();
+		return to;
+	}
+
+	public static org.eclipse.lsp4j.DidOpenTextDocumentParams toDidOpenTextDocumentParams(DidOpenTextDocumentParams from) {
+		org.eclipse.lsp4j.DidOpenTextDocumentParams to = new org.eclipse.lsp4j.DidOpenTextDocumentParams();
+		return to;
+	}
+
+	public static DidSaveTextDocumentParams toDidSaveTextDocumentParams(org.eclipse.lsp4j.DidSaveTextDocumentParams from) {
+		DidSaveTextDocumentParams to = new DidSaveTextDocumentParams();
+		return to;
+	}
+
+	public static org.eclipse.lsp4j.DidSaveTextDocumentParams toDidSaveTextDocumentParams(DidSaveTextDocumentParams from) {
+		org.eclipse.lsp4j.DidSaveTextDocumentParams to = new org.eclipse.lsp4j.DidSaveTextDocumentParams();
 		return to;
 	}
 

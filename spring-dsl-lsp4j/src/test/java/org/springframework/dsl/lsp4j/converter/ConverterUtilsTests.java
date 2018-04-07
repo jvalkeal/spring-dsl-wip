@@ -18,6 +18,10 @@ package org.springframework.dsl.lsp4j.converter;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
+import org.springframework.dsl.lsp.domain.DidChangeTextDocumentParams;
+import org.springframework.dsl.lsp.domain.DidCloseTextDocumentParams;
+import org.springframework.dsl.lsp.domain.DidOpenTextDocumentParams;
+import org.springframework.dsl.lsp.domain.DidSaveTextDocumentParams;
 import org.springframework.dsl.lsp.domain.InitializeParams;
 import org.springframework.dsl.lsp.domain.InitializeResult;
 import org.springframework.dsl.lsp.domain.ServerCapabilities;
@@ -27,7 +31,7 @@ public class ConverterUtilsTests {
 
 	@Test
 	public void testGenericConversionsUsingDefaultConstructors() {
-		// we do back and forward conversion from spring dsl and lsp4j
+		// test back and forward conversion from spring dsl and lsp4j
 		// to both directions which should catch most common mistakes.
 
 		assertInitializeParams(new InitializeParams());
@@ -41,6 +45,18 @@ public class ConverterUtilsTests {
 
 		assertTextDocumentSyncOptions(new TextDocumentSyncOptions());
 		assertTextDocumentSyncOptions(new org.eclipse.lsp4j.TextDocumentSyncOptions());
+
+		assertDidChangeTextDocumentParams(new DidChangeTextDocumentParams());
+		assertDidChangeTextDocumentParams(new org.eclipse.lsp4j.DidChangeTextDocumentParams());
+
+		assertDidCloseTextDocumentParams(new DidCloseTextDocumentParams());
+		assertDidCloseTextDocumentParams(new org.eclipse.lsp4j.DidCloseTextDocumentParams());
+
+		assertDidOpenTextDocumentParams(new DidOpenTextDocumentParams());
+		assertDidOpenTextDocumentParams(new org.eclipse.lsp4j.DidOpenTextDocumentParams());
+
+		assertDidSaveTextDocumentParams(new DidSaveTextDocumentParams());
+		assertDidSaveTextDocumentParams(new org.eclipse.lsp4j.DidSaveTextDocumentParams());
 	}
 
 	private static void assertInitializeParams(InitializeParams from) {
@@ -73,6 +89,38 @@ public class ConverterUtilsTests {
 
 	private static void assertTextDocumentSyncOptions(org.eclipse.lsp4j.TextDocumentSyncOptions from) {
 		assertObjects(from, ConverterUtils.toTextDocumentSyncOptions(ConverterUtils.toTextDocumentSyncOptions(from)));
+	}
+
+	private static void assertDidChangeTextDocumentParams(DidChangeTextDocumentParams from) {
+		assertObjects(from, ConverterUtils.toDidChangeTextDocumentParams(ConverterUtils.toDidChangeTextDocumentParams(from)));
+	}
+
+	private static void assertDidChangeTextDocumentParams(org.eclipse.lsp4j.DidChangeTextDocumentParams from) {
+		assertObjects(from, ConverterUtils.toDidChangeTextDocumentParams(ConverterUtils.toDidChangeTextDocumentParams(from)));
+	}
+
+	private static void assertDidCloseTextDocumentParams(DidCloseTextDocumentParams from) {
+		assertObjects(from, ConverterUtils.toDidCloseTextDocumentParams(ConverterUtils.toDidCloseTextDocumentParams(from)));
+	}
+
+	private static void assertDidCloseTextDocumentParams(org.eclipse.lsp4j.DidCloseTextDocumentParams from) {
+		assertObjects(from, ConverterUtils.toDidCloseTextDocumentParams(ConverterUtils.toDidCloseTextDocumentParams(from)));
+	}
+
+	private static void assertDidOpenTextDocumentParams(DidOpenTextDocumentParams from) {
+		assertObjects(from, ConverterUtils.toDidOpenTextDocumentParams(ConverterUtils.toDidOpenTextDocumentParams(from)));
+	}
+
+	private static void assertDidOpenTextDocumentParams(org.eclipse.lsp4j.DidOpenTextDocumentParams from) {
+		assertObjects(from, ConverterUtils.toDidOpenTextDocumentParams(ConverterUtils.toDidOpenTextDocumentParams(from)));
+	}
+
+	private static void assertDidSaveTextDocumentParams(DidSaveTextDocumentParams from) {
+		assertObjects(from, ConverterUtils.toDidSaveTextDocumentParams(ConverterUtils.toDidSaveTextDocumentParams(from)));
+	}
+
+	private static void assertDidSaveTextDocumentParams(org.eclipse.lsp4j.DidSaveTextDocumentParams from) {
+		assertObjects(from, ConverterUtils.toDidSaveTextDocumentParams(ConverterUtils.toDidSaveTextDocumentParams(from)));
 	}
 
 	private static void assertObjects(Object from, Object to) {
