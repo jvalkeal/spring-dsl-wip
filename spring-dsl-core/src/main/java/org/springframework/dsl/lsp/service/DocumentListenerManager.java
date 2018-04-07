@@ -13,18 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.lsp.model;
+package org.springframework.dsl.lsp.service;
 
-/**
- *
- * @author Kris De Volder
- * @author Janne Valkealahti
- *
- */
-public interface ProblemType {
+import java.util.function.Consumer;
 
-	ProblemSeverity getDefaultSeverity();
+import org.springframework.dsl.document.TextDocument;
+import org.springframework.dsl.document.TextDocumentContentChange;
 
-	String getCode();
+import reactor.core.Disposable;
+
+public interface DocumentListenerManager {
+
+	Disposable onDidChangeContent(Consumer<TextDocumentContentChange> l);
+
+	Disposable onDidClose(Consumer<TextDocument> l);
 
 }

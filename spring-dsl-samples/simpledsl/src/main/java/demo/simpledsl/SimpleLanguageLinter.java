@@ -15,28 +15,36 @@
  */
 package demo.simpledsl;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.dsl.lsp.model.Document;
-import org.springframework.dsl.lsp.model.ReconcileProblem;
-import org.springframework.dsl.lsp.service.Reconciler;
+import java.io.BufferedReader;
+import java.io.StringReader;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.dsl.document.Document;
+import org.springframework.dsl.reconcile.Linter;
+import org.springframework.dsl.reconcile.ReconcileProblem;
 
 import reactor.core.publisher.Flux;
 
 /**
- * A {@link Reconciler} implementation for a {@code simple} sample language.
+ * A {@link Linter} for a {@code simple} language.
  *
  * @author Janne Valkealahti
- * @see EnableSimpleLanguage
  *
  */
-public class SimpleLanguageReconciler implements Reconciler {
-
-	private static final Logger log = LoggerFactory.getLogger(SimpleLanguageReconciler.class);
+public class SimpleLanguageLinter implements Linter {
 
 	@Override
-	public Flux<ReconcileProblem> reconcile(Document document) {
-		log.debug("Starting reconciling document {}", document);
+	public Flux<ReconcileProblem> lint(Document doc) {
+
+		String content = doc.get();
+		List<String> lines = new BufferedReader(new StringReader(content)).lines().collect(Collectors.toList());
+
+		for (String line : lines) {
+			String[] split = line.split("=");
+
+
+		}
 		return Flux.empty();
 	}
 }

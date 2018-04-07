@@ -27,6 +27,12 @@ import org.springframework.dsl.lsp.domain.InitializeResult;
 import org.springframework.dsl.lsp.domain.ServerCapabilities;
 import org.springframework.dsl.lsp.domain.TextDocumentSyncOptions;
 
+/**
+ * Tests for {@link ConverterUtils}.
+ *
+ * @author Janne Valkealahti
+ *
+ */
 public class ConverterUtilsTests {
 
 	@Test

@@ -15,42 +15,30 @@
  */
 package org.springframework.dsl.lsp.domain;
 
-public class Range {
+public class VersionedTextDocumentIdentifier extends TextDocumentIdentifier {
 
-	private Position start;
+	private int version;
 
-	private Position end;
-
-	public Range() {
+	public VersionedTextDocumentIdentifier() {
 	}
 
-	public Range(Position start, Position end) {
-		this.start = start;
-		this.end = end;
+	public VersionedTextDocumentIdentifier(int version) {
+		this.version = version;
 	}
 
-	public Position getStart() {
-		return start;
+	public int getVersion() {
+		return version;
 	}
 
-	public void setStart(Position start) {
-		this.start = start;
-	}
-
-	public Position getEnd() {
-		return end;
-	}
-
-	public void setEnd(Position end) {
-		this.end = end;
+	public void setVersion(int version) {
+		this.version = version;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((end == null) ? 0 : end.hashCode());
-		result = prime * result + ((start == null) ? 0 : start.hashCode());
+		result = prime * result + version;
 		return result;
 	}
 
@@ -62,16 +50,8 @@ public class Range {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Range other = (Range) obj;
-		if (end == null) {
-			if (other.end != null)
-				return false;
-		} else if (!end.equals(other.end))
-			return false;
-		if (start == null) {
-			if (other.start != null)
-				return false;
-		} else if (!start.equals(other.start))
+		VersionedTextDocumentIdentifier other = (VersionedTextDocumentIdentifier) obj;
+		if (version != other.version)
 			return false;
 		return true;
 	}

@@ -9,6 +9,7 @@ buildscript {
 		propdepsVersion = '0.0.8'
 		asciidoctorVersion = '1.5.3'
 		docbookRererenceVersion = '0.3.1'
+		javolutionVersion = '6.0.0'
 	}
 	repositories {
 		mavenCentral()
@@ -64,6 +65,10 @@ configure(allprojects) {
 			dependency "org.antlr:antlr4-runtime:$antlr4Version"
 			dependency "org.eclipse.lsp4j:org.eclipse.lsp4j:$lsp4jVersion"
 			dependency "org.eclipse.xtend:org.eclipse.xtend.lib:$xtendVersion"
+			dependency("org.javolution:javolution-core-java:$javolutionVersion") {
+				exclude 'org.osgi:org.osgi.core'
+				exclude 'org.osgi:org.osgi.compendium'
+			}
 		}
 	}
 
@@ -119,6 +124,7 @@ project('spring-dsl-core') {
 		compile 'org.springframework:spring-web'
 		compile 'org.slf4j:slf4j-api'
 		compile 'io.projectreactor:reactor-core'
+		compile 'org.javolution:javolution-core-java'
 		optional 'com.google.code.gson:gson'
 		testCompile 'org.springframework.boot:spring-boot-starter-test'
 		testRuntime 'org.springframework.boot:spring-boot-starter'

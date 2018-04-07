@@ -34,7 +34,7 @@ import org.springframework.dsl.lsp.domain.InitializeParams;
 import org.springframework.dsl.lsp.domain.InitializeResult;
 import org.springframework.dsl.lsp.domain.ServerCapabilities;
 import org.springframework.dsl.lsp.domain.TextDocumentSyncKind;
-import org.springframework.dsl.lsp.model.Document;
+import org.springframework.dsl.lsp.domain.VersionedTextDocumentIdentifier;
 import org.springframework.dsl.lsp.service.Completioner;
 import org.springframework.dsl.lsp.service.Hoverer;
 import org.springframework.dsl.lsp.service.Reconciler;
@@ -96,7 +96,8 @@ public class GenericLanguageServerController {
 	public void clientDocumentChanged(DidChangeTextDocumentParams params, LspClientContext context) {
 		Reconciler reconciler = reconcilerProvider.getIfAvailable();
 		if (reconciler != null) {
-
+			VersionedTextDocumentIdentifier identifier = params.getTextDocument();
+			String uri = identifier.getUri();
 		}
 	}
 

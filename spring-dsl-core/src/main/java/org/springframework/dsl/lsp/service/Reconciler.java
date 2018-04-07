@@ -15,25 +15,25 @@
  */
 package org.springframework.dsl.lsp.service;
 
-import org.springframework.dsl.lsp.model.Document;
-import org.springframework.dsl.lsp.model.ReconcileProblem;
+import org.springframework.dsl.lsp.domain.VersionedTextDocumentIdentifier;
 
-import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
- * Strategy interface for reconciling a {@link Document}.
+ * Strategy interface for reconciling a {@code document}.
  *
  * @author Kris De Volder
  * @author Janne Valkealahti
  *
  */
+@FunctionalInterface
 public interface Reconciler {
 
 	/**
-	 * Reconcile a {@link Document}.
+	 * Reconcile a {@code document} and return {@link Mono} for completion.
 	 *
-	 * @param document the document to reconcile
-	 * @return a {@link Flux} of {@link ReconcileProblem}s
+	 * @param identifier the document identifier
+	 * @return a {@link Mono} indicating reconcile operation completion
 	 */
-	public Flux<ReconcileProblem> reconcile(Document document);
+	Mono<Void> reconcile(VersionedTextDocumentIdentifier identifier);
 }

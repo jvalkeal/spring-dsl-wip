@@ -25,8 +25,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-//import org.eclipse.lsp4j.InitializeParams;
-//import org.eclipse.lsp4j.InitializeResult;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +34,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.dsl.document.Document;
 import org.springframework.dsl.lsp.LspClientContext;
 import org.springframework.dsl.lsp.annotation.LspController;
 import org.springframework.dsl.lsp.annotation.LspDidChange;
@@ -45,16 +44,17 @@ import org.springframework.dsl.lsp.annotation.LspResponseBody;
 import org.springframework.dsl.lsp.domain.DidChangeTextDocumentParams;
 import org.springframework.dsl.lsp.domain.InitializeParams;
 import org.springframework.dsl.lsp.domain.InitializeResult;
-import org.springframework.dsl.lsp.model.Document;
-import org.springframework.dsl.lsp.model.ReconcileProblem;
+import org.springframework.dsl.lsp.domain.VersionedTextDocumentIdentifier;
 import org.springframework.dsl.lsp.server.config.EnableLanguageServer;
 import org.springframework.dsl.lsp.server.result.method.annotation.DefaultReconcileProblem;
 import org.springframework.dsl.lsp.server.support.DispatcherHandler;
 import org.springframework.dsl.lsp.service.Reconciler;
 import org.springframework.dsl.lsp4j.converter.GenericLsp4jObjectConverter;
 import org.springframework.dsl.lsp4j.result.method.annotation.Lsp4jDomainArgumentResolver;
+import org.springframework.dsl.reconcile.ReconcileProblem;
 
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * Tests for generic functionality around {@link Lsp4jLanguageServerAdapter}.
@@ -156,13 +156,13 @@ public class Lsp4jLanguageServerAdapterTests extends AbstractLspTests {
 		@LspDidChange
 		@LspNoResponseBody
 		public void clientDocumentChanged(DidChangeTextDocumentParams params, LspClientContext context) {
-			Reconciler reconciler = reconcilerProvider.getIfAvailable();
-			if (reconciler != null) {
-				reconciler.reconcile(null).doOnNext(problem -> {
-					log.info("XXXXX Hello from reconciler {} {}", problem, context);
-					context.getClient().send(problem);
-				}).subscribe();
-			}
+//			Reconciler reconciler = reconcilerProvider.getIfAvailable();
+//			if (reconciler != null) {
+//				reconciler.reconcile(null).doOnNext(problem -> {
+//					log.info("XXXXX Hello from reconciler {} {}", problem, context);
+//					context.getClient().send(problem);
+//				}).subscribe();
+//			}
 		}
 
 	}
@@ -172,9 +172,14 @@ public class Lsp4jLanguageServerAdapterTests extends AbstractLspTests {
 		AtomicInteger reconcileCount = new AtomicInteger();
 
 		@Override
-		public Flux<ReconcileProblem> reconcile(Document document) {
-			reconcileCount.incrementAndGet();
-			return Flux.just(new DefaultReconcileProblem(), new DefaultReconcileProblem());
+		public Mono<Void> reconcile(VersionedTextDocumentIdentifier identifier) {
+			return null;
 		}
+
+//		@Override
+//		public Flux<ReconcileProblem> reconcile(Document document) {
+//			reconcileCount.incrementAndGet();
+//			return Flux.just(new DefaultReconcileProblem(), new DefaultReconcileProblem());
+//		}
 	}
 }

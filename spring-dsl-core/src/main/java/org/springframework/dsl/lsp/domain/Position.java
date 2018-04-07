@@ -15,42 +15,42 @@
  */
 package org.springframework.dsl.lsp.domain;
 
-public class Range {
+public class Position {
 
-	private Position start;
+	private int line;
 
-	private Position end;
+	private int character;
 
-	public Range() {
+	public Position() {
 	}
 
-	public Range(Position start, Position end) {
-		this.start = start;
-		this.end = end;
+	public Position(int line, int character) {
+		this.line = line;
+		this.character = character;
 	}
 
-	public Position getStart() {
-		return start;
+	public int getLine() {
+		return line;
 	}
 
-	public void setStart(Position start) {
-		this.start = start;
+	public void setLine(int line) {
+		this.line = line;
 	}
 
-	public Position getEnd() {
-		return end;
+	public int getCharacter() {
+		return character;
 	}
 
-	public void setEnd(Position end) {
-		this.end = end;
+	public void setCharacter(int character) {
+		this.character = character;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((end == null) ? 0 : end.hashCode());
-		result = prime * result + ((start == null) ? 0 : start.hashCode());
+		result = prime * result + character;
+		result = prime * result + line;
 		return result;
 	}
 
@@ -62,16 +62,10 @@ public class Range {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Range other = (Range) obj;
-		if (end == null) {
-			if (other.end != null)
-				return false;
-		} else if (!end.equals(other.end))
+		Position other = (Position) obj;
+		if (character != other.character)
 			return false;
-		if (start == null) {
-			if (other.start != null)
-				return false;
-		} else if (!start.equals(other.start))
+		if (line != other.line)
 			return false;
 		return true;
 	}

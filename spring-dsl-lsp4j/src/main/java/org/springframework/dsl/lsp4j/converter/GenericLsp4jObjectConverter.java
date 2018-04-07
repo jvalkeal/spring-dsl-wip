@@ -37,6 +37,7 @@ import org.springframework.util.ClassUtils;
  */
 public class GenericLsp4jObjectConverter implements GenericConverter {
 
+	// needs to be stored in pairs!
 	private final static Class<?>[] typePairs = new Class[] {
 			InitializeParams.class, org.eclipse.lsp4j.InitializeParams.class,
 			InitializeResult.class, org.eclipse.lsp4j.InitializeResult.class,
@@ -50,36 +51,11 @@ public class GenericLsp4jObjectConverter implements GenericConverter {
 	public Set<ConvertiblePair> getConvertibleTypes() {
 		Set<ConvertiblePair> convertiblePairs = new HashSet<ConvertiblePair>();
 
+		// iterate as pairs
 		for (int i = 0; i < typePairs.length; i += 2) {
 			convertiblePairs.add(new ConvertiblePair(typePairs[i], typePairs[i + 1]));
 			convertiblePairs.add(new ConvertiblePair(typePairs[i + 1], typePairs[i]));
 		}
-
-//		convertiblePairs.add(new ConvertiblePair(InitializeParams.class, org.eclipse.lsp4j.InitializeParams.class));
-//		convertiblePairs.add(new ConvertiblePair(org.eclipse.lsp4j.InitializeParams.class, InitializeParams.class));
-//
-//		convertiblePairs.add(new ConvertiblePair(InitializeResult.class, org.eclipse.lsp4j.InitializeResult.class));
-//		convertiblePairs.add(new ConvertiblePair(org.eclipse.lsp4j.InitializeResult.class, InitializeResult.class));
-//
-//		convertiblePairs.add(new ConvertiblePair(DidChangeTextDocumentParams.class,
-//				org.eclipse.lsp4j.DidChangeTextDocumentParams.class));
-//		convertiblePairs.add(new ConvertiblePair(org.eclipse.lsp4j.DidChangeTextDocumentParams.class,
-//				DidChangeTextDocumentParams.class));
-//
-//		convertiblePairs.add(new ConvertiblePair(DidCloseTextDocumentParams.class,
-//				org.eclipse.lsp4j.DidCloseTextDocumentParams.class));
-//		convertiblePairs.add(new ConvertiblePair(org.eclipse.lsp4j.DidCloseTextDocumentParams.class,
-//				DidCloseTextDocumentParams.class));
-//
-//		convertiblePairs.add(new ConvertiblePair(DidOpenTextDocumentParams.class,
-//				org.eclipse.lsp4j.DidOpenTextDocumentParams.class));
-//		convertiblePairs.add(new ConvertiblePair(org.eclipse.lsp4j.DidOpenTextDocumentParams.class,
-//				DidOpenTextDocumentParams.class));
-//
-//		convertiblePairs.add(new ConvertiblePair(DidSaveTextDocumentParams.class,
-//				org.eclipse.lsp4j.DidSaveTextDocumentParams.class));
-//		convertiblePairs.add(new ConvertiblePair(org.eclipse.lsp4j.DidSaveTextDocumentParams.class,
-//				DidSaveTextDocumentParams.class));
 
 		return convertiblePairs;
 	}

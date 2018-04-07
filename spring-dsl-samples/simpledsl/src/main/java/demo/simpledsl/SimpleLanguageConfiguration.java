@@ -18,10 +18,11 @@ package demo.simpledsl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dsl.lsp.service.Hoverer;
-import org.springframework.dsl.lsp.service.Reconciler;
+import org.springframework.dsl.reconcile.Linter;
 
 /**
- * Configuration for a {@code simple} sample language.
+ * Configuration for a {@code simple} sample language supporting {@link Hoverer}
+ * and {@link Linter}.
  *
  * @author Janne Valkealahti
  *
@@ -30,12 +31,12 @@ import org.springframework.dsl.lsp.service.Reconciler;
 public class SimpleLanguageConfiguration {
 
 	@Bean
-	public Reconciler simpleLanguageReconciler() {
-		return new SimpleLanguageReconciler();
+	public Hoverer simpleLanguageHoverer() {
+		return new SimpleLanguageHoverer();
 	}
 
 	@Bean
-	public Hoverer simpleLanguageHoverer() {
-		return new SimpleLanguageHoverer();
+	public Linter simpleLanguageLinter() {
+		return new SimpleLanguageLinter();
 	}
 }

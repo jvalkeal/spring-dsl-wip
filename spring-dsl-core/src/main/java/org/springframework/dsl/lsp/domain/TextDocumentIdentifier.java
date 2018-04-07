@@ -15,42 +15,30 @@
  */
 package org.springframework.dsl.lsp.domain;
 
-public class Range {
+public class TextDocumentIdentifier {
 
-	private Position start;
+	private String uri;
 
-	private Position end;
-
-	public Range() {
+	public TextDocumentIdentifier() {
 	}
 
-	public Range(Position start, Position end) {
-		this.start = start;
-		this.end = end;
+	public TextDocumentIdentifier(String uri) {
+		this.uri = uri;
 	}
 
-	public Position getStart() {
-		return start;
+	public String getUri() {
+		return uri;
 	}
 
-	public void setStart(Position start) {
-		this.start = start;
-	}
-
-	public Position getEnd() {
-		return end;
-	}
-
-	public void setEnd(Position end) {
-		this.end = end;
+	public void setUri(String uri) {
+		this.uri = uri;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((end == null) ? 0 : end.hashCode());
-		result = prime * result + ((start == null) ? 0 : start.hashCode());
+		result = prime * result + ((uri == null) ? 0 : uri.hashCode());
 		return result;
 	}
 
@@ -62,16 +50,11 @@ public class Range {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Range other = (Range) obj;
-		if (end == null) {
-			if (other.end != null)
+		TextDocumentIdentifier other = (TextDocumentIdentifier) obj;
+		if (uri == null) {
+			if (other.uri != null)
 				return false;
-		} else if (!end.equals(other.end))
-			return false;
-		if (start == null) {
-			if (other.start != null)
-				return false;
-		} else if (!start.equals(other.start))
+		} else if (!uri.equals(other.uri))
 			return false;
 		return true;
 	}

@@ -15,8 +15,8 @@
  */
 package org.springframework.dsl.lsp.server.result.method.annotation;
 
-import org.springframework.dsl.lsp.model.ProblemType;
-import org.springframework.dsl.lsp.model.ReconcileProblem;
+import org.springframework.dsl.reconcile.ProblemType;
+import org.springframework.dsl.reconcile.ReconcileProblem;
 
 /**
  * Default implementation of a {@link ReconcileProblem}.
