@@ -1,0 +1,26 @@
+[[dsl-getting-started]]
+= Getting started
+If you’re just getting started with Spring Dsl,
+this is the section for you! Here we answer the basic
+“what?”, “how?” and “why?” questions. You’ll find a gentle
+introduction to Spring Dsl.
+
+== System Requirements
+Spring Cloud Iot {revnumber} is built and tested with
+JDK 8, Spring Framework {spring-version}, Spring Boot
+{spring-boot-version}.
+
+
+== Modules
+The following modules are available for Spring Dsl
+
+|===
+|Module |Description
+
+|spring-dsl-core
+|Core system of a Spring Dsl 
+
+
+|===
+
+

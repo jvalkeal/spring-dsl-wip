@@ -1,0 +1,8 @@
+[[introduction]]
+= Introduction
+Spring Dsl(SDSL) is a framework for application developers to use
+Spring concepts with Dsl applications. SDSL aims to provide the
+following features:
+
+* Easy configuration model.
+
