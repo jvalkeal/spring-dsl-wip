@@ -235,7 +235,7 @@ public class GenericLanguageServerController implements InitializingBean {
 	@LspResponseBody
 	public Flux<CompletionItem> completion(TextDocumentPositionParams params) {
 		if (completioner != null) {
-			return completioner.complete(params);
+			return completioner.complete(null, null);
 		}
 		return Flux.empty();
 	}

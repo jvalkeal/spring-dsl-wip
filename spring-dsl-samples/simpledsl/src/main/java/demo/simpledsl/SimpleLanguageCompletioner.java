@@ -15,8 +15,9 @@
  */
 package demo.simpledsl;
 
+import org.springframework.dsl.document.Document;
 import org.springframework.dsl.lsp.domain.CompletionItem;
-import org.springframework.dsl.lsp.domain.TextDocumentPositionParams;
+import org.springframework.dsl.lsp.domain.Position;
 import org.springframework.dsl.lsp.service.Completioner;
 
 import reactor.core.publisher.Flux;
@@ -31,7 +32,7 @@ import reactor.core.publisher.Flux;
 public class SimpleLanguageCompletioner implements Completioner {
 
 	@Override
-	public Flux<CompletionItem> complete(TextDocumentPositionParams params) {
+	public Flux<CompletionItem> complete(Document document, Position position) {
 		return Flux.empty();
 	}
 }

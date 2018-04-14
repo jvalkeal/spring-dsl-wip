@@ -15,13 +15,14 @@
  */
 package org.springframework.dsl.lsp.service;
 
+import org.springframework.dsl.document.Document;
 import org.springframework.dsl.lsp.domain.CompletionItem;
-import org.springframework.dsl.lsp.domain.TextDocumentPositionParams;
+import org.springframework.dsl.lsp.domain.Position;
 
 import reactor.core.publisher.Flux;
 
 public interface Completioner {
 
-	Flux<CompletionItem> complete(TextDocumentPositionParams params);
+	Flux<CompletionItem> complete(Document document, Position position);
 
 }
