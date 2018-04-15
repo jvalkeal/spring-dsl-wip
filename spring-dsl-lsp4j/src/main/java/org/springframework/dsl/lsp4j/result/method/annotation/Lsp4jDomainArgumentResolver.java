@@ -27,7 +27,6 @@ import org.springframework.dsl.lsp.domain.TextDocumentPositionParams;
 import org.springframework.dsl.lsp.server.ServerLspExchange;
 import org.springframework.dsl.lsp.server.result.method.LspHandlerMethodArgumentResolver;
 import org.springframework.util.Assert;
-import org.springframework.util.ClassUtils;
 
 import reactor.core.publisher.Mono;
 

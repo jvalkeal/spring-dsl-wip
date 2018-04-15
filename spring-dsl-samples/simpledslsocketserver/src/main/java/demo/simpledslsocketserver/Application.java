@@ -28,11 +28,7 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.dsl.lsp.controller.GenericLanguageServerController;
 import org.springframework.dsl.lsp.server.LspHandler;
 import org.springframework.dsl.lsp.server.config.EnableLanguageServer;
-import org.springframework.dsl.lsp.service.DocumentStateTracker;
-import org.springframework.dsl.lsp.service.GenericDocumentStateTracker;
-import org.springframework.dsl.lsp.service.Reconciler;
 import org.springframework.dsl.lsp4j.Lsp4jLanguageServerAdapter;
-import org.springframework.dsl.reconcile.SimpleReconciler;
 
 import demo.simpledsl.EnableSimpleLanguage;
 

@@ -19,7 +19,6 @@ import java.util.List;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.ReactiveAdapterRegistry;
 import org.springframework.dsl.lsp.server.HandlerAdapter;
 import org.springframework.dsl.lsp.server.HandlerMapping;
 import org.springframework.dsl.lsp.server.HandlerResultHandler;

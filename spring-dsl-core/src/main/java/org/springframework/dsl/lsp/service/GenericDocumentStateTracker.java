@@ -17,13 +17,10 @@ package org.springframework.dsl.lsp.service;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dsl.document.BadLocationException;
 import org.springframework.dsl.document.Document;
 import org.springframework.dsl.document.LanguageId;
@@ -40,9 +37,6 @@ import org.springframework.dsl.lsp.domain.TextDocumentItem;
 import org.springframework.dsl.lsp.domain.VersionedTextDocumentIdentifier;
 import org.springframework.dsl.lsp.model.TrackedDocument;
 
-//import com.google.common.collect.ImmutableList;
-
-import reactor.core.Disposable;
 import reactor.core.publisher.Mono;
 
 /**

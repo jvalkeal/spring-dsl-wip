@@ -16,15 +16,12 @@
 package org.springframework.dsl.lsp4j;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.lsp4j.CompletionList;
 import org.eclipse.lsp4j.MessageActionItem;
@@ -36,13 +33,11 @@ import org.eclipse.lsp4j.services.LanguageClient;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.core.convert.ConversionService;
-import org.springframework.dsl.document.Document;
 import org.springframework.dsl.lsp.LspClientContext;
 import org.springframework.dsl.lsp.annotation.LspCompletion;
 import org.springframework.dsl.lsp.annotation.LspController;
@@ -57,14 +52,10 @@ import org.springframework.dsl.lsp.domain.Hover;
 import org.springframework.dsl.lsp.domain.InitializeParams;
 import org.springframework.dsl.lsp.domain.InitializeResult;
 import org.springframework.dsl.lsp.domain.TextDocumentPositionParams;
-import org.springframework.dsl.lsp.domain.VersionedTextDocumentIdentifier;
 import org.springframework.dsl.lsp.server.config.EnableLanguageServer;
-import org.springframework.dsl.lsp.server.result.method.annotation.DefaultReconcileProblem;
 import org.springframework.dsl.lsp.server.support.DispatcherHandler;
-import org.springframework.dsl.lsp.service.Reconciler;
 import org.springframework.dsl.lsp4j.converter.GenericLsp4jObjectConverter;
 import org.springframework.dsl.lsp4j.result.method.annotation.Lsp4jDomainArgumentResolver;
-import org.springframework.dsl.reconcile.ReconcileProblem;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;

@@ -65,7 +65,6 @@ import org.springframework.dsl.lsp.server.support.GenericServerLspRequest;
 import org.springframework.dsl.lsp.server.support.GenericServerLspResponse;
 import org.springframework.util.Assert;
 
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**

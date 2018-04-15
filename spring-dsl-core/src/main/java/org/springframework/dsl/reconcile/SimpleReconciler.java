@@ -16,31 +16,21 @@
 package org.springframework.dsl.reconcile;
 
 import java.util.Arrays;
-import java.util.Collection;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dsl.document.BadLocationException;
-import org.springframework.dsl.document.DefaultRegion;
 import org.springframework.dsl.document.Document;
 import org.springframework.dsl.document.TextDocumentContentChange;
 import org.springframework.dsl.lsp.domain.Diagnostic;
 import org.springframework.dsl.lsp.domain.DiagnosticSeverity;
 import org.springframework.dsl.lsp.domain.PublishDiagnosticsParams;
-import org.springframework.dsl.lsp.domain.TextDocumentIdentifier;
-import org.springframework.dsl.lsp.service.DiagnosticPublisher;
-import org.springframework.dsl.lsp.service.DocumentListenerManager;
 import org.springframework.dsl.lsp.service.Reconciler;
 
 import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Scheduler;
-import reactor.core.scheduler.Schedulers;
 
 /**
  * Responds to document changes and calls {@link Linter} to validate
