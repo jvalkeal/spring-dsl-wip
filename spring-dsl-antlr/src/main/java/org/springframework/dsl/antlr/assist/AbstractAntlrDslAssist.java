@@ -27,7 +27,6 @@ import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.Token;
 import org.springframework.dsl.DslException;
 import org.springframework.dsl.antlr.AntlrFactory;
-import org.springframework.dsl.assist.AbstractDslAssist;
 import org.springframework.util.Assert;
 
 /**
@@ -37,7 +36,7 @@ import org.springframework.util.Assert;
  * @author Janne Valkealahti
  *
  */
-public abstract class AbstractAntlrDslAssist extends AbstractDslAssist {
+public abstract class AbstractAntlrDslAssist {
 
 	private final AntlrFactory antlrFactory;
 
