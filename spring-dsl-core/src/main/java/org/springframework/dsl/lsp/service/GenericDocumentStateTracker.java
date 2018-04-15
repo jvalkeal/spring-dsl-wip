@@ -1,3 +1,18 @@
+/*
+ * Copyright 2018 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.springframework.dsl.lsp.service;
 
 import java.util.Arrays;
@@ -10,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dsl.document.BadLocationException;
+import org.springframework.dsl.document.Document;
 import org.springframework.dsl.document.LanguageId;
 import org.springframework.dsl.document.TextDocument;
 import org.springframework.dsl.document.TextDocumentContentChange;
@@ -19,6 +35,7 @@ import org.springframework.dsl.lsp.domain.DidOpenTextDocumentParams;
 import org.springframework.dsl.lsp.domain.DidSaveTextDocumentParams;
 import org.springframework.dsl.lsp.domain.Range;
 import org.springframework.dsl.lsp.domain.TextDocumentContentChangeEvent;
+import org.springframework.dsl.lsp.domain.TextDocumentIdentifier;
 import org.springframework.dsl.lsp.domain.TextDocumentItem;
 import org.springframework.dsl.lsp.domain.VersionedTextDocumentIdentifier;
 import org.springframework.dsl.lsp.model.TrackedDocument;
@@ -41,6 +58,11 @@ public class GenericDocumentStateTracker implements DocumentStateTracker/*, Docu
 
 //	private ListenerList<TextDocumentContentChange> documentChangeListeners = new ListenerList<>();
 //	private ListenerList<TextDocument> documentCloseListeners = new ListenerList<>();
+
+	public Document getDocument(String uri) {
+		TrackedDocument trackedDocument = documents.get(uri);
+		return trackedDocument != null ? trackedDocument.getDocument() : null;
+	}
 
 	@Override
 	public boolean isIncrementalChangesSupported() {
@@ -83,6 +105,15 @@ public class GenericDocumentStateTracker implements DocumentStateTracker/*, Docu
 	@Override
 	public final Mono<TextDocumentContentChange> didChange(DidChangeTextDocumentParams params) {
 		VersionedTextDocumentIdentifier identifier = params.getTextDocument();
+		String url = identifier.getUri();
+		if (url != null) {
+			TrackedDocument trackedDocument = documents.get(url);
+			try {
+				trackedDocument.getDocument().apply(params);
+			} catch (BadLocationException e) {
+				log.error("", e);
+			}
+		}
 
 //	  async.execute(() -> {
 //		try {
@@ -103,6 +134,17 @@ public class GenericDocumentStateTracker implements DocumentStateTracker/*, Docu
 
 	@Override
 	public Mono<TextDocumentContentChange> didClose(DidCloseTextDocumentParams params) {
+		TextDocumentIdentifier identifier = params.getTextDocument();
+		String url = identifier.getUri();
+		if (url != null) {
+			TrackedDocument trackedDocument = documents.get(url);
+//			try {
+//				trackedDocument.getDocument().apply(params);
+//			} catch (BadLocationException e) {
+//				log.error("", e);
+//			}
+		}
+
 //	  async.execute(() -> {
 //		String url = params.getTextDocument().getUri();
 //		if (url!=null) {
@@ -126,14 +168,6 @@ public class GenericDocumentStateTracker implements DocumentStateTracker/*, Docu
 		return Mono.empty();
 	}
 
-//	public AsyncRunner getAsync() {
-//		return async;
-//	}
-//
-//	@Autowired public void setAsync(AsyncRunner async) {
-//		this.async = async;
-//	}
-
 	@Override
 	public Mono<TextDocumentContentChange> didSave(DidSaveTextDocumentParams params) {
 		return Mono.empty();
@@ -153,7 +187,7 @@ public class GenericDocumentStateTracker implements DocumentStateTracker/*, Docu
 //		return documentCloseListeners.add(l);
 //	}
 
-	private synchronized TextDocument getDocument(String url) {
+	private synchronized TextDocument getOrCreateDocument(String url) {
 		TrackedDocument doc = documents.get(url);
 		if (doc==null) {
 			log.warn("Trying to get document ["+url+"] but it did not exists. Creating it with language-id 'plaintext'");

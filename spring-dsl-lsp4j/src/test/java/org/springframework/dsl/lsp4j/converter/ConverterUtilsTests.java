@@ -31,6 +31,7 @@ import org.springframework.dsl.lsp.domain.TextDocumentIdentifier;
 import org.springframework.dsl.lsp.domain.TextDocumentItem;
 import org.springframework.dsl.lsp.domain.TextDocumentPositionParams;
 import org.springframework.dsl.lsp.domain.TextDocumentSyncOptions;
+import org.springframework.dsl.lsp.domain.VersionedTextDocumentIdentifier;
 
 /**
  * Tests for {@link ConverterUtils}.
@@ -81,6 +82,9 @@ public class ConverterUtilsTests {
 		assertTextDocumentIdentifier(new TextDocumentIdentifier());
 		assertTextDocumentIdentifier(new org.eclipse.lsp4j.TextDocumentIdentifier());
 
+		assertVersionedTextDocumentIdentifier(new VersionedTextDocumentIdentifier());
+		assertVersionedTextDocumentIdentifier(new org.eclipse.lsp4j.VersionedTextDocumentIdentifier());
+
 		assertTextDocumentPositionParams(new TextDocumentPositionParams());
 		assertTextDocumentPositionParams(new org.eclipse.lsp4j.TextDocumentPositionParams());
 	}
@@ -93,6 +97,19 @@ public class ConverterUtilsTests {
 		assertDidOpenTextDocumentParams(new org.eclipse.lsp4j.DidOpenTextDocumentParams(
 				new org.eclipse.lsp4j.TextDocumentItem("fakeuri", "fakelanguageid", 9, "faketext")));
 
+		VersionedTextDocumentIdentifier versionedTextDocumentIdentifier = new VersionedTextDocumentIdentifier();
+		versionedTextDocumentIdentifier.setVersion(1);
+		versionedTextDocumentIdentifier.setUri("fakeuri");
+		DidChangeTextDocumentParams didChangeTextDocumentParams = new DidChangeTextDocumentParams();
+		didChangeTextDocumentParams.setTextDocument(versionedTextDocumentIdentifier);
+		assertDidChangeTextDocumentParams(didChangeTextDocumentParams);
+
+		org.eclipse.lsp4j.VersionedTextDocumentIdentifier lsp4jVersionedTextDocumentIdentifier = new org.eclipse.lsp4j.VersionedTextDocumentIdentifier();
+		lsp4jVersionedTextDocumentIdentifier.setVersion(1);
+		lsp4jVersionedTextDocumentIdentifier.setUri("fakeuri");
+		org.eclipse.lsp4j.DidChangeTextDocumentParams lsp4jdidChangeTextDocumentParams = new org.eclipse.lsp4j.DidChangeTextDocumentParams();
+		lsp4jdidChangeTextDocumentParams.setTextDocument(lsp4jVersionedTextDocumentIdentifier);
+		assertDidChangeTextDocumentParams(new org.eclipse.lsp4j.DidChangeTextDocumentParams());
 	}
 
 
@@ -190,6 +207,14 @@ public class ConverterUtilsTests {
 
 	private static void assertTextDocumentIdentifier(org.eclipse.lsp4j.TextDocumentIdentifier from) {
 		assertObjects(from, ConverterUtils.toTextDocumentIdentifier(ConverterUtils.toTextDocumentIdentifier(from)));
+	}
+
+	private static void assertVersionedTextDocumentIdentifier(VersionedTextDocumentIdentifier from) {
+		assertObjects(from, ConverterUtils.toVersionedTextDocumentIdentifier(ConverterUtils.toVersionedTextDocumentIdentifier(from)));
+	}
+
+	private static void assertVersionedTextDocumentIdentifier(org.eclipse.lsp4j.VersionedTextDocumentIdentifier from) {
+		assertObjects(from, ConverterUtils.toVersionedTextDocumentIdentifier(ConverterUtils.toVersionedTextDocumentIdentifier(from)));
 	}
 
 	private static void assertTextDocumentPositionParams(TextDocumentPositionParams from) {

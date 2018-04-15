@@ -130,7 +130,10 @@ public class GenericLanguageServerController implements InitializingBean {
 	public InitializeResult clientInit(InitializeParams params) {
 		ServerCapabilities serverCapabilities = new ServerCapabilities();
 		serverCapabilities.setHoverProvider(hovererProvider.getIfAvailable() != null);
-		serverCapabilities.setTextDocumentSyncKind(TextDocumentSyncKind.Full);
+		// TODO: think how to use sync kind None
+		serverCapabilities.setTextDocumentSyncKind(
+				documentStateTracker.isIncrementalChangesSupported() ? TextDocumentSyncKind.Incremental
+						: TextDocumentSyncKind.Full);
 		if (completioner != null) {
 			serverCapabilities.setCompletionProvider(new CompletionOptions());
 		}

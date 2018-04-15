@@ -21,7 +21,6 @@ import java.util.List;
 public class DidChangeTextDocumentParams {
 
 	private VersionedTextDocumentIdentifier textDocument;
-
 	private List<TextDocumentContentChangeEvent> contentChanges = new ArrayList<TextDocumentContentChangeEvent>();
 
 	public VersionedTextDocumentIdentifier getTextDocument() {

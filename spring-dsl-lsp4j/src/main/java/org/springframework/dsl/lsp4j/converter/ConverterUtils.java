@@ -38,6 +38,7 @@ import org.springframework.dsl.lsp.domain.TextDocumentItem;
 import org.springframework.dsl.lsp.domain.TextDocumentPositionParams;
 import org.springframework.dsl.lsp.domain.TextDocumentSyncKind;
 import org.springframework.dsl.lsp.domain.TextDocumentSyncOptions;
+import org.springframework.dsl.lsp.domain.VersionedTextDocumentIdentifier;
 
 /**
  * Utilities to convert {@code POJO}s between {@code LSP4J} and
@@ -131,13 +132,37 @@ public final class ConverterUtils {
 		return new org.eclipse.lsp4j.CompletionOptions();
 	}
 
-	public static DidChangeTextDocumentParams toDidChangeTextDocumentParams(org.eclipse.lsp4j.DidChangeTextDocumentParams from) {
-		DidChangeTextDocumentParams to = new DidChangeTextDocumentParams();
+	/**
+	 * Convert {@code Spring DSL} {@link DidChangeTextDocumentParams} to {@code LSP4J}
+	 * {@link org.eclipse.lsp4j.DidChangeTextDocumentParams}.
+	 *
+	 * @param from the {@code Spring DSL DidChangeTextDocumentParams}
+	 * @return {@code LSP4J DidChangeTextDocumentParams}
+	 */
+	public static org.eclipse.lsp4j.DidChangeTextDocumentParams toDidChangeTextDocumentParams(
+			DidChangeTextDocumentParams from) {
+		if (from == null) {
+			return null;
+		}
+		org.eclipse.lsp4j.DidChangeTextDocumentParams to = new org.eclipse.lsp4j.DidChangeTextDocumentParams();
+		to.setTextDocument(toVersionedTextDocumentIdentifier(from.getTextDocument()));
 		return to;
 	}
 
-	public static org.eclipse.lsp4j.DidChangeTextDocumentParams toDidChangeTextDocumentParams(DidChangeTextDocumentParams from) {
-		org.eclipse.lsp4j.DidChangeTextDocumentParams to = new org.eclipse.lsp4j.DidChangeTextDocumentParams();
+	/**
+	 * Convert {@code LSP4J} {@link org.eclipse.lsp4j.DidChangeTextDocumentParams} to {@code Spring DSL}
+	 * {@link DidChangeTextDocumentParams}.
+	 *
+	 * @param from the {@code LSP4J DidChangeTextDocumentParams}
+	 * @return {@code Spring DSL DidChangeTextDocumentParams}
+	 */
+	public static DidChangeTextDocumentParams toDidChangeTextDocumentParams(
+			org.eclipse.lsp4j.DidChangeTextDocumentParams from) {
+		if (from == null) {
+			return null;
+		}
+		DidChangeTextDocumentParams to = new DidChangeTextDocumentParams();
+		to.setTextDocument(toVersionedTextDocumentIdentifier(from.getTextDocument()));
 		return to;
 	}
 
@@ -539,5 +564,40 @@ public final class ConverterUtils {
 			return null;
 		}
 		return new TextDocumentIdentifier();
+	}
+
+	/**
+	 * Convert {@code Spring DSL} {@link VersionedTextDocumentIdentifier} to {@code LSP4J}
+	 * {@link org.eclipse.lsp4j.VersionedTextDocumentIdentifier}.
+	 *
+	 * @param from the {@code Spring DSL VersionedTextDocumentIdentifier}
+	 * @return {@code LSP4J VersionedTextDocumentIdentifier}
+	 */
+	public static org.eclipse.lsp4j.VersionedTextDocumentIdentifier toVersionedTextDocumentIdentifier(VersionedTextDocumentIdentifier from) {
+		if (from == null) {
+			return null;
+		}
+		org.eclipse.lsp4j.VersionedTextDocumentIdentifier to =  new org.eclipse.lsp4j.VersionedTextDocumentIdentifier();
+		to.setUri(from.getUri());
+		to.setVersion(from.getVersion());
+		return to;
+	}
+
+
+	/**
+	 * Convert {@code LSP4J} {@link org.eclipse.lsp4j.VersionedTextDocumentIdentifier} to
+	 * {@code Spring DSL} {@link VersionedTextDocumentIdentifier}.
+	 *
+	 * @param from the {@code LSP4J VersionedTextDocumentIdentifier}
+	 * @return {@code Spring DSL VersionedTextDocumentIdentifier}
+	 */
+	public static VersionedTextDocumentIdentifier toVersionedTextDocumentIdentifier(org.eclipse.lsp4j.VersionedTextDocumentIdentifier from) {
+		if (from == null) {
+			return null;
+		}
+		VersionedTextDocumentIdentifier to = new VersionedTextDocumentIdentifier();
+		to.setUri(from.getUri());
+		to.setVersion(from.getVersion());
+		return to;
 	}
 }
