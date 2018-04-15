@@ -92,6 +92,9 @@ public class ConverterUtilsTests {
 	@Test
 	public void testGenericConversionsUsingValues() {
 
+		assertTextDocumentIdentifier(new TextDocumentIdentifier("fakeuri"));
+		assertTextDocumentIdentifier(new org.eclipse.lsp4j.TextDocumentIdentifier("fakeuri"));
+
 		assertDidOpenTextDocumentParams(
 				new DidOpenTextDocumentParams(new TextDocumentItem("fakeuri", "fakelanguageid", 9, "faketext")));
 		assertDidOpenTextDocumentParams(new org.eclipse.lsp4j.DidOpenTextDocumentParams(
@@ -110,6 +113,18 @@ public class ConverterUtilsTests {
 		org.eclipse.lsp4j.DidChangeTextDocumentParams lsp4jdidChangeTextDocumentParams = new org.eclipse.lsp4j.DidChangeTextDocumentParams();
 		lsp4jdidChangeTextDocumentParams.setTextDocument(lsp4jVersionedTextDocumentIdentifier);
 		assertDidChangeTextDocumentParams(new org.eclipse.lsp4j.DidChangeTextDocumentParams());
+
+		TextDocumentIdentifier textDocumentIdentifier = new TextDocumentIdentifier();
+		textDocumentIdentifier.setUri("fakeuri");
+		DidCloseTextDocumentParams didCloseTextDocumentParams = new DidCloseTextDocumentParams();
+		didCloseTextDocumentParams.setTextDocument(textDocumentIdentifier);
+		assertDidCloseTextDocumentParams(didCloseTextDocumentParams);
+
+		org.eclipse.lsp4j.TextDocumentIdentifier lsp4jTextDocumentIdentifier = new org.eclipse.lsp4j.TextDocumentIdentifier();
+		lsp4jTextDocumentIdentifier.setUri("fakeuri");
+		org.eclipse.lsp4j.DidCloseTextDocumentParams lsp4jDidCloseTextDocumentParams = new org.eclipse.lsp4j.DidCloseTextDocumentParams();
+		lsp4jDidCloseTextDocumentParams.setTextDocument(lsp4jTextDocumentIdentifier);
+		assertDidCloseTextDocumentParams(lsp4jDidCloseTextDocumentParams);
 	}
 
 

@@ -166,13 +166,35 @@ public final class ConverterUtils {
 		return to;
 	}
 
-	public static DidCloseTextDocumentParams toDidCloseTextDocumentParams(org.eclipse.lsp4j.DidCloseTextDocumentParams from) {
-		DidCloseTextDocumentParams to = new DidCloseTextDocumentParams();
+	/**
+	 * Convert {@code Spring DSL} {@link DidCloseTextDocumentParams} to {@code LSP4J}
+	 * {@link org.eclipse.lsp4j.DidCloseTextDocumentParams}.
+	 *
+	 * @param from the {@code Spring DSL DidCloseTextDocumentParams}
+	 * @return {@code LSP4J DidCloseTextDocumentParams}
+	 */
+	public static org.eclipse.lsp4j.DidCloseTextDocumentParams toDidCloseTextDocumentParams(DidCloseTextDocumentParams from) {
+		if (from == null) {
+			return null;
+		}
+		org.eclipse.lsp4j.DidCloseTextDocumentParams to = new org.eclipse.lsp4j.DidCloseTextDocumentParams();
+		to.setTextDocument(toTextDocumentIdentifier(from.getTextDocument()));
 		return to;
 	}
 
-	public static org.eclipse.lsp4j.DidCloseTextDocumentParams toDidCloseTextDocumentParams(DidCloseTextDocumentParams from) {
-		org.eclipse.lsp4j.DidCloseTextDocumentParams to = new org.eclipse.lsp4j.DidCloseTextDocumentParams();
+	/**
+	 * Convert {@code LSP4J} {@link org.eclipse.lsp4j.DidCloseTextDocumentParams} to {@code Spring DSL}
+	 * {@link DidCloseTextDocumentParams}.
+	 *
+	 * @param from the {@code LSP4J DidCloseTextDocumentParams}
+	 * @return {@code Spring DSL DidCloseTextDocumentParams}
+	 */
+	public static DidCloseTextDocumentParams toDidCloseTextDocumentParams(org.eclipse.lsp4j.DidCloseTextDocumentParams from) {
+		if (from == null) {
+			return null;
+		}
+		DidCloseTextDocumentParams to = new DidCloseTextDocumentParams();
+		to.setTextDocument(toTextDocumentIdentifier(from.getTextDocument()));
 		return to;
 	}
 
@@ -548,7 +570,9 @@ public final class ConverterUtils {
 		if (from == null) {
 			return null;
 		}
-		return new org.eclipse.lsp4j.TextDocumentIdentifier();
+		org.eclipse.lsp4j.TextDocumentIdentifier to = new org.eclipse.lsp4j.TextDocumentIdentifier();
+		to.setUri(from.getUri());
+		return to;
 	}
 
 
@@ -563,7 +587,9 @@ public final class ConverterUtils {
 		if (from == null) {
 			return null;
 		}
-		return new TextDocumentIdentifier();
+		TextDocumentIdentifier to = new TextDocumentIdentifier();
+		to.setUri(from.getUri());
+		return to;
 	}
 
 	/**

@@ -18,12 +18,13 @@ package org.springframework.dsl.lsp.service;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 import org.junit.Test;
 import org.springframework.dsl.document.LanguageId;
 import org.springframework.dsl.lsp.domain.DidChangeTextDocumentParams;
+import org.springframework.dsl.lsp.domain.DidCloseTextDocumentParams;
 import org.springframework.dsl.lsp.domain.DidOpenTextDocumentParams;
+import org.springframework.dsl.lsp.domain.DidSaveTextDocumentParams;
 import org.springframework.dsl.lsp.domain.Position;
 import org.springframework.dsl.lsp.domain.Range;
 import org.springframework.dsl.lsp.domain.TextDocumentContentChangeEvent;
@@ -58,5 +59,19 @@ public class GenericDocumentStateTrackerTests {
 		assertThat(tracker.getDocument("uri1")).isNotNull();
 		assertThat(tracker.getDocument("uri1").get()).isEqualTo("12");
 
+		DidSaveTextDocumentParams didSaveParams = new DidSaveTextDocumentParams();
+		TextDocumentIdentifier textDocumentIdentifier = new TextDocumentIdentifier();
+		textDocumentIdentifier.setUri("uri1");
+		didSaveParams.setTextDocument(textDocumentIdentifier);
+		didSaveParams.setText("12");
+		tracker.didSave(didSaveParams);
+		assertThat(tracker.getDocument("uri1")).isNotNull();
+		assertThat(tracker.getDocument("uri1").get()).isEqualTo("12");
+
+		DidCloseTextDocumentParams didCloseParams = new DidCloseTextDocumentParams();
+		didCloseParams.setTextDocument(textDocumentIdentifier);
+		tracker.didClose(didCloseParams);
+		assertThat(tracker.getDocument("uri1")).isNotNull();
+		assertThat(tracker.getDocument("uri1").get()).isEqualTo("12");
 	}
 }
