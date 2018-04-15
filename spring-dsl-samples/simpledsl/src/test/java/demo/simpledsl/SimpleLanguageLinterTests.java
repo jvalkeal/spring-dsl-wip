@@ -52,10 +52,10 @@ public class SimpleLanguageLinterTests {
 		problems = linter.lint(document).toStream().collect(Collectors.toList());
 		assertThat(problems).hasSize(1);
 		ReconcileProblem problem = problems.get(0);
-//		assertThat(problem.getRange().getStart().getLine()).isEqualTo(0);
-//		assertThat(problem.getRange().getStart().getCharacter()).isEqualTo(4);
-//		assertThat(problem.getRange().getEnd().getLine()).isEqualTo(0);
-//		assertThat(problem.getRange().getEnd().getCharacter()).isEqualTo(5);
+		assertThat(problem.getRange().getStart().getLine()).isEqualTo(0);
+		assertThat(problem.getRange().getStart().getCharacter()).isEqualTo(0);
+		assertThat(problem.getRange().getEnd().getLine()).isEqualTo(0);
+		assertThat(problem.getRange().getEnd().getCharacter()).isEqualTo(3);
 	}
 
 }

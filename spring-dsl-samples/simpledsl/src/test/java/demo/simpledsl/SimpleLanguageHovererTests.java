@@ -15,13 +15,30 @@
  */
 package demo.simpledsl;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.Test;
+import org.springframework.dsl.document.Document;
+import org.springframework.dsl.document.LanguageId;
+import org.springframework.dsl.document.TextDocument;
+import org.springframework.dsl.lsp.domain.Hover;
+import org.springframework.dsl.lsp.domain.Position;
+
+import reactor.core.publisher.Mono;
 
 public class SimpleLanguageHovererTests {
 
+	private final SimpleLanguageHoverer hoverer = new SimpleLanguageHoverer();
+
 	@Test
 	public void testHovers() {
+		Document document = new TextDocument("", LanguageId.PLAINTEXT, 0, SimpleLanguageTests.content1);
 
+		Mono<Hover> hover = hoverer.hover(document, new Position(0, 1));
+		assertThat(hover).isNotNull();
+		assertThat(hover.block()).isNotNull();
+		assertThat(hover.block().getContents()).isNotNull();
+		assertThat(hover.block().getContents().getValue()).isEqualTo("token");
 	}
 
 }

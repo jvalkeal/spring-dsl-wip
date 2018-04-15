@@ -59,7 +59,9 @@ public class SimpleLanguageLinter implements Linter {
 	public Flux<ReconcileProblem> lint(Document document) {
 		List<ReconcileProblem> problems = new ArrayList<>();
 
-		List<Line> lines = SimpleLanguage.parse(document);
+		SimpleLanguage simpleLanguage = SimpleLanguage.build(document);
+		List<Line> lines = simpleLanguage.getLines();
+
 		for (Line line : lines) {
 			if (line.getValueToken() == null) {
 				Position start = new Position(line.getLine(), line.getKeyToken().getStart());

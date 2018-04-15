@@ -39,31 +39,31 @@ public class SimpleLanguageTests {
 	@Test
 	public void testParse() {
 		Document document = new TextDocument("", LanguageId.PLAINTEXT, 0, content1);
-		List<Line> lines = SimpleLanguage.parse(document);
+		List<Line> lines = SimpleLanguage.build(document).getLines();
 		assertThat(lines.size()).isEqualTo(4);
 
 		document = new TextDocument("", LanguageId.PLAINTEXT, 0, content2);
-		lines = SimpleLanguage.parse(document);
+		lines = SimpleLanguage.build(document).getLines();
 		assertThat(lines.size()).isEqualTo(4);
 
 		document = new TextDocument("", LanguageId.PLAINTEXT, 0, content3);
-		lines = SimpleLanguage.parse(document);
+		lines = SimpleLanguage.build(document).getLines();
 		assertThat(lines.size()).isEqualTo(4);
 
 		document = new TextDocument("", LanguageId.PLAINTEXT, 0, content4);
-		lines = SimpleLanguage.parse(document);
+		lines = SimpleLanguage.build(document).getLines();
 		assertThat(lines.size()).isEqualTo(1);
 
 		document = new TextDocument("", LanguageId.PLAINTEXT, 0, content5);
-		lines = SimpleLanguage.parse(document);
+		lines = SimpleLanguage.build(document).getLines();
 		assertThat(lines.size()).isEqualTo(1);
 
 		document = new TextDocument("", LanguageId.PLAINTEXT, 0, content6);
-		lines = SimpleLanguage.parse(document);
+		lines = SimpleLanguage.build(document).getLines();
 		assertThat(lines.size()).isEqualTo(1);
 
 		document = new TextDocument("", LanguageId.PLAINTEXT, 0, content7);
-		lines = SimpleLanguage.parse(document);
+		lines = SimpleLanguage.build(document).getLines();
 		assertThat(lines.size()).isEqualTo(1);
 
 	}

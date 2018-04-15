@@ -21,10 +21,19 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.springframework.dsl.document.Document;
+import org.springframework.dsl.lsp.domain.Position;
+
+import demo.simpledsl.SimpleLanguage.KeyToken;
 
 /**
  * {@code simple} language representation containing parser to tokenize a dsl
  * which can be used to give various answers to {@code LSP} requests.
+ * <p>
+ * This language parser implementation is to showcase a raw ways to provide
+ * concepts of ideas how {@code LSP} can be hooked into various services. In
+ * a real world, you'd probably be better off with some real language parcer line
+ * {@code ANTRL} or similar. But having said that, this gives ideas how things
+ * work together without introducing additional logic using external libraries.
  *
  * @author Janne Valkealahti
  *
@@ -32,14 +41,47 @@ import org.springframework.dsl.document.Document;
 public class SimpleLanguage {
 
 	private final static Pattern REGEX = Pattern.compile("[\\r\\n]+");
+	private final Document document;
+	private final List<Line> lines;
+
+	public SimpleLanguage(Document document, List<Line> lines) {
+		this.document = document;
+		this.lines = lines;
+	}
+
+	public Document getDocument() {
+		return document;
+	}
+
+	public List<Line> getLines() {
+		return lines;
+	}
+
+	public Token getToken(Position position) {
+		for (Line line : getLines()) {
+			if (line.getLine() == position.getLine()) {
+				KeyToken keyToken = line.getKeyToken();
+				if (keyToken != null && keyToken.getStart() <= position.getCharacter()
+						&& keyToken.getEnd() >= position.getCharacter()) {
+					return keyToken;
+				}
+				ValueToken valueToken = line.getValueToken();
+				if (valueToken != null && valueToken.getStart() <= position.getCharacter()
+						&& valueToken.getEnd() >= position.getCharacter()) {
+					return keyToken;
+				}
+			}
+		}
+		return null;
+	}
 
 	/**
 	 * Parse a document and return a tokenized list of lines.
 	 *
 	 * @param document the document to parse
-	 * @return the a tokenized list of lines
+	 * @return the simple language structure
 	 */
-	public static List<Line> parse(Document document) {
+	public static SimpleLanguage build(Document document) {
 		ArrayList<Line> lines = new ArrayList<>();
 
 		String content = document.get();
@@ -63,7 +105,7 @@ public class SimpleLanguage {
 			processLine(lines, content.substring(position, content.length()), lineIndex);
 		}
 
-		return lines;
+		return new SimpleLanguage(document, lines);
 	}
 
 	private static void processLine(ArrayList<Line> lines, String line, int lineIndex) {
@@ -101,20 +143,14 @@ public class SimpleLanguage {
 		}
 	}
 
-	public static class KeyToken {
+	public static class Token {
 
-		private final Object key;
 		private final int start;
 		private final int end;
 
-		public KeyToken(Object key, int start, int end) {
-			this.key = key;
+		public Token(int start, int end) {
 			this.start = start;
 			this.end = end;
-		}
-
-		public Object getKey() {
-			return key;
 		}
 
 		public int getStart() {
@@ -126,28 +162,33 @@ public class SimpleLanguage {
 		}
 	}
 
-	public static class ValueToken {
+	public static class KeyToken extends Token {
 
-		private final Object value;
-		private final int start;
-		private final int end;
+		private final Object key;
 
-		public ValueToken(Object value, int start, int end) {
-			this.value = value;
-			this.start = start;
-			this.end = end;
+		public KeyToken(Object key, int start, int end) {
+			super(start, end);
+			this.key = key;
 		}
 
-		public Object getValue() {
-			return value;
+		public Object getKey() {
+			return key;
 		}
 
-		public int getStart() {
-			return start;
+	}
+
+	public static class ValueToken extends Token {
+
+		private final Object key;
+
+		public ValueToken(Object key, int start, int end) {
+			super(start, end);
+			this.key = key;
 		}
 
-		public int getEnd() {
-			return end;
+		public Object getKey() {
+			return key;
 		}
+
 	}
 }

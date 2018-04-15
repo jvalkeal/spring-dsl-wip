@@ -17,9 +17,12 @@ package demo.simpledsl;
 
 import org.springframework.dsl.document.Document;
 import org.springframework.dsl.lsp.domain.Hover;
+import org.springframework.dsl.lsp.domain.MarkupContent;
+import org.springframework.dsl.lsp.domain.MarkupKind;
 import org.springframework.dsl.lsp.domain.Position;
 import org.springframework.dsl.lsp.service.Hoverer;
 
+import demo.simpledsl.SimpleLanguage.Token;
 import reactor.core.publisher.Mono;
 
 /**
@@ -33,6 +36,23 @@ public class SimpleLanguageHoverer implements Hoverer {
 
 	@Override
 	public Mono<Hover> hover(Document document, Position position) {
-		return Mono.empty();
+		// we're getting a request to provide a hover in a document
+		// for a specific position. from a document, request a token
+		// for this particular position and return information about
+		// it, if available and fill hover with it info.
+		// we're returning this as a supplier so that actual hover
+		// operation will happen when demand for it is requested.
+
+		SimpleLanguage simpleLanguage = SimpleLanguage.build(document);
+		Token token = simpleLanguage.getToken(position);
+		if (token != null) {
+			Hover hover = new Hover();
+			MarkupContent contents = new MarkupContent(MarkupKind.PlainText, "token");
+			hover.setContents(contents);
+//			hover.setRange(range);
+			return Mono.just(hover);
+		} else {
+			return Mono.empty();
+		}
 	}
 }
