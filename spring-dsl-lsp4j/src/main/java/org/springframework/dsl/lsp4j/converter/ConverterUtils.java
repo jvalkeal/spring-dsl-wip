@@ -18,6 +18,7 @@ package org.springframework.dsl.lsp4j.converter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.springframework.dsl.lsp.domain.CompletionItem;
 import org.springframework.dsl.lsp.domain.CompletionOptions;
 import org.springframework.dsl.lsp.domain.Diagnostic;
@@ -29,6 +30,9 @@ import org.springframework.dsl.lsp.domain.DidSaveTextDocumentParams;
 import org.springframework.dsl.lsp.domain.Hover;
 import org.springframework.dsl.lsp.domain.InitializeParams;
 import org.springframework.dsl.lsp.domain.InitializeResult;
+import org.springframework.dsl.lsp.domain.MarkedString;
+import org.springframework.dsl.lsp.domain.MarkupContent;
+import org.springframework.dsl.lsp.domain.MarkupKind;
 import org.springframework.dsl.lsp.domain.Position;
 import org.springframework.dsl.lsp.domain.PublishDiagnosticsParams;
 import org.springframework.dsl.lsp.domain.Range;
@@ -424,6 +428,9 @@ public final class ConverterUtils {
 	 * @return {@code LSP4J Position}
 	 */
 	public static org.eclipse.lsp4j.Position toPosition(Position from) {
+		if (from == null) {
+			return null;
+		}
 		org.eclipse.lsp4j.Position to = new org.eclipse.lsp4j.Position();
 		to.setLine(from.getLine());
 		to.setCharacter(from.getCharacter());
@@ -438,6 +445,9 @@ public final class ConverterUtils {
 	 * @return {@code Spring DSL Position}
 	 */
 	public static Position toPosition(org.eclipse.lsp4j.Position from) {
+		if (from == null) {
+			return null;
+		}
 		Position to = new Position();
 		to.setLine(from.getLine());
 		to.setCharacter(from.getCharacter());
@@ -483,7 +493,14 @@ public final class ConverterUtils {
 		if (from == null) {
 			return null;
 		}
-		return new org.eclipse.lsp4j.Hover();
+		org.eclipse.lsp4j.Hover to = new org.eclipse.lsp4j.Hover();
+		to.setRange(toRange(from.getRange()));
+		org.eclipse.lsp4j.MarkupContent markupContent = toMarkupContent(from.getContents());
+		if (markupContent != null) {
+			to.setContents(markupContent);
+		}
+//		to.setContents(toMarkupContent(from.getContents()));
+		return to;
 	}
 
 	/**
@@ -497,7 +514,45 @@ public final class ConverterUtils {
 		if (from == null) {
 			return null;
 		}
-		return new Hover();
+		Hover to = new Hover();
+		to.setRange(toRange(from.getRange()));
+		to.setContents(toMarkupContent(from.getContents() != null ? from.getContents().getRight() : null));
+		return to;
+	}
+
+	/**
+	 * Convert {@code Spring DSL} {@link MarkupContent} to {@code LSP4J}
+	 * {@link org.eclipse.lsp4j.MarkupContent}.
+	 *
+	 * @param from the {@code Spring DSL MarkupContent}
+	 * @return {@code LSP4J MarkupContent}
+	 */
+	public static org.eclipse.lsp4j.MarkupContent toMarkupContent(MarkupContent from) {
+		if (from == null) {
+			return null;
+		}
+		org.eclipse.lsp4j.MarkupContent to = new org.eclipse.lsp4j.MarkupContent();
+		to.setValue(from.getValue());
+		to.setKind(from.getKind() != null ? from.getKind().toString() : null);
+		return to;
+	}
+
+
+	/**
+	 * Convert {@code LSP4J} {@link org.eclipse.lsp4j.MarkupContent} to
+	 * {@code Spring DSL} {@link MarkupContent}.
+	 *
+	 * @param from the {@code LSP4J MarkupContent}
+	 * @return {@code Spring DSL MarkupContent}
+	 */
+	public static MarkupContent toMarkupContent(org.eclipse.lsp4j.MarkupContent from) {
+		if (from == null) {
+			return null;
+		}
+		MarkupContent to = new MarkupContent();
+		to.setValue(from.getValue());
+		to.setKind(from.getKind() != null ? MarkupKind.valueOf(from.getKind()) : null);
+		return to;
 	}
 
 	/**
@@ -512,7 +567,10 @@ public final class ConverterUtils {
 		if (from == null) {
 			return null;
 		}
-		return new org.eclipse.lsp4j.TextDocumentPositionParams();
+		org.eclipse.lsp4j.TextDocumentPositionParams to = new org.eclipse.lsp4j.TextDocumentPositionParams();
+		to.setPosition(toPosition(from.getPosition()));
+		to.setTextDocument(toTextDocumentIdentifier(from.getTextDocument()));
+		return to;
 	}
 
 	/**
@@ -527,7 +585,10 @@ public final class ConverterUtils {
 		if (from == null) {
 			return null;
 		}
-		return new TextDocumentPositionParams();
+		TextDocumentPositionParams to = new TextDocumentPositionParams();
+		to.setPosition(toPosition(from.getPosition()));
+		to.setTextDocument(toTextDocumentIdentifier(from.getTextDocument()));
+		return to;
 	}
 
 	/**
@@ -624,6 +685,41 @@ public final class ConverterUtils {
 		VersionedTextDocumentIdentifier to = new VersionedTextDocumentIdentifier();
 		to.setUri(from.getUri());
 		to.setVersion(from.getVersion());
+		return to;
+	}
+
+	/**
+	 * Convert {@code Spring DSL} {@link MarkedString} to {@code LSP4J}
+	 * {@link org.eclipse.lsp4j.MarkedString}.
+	 *
+	 * @param from the {@code Spring DSL MarkedString}
+	 * @return {@code LSP4J MarkedString}
+	 */
+	public static org.eclipse.lsp4j.MarkedString toMarkedString(MarkedString from) {
+		if (from == null) {
+			return null;
+		}
+		org.eclipse.lsp4j.MarkedString to =  new org.eclipse.lsp4j.MarkedString();
+		to.setLanguage(from.getLanguage());
+		to.setValue(from.getValue());
+		return to;
+	}
+
+
+	/**
+	 * Convert {@code LSP4J} {@link org.eclipse.lsp4j.MarkedString} to
+	 * {@code Spring DSL} {@link MarkedString}.
+	 *
+	 * @param from the {@code LSP4J MarkedString}
+	 * @return {@code Spring DSL MarkedString}
+	 */
+	public static MarkedString toMarkedString(org.eclipse.lsp4j.MarkedString from) {
+		if (from == null) {
+			return null;
+		}
+		MarkedString to = new MarkedString();
+		to.setLanguage(from.getLanguage());
+		to.setValue(from.getValue());
 		return to;
 	}
 }

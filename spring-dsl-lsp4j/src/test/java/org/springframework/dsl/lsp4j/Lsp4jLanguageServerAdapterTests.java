@@ -146,10 +146,10 @@ public class Lsp4jLanguageServerAdapterTests extends AbstractLspTests {
 
 		languageServerAdapter.connect(new MockLanguageClient());
 
-		org.eclipse.lsp4j.TextDocumentPositionParams lsp4jTextDocumentPositionParams =
-				new org.eclipse.lsp4j.TextDocumentPositionParams();
+		org.eclipse.lsp4j.CompletionParams lsp4jCompletionParams =
+				new org.eclipse.lsp4j.CompletionParams();
 		CompletableFuture<Either<List<org.eclipse.lsp4j.CompletionItem>, CompletionList>> completion = languageServerAdapter
-				.getTextDocumentService().completion(lsp4jTextDocumentPositionParams);
+				.getTextDocumentService().completion(lsp4jCompletionParams);
 		assertThat(completion).isNotNull();
 		assertThat(completion.get()).isNotNull();
 		assertThat(completion.get().getRight()).isNotNull();

@@ -222,7 +222,8 @@ public class GenericLanguageServerController implements InitializingBean {
 	@LspResponseBody
 	public Mono<Hover> hover(TextDocumentPositionParams params) {
 		if (hoverer != null) {
-			return hoverer.hover(null, null);
+			return hoverer.hover(documentStateTracker.getDocument(params.getTextDocument().getUri()),
+					params.getPosition());
 		}
 		return Mono.empty();
 	}

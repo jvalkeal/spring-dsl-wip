@@ -17,6 +17,11 @@ package org.springframework.dsl.lsp4j.converter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.lsp4j.MarkedString;
+import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.junit.Test;
 import org.springframework.dsl.lsp.domain.DidChangeTextDocumentParams;
 import org.springframework.dsl.lsp.domain.DidCloseTextDocumentParams;
@@ -25,7 +30,10 @@ import org.springframework.dsl.lsp.domain.DidSaveTextDocumentParams;
 import org.springframework.dsl.lsp.domain.Hover;
 import org.springframework.dsl.lsp.domain.InitializeParams;
 import org.springframework.dsl.lsp.domain.InitializeResult;
+import org.springframework.dsl.lsp.domain.MarkupContent;
+import org.springframework.dsl.lsp.domain.MarkupKind;
 import org.springframework.dsl.lsp.domain.Position;
+import org.springframework.dsl.lsp.domain.Range;
 import org.springframework.dsl.lsp.domain.ServerCapabilities;
 import org.springframework.dsl.lsp.domain.TextDocumentIdentifier;
 import org.springframework.dsl.lsp.domain.TextDocumentItem;
@@ -72,6 +80,9 @@ public class ConverterUtilsTests {
 
 		assertDidSaveTextDocumentParams(new DidSaveTextDocumentParams());
 		assertDidSaveTextDocumentParams(new org.eclipse.lsp4j.DidSaveTextDocumentParams());
+
+		assertMarkupContent(new MarkupContent());
+		assertMarkupContent(new org.eclipse.lsp4j.MarkupContent());
 
 		assertHover(new Hover());
 		assertHover(new org.eclipse.lsp4j.Hover());
@@ -125,8 +136,37 @@ public class ConverterUtilsTests {
 		org.eclipse.lsp4j.DidCloseTextDocumentParams lsp4jDidCloseTextDocumentParams = new org.eclipse.lsp4j.DidCloseTextDocumentParams();
 		lsp4jDidCloseTextDocumentParams.setTextDocument(lsp4jTextDocumentIdentifier);
 		assertDidCloseTextDocumentParams(lsp4jDidCloseTextDocumentParams);
-	}
 
+		TextDocumentPositionParams textDocumentPositionParams = new TextDocumentPositionParams();
+		textDocumentPositionParams.setPosition(new Position(1, 1));
+		textDocumentPositionParams.setTextDocument(textDocumentIdentifier);
+		assertTextDocumentPositionParams(textDocumentPositionParams);
+
+		org.eclipse.lsp4j.TextDocumentPositionParams lsp4jTextDocumentPositionParams = new org.eclipse.lsp4j.TextDocumentPositionParams();
+		lsp4jTextDocumentPositionParams.setPosition(new org.eclipse.lsp4j.Position(1, 1));
+		lsp4jTextDocumentPositionParams.setTextDocument(lsp4jTextDocumentIdentifier);
+		assertTextDocumentPositionParams(lsp4jTextDocumentPositionParams);
+
+		Hover hover = new Hover();
+		Position start = new Position(1, 1);
+		Position end = new Position(1, 1);
+		Range range = new Range(start, end);
+		hover.setRange(range);
+		MarkupContent contents = new MarkupContent();
+		contents.setKind(MarkupKind.PlainText);
+		contents.setValue("hi");
+		hover.setContents(contents);
+		assertHover(hover);
+
+		org.eclipse.lsp4j.Hover lsp4jHover = new org.eclipse.lsp4j.Hover();
+		org.eclipse.lsp4j.Position lsp4jStart = new org.eclipse.lsp4j.Position(1, 1);
+		org.eclipse.lsp4j.Position lsp4jEnd = new org.eclipse.lsp4j.Position(1, 1);
+		org.eclipse.lsp4j.Range lsp4jRange = new org.eclipse.lsp4j.Range(lsp4jStart, lsp4jEnd);
+		lsp4jHover.setRange(lsp4jRange);
+		org.eclipse.lsp4j.MarkupContent markupContent = new org.eclipse.lsp4j.MarkupContent();
+		lsp4jHover.setContents(markupContent);
+		assertHover(lsp4jHover);
+	}
 
 	private static void assertInitializeParams(InitializeParams from) {
 		assertObjects(from, ConverterUtils.toInitializeParams(ConverterUtils.toInitializeParams(from)));
@@ -198,6 +238,14 @@ public class ConverterUtilsTests {
 
 	private static void assertDidSaveTextDocumentParams(org.eclipse.lsp4j.DidSaveTextDocumentParams from) {
 		assertObjects(from, ConverterUtils.toDidSaveTextDocumentParams(ConverterUtils.toDidSaveTextDocumentParams(from)));
+	}
+
+	private static void assertMarkupContent(MarkupContent from) {
+		assertObjects(from, ConverterUtils.toMarkupContent(ConverterUtils.toMarkupContent(from)));
+	}
+
+	private static void assertMarkupContent(org.eclipse.lsp4j.MarkupContent from) {
+		assertObjects(from, ConverterUtils.toMarkupContent(ConverterUtils.toMarkupContent(from)));
 	}
 
 	private static void assertHover(Hover from) {

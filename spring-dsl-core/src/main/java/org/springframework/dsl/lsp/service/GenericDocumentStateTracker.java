@@ -53,6 +53,7 @@ public class GenericDocumentStateTracker implements DocumentStateTracker/*, Docu
 //	private ListenerList<TextDocumentContentChange> documentChangeListeners = new ListenerList<>();
 //	private ListenerList<TextDocument> documentCloseListeners = new ListenerList<>();
 
+	@Override
 	public Document getDocument(String uri) {
 		TrackedDocument trackedDocument = documents.get(uri);
 		return trackedDocument != null ? trackedDocument.getDocument() : null;

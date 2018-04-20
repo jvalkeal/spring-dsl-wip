@@ -17,7 +17,7 @@ package org.springframework.dsl.lsp.domain;
 
 public class VersionedTextDocumentIdentifier extends TextDocumentIdentifier {
 
-	private int version;
+	private Integer version;
 
 	public VersionedTextDocumentIdentifier() {
 	}
@@ -26,19 +26,19 @@ public class VersionedTextDocumentIdentifier extends TextDocumentIdentifier {
 		this.version = version;
 	}
 
-	public int getVersion() {
+	public Integer getVersion() {
 		return version;
 	}
 
-	public void setVersion(int version) {
+	public void setVersion(Integer version) {
 		this.version = version;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = 1;
-		result = prime * result + version;
+		int result = super.hashCode();
+		result = prime * result + ((version == null) ? 0 : version.hashCode());
 		return result;
 	}
 
@@ -46,12 +46,15 @@ public class VersionedTextDocumentIdentifier extends TextDocumentIdentifier {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
+		if (!super.equals(obj))
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
 		VersionedTextDocumentIdentifier other = (VersionedTextDocumentIdentifier) obj;
-		if (version != other.version)
+		if (version == null) {
+			if (other.version != null)
+				return false;
+		} else if (!version.equals(other.version))
 			return false;
 		return true;
 	}

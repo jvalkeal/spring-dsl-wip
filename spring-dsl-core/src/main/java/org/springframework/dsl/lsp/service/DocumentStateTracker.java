@@ -15,6 +15,7 @@
  */
 package org.springframework.dsl.lsp.service;
 
+import org.springframework.dsl.document.Document;
 import org.springframework.dsl.document.TextDocumentContentChange;
 import org.springframework.dsl.lsp.domain.DidChangeTextDocumentParams;
 import org.springframework.dsl.lsp.domain.DidCloseTextDocumentParams;
@@ -74,4 +75,6 @@ public interface DocumentStateTracker {
 	 * @return the {@link Mono} for completion
 	 */
 	Mono<TextDocumentContentChange> didClose(DidCloseTextDocumentParams params);
+
+	Document getDocument(String uri);
 }

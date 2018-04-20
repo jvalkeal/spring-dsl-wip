@@ -25,6 +25,7 @@ import org.eclipse.lsp4j.CodeLensParams;
 import org.eclipse.lsp4j.Command;
 import org.eclipse.lsp4j.CompletionItem;
 import org.eclipse.lsp4j.CompletionList;
+import org.eclipse.lsp4j.CompletionParams;
 import org.eclipse.lsp4j.DidChangeTextDocumentParams;
 import org.eclipse.lsp4j.DidCloseTextDocumentParams;
 import org.eclipse.lsp4j.DidOpenTextDocumentParams;
@@ -226,9 +227,9 @@ public class Lsp4jLanguageServerAdapter implements LanguageServer, LanguageClien
 
 			@Override
 			public CompletableFuture<Either<List<CompletionItem>, CompletionList>> completion(
-					TextDocumentPositionParams position) {
-				log.trace("completion {}", position);
-				ServerLspExchange exchange = createExchange(LspMethod.TEXTDOCUMENT_COMPLETION, position, client, conversionService);
+					CompletionParams params) {
+				log.trace("completion {}", params);
+				ServerLspExchange exchange = createExchange(LspMethod.TEXTDOCUMENT_COMPLETION, params, client, conversionService);
 				return lspHandler.handle(exchange)
 					.then(convert2(exchange, CompletionItem.class, conversionService))
 					.flatMap(list -> Mono.just(Either.<List<CompletionItem>, CompletionList>forRight(new CompletionList(list))))
