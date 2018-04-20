@@ -23,6 +23,8 @@ import java.util.List;
 import org.eclipse.lsp4j.MarkedString;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.junit.Test;
+import org.springframework.dsl.lsp.domain.CompletionContext;
+import org.springframework.dsl.lsp.domain.CompletionParams;
 import org.springframework.dsl.lsp.domain.DidChangeTextDocumentParams;
 import org.springframework.dsl.lsp.domain.DidCloseTextDocumentParams;
 import org.springframework.dsl.lsp.domain.DidOpenTextDocumentParams;
@@ -86,6 +88,12 @@ public class ConverterUtilsTests {
 
 		assertHover(new Hover());
 		assertHover(new org.eclipse.lsp4j.Hover());
+
+		assertCompletionContext(new CompletionContext());
+		assertCompletionContext(new org.eclipse.lsp4j.CompletionContext());
+
+		assertCompletionParams(new CompletionParams());
+		assertCompletionParams(new org.eclipse.lsp4j.CompletionParams());
 
 		assertPosition(new Position());
 		assertPosition(new org.eclipse.lsp4j.Position());
@@ -254,6 +262,22 @@ public class ConverterUtilsTests {
 
 	private static void assertHover(org.eclipse.lsp4j.Hover from) {
 		assertObjects(from, ConverterUtils.toHover(ConverterUtils.toHover(from)));
+	}
+
+	private static void assertCompletionContext(CompletionContext from) {
+		assertObjects(from, ConverterUtils.toCompletionContext(ConverterUtils.toCompletionContext(from)));
+	}
+
+	private static void assertCompletionContext(org.eclipse.lsp4j.CompletionContext from) {
+		assertObjects(from, ConverterUtils.toCompletionContext(ConverterUtils.toCompletionContext(from)));
+	}
+
+	private static void assertCompletionParams(CompletionParams from) {
+		assertObjects(from, ConverterUtils.toCompletionParams(ConverterUtils.toCompletionParams(from)));
+	}
+
+	private static void assertCompletionParams(org.eclipse.lsp4j.CompletionParams from) {
+		assertObjects(from, ConverterUtils.toCompletionParams(ConverterUtils.toCompletionParams(from)));
 	}
 
 	private static void assertPosition(Position from) {

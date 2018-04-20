@@ -19,8 +19,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
+import org.springframework.dsl.lsp.domain.CompletionContext;
 import org.springframework.dsl.lsp.domain.CompletionItem;
 import org.springframework.dsl.lsp.domain.CompletionOptions;
+import org.springframework.dsl.lsp.domain.CompletionParams;
+import org.springframework.dsl.lsp.domain.CompletionTriggerKind;
 import org.springframework.dsl.lsp.domain.Diagnostic;
 import org.springframework.dsl.lsp.domain.DiagnosticSeverity;
 import org.springframework.dsl.lsp.domain.DidChangeTextDocumentParams;
@@ -720,6 +723,77 @@ public final class ConverterUtils {
 		MarkedString to = new MarkedString();
 		to.setLanguage(from.getLanguage());
 		to.setValue(from.getValue());
+		return to;
+	}
+
+	/**
+	 * Convert {@code Spring DSL} {@link CompletionContext} to {@code LSP4J}
+	 * {@link org.eclipse.lsp4j.CompletionContext}.
+	 *
+	 * @param from the {@code Spring DSL CompletionContext}
+	 * @return {@code LSP4J CompletionContext}
+	 */
+	public static org.eclipse.lsp4j.CompletionContext toCompletionContext(CompletionContext from) {
+		if (from == null) {
+			return null;
+		}
+		org.eclipse.lsp4j.CompletionContext to =  new org.eclipse.lsp4j.CompletionContext();
+		to.setTriggerCharacter(from.getTriggerCharacter());
+		to.setTriggerKind(from.getTriggerKind() != null
+				? org.eclipse.lsp4j.CompletionTriggerKind.valueOf(from.getTriggerKind().toString())
+				: null);
+		return to;
+	}
+
+
+	/**
+	 * Convert {@code LSP4J} {@link org.eclipse.lsp4j.CompletionContext} to
+	 * {@code Spring DSL} {@link CompletionContext}.
+	 *
+	 * @param from the {@code LSP4J CompletionContext}
+	 * @return {@code Spring DSL CompletionContext}
+	 */
+	public static CompletionContext toCompletionContext(org.eclipse.lsp4j.CompletionContext from) {
+		if (from == null) {
+			return null;
+		}
+		CompletionContext to = new CompletionContext();
+		to.setTriggerCharacter(from.getTriggerCharacter());
+		to.setTriggerKind(
+				from.getTriggerKind() != null ? CompletionTriggerKind.valueOf(from.getTriggerKind().toString()) : null);
+		return to;
+	}
+
+	/**
+	 * Convert {@code Spring DSL} {@link CompletionParams} to {@code LSP4J}
+	 * {@link org.eclipse.lsp4j.CompletionParams}.
+	 *
+	 * @param from the {@code Spring DSL CompletionParams}
+	 * @return {@code LSP4J CompletionParams}
+	 */
+	public static org.eclipse.lsp4j.CompletionParams toCompletionParams(CompletionParams from) {
+		if (from == null) {
+			return null;
+		}
+		org.eclipse.lsp4j.CompletionParams to =  new org.eclipse.lsp4j.CompletionParams();
+		to.setContext(toCompletionContext(from.getContext()));
+		return to;
+	}
+
+
+	/**
+	 * Convert {@code LSP4J} {@link org.eclipse.lsp4j.CompletionParams} to
+	 * {@code Spring DSL} {@link CompletionParams}.
+	 *
+	 * @param from the {@code LSP4J CompletionParams}
+	 * @return {@code Spring DSL CompletionParams}
+	 */
+	public static CompletionParams toCompletionParams(org.eclipse.lsp4j.CompletionParams from) {
+		if (from == null) {
+			return null;
+		}
+		CompletionParams to = new CompletionParams();
+		to.setContext(toCompletionContext(from.getContext()));
 		return to;
 	}
 }
