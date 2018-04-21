@@ -21,6 +21,7 @@ import java.util.Set;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.core.convert.converter.GenericConverter;
 import org.springframework.dsl.lsp.domain.CompletionItem;
+import org.springframework.dsl.lsp.domain.CompletionParams;
 import org.springframework.dsl.lsp.domain.DidChangeTextDocumentParams;
 import org.springframework.dsl.lsp.domain.DidCloseTextDocumentParams;
 import org.springframework.dsl.lsp.domain.DidOpenTextDocumentParams;
@@ -70,6 +71,22 @@ public class GenericLsp4jObjectConverter implements GenericConverter {
 
 	@Override
 	public Object convert(Object source, TypeDescriptor sourceType, TypeDescriptor targetType) {
+
+		if (ClassUtils.isAssignable(org.eclipse.lsp4j.InitializeParams.class, sourceType.getType())) {
+			return ConverterUtils.toInitializeParams((org.eclipse.lsp4j.InitializeParams) source);
+		}
+		if (ClassUtils.isAssignable(InitializeParams.class, sourceType.getType())) {
+			return ConverterUtils.toInitializeParams((InitializeParams) source);
+		}
+
+		if (ClassUtils.isAssignable(org.eclipse.lsp4j.CompletionParams.class, sourceType.getType())) {
+			return ConverterUtils.toCompletionParams((org.eclipse.lsp4j.CompletionParams) source);
+		}
+		if (ClassUtils.isAssignable(CompletionParams.class, sourceType.getType())) {
+			return ConverterUtils.toCompletionParams((CompletionParams) source);
+		}
+
+
 		if (ClassUtils.isAssignable(InitializeResult.class, sourceType.getType())) {
 			return ConverterUtils.toInitializeResult((InitializeResult) source);
 		} else if (ClassUtils.isAssignable(InitializeParams.class, sourceType.getType())) {

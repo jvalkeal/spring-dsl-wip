@@ -27,6 +27,7 @@ import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.SynthesizingMethodParameter;
 import org.springframework.dsl.lsp.LspMethod;
+import org.springframework.dsl.lsp.domain.CompletionParams;
 import org.springframework.dsl.lsp.domain.DidChangeTextDocumentParams;
 import org.springframework.dsl.lsp.domain.DidCloseTextDocumentParams;
 import org.springframework.dsl.lsp.domain.DidOpenTextDocumentParams;
@@ -52,6 +53,7 @@ public class Lsp4jDomainArgumentResolverTests {
 	private MethodParameter paramDidCloseTextDocumentParams;
 	private MethodParameter paramDidOpenTextDocumentParams;
 	private MethodParameter paramDidSaveTextDocumentParams;
+	private MethodParameter paramCompletionParams;
 
 	@Before
 	public void setup() throws Exception {
@@ -60,12 +62,13 @@ public class Lsp4jDomainArgumentResolverTests {
 		this.resolver = new Lsp4jDomainArgumentResolver(conversionServiceFactoryBean.getObject());
 		Method payloadMethod = Lsp4jDomainArgumentResolverTests.class.getDeclaredMethod("testMethod",
 				InitializeParams.class, DidChangeTextDocumentParams.class, DidCloseTextDocumentParams.class,
-				DidOpenTextDocumentParams.class, DidSaveTextDocumentParams.class);
+				DidOpenTextDocumentParams.class, DidSaveTextDocumentParams.class, CompletionParams.class);
 		this.paramInitializeParams = new SynthesizingMethodParameter(payloadMethod, 0);
 		this.paramDidChangeTextDocumentParams = new SynthesizingMethodParameter(payloadMethod, 1);
 		this.paramDidCloseTextDocumentParams = new SynthesizingMethodParameter(payloadMethod, 2);
 		this.paramDidOpenTextDocumentParams = new SynthesizingMethodParameter(payloadMethod, 3);
 		this.paramDidSaveTextDocumentParams = new SynthesizingMethodParameter(payloadMethod, 4);
+		this.paramCompletionParams = new SynthesizingMethodParameter(payloadMethod, 5);
 	}
 
 	@Test
@@ -75,19 +78,49 @@ public class Lsp4jDomainArgumentResolverTests {
 		assertThat(resolver.supportsParameter(paramDidCloseTextDocumentParams)).isTrue();
 		assertThat(resolver.supportsParameter(paramDidOpenTextDocumentParams)).isTrue();
 		assertThat(resolver.supportsParameter(paramDidSaveTextDocumentParams)).isTrue();
+		assertThat(resolver.supportsParameter(paramCompletionParams)).isTrue();
 	}
 
 	@Test
 	public void testConversions() {
-		ServerLspExchange exchange = createExchange(LspMethod.DIDSAVE,
+		ServerLspExchange exchange;
+		Object object;
+
+		exchange = createExchange(LspMethod.INITIALIZE,
+				new org.eclipse.lsp4j.InitializeParams());
+		object = this.resolver.resolveArgument(paramInitializeParams, exchange).block();
+		assertThat(object).isInstanceOf(InitializeParams.class);
+
+		exchange = createExchange(LspMethod.DIDCHANGE,
+				new org.eclipse.lsp4j.DidChangeTextDocumentParams());
+		object = this.resolver.resolveArgument(paramDidChangeTextDocumentParams, exchange).block();
+		assertThat(object).isInstanceOf(DidChangeTextDocumentParams.class);
+
+		exchange = createExchange(LspMethod.DIDCLOSE,
+				new org.eclipse.lsp4j.DidCloseTextDocumentParams());
+		object = this.resolver.resolveArgument(paramDidCloseTextDocumentParams, exchange).block();
+		assertThat(object).isInstanceOf(DidCloseTextDocumentParams.class);
+
+		exchange = createExchange(LspMethod.DIDOPEN,
+				new org.eclipse.lsp4j.DidOpenTextDocumentParams());
+		object = this.resolver.resolveArgument(paramDidOpenTextDocumentParams, exchange).block();
+		assertThat(object).isInstanceOf(DidOpenTextDocumentParams.class);
+
+		exchange = createExchange(LspMethod.DIDSAVE,
 				new org.eclipse.lsp4j.DidSaveTextDocumentParams());
-		Object object = this.resolver.resolveArgument(paramDidSaveTextDocumentParams, exchange).block();
+		object = this.resolver.resolveArgument(paramDidSaveTextDocumentParams, exchange).block();
 		assertThat(object).isInstanceOf(DidSaveTextDocumentParams.class);
+
+		exchange = createExchange(LspMethod.TEXTDOCUMENT_COMPLETION,
+				new org.eclipse.lsp4j.CompletionParams());
+		object = this.resolver.resolveArgument(paramCompletionParams, exchange).block();
+		assertThat(object).isInstanceOf(CompletionParams.class);
+
 	}
 
 	@SuppressWarnings("unused")
 	private void testMethod(InitializeParams p1, DidChangeTextDocumentParams p2, DidCloseTextDocumentParams p3,
-			DidOpenTextDocumentParams p4, DidSaveTextDocumentParams p5) {
+			DidOpenTextDocumentParams p4, DidSaveTextDocumentParams p5, CompletionParams p6) {
 	};
 
 	private ConversionServiceFactoryBean lspConversionService() {

@@ -18,6 +18,7 @@ package org.springframework.dsl.lsp4j.result.method.annotation;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.dsl.lsp.LspInputMessage;
+import org.springframework.dsl.lsp.domain.CompletionParams;
 import org.springframework.dsl.lsp.domain.DidChangeTextDocumentParams;
 import org.springframework.dsl.lsp.domain.DidCloseTextDocumentParams;
 import org.springframework.dsl.lsp.domain.DidOpenTextDocumentParams;
@@ -51,9 +52,11 @@ public class Lsp4jDomainArgumentResolver implements LspHandlerMethodArgumentReso
 	@Override
 	public boolean supportsParameter(MethodParameter parameter) {
 		Class<?> type = parameter.getParameterType();
-		return InitializeParams.class.isAssignableFrom(type) || DidChangeTextDocumentParams.class.isAssignableFrom(type)
+		return InitializeParams.class.isAssignableFrom(type)
+				|| DidChangeTextDocumentParams.class.isAssignableFrom(type)
 				|| DidCloseTextDocumentParams.class.isAssignableFrom(type)
 				|| DidOpenTextDocumentParams.class.isAssignableFrom(type)
+				|| CompletionParams.class.isAssignableFrom(type)
 				|| DidSaveTextDocumentParams.class.isAssignableFrom(type)
 				|| TextDocumentPositionParams.class.isAssignableFrom(type)
 				;
@@ -61,63 +64,11 @@ public class Lsp4jDomainArgumentResolver implements LspHandlerMethodArgumentReso
 
 	@Override
 	public Mono<Object> resolveArgument(MethodParameter parameter, ServerLspExchange exchange) {
-
-//		Class<?> clazz = null;
 		Object body = null;
 		if (exchange.getRequest() != null) {
 			body = exchange.getRequest().getBody();
-//			if (body != null) {
-//				clazz = body.getClass();
-//			}
 		}
-//
-//		if (conversionService.)
-
-
 		Class<?> clazz = parameter.getParameterType();
 		return Mono.just(conversionService.convert(body, clazz));
-
-
-//		if (ClassUtils.isAssignable(org.eclipse.lsp4j.InitializeParams.class,
-//				exchange.getRequest().getBody().getClass())) {
-//			return Mono.just(conversionService.convert(body, InitializeParams.class));
-//		} else if (ClassUtils.isAssignable(DidChangeTextDocumentParams.class,
-//				exchange.getRequest().getBody().getClass())) {
-//			return Mono.just(conversionService.convert(body, DidChangeTextDocumentParams.class));
-//		} else if (ClassUtils.isAssignable(DidCloseTextDocumentParams.class,
-//				exchange.getRequest().getBody().getClass())) {
-//			return Mono.just(conversionService.convert(body, DidCloseTextDocumentParams.class));
-//		} else if (ClassUtils.isAssignable(DidOpenTextDocumentParams.class,
-//				exchange.getRequest().getBody().getClass())) {
-//			return Mono.just(conversionService.convert(body, DidOpenTextDocumentParams.class));
-//		} else if (ClassUtils.isAssignable(DidSaveTextDocumentParams.class,
-//				exchange.getRequest().getBody().getClass())) {
-//			return Mono.just(conversionService.convert(body, DidSaveTextDocumentParams.class));
-//
-//
-//		} else if (ClassUtils.isAssignable(org.eclipse.lsp4j.DidSaveTextDocumentParams.class,
-//				exchange.getRequest().getBody().getClass())) {
-//			return Mono.just(conversionService.convert(body, org.eclipse.lsp4j.DidSaveTextDocumentParams.class));
-//
-//		} else if (ClassUtils.isAssignable(org.eclipse.lsp4j.DidSaveTextDocumentParams.class,
-//				exchange.getRequest().getBody().getClass())) {
-//			return Mono.just(conversionService.convert(body, org.eclipse.lsp4j.DidSaveTextDocumentParams.class));
-//
-//		} else if (ClassUtils.isAssignable(org.eclipse.lsp4j.DidSaveTextDocumentParams.class,
-//				exchange.getRequest().getBody().getClass())) {
-//			return Mono.just(conversionService.convert(body, org.eclipse.lsp4j.DidSaveTextDocumentParams.class));
-//
-//		} else if (ClassUtils.isAssignable(org.eclipse.lsp4j.DidSaveTextDocumentParams.class,
-//				exchange.getRequest().getBody().getClass())) {
-//			return Mono.just(conversionService.convert(body, org.eclipse.lsp4j.DidSaveTextDocumentParams.class));
-//
-//		} else if (ClassUtils.isAssignable(org.eclipse.lsp4j.DidSaveTextDocumentParams.class,
-//				exchange.getRequest().getBody().getClass())) {
-//			return Mono.just(conversionService.convert(body, org.eclipse.lsp4j.DidSaveTextDocumentParams.class));
-//
-//		} else {
-//			return Mono.empty();
-//		}
 	}
-
 }

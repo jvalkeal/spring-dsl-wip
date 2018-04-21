@@ -17,13 +17,11 @@ package org.springframework.dsl.lsp4j.converter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.eclipse.lsp4j.MarkedString;
-import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.junit.Test;
+import org.springframework.dsl.lsp.domain.Command;
 import org.springframework.dsl.lsp.domain.CompletionContext;
+import org.springframework.dsl.lsp.domain.CompletionItem;
+import org.springframework.dsl.lsp.domain.CompletionOptions;
 import org.springframework.dsl.lsp.domain.CompletionParams;
 import org.springframework.dsl.lsp.domain.DidChangeTextDocumentParams;
 import org.springframework.dsl.lsp.domain.DidCloseTextDocumentParams;
@@ -41,6 +39,7 @@ import org.springframework.dsl.lsp.domain.TextDocumentIdentifier;
 import org.springframework.dsl.lsp.domain.TextDocumentItem;
 import org.springframework.dsl.lsp.domain.TextDocumentPositionParams;
 import org.springframework.dsl.lsp.domain.TextDocumentSyncOptions;
+import org.springframework.dsl.lsp.domain.TextEdit;
 import org.springframework.dsl.lsp.domain.VersionedTextDocumentIdentifier;
 
 /**
@@ -106,6 +105,18 @@ public class ConverterUtilsTests {
 
 		assertTextDocumentPositionParams(new TextDocumentPositionParams());
 		assertTextDocumentPositionParams(new org.eclipse.lsp4j.TextDocumentPositionParams());
+
+		assertTextEdit(new TextEdit());
+		assertTextEdit(new org.eclipse.lsp4j.TextEdit());
+
+		assertCommand(new Command());
+		assertCommand(new org.eclipse.lsp4j.Command());
+
+		assertCompletionItem(new CompletionItem());
+		assertCompletionItem(new org.eclipse.lsp4j.CompletionItem());
+
+		assertCompletionOptions(new CompletionOptions());
+		assertCompletionOptions(new org.eclipse.lsp4j.CompletionOptions());
 	}
 
 	@Test
@@ -310,6 +321,38 @@ public class ConverterUtilsTests {
 
 	private static void assertTextDocumentPositionParams(org.eclipse.lsp4j.TextDocumentPositionParams from) {
 		assertObjects(from, ConverterUtils.toTextDocumentPositionParams(ConverterUtils.toTextDocumentPositionParams(from)));
+	}
+
+	private static void assertTextEdit(TextEdit from) {
+		assertObjects(from, ConverterUtils.toTextEdit(ConverterUtils.toTextEdit(from)));
+	}
+
+	private static void assertTextEdit(org.eclipse.lsp4j.TextEdit from) {
+		assertObjects(from, ConverterUtils.toTextEdit(ConverterUtils.toTextEdit(from)));
+	}
+
+	private static void assertCommand(Command from) {
+		assertObjects(from, ConverterUtils.toCommand(ConverterUtils.toCommand(from)));
+	}
+
+	private static void assertCommand(org.eclipse.lsp4j.Command from) {
+		assertObjects(from, ConverterUtils.toCommand(ConverterUtils.toCommand(from)));
+	}
+
+	private static void assertCompletionItem(CompletionItem from) {
+		assertObjects(from, ConverterUtils.toCompletionItem(ConverterUtils.toCompletionItem(from)));
+	}
+
+	private static void assertCompletionItem(org.eclipse.lsp4j.CompletionItem from) {
+		assertObjects(from, ConverterUtils.toCompletionItem(ConverterUtils.toCompletionItem(from)));
+	}
+
+	private static void assertCompletionOptions(CompletionOptions from) {
+		assertObjects(from, ConverterUtils.toCompletionOptions(ConverterUtils.toCompletionOptions(from)));
+	}
+
+	private static void assertCompletionOptions(org.eclipse.lsp4j.CompletionOptions from) {
+		assertObjects(from, ConverterUtils.toCompletionOptions(ConverterUtils.toCompletionOptions(from)));
 	}
 
 	private static void assertObjects(Object from, Object to) {

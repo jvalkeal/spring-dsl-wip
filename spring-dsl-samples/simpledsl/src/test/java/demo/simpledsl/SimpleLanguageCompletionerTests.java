@@ -15,13 +15,33 @@
  */
 package demo.simpledsl;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.junit.Test;
+import org.springframework.dsl.document.Document;
+import org.springframework.dsl.document.LanguageId;
+import org.springframework.dsl.document.TextDocument;
+import org.springframework.dsl.lsp.domain.CompletionItem;
+import org.springframework.dsl.lsp.domain.Position;
+
+import reactor.core.publisher.Flux;
 
 public class SimpleLanguageCompletionerTests {
 
+	private final SimpleLanguageCompletioner completioner = new SimpleLanguageCompletioner();
+
 	@Test
 	public void testCompletions() {
+		Document document = new TextDocument("", LanguageId.PLAINTEXT, 0, SimpleLanguageTests.content1);
 
+		Flux<CompletionItem> complete = completioner.complete(document, new Position(0, 1));
+		assertThat(complete).isNotNull();
+		List<CompletionItem> items = complete.toStream().collect(Collectors.toList());
+		assertThat(items).hasSize(1);
+		assertThat(items.get(0).getLabel()).isEqualTo("int");
 	}
 
 }

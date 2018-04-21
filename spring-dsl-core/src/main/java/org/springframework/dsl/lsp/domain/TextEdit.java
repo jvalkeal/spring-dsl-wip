@@ -15,35 +15,41 @@
  */
 package org.springframework.dsl.lsp.domain;
 
-import java.util.List;
+public class TextEdit {
 
-public class CompletionOptions {
+	private Range range;
+	private String newText;
 
-	private Boolean resolveProvider;
-	private List<String> triggerCharacters;
-
-	public Boolean getResolveProvider() {
-		return resolveProvider;
+	public TextEdit() {
 	}
 
-	public void setResolveProvider(Boolean resolveProvider) {
-		this.resolveProvider = resolveProvider;
+	public TextEdit(Range range, String newText) {
+		this.range = range;
+		this.newText = newText;
 	}
 
-	public List<String> getTriggerCharacters() {
-		return triggerCharacters;
+	public Range getRange() {
+		return range;
 	}
 
-	public void setTriggerCharacters(List<String> triggerCharacters) {
-		this.triggerCharacters = triggerCharacters;
+	public void setRange(Range range) {
+		this.range = range;
+	}
+
+	public String getNewText() {
+		return newText;
+	}
+
+	public void setNewText(String newText) {
+		this.newText = newText;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((resolveProvider == null) ? 0 : resolveProvider.hashCode());
-		result = prime * result + ((triggerCharacters == null) ? 0 : triggerCharacters.hashCode());
+		result = prime * result + ((newText == null) ? 0 : newText.hashCode());
+		result = prime * result + ((range == null) ? 0 : range.hashCode());
 		return result;
 	}
 
@@ -55,16 +61,16 @@ public class CompletionOptions {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		CompletionOptions other = (CompletionOptions) obj;
-		if (resolveProvider == null) {
-			if (other.resolveProvider != null)
+		TextEdit other = (TextEdit) obj;
+		if (newText == null) {
+			if (other.newText != null)
 				return false;
-		} else if (!resolveProvider.equals(other.resolveProvider))
+		} else if (!newText.equals(other.newText))
 			return false;
-		if (triggerCharacters == null) {
-			if (other.triggerCharacters != null)
+		if (range == null) {
+			if (other.range != null)
 				return false;
-		} else if (!triggerCharacters.equals(other.triggerCharacters))
+		} else if (!range.equals(other.range))
 			return false;
 		return true;
 	}

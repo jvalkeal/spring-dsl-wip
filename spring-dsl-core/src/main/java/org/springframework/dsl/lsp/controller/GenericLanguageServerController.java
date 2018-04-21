@@ -15,6 +15,9 @@
  */
 package org.springframework.dsl.lsp.controller;
 
+import java.util.Arrays;
+import java.util.Collections;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -135,6 +138,10 @@ public class GenericLanguageServerController implements InitializingBean {
 				documentStateTracker.isIncrementalChangesSupported() ? TextDocumentSyncKind.Incremental
 						: TextDocumentSyncKind.Full);
 		if (completioner != null) {
+			CompletionOptions x = new CompletionOptions();
+//			x.setTriggerCharacters(Arrays.asList("x"));
+//			x.setResolveProvider(true);
+//			serverCapabilities.setCompletionProvider(x);
 			serverCapabilities.setCompletionProvider(new CompletionOptions());
 		}
 		return new InitializeResult(serverCapabilities);
@@ -239,7 +246,8 @@ public class GenericLanguageServerController implements InitializingBean {
 	@LspResponseBody
 	public Flux<CompletionItem> completion(TextDocumentPositionParams params) {
 		if (completioner != null) {
-			return completioner.complete(null, null);
+			return completioner.complete(documentStateTracker.getDocument(params.getTextDocument().getUri()),
+					params.getPosition());
 		}
 		return Flux.empty();
 	}

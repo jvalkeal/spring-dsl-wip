@@ -18,9 +18,10 @@ package org.springframework.dsl.lsp4j.converter;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.lsp4j.jsonrpc.messages.Either;
+import org.springframework.dsl.lsp.domain.Command;
 import org.springframework.dsl.lsp.domain.CompletionContext;
 import org.springframework.dsl.lsp.domain.CompletionItem;
+import org.springframework.dsl.lsp.domain.CompletionItemKind;
 import org.springframework.dsl.lsp.domain.CompletionOptions;
 import org.springframework.dsl.lsp.domain.CompletionParams;
 import org.springframework.dsl.lsp.domain.CompletionTriggerKind;
@@ -33,6 +34,7 @@ import org.springframework.dsl.lsp.domain.DidSaveTextDocumentParams;
 import org.springframework.dsl.lsp.domain.Hover;
 import org.springframework.dsl.lsp.domain.InitializeParams;
 import org.springframework.dsl.lsp.domain.InitializeResult;
+import org.springframework.dsl.lsp.domain.InsertTextFormat;
 import org.springframework.dsl.lsp.domain.MarkedString;
 import org.springframework.dsl.lsp.domain.MarkupContent;
 import org.springframework.dsl.lsp.domain.MarkupKind;
@@ -45,6 +47,7 @@ import org.springframework.dsl.lsp.domain.TextDocumentItem;
 import org.springframework.dsl.lsp.domain.TextDocumentPositionParams;
 import org.springframework.dsl.lsp.domain.TextDocumentSyncKind;
 import org.springframework.dsl.lsp.domain.TextDocumentSyncOptions;
+import org.springframework.dsl.lsp.domain.TextEdit;
 import org.springframework.dsl.lsp.domain.VersionedTextDocumentIdentifier;
 
 /**
@@ -125,18 +128,42 @@ public final class ConverterUtils {
 		return org.eclipse.lsp4j.TextDocumentSyncKind.valueOf(from.name());
 	}
 
-	public static CompletionOptions toCompletionOptions(org.eclipse.lsp4j.CompletionOptions from) {
-		if (from == null) {
-			return null;
-		}
-		return new CompletionOptions();
-	}
-
+	/**
+	 * Convert {@code Spring DSL} {@link CompletionOptions} to {@code LSP4J}
+	 * {@link org.eclipse.lsp4j.CompletionOptions}.
+	 *
+	 * @param from the {@code Spring DSL CompletionOptions}
+	 * @return {@code LSP4J CompletionOptions}
+	 */
 	public static org.eclipse.lsp4j.CompletionOptions toCompletionOptions(CompletionOptions from) {
 		if (from == null) {
 			return null;
 		}
-		return new org.eclipse.lsp4j.CompletionOptions();
+		org.eclipse.lsp4j.CompletionOptions to = new org.eclipse.lsp4j.CompletionOptions();
+		to.setResolveProvider(from.getResolveProvider());
+		if (from.getTriggerCharacters() != null) {
+			to.setTriggerCharacters(from.getTriggerCharacters());
+		}
+		return to;
+	}
+
+	/**
+	 * Convert {@code LSP4J} {@link org.eclipse.lsp4j.CompletionOptions} to {@code Spring DSL}
+	 * {@link CompletionOptions}.
+	 *
+	 * @param from the {@code LSP4J CompletionOptions}
+	 * @return {@code Spring DSL CompletionOptions}
+	 */
+	public static CompletionOptions toCompletionOptions(org.eclipse.lsp4j.CompletionOptions from) {
+		if (from == null) {
+			return null;
+		}
+		CompletionOptions to = new CompletionOptions();
+		to.setResolveProvider(from.getResolveProvider());
+		if (from.getTriggerCharacters() != null) {
+			to.setTriggerCharacters(from.getTriggerCharacters());
+		}
+		return to;
 	}
 
 	/**
@@ -502,7 +529,6 @@ public final class ConverterUtils {
 		if (markupContent != null) {
 			to.setContents(markupContent);
 		}
-//		to.setContents(toMarkupContent(from.getContents()));
 		return to;
 	}
 
@@ -605,7 +631,33 @@ public final class ConverterUtils {
 		if (from == null) {
 			return null;
 		}
-		return new org.eclipse.lsp4j.CompletionItem();
+		org.eclipse.lsp4j.CompletionItem to = new org.eclipse.lsp4j.CompletionItem();
+		to.setLabel(from.getLabel());
+		to.setKind(from.getKind() != null ? org.eclipse.lsp4j.CompletionItemKind.valueOf(from.getKind().toString())
+				: null);
+		to.setDetail(from.getDetail());
+		if (from.getDocumentation() != null) {
+			to.setDocumentation(toMarkupContent(from.getDocumentation()));
+		}
+		to.setSortText(from.getSortText());
+		to.setFilterText(from.getFilterText());
+		to.setInsertText(from.getInsertText());
+		to.setInsertTextFormat(from.getInsertTextFormat() != null
+				? org.eclipse.lsp4j.InsertTextFormat.valueOf(from.getInsertTextFormat().toString())
+				: null);
+		to.setTextEdit(toTextEdit(from.getTextEdit()));
+		if (from.getAdditionalTextEdits() != null) {
+			ArrayList<org.eclipse.lsp4j.TextEdit> additional = new ArrayList<>();
+			for (TextEdit textEdit : from.getAdditionalTextEdits()) {
+				additional.add(toTextEdit(textEdit));
+			}
+			to.setAdditionalTextEdits(additional);
+		}
+		if (from.getCommitCharacters() != null) {
+			to.setCommitCharacters(from.getCommitCharacters());
+		}
+		to.setCommand(toCommand(from.getCommand()));
+		return to;
 	}
 
 
@@ -620,7 +672,35 @@ public final class ConverterUtils {
 		if (from == null) {
 			return null;
 		}
-		return new CompletionItem();
+		CompletionItem to = new CompletionItem();
+		to.setLabel(from.getLabel());
+		to.setKind(from.getKind() != null ? CompletionItemKind.valueOf(from.getKind().toString())
+				: null);
+		to.setDetail(from.getDetail());
+		if (from.getDocumentation() != null) {
+			if (from.getDocumentation().getRight() != null) {
+				to.setDocumentation(toMarkupContent(from.getDocumentation().getRight()));
+			}
+		}
+		to.setSortText(from.getSortText());
+		to.setFilterText(from.getFilterText());
+		to.setInsertText(from.getInsertText());
+		to.setInsertTextFormat(from.getInsertTextFormat() != null
+				? InsertTextFormat.valueOf(from.getInsertTextFormat().toString())
+				: null);
+		to.setTextEdit(toTextEdit(from.getTextEdit()));
+		if (from.getAdditionalTextEdits() != null) {
+			ArrayList<TextEdit> additional = new ArrayList<>();
+			for (org.eclipse.lsp4j.TextEdit textEdit : from.getAdditionalTextEdits()) {
+				additional.add(toTextEdit(textEdit));
+			}
+			to.setAdditionalTextEdits(additional);
+		}
+		if (from.getCommitCharacters() != null) {
+			to.setCommitCharacters(from.getCommitCharacters());
+		}
+		to.setCommand(toCommand(from.getCommand()));
+		return to;
 	}
 
 	/**
@@ -794,6 +874,78 @@ public final class ConverterUtils {
 		}
 		CompletionParams to = new CompletionParams();
 		to.setContext(toCompletionContext(from.getContext()));
+		return to;
+	}
+
+	/**
+	 * Convert {@code Spring DSL} {@link TextEdit} to {@code LSP4J}
+	 * {@link org.eclipse.lsp4j.TextEdit}.
+	 *
+	 * @param from the {@code Spring DSL TextEdit}
+	 * @return {@code LSP4J TextEdit}
+	 */
+	public static org.eclipse.lsp4j.TextEdit toTextEdit(TextEdit from) {
+		if (from == null) {
+			return null;
+		}
+		org.eclipse.lsp4j.TextEdit to =  new org.eclipse.lsp4j.TextEdit();
+		to.setRange(toRange(from.getRange()));
+		to.setNewText(from.getNewText());
+		return to;
+	}
+
+
+	/**
+	 * Convert {@code LSP4J} {@link org.eclipse.lsp4j.TextEdit} to
+	 * {@code Spring DSL} {@link TextEdit}.
+	 *
+	 * @param from the {@code LSP4J TextEdit}
+	 * @return {@code Spring DSL TextEdit}
+	 */
+	public static TextEdit toTextEdit(org.eclipse.lsp4j.TextEdit from) {
+		if (from == null) {
+			return null;
+		}
+		TextEdit to = new TextEdit();
+		to.setRange(toRange(from.getRange()));
+		to.setNewText(from.getNewText());
+		return to;
+	}
+
+	/**
+	 * Convert {@code Spring DSL} {@link Command} to {@code LSP4J}
+	 * {@link org.eclipse.lsp4j.Command}.
+	 *
+	 * @param from the {@code Spring DSL Command}
+	 * @return {@code LSP4J Command}
+	 */
+	public static org.eclipse.lsp4j.Command toCommand(Command from) {
+		if (from == null) {
+			return null;
+		}
+		org.eclipse.lsp4j.Command to =  new org.eclipse.lsp4j.Command();
+		to.setTitle(from.getTitle());
+		to.setCommand(from.getCommand());
+		// TODO: add argument list
+		return to;
+	}
+
+
+	/**
+	 * Convert {@code LSP4J} {@link org.eclipse.lsp4j.Command} to
+	 * {@code Spring DSL} {@link Command}.
+	 *
+	 * @param from the {@code LSP4J Command}
+	 * @return {@code Spring DSL Command}
+	 */
+	public static Command toCommand(org.eclipse.lsp4j.Command from) {
+		if (from == null) {
+			return null;
+		}
+		Command to = new Command();
+		to.setTitle(from.getTitle());
+		to.setCommand(from.getCommand());
+		// TODO: add argument list
 		return to;
 	}
 }

@@ -20,6 +20,8 @@ import org.springframework.dsl.lsp.domain.CompletionItem;
 import org.springframework.dsl.lsp.domain.Position;
 import org.springframework.dsl.lsp.service.Completioner;
 
+import demo.simpledsl.SimpleLanguage.KeyToken;
+import demo.simpledsl.SimpleLanguage.Token;
 import reactor.core.publisher.Flux;
 
 /**
@@ -33,6 +35,19 @@ public class SimpleLanguageCompletioner implements Completioner {
 
 	@Override
 	public Flux<CompletionItem> complete(Document document, Position position) {
+
+		SimpleLanguage simpleLanguage = SimpleLanguage.build(document);
+		Token token = simpleLanguage.getToken(position);
+		if (token != null) {
+			if (token instanceof KeyToken) {
+				Object key = ((KeyToken)token).getKey();
+				if (key != null) {
+					CompletionItem item = new CompletionItem();
+					item.setLabel(key.toString());
+					return Flux.just(item);
+				}
+			}
+		}
 		return Flux.empty();
 	}
 }
