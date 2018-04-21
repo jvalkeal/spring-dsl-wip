@@ -56,8 +56,8 @@ public class Lsp4jDomainArgumentResolver implements LspHandlerMethodArgumentReso
 				|| DidChangeTextDocumentParams.class.isAssignableFrom(type)
 				|| DidCloseTextDocumentParams.class.isAssignableFrom(type)
 				|| DidOpenTextDocumentParams.class.isAssignableFrom(type)
-				|| CompletionParams.class.isAssignableFrom(type)
 				|| DidSaveTextDocumentParams.class.isAssignableFrom(type)
+				|| CompletionParams.class.isAssignableFrom(type)
 				|| TextDocumentPositionParams.class.isAssignableFrom(type)
 				;
 	}

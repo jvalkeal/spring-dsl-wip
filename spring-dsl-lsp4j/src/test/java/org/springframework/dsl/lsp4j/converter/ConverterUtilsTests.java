@@ -185,6 +185,14 @@ public class ConverterUtilsTests {
 		org.eclipse.lsp4j.MarkupContent markupContent = new org.eclipse.lsp4j.MarkupContent();
 		lsp4jHover.setContents(markupContent);
 		assertHover(lsp4jHover);
+
+		CompletionParams completionParams = new CompletionParams();
+		completionParams.setTextDocument(textDocumentIdentifier);
+		assertCompletionParams(completionParams);
+
+		org.eclipse.lsp4j.CompletionParams lsp4jCompletionParams = new org.eclipse.lsp4j.CompletionParams();
+		lsp4jCompletionParams.setTextDocument(lsp4jTextDocumentIdentifier);
+		assertCompletionParams(lsp4jCompletionParams);
 	}
 
 	private static void assertInitializeParams(InitializeParams from) {

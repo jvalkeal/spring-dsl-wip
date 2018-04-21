@@ -37,6 +37,7 @@ import org.springframework.dsl.lsp.annotation.LspResponseBody;
 import org.springframework.dsl.lsp.domain.CompletionItem;
 import org.springframework.dsl.lsp.domain.CompletionList;
 import org.springframework.dsl.lsp.domain.CompletionOptions;
+import org.springframework.dsl.lsp.domain.CompletionParams;
 import org.springframework.dsl.lsp.domain.DidChangeTextDocumentParams;
 import org.springframework.dsl.lsp.domain.DidCloseTextDocumentParams;
 import org.springframework.dsl.lsp.domain.DidOpenTextDocumentParams;
@@ -244,8 +245,8 @@ public class GenericLanguageServerController implements InitializingBean {
 	 */
 	@LspCompletion
 	@LspResponseBody
-	public Flux<CompletionItem> completion(TextDocumentPositionParams params) {
-		if (completioner != null) {
+	public Flux<CompletionItem> completion(CompletionParams params) {
+		if (completioner != null && params != null) {
 			return completioner.complete(documentStateTracker.getDocument(params.getTextDocument().getUri()),
 					params.getPosition());
 		}

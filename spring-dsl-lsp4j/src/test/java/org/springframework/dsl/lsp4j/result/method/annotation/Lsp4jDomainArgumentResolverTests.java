@@ -21,6 +21,7 @@ import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.lsp4j.TextDocumentIdentifier;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.support.ConversionServiceFactoryBean;
@@ -111,11 +112,14 @@ public class Lsp4jDomainArgumentResolverTests {
 		object = this.resolver.resolveArgument(paramDidSaveTextDocumentParams, exchange).block();
 		assertThat(object).isInstanceOf(DidSaveTextDocumentParams.class);
 
-		exchange = createExchange(LspMethod.TEXTDOCUMENT_COMPLETION,
-				new org.eclipse.lsp4j.CompletionParams());
+		org.eclipse.lsp4j.CompletionParams lsp4jCompletionParams = new org.eclipse.lsp4j.CompletionParams();
+		lsp4jCompletionParams.setTextDocument(new TextDocumentIdentifier("fakeuri"));
+		exchange = createExchange(LspMethod.TEXTDOCUMENT_COMPLETION, lsp4jCompletionParams);
 		object = this.resolver.resolveArgument(paramCompletionParams, exchange).block();
 		assertThat(object).isInstanceOf(CompletionParams.class);
-
+		CompletionParams completionParams = (CompletionParams) object;
+		assertThat(completionParams.getTextDocument()).isNotNull();
+		assertThat(completionParams.getTextDocument().getUri()).isEqualTo("fakeuri");
 	}
 
 	@SuppressWarnings("unused")

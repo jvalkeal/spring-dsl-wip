@@ -566,7 +566,6 @@ public final class ConverterUtils {
 		return to;
 	}
 
-
 	/**
 	 * Convert {@code LSP4J} {@link org.eclipse.lsp4j.MarkupContent} to
 	 * {@code Spring DSL} {@link MarkupContent}.
@@ -660,7 +659,6 @@ public final class ConverterUtils {
 		return to;
 	}
 
-
 	/**
 	 * Convert {@code LSP4J} {@link org.eclipse.lsp4j.CompletionItem} to
 	 * {@code Spring DSL} {@link CompletionItem}.
@@ -719,7 +717,6 @@ public final class ConverterUtils {
 		return to;
 	}
 
-
 	/**
 	 * Convert {@code LSP4J} {@link org.eclipse.lsp4j.TextDocumentIdentifier} to
 	 * {@code Spring DSL} {@link TextDocumentIdentifier}.
@@ -752,7 +749,6 @@ public final class ConverterUtils {
 		to.setVersion(from.getVersion());
 		return to;
 	}
-
 
 	/**
 	 * Convert {@code LSP4J} {@link org.eclipse.lsp4j.VersionedTextDocumentIdentifier} to
@@ -787,7 +783,6 @@ public final class ConverterUtils {
 		to.setValue(from.getValue());
 		return to;
 	}
-
 
 	/**
 	 * Convert {@code LSP4J} {@link org.eclipse.lsp4j.MarkedString} to
@@ -825,7 +820,6 @@ public final class ConverterUtils {
 		return to;
 	}
 
-
 	/**
 	 * Convert {@code LSP4J} {@link org.eclipse.lsp4j.CompletionContext} to
 	 * {@code Spring DSL} {@link CompletionContext}.
@@ -857,9 +851,10 @@ public final class ConverterUtils {
 		}
 		org.eclipse.lsp4j.CompletionParams to =  new org.eclipse.lsp4j.CompletionParams();
 		to.setContext(toCompletionContext(from.getContext()));
+		to.setPosition(toPosition(from.getPosition()));
+		to.setTextDocument(toTextDocumentIdentifier(from.getTextDocument()));
 		return to;
 	}
-
 
 	/**
 	 * Convert {@code LSP4J} {@link org.eclipse.lsp4j.CompletionParams} to
@@ -874,6 +869,9 @@ public final class ConverterUtils {
 		}
 		CompletionParams to = new CompletionParams();
 		to.setContext(toCompletionContext(from.getContext()));
+		to.setContext(toCompletionContext(from.getContext()));
+		to.setPosition(toPosition(from.getPosition()));
+		to.setTextDocument(toTextDocumentIdentifier(from.getTextDocument()));
 		return to;
 	}
 
@@ -893,7 +891,6 @@ public final class ConverterUtils {
 		to.setNewText(from.getNewText());
 		return to;
 	}
-
 
 	/**
 	 * Convert {@code LSP4J} {@link org.eclipse.lsp4j.TextEdit} to
@@ -929,7 +926,6 @@ public final class ConverterUtils {
 		// TODO: add argument list
 		return to;
 	}
-
 
 	/**
 	 * Convert {@code LSP4J} {@link org.eclipse.lsp4j.Command} to
