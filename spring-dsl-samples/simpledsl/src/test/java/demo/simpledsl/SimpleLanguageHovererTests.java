@@ -38,7 +38,7 @@ public class SimpleLanguageHovererTests {
 		assertThat(hover).isNotNull();
 		assertThat(hover.block()).isNotNull();
 		assertThat(hover.block().getContents()).isNotNull();
-		assertThat(hover.block().getContents().getValue()).isEqualTo("token");
+		assertThat(hover.block().getContents().getValue()).isEqualTo("INT");
 	}
 
 }
