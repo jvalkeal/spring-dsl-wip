@@ -15,7 +15,6 @@
  */
 package org.springframework.dsl.websocket;
 
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 import org.slf4j.Logger;

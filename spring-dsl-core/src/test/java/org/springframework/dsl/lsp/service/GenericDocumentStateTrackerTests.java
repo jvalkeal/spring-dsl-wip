@@ -22,13 +22,10 @@ import java.util.Arrays;
 import org.junit.Test;
 import org.springframework.dsl.document.LanguageId;
 import org.springframework.dsl.lsp.domain.DidChangeTextDocumentParams;
-import org.springframework.dsl.lsp.domain.DidCloseTextDocumentParams;
 import org.springframework.dsl.lsp.domain.DidOpenTextDocumentParams;
-import org.springframework.dsl.lsp.domain.DidSaveTextDocumentParams;
 import org.springframework.dsl.lsp.domain.Position;
 import org.springframework.dsl.lsp.domain.Range;
 import org.springframework.dsl.lsp.domain.TextDocumentContentChangeEvent;
-import org.springframework.dsl.lsp.domain.TextDocumentIdentifier;
 import org.springframework.dsl.lsp.domain.TextDocumentItem;
 import org.springframework.dsl.lsp.domain.VersionedTextDocumentIdentifier;
 

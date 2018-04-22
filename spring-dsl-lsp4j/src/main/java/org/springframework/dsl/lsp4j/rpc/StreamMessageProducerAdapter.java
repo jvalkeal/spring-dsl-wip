@@ -16,7 +16,6 @@
 package org.springframework.dsl.lsp4j.rpc;
 
 import java.io.ByteArrayInputStream;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 import org.eclipse.lsp4j.jsonrpc.MessageConsumer;
