@@ -44,7 +44,6 @@ import org.springframework.dsl.lsp.domain.InitializeParams;
 import org.springframework.dsl.lsp.domain.InitializeResult;
 import org.springframework.dsl.lsp.domain.PublishDiagnosticsParams;
 import org.springframework.dsl.lsp.domain.ServerCapabilities;
-import org.springframework.dsl.lsp.domain.TextDocumentItem;
 import org.springframework.dsl.lsp.domain.TextDocumentPositionParams;
 import org.springframework.dsl.lsp.domain.TextDocumentSyncKind;
 import org.springframework.dsl.lsp.service.Completioner;
@@ -138,7 +137,6 @@ public class GenericLanguageServerController implements InitializingBean {
 				documentStateTracker.isIncrementalChangesSupported() ? TextDocumentSyncKind.Incremental
 						: TextDocumentSyncKind.Full);
 		if (completioner != null) {
-			CompletionOptions x = new CompletionOptions();
 			serverCapabilities.setCompletionProvider(new CompletionOptions());
 		}
 		return new InitializeResult(serverCapabilities);
@@ -157,36 +155,7 @@ public class GenericLanguageServerController implements InitializingBean {
 	@LspDidOpen
 	@LspNoResponseBody
 	public void clientDocumentOpened(DidOpenTextDocumentParams params, LspClientContext context) {
-		this.documentStateTracker.didOpen(params)
-			.doOnNext(c -> {
-				reconciler.reconcile(c)
-					.switchIfEmpty(Mono.just(new PublishDiagnosticsParams(params.getTextDocument().getUri())))
-					.doOnNext(d -> {
-						context.getClient().send(d);
-					})
-					.subscribe();
-			})
-			.subscribe();
-	}
-
-	private static void handle(Mono<TextDocumentContentChange> change, Reconciler reconciler, LspClientContext context,
-			String uri) {
-		change
-			.doOnNext(c -> {
-				reconciler.reconcile(c)
-					.switchIfEmpty(Mono.just(new PublishDiagnosticsParams(uri)))
-					.doOnNext(d -> {
-						context.getClient().send(d);
-					})
-					.subscribe();
-			})
-//			.switchIfEmpty(Mono.just(new TextDocumentContentChange(null, null)))
-//			.doOnNext(c -> {
-//				if (c.getDocument() == null) {
-//					context.getClient().send(new PublishDiagnosticsParams(uri));
-//				}
-//			})
-			.subscribe();
+		handle(this.documentStateTracker.didOpen(params), reconciler, context, params.getTextDocument().getUri());
 	}
 
 	/**
@@ -200,17 +169,6 @@ public class GenericLanguageServerController implements InitializingBean {
 	@LspNoResponseBody
 	public void clientDocumentChanged(DidChangeTextDocumentParams params, LspClientContext context) {
 		handle(this.documentStateTracker.didChange(params), reconciler, context, params.getTextDocument().getUri());
-
-//		this.documentStateTracker.didChange(params)
-//			.doOnNext(c -> {
-//				reconciler.reconcile(c)
-//					.switchIfEmpty(Mono.just(new PublishDiagnosticsParams(params.getTextDocument().getUri())))
-//					.doOnNext(d -> {
-//						context.getClient().send(d);
-//					})
-//					.subscribe();
-//			})
-//			.subscribe();
 	}
 
 	/**
@@ -223,11 +181,7 @@ public class GenericLanguageServerController implements InitializingBean {
 	@LspDidClose
 	@LspNoResponseBody
 	public void clientDocumentClosed(DidCloseTextDocumentParams params, LspClientContext context) {
-		this.documentStateTracker.didClose(params).doOnNext(c -> {
-			reconciler.reconcile(c).doOnNext(d -> {
-				context.getClient().send(d);
-			}).subscribe();
-		}).subscribe();
+		handle(this.documentStateTracker.didClose(params), reconciler, context, params.getTextDocument().getUri());
 	}
 
 	/**
@@ -240,16 +194,7 @@ public class GenericLanguageServerController implements InitializingBean {
 	@LspDidSave
 	@LspNoResponseBody
 	public void clientDocumentSaved(DidSaveTextDocumentParams params, LspClientContext context) {
-		this.documentStateTracker.didSave(params)
-			.doOnNext(c -> {
-				reconciler.reconcile(c)
-					.switchIfEmpty(Mono.just(new PublishDiagnosticsParams(params.getTextDocument().getUri())))
-					.doOnNext(d -> {
-						context.getClient().send(d);
-					})
-					.subscribe();
-			})
-		.subscribe();
+		handle(this.documentStateTracker.didSave(params), reconciler, context, params.getTextDocument().getUri());
 	}
 
 	/**
@@ -284,5 +229,18 @@ public class GenericLanguageServerController implements InitializingBean {
 					params.getPosition());
 		}
 		return Flux.empty();
+	}
+
+	private static void handle(Mono<TextDocumentContentChange> change, Reconciler reconciler, LspClientContext context,
+			String uri) {
+		change.doOnNext(c -> {
+			reconciler.reconcile(c)
+				.switchIfEmpty(Mono.just(new PublishDiagnosticsParams(uri)))
+				.doOnNext(d -> {
+					context.getClient().send(d);
+				})
+				.subscribe();
+		})
+		.subscribe();
 	}
 }

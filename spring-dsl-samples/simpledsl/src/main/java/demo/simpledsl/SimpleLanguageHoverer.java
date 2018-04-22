@@ -47,7 +47,7 @@ public class SimpleLanguageHoverer implements Hoverer {
 		Token token = simpleLanguage.getToken(position);
 		if (token != null) {
 			Hover hover = new Hover();
-			MarkupContent contents = new MarkupContent(MarkupKind.PlainText, "token");
+			MarkupContent contents = new MarkupContent(MarkupKind.PlainText, token.getType().toString());
 			hover.setContents(contents);
 //			hover.setRange(range);
 			return Mono.just(hover);

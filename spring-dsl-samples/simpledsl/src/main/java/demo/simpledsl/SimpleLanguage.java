@@ -23,15 +23,13 @@ import java.util.regex.Pattern;
 import org.springframework.dsl.document.Document;
 import org.springframework.dsl.lsp.domain.Position;
 
-import demo.simpledsl.SimpleLanguage.KeyToken;
-
 /**
  * {@code simple} language representation containing parser to tokenize a dsl
  * which can be used to give various answers to {@code LSP} requests.
  * <p>
  * This language parser implementation is to showcase a raw ways to provide
  * concepts of ideas how {@code LSP} can be hooked into various services. In
- * a real world, you'd probably be better off with some real language parcer line
+ * a real world, you'd probably be better off with some real language parser line
  * {@code ANTRL} or similar. But having said that, this gives ideas how things
  * work together without introducing additional logic using external libraries.
  *
@@ -110,12 +108,20 @@ public class SimpleLanguage {
 
 	private static void processLine(ArrayList<Line> lines, String line, int lineIndex) {
 		String[] split = line.split("=");
+		// content before '=' with surrounding white spaces stripped is a key,
+		// same for value after '='.
 		if (split.length == 1) {
-			lines.add(new Line(lineIndex, new KeyToken(split[0], 0, split[0].length()), null));
+			lines.add(new Line(lineIndex, new KeyToken(split[0], 0, split[0].length(), resolveType(split[0])), null));
 		} else {
-			lines.add(new Line(lineIndex, new KeyToken(split[0], 0, split[0].length()),
+			lines.add(new Line(lineIndex, new KeyToken(split[0], 0, split[0].length(), resolveType(split[0])),
 					new ValueToken(split[1], split[0].length() + 1, line.length())));
 		}
+	}
+
+	private static TokenType resolveType(String content) {
+		content = content.trim();
+		TokenType tokenType = TokenType.valueOf(content.toUpperCase());
+		return tokenType;
 	}
 
 	public static class Line {
@@ -143,14 +149,24 @@ public class SimpleLanguage {
 		}
 	}
 
+	public enum TokenType {
+		INT,
+		LONG,
+		DOUBLE,
+		STRING,
+		VALUE;
+	}
+
 	public static class Token {
 
 		private final int start;
 		private final int end;
+		private final TokenType type;
 
-		public Token(int start, int end) {
+		public Token(int start, int end, TokenType type) {
 			this.start = start;
 			this.end = end;
+			this.type = type;
 		}
 
 		public int getStart() {
@@ -160,21 +176,24 @@ public class SimpleLanguage {
 		public int getEnd() {
 			return end;
 		}
+
+		public TokenType getType() {
+			return type;
+		}
 	}
 
 	public static class KeyToken extends Token {
 
 		private final Object key;
 
-		public KeyToken(Object key, int start, int end) {
-			super(start, end);
+		public KeyToken(Object key, int start, int end, TokenType type) {
+			super(start, end, type);
 			this.key = key;
 		}
 
 		public Object getKey() {
 			return key;
 		}
-
 	}
 
 	public static class ValueToken extends Token {
@@ -182,13 +201,12 @@ public class SimpleLanguage {
 		private final Object key;
 
 		public ValueToken(Object key, int start, int end) {
-			super(start, end);
+			super(start, end, TokenType.VALUE);
 			this.key = key;
 		}
 
 		public Object getKey() {
 			return key;
 		}
-
 	}
 }
