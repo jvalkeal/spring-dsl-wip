@@ -42,28 +42,52 @@ public class SimpleLanguage {
 	private final Document document;
 	private final List<Line> lines;
 
+	/**
+	 * Instantiates a new simple language.
+	 *
+	 * @param document the document
+	 * @param lines the lines
+	 */
 	public SimpleLanguage(Document document, List<Line> lines) {
 		this.document = document;
 		this.lines = lines;
 	}
 
+	/**
+	 * Gets the document known to this language.
+	 *
+	 * @return the document
+	 */
 	public Document getDocument() {
 		return document;
 	}
 
+	/**
+	 * Gets the {@link Line}s known to this language.
+	 *
+	 * @return the lines
+	 */
 	public List<Line> getLines() {
 		return lines;
 	}
 
+	/**
+	 * Gets the token for this language for this particular {@link Position}. If
+	 * there are no resolvable token in a specific position {@code NULL} is
+	 * returned.
+	 *
+	 * @param position the position
+	 * @return the token
+	 */
 	public Token getToken(Position position) {
 		for (Line line : getLines()) {
 			if (line.getLine() == position.getLine()) {
-				KeyToken keyToken = line.getKeyToken();
+				Token keyToken = line.getKeyToken();
 				if (keyToken != null && keyToken.getStart() <= position.getCharacter()
 						&& keyToken.getEnd() >= position.getCharacter()) {
 					return keyToken;
 				}
-				ValueToken valueToken = line.getValueToken();
+				Token valueToken = line.getValueToken();
 				if (valueToken != null && valueToken.getStart() <= position.getCharacter()
 						&& valueToken.getEnd() >= position.getCharacter()) {
 					return keyToken;
@@ -124,13 +148,17 @@ public class SimpleLanguage {
 		return tokenType;
 	}
 
+	/**
+	 * Represents a {@code line} in this document having a line index, and
+	 * optionally existing {@link KeyToken} and {@link ValueToken}.
+	 */
 	public static class Line {
 
 		private final int line;
-		private final KeyToken keyToken;
-		private final ValueToken valueToken;
+		private final Token keyToken;
+		private final Token valueToken;
 
-		public Line(int line, KeyToken keyToken, ValueToken valueToken) {
+		public Line(int line, Token keyToken, Token valueToken) {
 			this.line = line;
 			this.keyToken = keyToken;
 			this.valueToken = valueToken;
@@ -140,15 +168,18 @@ public class SimpleLanguage {
 			return line;
 		}
 
-		public KeyToken getKeyToken() {
+		public Token getKeyToken() {
 			return keyToken;
 		}
 
-		public ValueToken getValueToken() {
+		public Token getValueToken() {
 			return valueToken;
 		}
 	}
 
+	/**
+	 * Token type shared with both keys and values.
+	 */
 	public enum TokenType {
 		INT,
 		LONG,
@@ -162,11 +193,17 @@ public class SimpleLanguage {
 		private final int start;
 		private final int end;
 		private final TokenType type;
+		private final String value;
 
-		public Token(int start, int end, TokenType type) {
+		public Token(String value, int start, int end, TokenType type) {
+			this.value = value;
 			this.start = start;
 			this.end = end;
 			this.type = type;
+		}
+
+		public String getValue() {
+			return value;
 		}
 
 		public int getStart() {
@@ -180,33 +217,22 @@ public class SimpleLanguage {
 		public TokenType getType() {
 			return type;
 		}
-	}
 
-	public static class KeyToken extends Token {
-
-		private final Object key;
-
-		public KeyToken(Object key, int start, int end, TokenType type) {
-			super(start, end, type);
-			this.key = key;
-		}
-
-		public Object getKey() {
-			return key;
+		public boolean isKey() {
+			return !(type == TokenType.VALUE);
 		}
 	}
 
-	public static class ValueToken extends Token {
+	private static class KeyToken extends Token {
 
-		private final Object key;
-
-		public ValueToken(Object key, int start, int end) {
-			super(start, end, TokenType.VALUE);
-			this.key = key;
+		public KeyToken(String key, int start, int end, TokenType type) {
+			super(key, start, end, type);
 		}
+	}
 
-		public Object getKey() {
-			return key;
+	private static class ValueToken extends Token {
+		public ValueToken(String key, int start, int end) {
+			super(key, start, end, TokenType.VALUE);
 		}
 	}
 }
