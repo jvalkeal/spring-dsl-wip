@@ -59,19 +59,29 @@ public class GenericDocumentStateTrackerTests {
 		assertThat(tracker.getDocument("uri1")).isNotNull();
 		assertThat(tracker.getDocument("uri1").get()).isEqualTo("12");
 
-		DidSaveTextDocumentParams didSaveParams = new DidSaveTextDocumentParams();
-		TextDocumentIdentifier textDocumentIdentifier = new TextDocumentIdentifier();
-		textDocumentIdentifier.setUri("uri1");
-		didSaveParams.setTextDocument(textDocumentIdentifier);
-		didSaveParams.setText("12");
-		tracker.didSave(didSaveParams);
-		assertThat(tracker.getDocument("uri1")).isNotNull();
-		assertThat(tracker.getDocument("uri1").get()).isEqualTo("12");
+		start.setCharacter(2);
+		end.setCharacter(2);
+		identifier.setVersion(2);
+		event.setText("3");
 
-		DidCloseTextDocumentParams didCloseParams = new DidCloseTextDocumentParams();
-		didCloseParams.setTextDocument(textDocumentIdentifier);
-		tracker.didClose(didCloseParams);
+		tracker.didChange(didChangeParams);
 		assertThat(tracker.getDocument("uri1")).isNotNull();
-		assertThat(tracker.getDocument("uri1").get()).isEqualTo("12");
+		assertThat(tracker.getDocument("uri1").get()).isEqualTo("123");
+
+
+//		DidSaveTextDocumentParams didSaveParams = new DidSaveTextDocumentParams();
+//		TextDocumentIdentifier textDocumentIdentifier = new TextDocumentIdentifier();
+//		textDocumentIdentifier.setUri("uri1");
+//		didSaveParams.setTextDocument(textDocumentIdentifier);
+//		didSaveParams.setText("12");
+//		tracker.didSave(didSaveParams);
+//		assertThat(tracker.getDocument("uri1")).isNotNull();
+//		assertThat(tracker.getDocument("uri1").get()).isEqualTo("12");
+//
+//		DidCloseTextDocumentParams didCloseParams = new DidCloseTextDocumentParams();
+//		didCloseParams.setTextDocument(textDocumentIdentifier);
+//		tracker.didClose(didCloseParams);
+//		assertThat(tracker.getDocument("uri1")).isNotNull();
+//		assertThat(tracker.getDocument("uri1").get()).isEqualTo("12");
 	}
 }

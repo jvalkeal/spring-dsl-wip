@@ -15,6 +15,7 @@
  */
 package org.springframework.dsl.lsp.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PublishDiagnosticsParams {
@@ -24,6 +25,12 @@ public class PublishDiagnosticsParams {
 	private List<Diagnostic> diagnostics;
 
 	public PublishDiagnosticsParams() {
+		this.diagnostics = new ArrayList<>();
+	}
+
+	public PublishDiagnosticsParams(String uri) {
+		this.uri = uri;
+		this.diagnostics = new ArrayList<>();
 	}
 
 	public PublishDiagnosticsParams(String uri, List<Diagnostic> diagnostics) {

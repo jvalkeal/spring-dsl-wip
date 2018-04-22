@@ -42,6 +42,7 @@ import org.springframework.dsl.lsp.domain.Position;
 import org.springframework.dsl.lsp.domain.PublishDiagnosticsParams;
 import org.springframework.dsl.lsp.domain.Range;
 import org.springframework.dsl.lsp.domain.ServerCapabilities;
+import org.springframework.dsl.lsp.domain.TextDocumentContentChangeEvent;
 import org.springframework.dsl.lsp.domain.TextDocumentIdentifier;
 import org.springframework.dsl.lsp.domain.TextDocumentItem;
 import org.springframework.dsl.lsp.domain.TextDocumentPositionParams;
@@ -167,6 +168,42 @@ public final class ConverterUtils {
 	}
 
 	/**
+	 * Convert {@code Spring DSL} {@link TextDocumentContentChangeEvent} to {@code LSP4J}
+	 * {@link org.eclipse.lsp4j.TextDocumentContentChangeEvent}.
+	 *
+	 * @param from the {@code Spring DSL TextDocumentContentChangeEvent}
+	 * @return {@code LSP4J TextDocumentContentChangeEvent}
+	 */
+	public static org.eclipse.lsp4j.TextDocumentContentChangeEvent toTextDocumentContentChangeEvent(TextDocumentContentChangeEvent from) {
+		if (from == null) {
+			return null;
+		}
+		org.eclipse.lsp4j.TextDocumentContentChangeEvent to = new org.eclipse.lsp4j.TextDocumentContentChangeEvent();
+		to.setRange(toRange(from.getRange()));
+		to.setRangeLength(from.getRangeLength());
+		to.setText(from.getText());
+		return to;
+	}
+
+	/**
+	 * Convert {@code LSP4J} {@link org.eclipse.lsp4j.TextDocumentContentChangeEvent} to {@code Spring DSL}
+	 * {@link TextDocumentContentChangeEvent}.
+	 *
+	 * @param from the {@code LSP4J CompletionOptions}
+	 * @return {@code Spring DSL CompletionOptions}
+	 */
+	public static TextDocumentContentChangeEvent toTextDocumentContentChangeEvent(org.eclipse.lsp4j.TextDocumentContentChangeEvent from) {
+		if (from == null) {
+			return null;
+		}
+		TextDocumentContentChangeEvent to = new TextDocumentContentChangeEvent();
+		to.setRange(toRange(from.getRange()));
+		to.setRangeLength(from.getRangeLength());
+		to.setText(from.getText());
+		return to;
+	}
+
+	/**
 	 * Convert {@code Spring DSL} {@link DidChangeTextDocumentParams} to {@code LSP4J}
 	 * {@link org.eclipse.lsp4j.DidChangeTextDocumentParams}.
 	 *
@@ -180,6 +217,13 @@ public final class ConverterUtils {
 		}
 		org.eclipse.lsp4j.DidChangeTextDocumentParams to = new org.eclipse.lsp4j.DidChangeTextDocumentParams();
 		to.setTextDocument(toVersionedTextDocumentIdentifier(from.getTextDocument()));
+		if (from.getContentChanges() != null) {
+			ArrayList<org.eclipse.lsp4j.TextDocumentContentChangeEvent> changes = new ArrayList<>();
+			for (TextDocumentContentChangeEvent event : from.getContentChanges()) {
+				changes.add(toTextDocumentContentChangeEvent(event));
+			}
+			to.setContentChanges(changes);
+		}
 		return to;
 	}
 
@@ -197,6 +241,13 @@ public final class ConverterUtils {
 		}
 		DidChangeTextDocumentParams to = new DidChangeTextDocumentParams();
 		to.setTextDocument(toVersionedTextDocumentIdentifier(from.getTextDocument()));
+		if (from.getContentChanges() != null) {
+			ArrayList<TextDocumentContentChangeEvent> changes = new ArrayList<>();
+			for (org.eclipse.lsp4j.TextDocumentContentChangeEvent event : from.getContentChanges()) {
+				changes.add(toTextDocumentContentChangeEvent(event));
+			}
+			to.setContentChanges(changes);
+		}
 		return to;
 	}
 
@@ -347,11 +398,13 @@ public final class ConverterUtils {
 		}
 		org.eclipse.lsp4j.PublishDiagnosticsParams to = new org.eclipse.lsp4j.PublishDiagnosticsParams();
 		to.setUri(from.getUri());
-		List<org.eclipse.lsp4j.Diagnostic> diagnostics = new ArrayList<org.eclipse.lsp4j.Diagnostic>();
-		for (Diagnostic d : from.getDiagnostics()) {
-			diagnostics.add(toDiagnostic(d));
+		if (from.getDiagnostics() != null) {
+			List<org.eclipse.lsp4j.Diagnostic> diagnostics = new ArrayList<org.eclipse.lsp4j.Diagnostic>();
+			for (Diagnostic d : from.getDiagnostics()) {
+				diagnostics.add(toDiagnostic(d));
+			}
+			to.setDiagnostics(diagnostics);
 		}
-		to.setDiagnostics(diagnostics);
 		return to;
 	}
 
@@ -368,11 +421,13 @@ public final class ConverterUtils {
 		}
 		PublishDiagnosticsParams to = new PublishDiagnosticsParams();
 		to.setUri(from.getUri());
-		List<Diagnostic> diagnostics = new ArrayList<Diagnostic>();
-		for (org.eclipse.lsp4j.Diagnostic d : from.getDiagnostics()) {
-			diagnostics.add(toDiagnostic(d));
+		if (from.getDiagnostics() != null) {
+			List<Diagnostic> diagnostics = new ArrayList<Diagnostic>();
+			for (org.eclipse.lsp4j.Diagnostic d : from.getDiagnostics()) {
+				diagnostics.add(toDiagnostic(d));
+			}
+			to.setDiagnostics(diagnostics);
 		}
-		to.setDiagnostics(diagnostics);
 		return to;
 	}
 

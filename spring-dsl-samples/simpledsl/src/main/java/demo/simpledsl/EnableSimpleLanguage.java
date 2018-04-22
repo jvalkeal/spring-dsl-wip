@@ -25,7 +25,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.dsl.lsp.server.config.EnableLanguageServer;
 
 /**
- * Meta annotation for enabling all needed services for a {@code simple} sample
+ * Meta annotation for enabling all supported services for a {@code simple} sample
  * language.
  * <p>
  * Grammar of a {@code simple} language is:

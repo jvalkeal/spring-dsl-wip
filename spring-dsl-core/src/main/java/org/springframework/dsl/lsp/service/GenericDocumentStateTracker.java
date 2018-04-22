@@ -17,6 +17,7 @@ package org.springframework.dsl.lsp.service;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -76,22 +77,7 @@ public class GenericDocumentStateTracker implements DocumentStateTracker/*, Docu
 		TrackedDocument td = createDocument(uri, languageId, version, text).open();
 		TextDocument doc = td.getDocument();
 
-		TextDocumentContentChangeEvent change = new TextDocumentContentChangeEvent() {
-			@Override
-			public Range getRange() {
-				return null;
-			}
-
-			@Override
-			public Integer getRangeLength() {
-				return null;
-			}
-
-			@Override
-			public String getText() {
-				return text;
-			}
-		};
+		TextDocumentContentChangeEvent change = new TextDocumentContentChangeEvent(null, null, text);
 		TextDocumentContentChange evt = new TextDocumentContentChange(doc, Arrays.asList(change));
 		return Mono.just(evt);
 
@@ -103,27 +89,21 @@ public class GenericDocumentStateTracker implements DocumentStateTracker/*, Docu
 		String url = identifier.getUri();
 		if (url != null) {
 			TrackedDocument trackedDocument = documents.get(url);
+
 			try {
-				trackedDocument.getDocument().apply(params);
+				TextDocument doc = trackedDocument.getDocument();
+				doc.apply(params);
+
+//				TextDocumentContentChangeEvent change = new TextDocumentContentChangeEvent(null, null, doc.get());
+				List<TextDocumentContentChangeEvent> changes = params.getContentChanges();
+				TextDocumentContentChange evt = new TextDocumentContentChange(doc, changes);
+				return Mono.just(evt);
+
 			} catch (BadLocationException e) {
 				log.error("", e);
 			}
 		}
 
-//	  async.execute(() -> {
-//		try {
-//			VersionedTextDocumentIdentifier docId = params.getTextDocument();
-//			String url = docId.getUri();
-//			if (url!=null) {
-//				TextDocument doc = getDocument(url);
-//				List<TextDocumentContentChangeEvent> changes = params.getContentChanges();
-//				doc.apply(params);
-//				fireDidChangeContent(doc, changes);
-//			}
-//		} catch (BadLocationException e) {
-//			log.error("", e);
-//		}
-//	  });
 		return Mono.empty();
 	}
 

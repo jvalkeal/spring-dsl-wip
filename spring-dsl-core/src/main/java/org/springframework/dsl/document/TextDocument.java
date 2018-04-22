@@ -97,6 +97,7 @@ public class TextDocument implements Document {
 	}
 
 	private void apply(TextDocumentContentChangeEvent change) throws BadLocationException {
+		log.trace("Old content before apply is '{}'", get());
 		Range rng = change.getRange();
 		if (rng==null) {
 			//full sync mode
@@ -106,17 +107,19 @@ public class TextDocument implements Document {
 			int end = toOffset(rng.getEnd());
 			replace(start, end-start, change.getText());
 		}
+		log.trace("New content after apply is '{}'", get());
 	}
 
 	public synchronized void apply(DidChangeTextDocumentParams params) throws BadLocationException {
 		int newVersion = params.getTextDocument().getVersion();
-		if (version<newVersion) {
+		if (version < newVersion) {
+			log.trace("Number of changes {}", params.getContentChanges().size());
 			for (TextDocumentContentChangeEvent change : params.getContentChanges()) {
 				apply(change);
 			}
 			this.version = newVersion;
 		} else {
-			log.warn("Change event with bad version ignored: {}", params);
+			log.warn("Change event with bad version ignored, current {} new {}: {}", version, newVersion, params);
 		}
 	}
 

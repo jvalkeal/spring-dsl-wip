@@ -17,6 +17,8 @@ package org.springframework.dsl.lsp4j.converter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.Arrays;
+
 import org.junit.Test;
 import org.springframework.dsl.lsp.domain.Command;
 import org.springframework.dsl.lsp.domain.CompletionContext;
@@ -33,8 +35,10 @@ import org.springframework.dsl.lsp.domain.InitializeResult;
 import org.springframework.dsl.lsp.domain.MarkupContent;
 import org.springframework.dsl.lsp.domain.MarkupKind;
 import org.springframework.dsl.lsp.domain.Position;
+import org.springframework.dsl.lsp.domain.PublishDiagnosticsParams;
 import org.springframework.dsl.lsp.domain.Range;
 import org.springframework.dsl.lsp.domain.ServerCapabilities;
+import org.springframework.dsl.lsp.domain.TextDocumentContentChangeEvent;
 import org.springframework.dsl.lsp.domain.TextDocumentIdentifier;
 import org.springframework.dsl.lsp.domain.TextDocumentItem;
 import org.springframework.dsl.lsp.domain.TextDocumentPositionParams;
@@ -117,6 +121,12 @@ public class ConverterUtilsTests {
 
 		assertCompletionOptions(new CompletionOptions());
 		assertCompletionOptions(new org.eclipse.lsp4j.CompletionOptions());
+
+		assertPublishDiagnosticsParams(new PublishDiagnosticsParams());
+		assertPublishDiagnosticsParams(new org.eclipse.lsp4j.PublishDiagnosticsParams());
+
+		assertTextDocumentContentChangeEvent(new TextDocumentContentChangeEvent());
+		assertTextDocumentContentChangeEvent(new org.eclipse.lsp4j.TextDocumentContentChangeEvent());
 	}
 
 	@Test
@@ -135,6 +145,8 @@ public class ConverterUtilsTests {
 		versionedTextDocumentIdentifier.setUri("fakeuri");
 		DidChangeTextDocumentParams didChangeTextDocumentParams = new DidChangeTextDocumentParams();
 		didChangeTextDocumentParams.setTextDocument(versionedTextDocumentIdentifier);
+		didChangeTextDocumentParams
+				.setContentChanges(Arrays.asList(new TextDocumentContentChangeEvent(new Range(0, 0, 0), 0, "0")));
 		assertDidChangeTextDocumentParams(didChangeTextDocumentParams);
 
 		org.eclipse.lsp4j.VersionedTextDocumentIdentifier lsp4jVersionedTextDocumentIdentifier = new org.eclipse.lsp4j.VersionedTextDocumentIdentifier();
@@ -142,7 +154,10 @@ public class ConverterUtilsTests {
 		lsp4jVersionedTextDocumentIdentifier.setUri("fakeuri");
 		org.eclipse.lsp4j.DidChangeTextDocumentParams lsp4jdidChangeTextDocumentParams = new org.eclipse.lsp4j.DidChangeTextDocumentParams();
 		lsp4jdidChangeTextDocumentParams.setTextDocument(lsp4jVersionedTextDocumentIdentifier);
-		assertDidChangeTextDocumentParams(new org.eclipse.lsp4j.DidChangeTextDocumentParams());
+		lsp4jdidChangeTextDocumentParams.setContentChanges(
+				Arrays.asList(new org.eclipse.lsp4j.TextDocumentContentChangeEvent(new org.eclipse.lsp4j.Range(
+						new org.eclipse.lsp4j.Position(0, 0), new org.eclipse.lsp4j.Position(0, 0)), 0, "0")));
+		assertDidChangeTextDocumentParams(lsp4jdidChangeTextDocumentParams);
 
 		TextDocumentIdentifier textDocumentIdentifier = new TextDocumentIdentifier();
 		textDocumentIdentifier.setUri("fakeuri");
@@ -361,6 +376,22 @@ public class ConverterUtilsTests {
 
 	private static void assertCompletionOptions(org.eclipse.lsp4j.CompletionOptions from) {
 		assertObjects(from, ConverterUtils.toCompletionOptions(ConverterUtils.toCompletionOptions(from)));
+	}
+
+	private static void assertPublishDiagnosticsParams(PublishDiagnosticsParams from) {
+		assertObjects(from, ConverterUtils.toPublishDiagnosticsParams(ConverterUtils.toPublishDiagnosticsParams(from)));
+	}
+
+	private static void assertPublishDiagnosticsParams(org.eclipse.lsp4j.PublishDiagnosticsParams from) {
+		assertObjects(from, ConverterUtils.toPublishDiagnosticsParams(ConverterUtils.toPublishDiagnosticsParams(from)));
+	}
+
+	private static void assertTextDocumentContentChangeEvent(TextDocumentContentChangeEvent from) {
+		assertObjects(from, ConverterUtils.toTextDocumentContentChangeEvent(ConverterUtils.toTextDocumentContentChangeEvent(from)));
+	}
+
+	private static void assertTextDocumentContentChangeEvent(org.eclipse.lsp4j.TextDocumentContentChangeEvent from) {
+		assertObjects(from, ConverterUtils.toTextDocumentContentChangeEvent(ConverterUtils.toTextDocumentContentChangeEvent(from)));
 	}
 
 	private static void assertObjects(Object from, Object to) {
