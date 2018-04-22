@@ -188,6 +188,10 @@ public class SimpleLanguage {
 		VALUE;
 	}
 
+	/**
+	 * {@code Token} representing a {@code start} and {@code end} position in a
+	 * hosting {@link Line} with its hosting {@link TokenType} and actual value.
+	 */
 	public static class Token {
 
 		private final int start;
@@ -231,6 +235,7 @@ public class SimpleLanguage {
 	}
 
 	private static class ValueToken extends Token {
+
 		public ValueToken(String key, int start, int end) {
 			super(key, start, end, TokenType.VALUE);
 		}
