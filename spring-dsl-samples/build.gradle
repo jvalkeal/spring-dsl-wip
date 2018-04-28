@@ -51,6 +51,7 @@ project('spring-dsl-samples-simpledsleditor') {
 	bootRun.dependsOn(buildClientDev)
 	jar.dependsOn(buildClient)
 	build.dependsOn bootJar
+	install.dependsOn bootJar
 }
 
 project('spring-dsl-samples-simpledslprocessserver') {
@@ -64,6 +65,7 @@ project('spring-dsl-samples-simpledslprocessserver') {
 		testCompile 'junit:junit'
 	}
 	build.dependsOn bootJar
+	install.dependsOn bootJar
 }
 
 project('spring-dsl-samples-simpledslsocketserver') {
@@ -77,4 +79,5 @@ project('spring-dsl-samples-simpledslsocketserver') {
 		testCompile 'junit:junit'
 	}
 	build.dependsOn bootJar
+	install.dependsOn bootJar
 }
