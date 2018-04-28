@@ -3,7 +3,7 @@ buildscript {
 		springVersion = '5.0.5.RELEASE'
 		springBootVersion = '2.0.1.RELEASE'
 		antlr4Version = '4.7.1'
-		lsp4jVersion = '0.4.0-SNAPSHOT'
+		lsp4jVersion = '0.4.0'
 		xtendVersion = '2.13.0'
 		mooworkVersion = '1.2.0'
 		propdepsVersion = '0.0.8'
@@ -51,8 +51,6 @@ configure(allprojects) {
 	repositories {
 		mavenCentral()
 		maven { url 'https://repo.spring.io/libs-snapshot' }
-		// for lsp4j snapshots
-		maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
 	}
 
 	dependencyManagement {
