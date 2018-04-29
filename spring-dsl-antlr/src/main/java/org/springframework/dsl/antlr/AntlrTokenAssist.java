@@ -31,25 +31,29 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.util.Assert;
 
 /**
- * Given an ATN state and the lexer ATN, suggests auto-completion texts.
+ * Given an {@code ANTLR ATN State} and the {@code ANTLR Lexer ATN}, suggests
+ * auto-completion texts. This is a lowest level implementation on top of a raw
+ * {@code ANTLR} to ask possible valid characters in a given position with existing
+ * {@code DSL} which may or may not be valid. It's pretty common that when typing
+ * and at a same time trying to validate it, {@code DSL} may not be fully valid.
  *
  * @author Janne Valkealahti
  *
  */
-class AntlrDslTokenAssist {
+public class AntlrTokenAssist {
 
-	private static final Log log = LogFactory.getLog(AntlrDslTokenAssist.class);
+	private static final Log log = LogFactory.getLog(AntlrTokenAssist.class);
     private final Lexer lexer;
     private final Set<String> suggestions = new TreeSet<String>();
     private final List<Integer> visitedLexerStates = new ArrayList<>();
     private String origPartialToken;
 
     /**
-     * Instantiates a new antlr dsl token assist.
+     * Instantiates a new antlr token assist.
      *
      * @param lexer the lexer
      */
-    public AntlrDslTokenAssist(Lexer lexer) {
+    public AntlrTokenAssist(Lexer lexer) {
     	Assert.notNull(lexer, "lexer must be set");
         this.lexer = lexer;
     }

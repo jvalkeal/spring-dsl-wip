@@ -15,8 +15,6 @@
  */
 package org.springframework.dsl.antlr;
 
-import java.io.IOException;
-import java.io.StringReader;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -26,8 +24,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.antlr.v4.runtime.BaseErrorListener;
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.RecognitionException;
@@ -42,12 +38,10 @@ import org.antlr.v4.runtime.misc.Interval;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.dsl.DslException;
 import org.springframework.dsl.document.Document;
 import org.springframework.dsl.lsp.domain.CompletionItem;
 import org.springframework.dsl.lsp.domain.Position;
 import org.springframework.dsl.lsp.service.Completioner;
-import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import reactor.core.publisher.Flux;
@@ -57,59 +51,36 @@ import reactor.core.publisher.Flux;
  *
  * @author Janne Valkealahti
  *
+ * @param <L> the type of lexer
+ * @param <P> the type of parser
+ *
  */
-public abstract class AbstractAntlrCompletioner implements Completioner {
+public abstract class AbstractAntlrCompletioner<L extends Lexer, P extends Parser> extends AntlrObjectSupport<L, P>
+		implements Completioner {
 
 	private static final Log log = LogFactory.getLog(AbstractAntlrCompletioner.class);
-	private final AntlrFactory antlrFactory;
 
 	/**
-	 * Instantiates a new abstract antlr linter.
+	 * Instantiates a new abstract antlr completioner.
 	 *
 	 * @param antlrFactory the antlr factory
 	 */
-	public AbstractAntlrCompletioner(AntlrFactory antlrFactory) {
-		Assert.notNull(antlrFactory, "antlrFactory must be set");
-		this.antlrFactory = antlrFactory;
+	public AbstractAntlrCompletioner(AntlrFactory<L, P> antlrFactory) {
+		super(antlrFactory);
 	}
 
 	@Override
 	public Flux<CompletionItem> complete(Document document, Position position) {
-		return completeInternal();
+		return completeInternal(document.get());
 	}
 
-	protected abstract Flux<CompletionItem> completeInternal();
-
-	/**
-	 * Gets the antlr factory.
-	 *
-	 * @return the antlr factory
-	 */
-	protected AntlrFactory getAntlrFactory() {
-		return antlrFactory;
-	}
-
-	protected Lexer createLexer(String content) {
-		return this.antlrFactory.createLexer(stringToCharStream(content));
-	}
-
-	protected Parser createParser() {
-		return this.antlrFactory.createParser(null);
-	}
+	protected abstract Flux<CompletionItem> completeInternal(String content);
 
 	protected static List<? extends Token> filterTokensByChannel(List<? extends Token> tokens, int channel) {
 		return tokens.stream().filter(t -> t.getChannel() == channel).collect(Collectors.toList());
 	}
 
-	private static CharStream stringToCharStream(String content) {
-		try {
-			return CharStreams.fromReader(new StringReader(content));
-		} catch (IOException e) {
-			throw new DslException(e);
-		}
-	}
-
-	private Collection<String> assistCompletions(String content) {
+	protected Collection<String> assistCompletions(String content) {
 		AssistHolder assistHolder = new AssistHolder(content);
 		tokenizeInput(assistHolder);
 		storeParserAtnAndRuleNames(assistHolder);
@@ -124,7 +95,7 @@ public abstract class AbstractAntlrCompletioner implements Completioner {
 	}
 
 	private void storeParserAtnAndRuleNames(AssistHolder assistHolder) {
-		Parser parserForAtnOnly = createParser();
+		P parserForAtnOnly = getAntlrFactory().createParser(null);
 		assistHolder.parserAtn = parserForAtnOnly.getATN();
 		assistHolder.parserRuleNames = parserForAtnOnly.getRuleNames();
 	}
@@ -206,7 +177,8 @@ public abstract class AbstractAntlrCompletioner implements Completioner {
 	private void suggestNextTokensForParserState(AssistHolder assistHolder, ATNState parserState) {
 		Set<Integer> transitionLabels = new HashSet<>();
 		fillParserTransitionLabels(assistHolder, parserState, transitionLabels, new HashSet<>());
-		AntlrDslTokenAssist tokenSuggester = new AntlrDslTokenAssist(createLexer(assistHolder.content));
+		L lexer = getAntlrFactory().createLexer(stringToCharStream(assistHolder.content));
+		AntlrTokenAssist tokenSuggester = new AntlrTokenAssist(lexer);
 		String untokenizedText = assistHolder.errorListener.errorPosition != null
 				? assistHolder.content.substring(assistHolder.errorListener.errorPosition)
 				: "";
@@ -260,7 +232,7 @@ public abstract class AbstractAntlrCompletioner implements Completioner {
 
 	private Token getAddedToken(AssistHolder assistHolder, String suggestedCompletion) {
 		String completedText = assistHolder.content + suggestedCompletion;
-		Lexer completedTextLexer = this.createLexer(completedText);
+		Lexer completedTextLexer = getAntlrFactory().createLexer(stringToCharStream(completedText));
 		completedTextLexer.removeErrorListeners();
 		List<? extends Token> completedTextTokens = filterTokensByChannel(completedTextLexer.getAllTokens(), 0);
 		if (completedTextTokens.size() <= assistHolder.inputTokens.size()) {
@@ -319,8 +291,9 @@ public abstract class AbstractAntlrCompletioner implements Completioner {
 	private String toString(AssistHolder assistHolder, Transition t) {
 		String nameOrLabel = t.getClass().getSimpleName();
 		if (t instanceof AtomTransition) {
+			L lexer = getAntlrFactory().createLexer(stringToCharStream(assistHolder.content));
 			nameOrLabel += ' '
-					+ this.createLexer(assistHolder.content).getVocabulary().getDisplayName(((AtomTransition) t).label);
+					+ lexer.getVocabulary().getDisplayName(((AtomTransition) t).label);
 		}
 		return nameOrLabel + " -> " + toString(assistHolder, t.target);
 	}
@@ -333,7 +306,7 @@ public abstract class AbstractAntlrCompletioner implements Completioner {
 	}
 
 	private Lexer createLexerWithUntokenizedTextDetection(AssistHolder assistHolder) {
-		Lexer lexer = createLexer(assistHolder.content);
+		L lexer = getAntlrFactory().createLexer(stringToCharStream(assistHolder.content));
 		lexer.removeErrorListeners();
 
 		AssistErrorListener errorListener = new AssistErrorListener();
