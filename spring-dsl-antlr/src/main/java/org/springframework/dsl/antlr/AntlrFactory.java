@@ -21,13 +21,27 @@ import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.TokenStream;
 
 /**
+ * {@code AntlrFactory} is a simple interface able to create a {@link Lexer} and
+ * {@link Parser}.
  *
  * @author Janne Valkealahti
  *
  */
 public interface AntlrFactory {
 
+    /**
+     * Creates a new Antlr {@link Lexer}.
+     *
+     * @param input the input
+     * @return the lexer
+     */
     Lexer createLexer(CharStream input);
 
+    /**
+     * Creates a new Antlr {@link Parser}.
+     *
+     * @param tokenStream the token stream
+     * @return the parser
+     */
     Parser createParser(TokenStream tokenStream);
 }

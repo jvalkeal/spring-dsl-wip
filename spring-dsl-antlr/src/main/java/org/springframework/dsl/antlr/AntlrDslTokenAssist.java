@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.antlr.assist;
+package org.springframework.dsl.antlr;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,9 +28,13 @@ import org.antlr.v4.runtime.atn.SetTransition;
 import org.antlr.v4.runtime.atn.Transition;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.util.Assert;
 
 /**
  * Given an ATN state and the lexer ATN, suggests auto-completion texts.
+ *
+ * @author Janne Valkealahti
+ *
  */
 class AntlrDslTokenAssist {
 
@@ -40,10 +44,15 @@ class AntlrDslTokenAssist {
     private final List<Integer> visitedLexerStates = new ArrayList<>();
     private String origPartialToken;
 
+    /**
+     * Instantiates a new antlr dsl token assist.
+     *
+     * @param lexer the lexer
+     */
     public AntlrDslTokenAssist(Lexer lexer) {
+    	Assert.notNull(lexer, "lexer must be set");
         this.lexer = lexer;
     }
-
 
     public Collection<String> suggest(Collection<Integer> nextParserTransitionLabels, String remainingText) {
 //        logTokensUsedForSuggestion(nextParserTransitionLabels);
