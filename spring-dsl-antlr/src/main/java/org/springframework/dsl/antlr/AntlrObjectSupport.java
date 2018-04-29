@@ -20,8 +20,8 @@ import java.io.StringReader;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.antlr.v4.runtime.Lexer;
+import org.antlr.v4.runtime.Parser;
 import org.springframework.dsl.DslException;
 import org.springframework.util.Assert;
 
@@ -30,18 +30,20 @@ import org.springframework.util.Assert;
  *
  * @author Janne Valkealahti
  *
+ * @param <L> the type of lexer
+ * @param <P> the type of parser
+ *
  */
-public abstract class AntlrObjectSupport {
+public abstract class AntlrObjectSupport<L extends Lexer, P extends Parser> {
 
-	private static final Log log = LogFactory.getLog(AntlrObjectSupport.class);
-	private final AntlrFactory antlrFactory;
+	private final AntlrFactory<L, P> antlrFactory;
 
 	/**
 	 * Instantiates a new abstract antlr linter.
 	 *
 	 * @param antlrFactory the antlr factory
 	 */
-	public AntlrObjectSupport(AntlrFactory antlrFactory) {
+	public AntlrObjectSupport(AntlrFactory<L, P> antlrFactory) {
 		Assert.notNull(antlrFactory, "antlrFactory must be set");
 		this.antlrFactory = antlrFactory;
 	}
@@ -51,10 +53,16 @@ public abstract class AntlrObjectSupport {
 	 *
 	 * @return the antlr factory
 	 */
-	protected AntlrFactory getAntlrFactory() {
+	protected AntlrFactory<L, P> getAntlrFactory() {
 		return antlrFactory;
 	}
 
+	/**
+	 * Utility method to convert a {@link String} to a {@link CharStream}.
+	 *
+	 * @param content the content
+	 * @return the char stream
+	 */
 	protected static CharStream stringToCharStream(String content) {
 		try {
 			return CharStreams.fromReader(new StringReader(content));
@@ -62,5 +70,4 @@ public abstract class AntlrObjectSupport {
 			throw new DslException(e);
 		}
 	}
-
 }

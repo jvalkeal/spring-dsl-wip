@@ -26,8 +26,11 @@ import org.antlr.v4.runtime.TokenStream;
  *
  * @author Janne Valkealahti
  *
+ * @param <L> the type of lexer
+ * @param <P> the type of parser
+ *
  */
-public interface AntlrFactory {
+public interface AntlrFactory<L extends Lexer, P extends Parser> {
 
     /**
      * Creates a new Antlr {@link Lexer}.
@@ -35,7 +38,7 @@ public interface AntlrFactory {
      * @param input the input
      * @return the lexer
      */
-    Lexer createLexer(CharStream input);
+    L createLexer(CharStream input);
 
     /**
      * Creates a new Antlr {@link Parser}.
@@ -43,5 +46,5 @@ public interface AntlrFactory {
      * @param tokenStream the token stream
      * @return the parser
      */
-    Parser createParser(TokenStream tokenStream);
+    P createParser(TokenStream tokenStream);
 }

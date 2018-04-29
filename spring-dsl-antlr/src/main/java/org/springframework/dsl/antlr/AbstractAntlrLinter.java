@@ -15,10 +15,8 @@
  */
 package org.springframework.dsl.antlr;
 
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Lexer;
+import org.antlr.v4.runtime.Parser;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.dsl.document.Document;
@@ -32,8 +30,12 @@ import reactor.core.publisher.Flux;
  *
  * @author Janne Valkealahti
  *
+ * @param <L> the type of lexer
+ * @param <P> the type of parser
+ *
  */
-public abstract class AbstractAntlrLinter extends AntlrObjectSupport implements Linter {
+public abstract class AbstractAntlrLinter<L extends Lexer, P extends Parser> extends AntlrObjectSupport<L, P>
+		implements Linter {
 
 	private static final Log log = LogFactory.getLog(AbstractAntlrCompletioner.class);
 
@@ -42,7 +44,7 @@ public abstract class AbstractAntlrLinter extends AntlrObjectSupport implements 
 	 *
 	 * @param antlrFactory the antlr factory
 	 */
-	public AbstractAntlrLinter(AntlrFactory antlrFactory) {
+	public AbstractAntlrLinter(AntlrFactory<L, P> antlrFactory) {
 		super(antlrFactory);
 	}
 
