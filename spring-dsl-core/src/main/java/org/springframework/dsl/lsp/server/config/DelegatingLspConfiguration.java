@@ -84,6 +84,7 @@ public class DelegatingLspConfiguration {
 	/**
 	 * Lsp request mapping handler adapter.
 	 *
+	 * @param resolvers the resolvers
 	 * @return the lsp request mapping handler adapter
 	 */
 	@Bean

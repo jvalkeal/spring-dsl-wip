@@ -11,7 +11,7 @@
 :core-jdbc-JdbcTemplate: http://docs.spring.io/spring/docs/{spring-version}/spring-framework-reference/html/jdbc.html#jdbc-JdbcTemplate
 :spring-security-site: http://projects.spring.io/spring-security
 
-= Spring Cloud IoT - Reference Documentation
+= Spring Dsl - Reference Documentation
 
 include::preface.adoc[]
 include::introduction.adoc[]

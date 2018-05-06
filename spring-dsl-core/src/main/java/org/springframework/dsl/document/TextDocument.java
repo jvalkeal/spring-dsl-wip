@@ -18,6 +18,8 @@ package org.springframework.dsl.document;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dsl.document.linetracker.DefaultLineTracker;
 import org.springframework.dsl.document.linetracker.ILineTracker;
 import org.springframework.dsl.lsp.domain.DidChangeTextDocumentParams;
@@ -25,8 +27,6 @@ import org.springframework.dsl.lsp.domain.Position;
 import org.springframework.dsl.lsp.domain.Range;
 import org.springframework.dsl.lsp.domain.TextDocumentContentChangeEvent;
 import org.springframework.dsl.lsp.domain.TextDocumentIdentifier;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javolution.text.Text;
 
@@ -58,10 +58,21 @@ public class TextDocument implements Document {
 	private Text text = new Text("");
 	private int version;
 
+	/**
+	 * Instantiates a new text document.
+	 *
+	 * @param uri the uri
+	 * @param languageId the language id
+	 */
 	public TextDocument(String uri, LanguageId languageId) {
 		this(uri, languageId, 0, "");
 	}
 
+	/**
+	 * Instantiates a new text document.
+	 *
+	 * @param other the other
+	 */
 	private TextDocument(TextDocument other) {
 		this.uri = other.uri;
 		this.languageId = other.getLanguageId();
@@ -70,6 +81,14 @@ public class TextDocument implements Document {
 		this.version = other.version;
 	}
 
+	/**
+	 * Instantiates a new text document.
+	 *
+	 * @param uri the uri
+	 * @param languageId the language id
+	 * @param version the version
+	 * @param text the text
+	 */
 	public TextDocument(String uri, LanguageId languageId, int version, String text) {
 		this.uri = uri;
 		this.languageId = languageId;
@@ -127,6 +146,11 @@ public class TextDocument implements Document {
 	 * Convert a simple offset+length pair into a vscode range. This is a method on
 	 * TextDocument because it requires splitting document into lines to determine
 	 * line numbers from offsets.
+	 *
+	 * @param offset the offset
+	 * @param length the length
+	 * @return the range
+	 * @throws BadLocationException the bad location exception
 	 */
 	public Range toRange(int offset, int length) throws BadLocationException {
 		int end = Math.min(offset + length, getLength());
@@ -138,6 +162,10 @@ public class TextDocument implements Document {
 
 	/**
 	 * Determine the line-number a given offset (i.e. what line is the offset inside of?)
+	 *
+	 * @param offset the offset
+	 * @return the int
+	 * @throws BadLocationException the bad location exception
 	 */
 	private int lineNumber(int offset) throws BadLocationException {
 		return lineTracker.getLineNumberOfOffset(offset);
@@ -263,6 +291,9 @@ public class TextDocument implements Document {
 	 * <p>
 	 * This may return -1 if, for some reason, a line's indentation cannot be determined (e.g. the line does
 	 * not exist in the document)
+	 *
+	 * @param line the line
+	 * @return the line indentation
 	 */
 	public int getLineIndentation(int line) {
 		//TODO: this works fine only if we assume all indentation is done with spaces only.
@@ -291,6 +322,9 @@ public class TextDocument implements Document {
 	/**
 	 * Like getChar but never throws {@link BadLocationException}. Instead it
 	 * return (char)0 for offsets outside the document.
+	 *
+	 * @param offset the offset
+	 * @return the safe char
 	 */
 	public char getSafeChar(int offset) {
 		try {

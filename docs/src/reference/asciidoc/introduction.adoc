@@ -6,3 +6,5 @@ following features:
 
 * Easy configuration model.
 
+== Background
+xxx

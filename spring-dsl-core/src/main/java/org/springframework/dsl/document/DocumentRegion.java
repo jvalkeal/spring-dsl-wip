@@ -1,3 +1,18 @@
+/*
+ * Copyright 2018 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.springframework.dsl.document;
 
 import java.util.ArrayList;
@@ -25,9 +40,10 @@ public class DocumentRegion implements CharSequence, Region {
 	final int end;
 
 	/**
+	 * Instantiates a new document region.
 	 *
-	 * @param doc
-	 * @param r
+	 * @param doc the doc
+	 * @param r the r
 	 */
 	public DocumentRegion(Document doc, Region r) {
 		this(doc,
@@ -51,9 +67,9 @@ public class DocumentRegion implements CharSequence, Region {
 	 * exactly at the start position (this avoids region with
 	 * negative length).
 	 *
-	 * @param doc
-	 * @param start
-	 * @param end
+	 * @param doc the doc
+	 * @param start the start
+	 * @param end the end
 	 */
 	public DocumentRegion(Document doc, int start, int end) {
 		this.doc = doc;
@@ -64,18 +80,19 @@ public class DocumentRegion implements CharSequence, Region {
 	/**
 	 * Create {@link DocumentRegion} covering the whole document.
 	 *
-	 * @param doc
+	 * @param doc the doc
 	 */
 	public DocumentRegion(Document doc) {
 		this(doc, 0, doc.getLength());
 	}
 
 	/**
+	 * Limit range.
 	 *
-	 * @param offset
-	 * @param min
-	 * @param max
-	 * @return
+	 * @param offset the offset
+	 * @param min the min
+	 * @param max the max
+	 * @return the int
 	 */
 	private int limitRange(int offset, int min, int max) {
 		if (offset<min) {
@@ -119,10 +136,10 @@ public class DocumentRegion implements CharSequence, Region {
 	}
 
 	/**
-	 * Gets character from the region, offset from the start of the region
-	 * @return the character from the document (char)0 if the offset is outside the region.
+	 * Gets character from the region, offset from the start of the region.
 	 *
-	 * @param offset
+	 * @param offset the offset
+	 * @return the character from the document (char)0 if the offset is outside the region.
 	 */
 	@Override
 	public char charAt(int offset) {
@@ -145,7 +162,8 @@ public class DocumentRegion implements CharSequence, Region {
 	 * In other words, the 'end' position is considered as being contained in the
 	 * region.
 	 *
-	 * @param absoluteOffset
+	 * @param absoluteOffset the absolute offset
+	 * @return true, if successful
 	 */
 	public boolean containsOffset(int absoluteOffset) {
 		return absoluteOffset>=start && absoluteOffset <= end;
@@ -222,6 +240,9 @@ public class DocumentRegion implements CharSequence, Region {
 
 	/**
 	 * Removes a single occurrence of pat from the start of this region.
+	 *
+	 * @param pat the pat
+	 * @return the document region
 	 */
 	public DocumentRegion trimStart(Pattern pat) {
 		pat = Pattern.compile("^("+pat.pattern()+")");
@@ -234,6 +255,9 @@ public class DocumentRegion implements CharSequence, Region {
 
 	/**
 	 * Removes a single occurrence of pat from the end of this region.
+	 *
+	 * @param pat the pat
+	 * @return the document region
 	 */
 	public DocumentRegion trimEnd(Pattern pat) {
 		pat = Pattern.compile("("+pat.pattern()+")$");
@@ -249,6 +273,9 @@ public class DocumentRegion implements CharSequence, Region {
 	 * <p>
 	 * If the document is too short to provide the requested lenght
 	 * then the region is truncated to end of the document.
+	 *
+	 * @param len the len
+	 * @return the document region
 	 */
 	public DocumentRegion textAfter(int len) {
 		Assert.isTrue(len>=0);
@@ -260,6 +287,9 @@ public class DocumentRegion implements CharSequence, Region {
 	 * <p>
 	 * If the requested region extends before the start of the document,
 	 * then the region is shortened so its start coincides with document start.
+	 *
+	 * @param len the len
+	 * @return the document region
 	 */
 	public DocumentRegion textBefore(int len) {
 		Assert.isTrue(len>=0);
@@ -272,6 +302,8 @@ public class DocumentRegion implements CharSequence, Region {
 
 	/**
 	 * Get the start of this region in 'absolute' terms (i.e. relative to the document).
+	 *
+	 * @return the start
 	 */
 	public int getStart() {
 		return start;
@@ -279,6 +311,8 @@ public class DocumentRegion implements CharSequence, Region {
 
 	/**
 	 * Get the end of this region in 'absolute' terms (i.e. relative to the document).
+	 *
+	 * @return the end
 	 */
 	public int getEnd() {
 		return end;
@@ -286,6 +320,9 @@ public class DocumentRegion implements CharSequence, Region {
 
 	/**
 	 * Convert the given document offset into an offset relative to this region.
+	 *
+	 * @param offset the offset
+	 * @return the int
 	 */
 	public int toRelative(int offset) {
 		return offset-start;
@@ -325,7 +362,10 @@ public class DocumentRegion implements CharSequence, Region {
 	}
 
 	/**
-	 * Take documentRegion at the end of
+	 * Take documentRegion at the end of.
+	 *
+	 * @param numChars the num chars
+	 * @return the document region
 	 */
 	public DocumentRegion textAtEnd(int numChars) {
 		numChars = Math.min(getLength(), numChars);

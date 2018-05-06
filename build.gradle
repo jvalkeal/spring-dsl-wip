@@ -48,6 +48,11 @@ configure(allprojects) {
 		targetCompatibility = 1.8
 	}
 
+	compileTestJava {
+		sourceCompatibility = 1.8
+		targetCompatibility = 1.8
+	}
+
 	repositories {
 		mavenCentral()
 		maven { url 'https://repo.spring.io/libs-snapshot' }
@@ -91,6 +96,21 @@ configure(subprojects) { subproject ->
 			into "META-INF"
 			expand(copyright: new Date().format('yyyy'), version: project.version)
 		}
+	}
+
+	javadoc {
+		description = "Generates project-level javadoc for use in -javadoc jar"
+
+		options.memberLevel = org.gradle.external.javadoc.JavadocMemberLevel.PROTECTED
+		options.author = true
+		options.header = project.name
+		options.use = true
+		options.addStringOption('Xdoclint:none', '-quiet')
+
+		// Suppress warnings due to cross-module @see and @link references.
+		// Note that global 'api' task does display all warnings.
+		logging.captureStandardError LogLevel.INFO
+		logging.captureStandardOutput LogLevel.INFO  // suppress "## warnings" message
 	}
 
 	dependencies {
@@ -324,6 +344,7 @@ configure(rootProject) {
 		options.links(
 			'http://docs.jboss.org/jbossas/javadoc/4.0.5/connector'
 		)
+		options.addStringOption('Xdoclint:none', '-quiet')
 
 		// disable javadocs for samples
 		source subprojects

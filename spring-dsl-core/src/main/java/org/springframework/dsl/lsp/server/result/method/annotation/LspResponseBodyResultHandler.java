@@ -52,6 +52,7 @@ public class LspResponseBodyResultHandler extends AbstractMessageWriterResultHan
 				parameter.getMethodAnnotation(LspResponseBody.class) != null);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Mono<Void> handleResult(ServerLspExchange exchange, HandlerResult result) {
 		Object body = result.getReturnValue();

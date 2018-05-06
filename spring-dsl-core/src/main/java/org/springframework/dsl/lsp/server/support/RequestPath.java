@@ -19,7 +19,6 @@ import java.net.URI;
 
 import org.springframework.lang.Nullable;
 
-// TODO: Auto-generated Javadoc
 /**
  * Represents the complete path for a request.
  *
@@ -34,8 +33,6 @@ public interface RequestPath extends PathContainer {
 	 * <p>The context path may come from the underlying runtime API such as
 	 * when deploying as a WAR to a Servlet container or it may be assigned in
 	 * a WebFlux application through the use of
-	 * {@link org.springframework.http.server.reactive.ContextPathCompositeHandler
-	 * ContextPathCompositeHandler}.
 	 *
 	 * @return the path container
 	 */

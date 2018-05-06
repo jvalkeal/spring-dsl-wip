@@ -6,7 +6,7 @@ this is the section for you! Here we answer the basic
 introduction to Spring Dsl.
 
 == System Requirements
-Spring Cloud Iot {revnumber} is built and tested with
+Spring Dsl {revnumber} is built and tested with
 JDK 8, Spring Framework {spring-version}, Spring Boot
 {spring-boot-version}.
 
@@ -22,5 +22,3 @@ The following modules are available for Spring Dsl
 
 
 |===
-
-
