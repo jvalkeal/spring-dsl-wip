@@ -21,8 +21,23 @@ import org.springframework.dsl.lsp.domain.Position;
 
 import reactor.core.publisher.Flux;
 
+/**
+ * Strategy interface defining a contract for providing completion from a
+ * {@link Document} in a given {@link Position} and returning a {@link Flux} of
+ * {@link CompletionItem}s.
+ *
+ * @author Janne Valkealahti
+ *
+ */
+@FunctionalInterface
 public interface Completioner {
 
+	/**
+	 * Provide completion items from a document in given position.
+	 *
+	 * @param document the document
+	 * @param position the position
+	 * @return the flux of completion items
+	 */
 	Flux<CompletionItem> complete(Document document, Position position);
-
 }

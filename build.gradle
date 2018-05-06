@@ -153,10 +153,32 @@ project('spring-dsl-websocket') {
 
 project('spring-dsl-antlr') {
 	description = "Spring Dsl Antlr"
+	apply plugin: 'antlr'
+
+	generateTestGrammarSource {
+		arguments += ["-visitor", "-long-messages", "-package", "org.springframework.dsl"]
+		doLast {
+			def parserFilePattern = 'Test*'
+			def outputPath = generateTestGrammarSource.outputDirectory.canonicalPath
+			def parserPackagePath = "${outputPath}/org/springframework/dsl"
+			file(parserPackagePath).mkdirs()
+			copy {
+				from outputPath
+				into parserPackagePath
+				include parserFilePattern
+			}
+			delete fileTree(outputPath) {
+				include parserFilePattern
+			}
+		}
+	}
 
 	dependencies {
+		antlr 'org.antlr:antlr4'
 		compile project(':spring-dsl-core')
 		compile 'org.antlr:antlr4-runtime'
+		testCompile 'org.antlr:antlr4'
+		testCompile 'org.springframework.boot:spring-boot-starter-test'
 	}
 }
 

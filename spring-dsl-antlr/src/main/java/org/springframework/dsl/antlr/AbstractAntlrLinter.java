@@ -19,6 +19,7 @@ import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Parser;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.dsl.antlr.support.AntlrObjectSupport;
 import org.springframework.dsl.document.Document;
 import org.springframework.dsl.reconcile.Linter;
 import org.springframework.dsl.reconcile.ReconcileProblem;
@@ -49,7 +50,7 @@ public abstract class AbstractAntlrLinter<L extends Lexer, P extends Parser> ext
 	}
 
 	@Override
-	public Flux<ReconcileProblem> lint(Document document) {
+	public final Flux<ReconcileProblem> lint(Document document) {
 		return lintInternal(document);
 	}
 

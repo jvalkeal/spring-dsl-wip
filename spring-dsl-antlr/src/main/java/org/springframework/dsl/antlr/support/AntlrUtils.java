@@ -13,57 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.antlr;
+package org.springframework.dsl.antlr.support;
 
 import java.io.IOException;
 import java.io.StringReader;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.Lexer;
-import org.antlr.v4.runtime.Parser;
 import org.springframework.dsl.DslException;
-import org.springframework.util.Assert;
 
 /**
- * Base class for language support for {@code ANTLR}.
+ * Utility functions for {@code ANTLR}.
  *
  * @author Janne Valkealahti
  *
- * @param <L> the type of lexer
- * @param <P> the type of parser
- *
  */
-public abstract class AntlrObjectSupport<L extends Lexer, P extends Parser> {
-
-	private final AntlrFactory<L, P> antlrFactory;
+public abstract class AntlrUtils {
 
 	/**
-	 * Instantiates a new abstract antlr linter.
-	 *
-	 * @param antlrFactory the antlr factory
-	 */
-	public AntlrObjectSupport(AntlrFactory<L, P> antlrFactory) {
-		Assert.notNull(antlrFactory, "antlrFactory must be set");
-		this.antlrFactory = antlrFactory;
-	}
-
-	/**
-	 * Gets the antlr factory.
-	 *
-	 * @return the antlr factory
-	 */
-	protected AntlrFactory<L, P> getAntlrFactory() {
-		return antlrFactory;
-	}
-
-	/**
-	 * Utility method to convert a {@link String} to a {@link CharStream}.
+	 * Convert a {@link String} to a {@link CharStream}.
 	 *
 	 * @param content the content
 	 * @return the char stream
 	 */
-	protected static CharStream stringToCharStream(String content) {
+	public static CharStream stringToCharStream(String content) {
 		try {
 			return CharStreams.fromReader(new StringReader(content));
 		} catch (IOException e) {
