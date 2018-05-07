@@ -28,6 +28,8 @@ public enum LspMethod {
 
 	INITIALIZE,
 
+	INITIALIZED,
+
 	DIDOPEN,
 
 	DIDCHANGE,

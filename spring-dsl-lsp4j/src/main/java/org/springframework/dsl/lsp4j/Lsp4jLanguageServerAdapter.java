@@ -38,6 +38,7 @@ import org.eclipse.lsp4j.DocumentSymbolParams;
 import org.eclipse.lsp4j.Hover;
 import org.eclipse.lsp4j.InitializeParams;
 import org.eclipse.lsp4j.InitializeResult;
+import org.eclipse.lsp4j.InitializedParams;
 import org.eclipse.lsp4j.Location;
 import org.eclipse.lsp4j.ReferenceParams;
 import org.eclipse.lsp4j.RenameParams;
@@ -118,6 +119,12 @@ public class Lsp4jLanguageServerAdapter implements LanguageServer, LanguageClien
 		return lspHandler.handle(exchange)
 				.then(convert(exchange, InitializeResult.class, conversionService))
 				.toFuture();
+	}
+
+	@Override
+	public void initialized(InitializedParams params) {
+		log.trace("initialized {}", params);
+		lspHandler.handle(createExchange(LspMethod.INITIALIZED, params, client, conversionService)).subscribe();
 	}
 
 	@Override

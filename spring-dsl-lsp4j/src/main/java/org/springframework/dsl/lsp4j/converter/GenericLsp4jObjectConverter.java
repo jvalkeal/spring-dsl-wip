@@ -29,6 +29,7 @@ import org.springframework.dsl.lsp.domain.DidSaveTextDocumentParams;
 import org.springframework.dsl.lsp.domain.Hover;
 import org.springframework.dsl.lsp.domain.InitializeParams;
 import org.springframework.dsl.lsp.domain.InitializeResult;
+import org.springframework.dsl.lsp.domain.InitializedParams;
 import org.springframework.dsl.lsp.domain.PublishDiagnosticsParams;
 import org.springframework.dsl.lsp.domain.TextDocumentPositionParams;
 import org.springframework.util.ClassUtils;
@@ -45,6 +46,7 @@ public class GenericLsp4jObjectConverter implements GenericConverter {
 	// needs to be stored in pairs!
 	private final static Class<?>[] typePairs = new Class[] {
 			InitializeParams.class, org.eclipse.lsp4j.InitializeParams.class,
+			InitializedParams.class, org.eclipse.lsp4j.InitializedParams.class,
 			InitializeResult.class, org.eclipse.lsp4j.InitializeResult.class,
 			DidChangeTextDocumentParams.class, org.eclipse.lsp4j.DidChangeTextDocumentParams.class,
 			DidCloseTextDocumentParams.class, org.eclipse.lsp4j.DidCloseTextDocumentParams.class,
@@ -77,6 +79,13 @@ public class GenericLsp4jObjectConverter implements GenericConverter {
 		}
 		if (ClassUtils.isAssignable(InitializeParams.class, sourceType.getType())) {
 			return ConverterUtils.toInitializeParams((InitializeParams) source);
+		}
+
+		if (ClassUtils.isAssignable(org.eclipse.lsp4j.InitializedParams.class, sourceType.getType())) {
+			return ConverterUtils.toInitializedParams((org.eclipse.lsp4j.InitializedParams) source);
+		}
+		if (ClassUtils.isAssignable(InitializedParams.class, sourceType.getType())) {
+			return ConverterUtils.toInitializedParams((InitializedParams) source);
 		}
 
 		if (ClassUtils.isAssignable(org.eclipse.lsp4j.CompletionParams.class, sourceType.getType())) {

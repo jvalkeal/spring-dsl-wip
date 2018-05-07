@@ -32,6 +32,7 @@ import org.springframework.dsl.lsp.domain.DidSaveTextDocumentParams;
 import org.springframework.dsl.lsp.domain.Hover;
 import org.springframework.dsl.lsp.domain.InitializeParams;
 import org.springframework.dsl.lsp.domain.InitializeResult;
+import org.springframework.dsl.lsp.domain.InitializedParams;
 import org.springframework.dsl.lsp.domain.MarkupContent;
 import org.springframework.dsl.lsp.domain.MarkupKind;
 import org.springframework.dsl.lsp.domain.Position;
@@ -61,6 +62,9 @@ public class ConverterUtilsTests {
 
 		assertInitializeParams(new InitializeParams());
 		assertInitializeParams(new org.eclipse.lsp4j.InitializeParams());
+
+		assertInitializedParams(new InitializedParams());
+		assertInitializedParams(new org.eclipse.lsp4j.InitializedParams());
 
 		assertInitializeResult(new InitializeResult());
 		assertInitializeResult(new org.eclipse.lsp4j.InitializeResult());
@@ -216,6 +220,14 @@ public class ConverterUtilsTests {
 
 	private static void assertInitializeParams(org.eclipse.lsp4j.InitializeParams from) {
 		assertObjects(from, ConverterUtils.toInitializeParams(ConverterUtils.toInitializeParams(from)));
+	}
+
+	private static void assertInitializedParams(InitializedParams from) {
+		assertObjects(from, ConverterUtils.toInitializedParams(ConverterUtils.toInitializedParams(from)));
+	}
+
+	private static void assertInitializedParams(org.eclipse.lsp4j.InitializedParams from) {
+		assertObjects(from, ConverterUtils.toInitializedParams(ConverterUtils.toInitializedParams(from)));
 	}
 
 	private static void assertInitializeResult(InitializeResult from) {

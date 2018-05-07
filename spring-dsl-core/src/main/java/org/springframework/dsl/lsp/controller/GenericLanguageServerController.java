@@ -30,6 +30,7 @@ import org.springframework.dsl.lsp.annotation.LspDidOpen;
 import org.springframework.dsl.lsp.annotation.LspDidSave;
 import org.springframework.dsl.lsp.annotation.LspHover;
 import org.springframework.dsl.lsp.annotation.LspInitialize;
+import org.springframework.dsl.lsp.annotation.LspInitialized;
 import org.springframework.dsl.lsp.annotation.LspNoResponseBody;
 import org.springframework.dsl.lsp.annotation.LspResponseBody;
 import org.springframework.dsl.lsp.domain.CompletionItem;
@@ -42,6 +43,7 @@ import org.springframework.dsl.lsp.domain.DidSaveTextDocumentParams;
 import org.springframework.dsl.lsp.domain.Hover;
 import org.springframework.dsl.lsp.domain.InitializeParams;
 import org.springframework.dsl.lsp.domain.InitializeResult;
+import org.springframework.dsl.lsp.domain.InitializedParams;
 import org.springframework.dsl.lsp.domain.PublishDiagnosticsParams;
 import org.springframework.dsl.lsp.domain.ServerCapabilities;
 import org.springframework.dsl.lsp.domain.TextDocumentPositionParams;
@@ -117,6 +119,12 @@ public class GenericLanguageServerController implements InitializingBean {
 		this.reconciler = reconcilerProvider.getIfAvailable();
 		this.completioner = completionerProvider.getIfAvailable();
 		this.hoverer = hovererProvider.getIfAvailable();
+	}
+
+	@LspInitialized
+	@LspNoResponseBody
+	public void clientInitialized(InitializedParams params) {
+		log.trace("clientInitialized {}", params);
 	}
 
 	/**

@@ -24,6 +24,7 @@ import org.springframework.dsl.lsp.domain.DidCloseTextDocumentParams;
 import org.springframework.dsl.lsp.domain.DidOpenTextDocumentParams;
 import org.springframework.dsl.lsp.domain.DidSaveTextDocumentParams;
 import org.springframework.dsl.lsp.domain.InitializeParams;
+import org.springframework.dsl.lsp.domain.InitializedParams;
 import org.springframework.dsl.lsp.domain.TextDocumentPositionParams;
 import org.springframework.dsl.lsp.server.ServerLspExchange;
 import org.springframework.dsl.lsp.server.result.method.LspHandlerMethodArgumentResolver;
@@ -53,6 +54,7 @@ public class Lsp4jDomainArgumentResolver implements LspHandlerMethodArgumentReso
 	public boolean supportsParameter(MethodParameter parameter) {
 		Class<?> type = parameter.getParameterType();
 		return InitializeParams.class.isAssignableFrom(type)
+				|| InitializedParams.class.isAssignableFrom(type)
 				|| DidChangeTextDocumentParams.class.isAssignableFrom(type)
 				|| DidCloseTextDocumentParams.class.isAssignableFrom(type)
 				|| DidOpenTextDocumentParams.class.isAssignableFrom(type)

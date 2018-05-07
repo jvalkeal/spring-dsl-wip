@@ -34,6 +34,7 @@ import org.springframework.dsl.lsp.domain.DidSaveTextDocumentParams;
 import org.springframework.dsl.lsp.domain.Hover;
 import org.springframework.dsl.lsp.domain.InitializeParams;
 import org.springframework.dsl.lsp.domain.InitializeResult;
+import org.springframework.dsl.lsp.domain.InitializedParams;
 import org.springframework.dsl.lsp.domain.InsertTextFormat;
 import org.springframework.dsl.lsp.domain.MarkedString;
 import org.springframework.dsl.lsp.domain.MarkupContent;
@@ -60,13 +61,51 @@ import org.springframework.dsl.lsp.domain.VersionedTextDocumentIdentifier;
  */
 public final class ConverterUtils {
 
+	/**
+	 * Convert {@code Spring DSL} {@link InitializeParams} to {@code LSP4J}
+	 * {@link org.eclipse.lsp4j.InitializeParams}.
+	 *
+	 * @param from the {@code Spring DSL InitializeParams}
+	 * @return {@code LSP4J InitializeParams}
+	 */
+	public static org.eclipse.lsp4j.InitializeParams toInitializeParams(InitializeParams from) {
+		org.eclipse.lsp4j.InitializeParams to = new org.eclipse.lsp4j.InitializeParams();
+		return to;
+	}
+
+	/**
+	 * Convert {@code Spring DSL} {@link InitializeParams} to {@code LSP4J}
+	 * {@link org.eclipse.lsp4j.InitializeParams}.
+	 *
+	 * @param from the {@code Spring DSL InitializeParams}
+	 * @return {@code LSP4J InitializeParams}
+	 */
 	public static InitializeParams toInitializeParams(org.eclipse.lsp4j.InitializeParams from) {
 		InitializeParams to = new InitializeParams();
 		return to;
 	}
 
-	public static org.eclipse.lsp4j.InitializeParams toInitializeParams(InitializeParams from) {
-		org.eclipse.lsp4j.InitializeParams to = new org.eclipse.lsp4j.InitializeParams();
+	/**
+	 * Convert {@code Spring DSL} {@link InitializedParams} to {@code LSP4J}
+	 * {@link org.eclipse.lsp4j.InitializedParams}.
+	 *
+	 * @param from the {@code Spring DSL InitializedParams}
+	 * @return {@code LSP4J InitializedParams}
+	 */
+	public static org.eclipse.lsp4j.InitializedParams toInitializedParams(InitializedParams from) {
+		org.eclipse.lsp4j.InitializedParams to = new org.eclipse.lsp4j.InitializedParams();
+		return to;
+	}
+
+	/**
+	 * Convert {@code Spring DSL} {@link InitializedParams} to {@code LSP4J}
+	 * {@link org.eclipse.lsp4j.InitializedParams}.
+	 *
+	 * @param from the {@code Spring DSL InitializedParams}
+	 * @return {@code LSP4J InitializedParams}
+	 */
+	public static InitializedParams toInitializedParams(org.eclipse.lsp4j.InitializedParams from) {
+		InitializedParams to = new InitializedParams();
 		return to;
 	}
 
