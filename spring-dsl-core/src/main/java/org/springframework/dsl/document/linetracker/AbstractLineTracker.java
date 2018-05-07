@@ -1,13 +1,18 @@
-/*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/*
+ * Copyright 2018 the original author or authors.
  *
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.springframework.dsl.document.linetracker;
 
 import java.util.ArrayList;
@@ -15,7 +20,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.dsl.document.BadLocationException;
-import org.springframework.dsl.document.Region;
 
 /**
  * Abstract implementation of <code>ILineTracker</code>. It lets the definition of line
@@ -33,7 +37,7 @@ import org.springframework.dsl.document.Region;
  * This class must be subclassed.
  * </p>
  */
-public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerExtension {
+public abstract class AbstractLineTracker implements LineTracker, LineTrackerExtension {
 
 	/**
 	 * Tells whether this class is in debug mode.
@@ -48,8 +52,14 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 	 * indicates the length of the delimiter.
 	 */
 	protected static class DelimiterInfo {
+
+		/** The delimiter index. */
 		public int delimiterIndex;
+
+		/** The delimiter length. */
 		public int delimiterLength;
+
+		/** The delimiter. */
 		public String delimiter;
 	}
 
@@ -59,22 +69,45 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 	 * @since 3.1
 	 */
 	protected static class Request {
+
+		/** The offset. */
 		public final int offset;
+
+		/** The length. */
 		public final int length;
+
+		/** The text. */
 		public final String text;
 
+		/**
+		 * Instantiates a new request.
+		 *
+		 * @param offset the offset
+		 * @param length the length
+		 * @param text the text
+		 */
 		public Request(int offset, int length, String text) {
 			this.offset= offset;
 			this.length= length;
 			this.text= text;
 		}
 
+		/**
+		 * Instantiates a new request.
+		 *
+		 * @param text the text
+		 */
 		public Request(String text) {
 			this.offset= -1;
 			this.length= -1;
 			this.text= text;
 		}
 
+		/**
+		 * Checks if is replace request.
+		 *
+		 * @return true, if is replace request
+		 */
 		public boolean isReplaceRequest() {
 			return this.offset > -1 && this.length > -1;
 		}
@@ -98,7 +131,7 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 	 *
 	 * @since 3.2
 	 */
-	private ILineTracker fDelegate= new ListLineTracker() {
+	private LineTracker fDelegate= new ListLineTracker() {
 		@Override
 		public String[] getLegalLineDelimiters() {
 			return AbstractLineTracker.this.getLegalLineDelimiters();
@@ -120,47 +153,71 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 	protected AbstractLineTracker() {
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.dsl.document.linetracker.LineTracker#computeNumberOfLines(java.lang.String)
+	 */
 	@Override
 	public int computeNumberOfLines(String text) {
 		return fDelegate.computeNumberOfLines(text);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.dsl.document.linetracker.LineTracker#getLineDelimiter(int)
+	 */
 	@Override
 	public String getLineDelimiter(int line) throws BadLocationException {
 		checkRewriteSession();
 		return fDelegate.getLineDelimiter(line);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.dsl.document.linetracker.LineTracker#getLineInformation(int)
+	 */
 	@Override
-	public Region getLineInformation(int line) throws BadLocationException {
+	public Region getLineInformation(int line) {
 		checkRewriteSession();
 		return fDelegate.getLineInformation(line);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.dsl.document.linetracker.LineTracker#getLineInformationOfOffset(int)
+	 */
 	@Override
 	public Region getLineInformationOfOffset(int offset) throws BadLocationException {
 		checkRewriteSession();
 		return fDelegate.getLineInformationOfOffset(offset);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.dsl.document.linetracker.LineTracker#getLineLength(int)
+	 */
 	@Override
 	public int getLineLength(int line) throws BadLocationException {
 		checkRewriteSession();
 		return fDelegate.getLineLength(line);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.dsl.document.linetracker.LineTracker#getLineNumberOfOffset(int)
+	 */
 	@Override
 	public int getLineNumberOfOffset(int offset) throws BadLocationException {
 		checkRewriteSession();
 		return fDelegate.getLineNumberOfOffset(offset);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.dsl.document.linetracker.LineTracker#getLineOffset(int)
+	 */
 	@Override
 	public int getLineOffset(int line) throws BadLocationException {
 		checkRewriteSession();
 		return fDelegate.getLineOffset(line);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.dsl.document.linetracker.LineTracker#getNumberOfLines()
+	 */
 	@Override
 	public int getNumberOfLines() {
 		try {
@@ -171,12 +228,18 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 		return fDelegate.getNumberOfLines();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.dsl.document.linetracker.LineTracker#getNumberOfLines(int, int)
+	 */
 	@Override
 	public int getNumberOfLines(int offset, int length) throws BadLocationException {
 		checkRewriteSession();
 		return fDelegate.getNumberOfLines(offset, length);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.dsl.document.linetracker.LineTracker#set(java.lang.String)
+	 */
 	@Override
 	public void set(String text) {
 		if (hasActiveRewriteSession()) {
@@ -188,6 +251,9 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 		fDelegate.set(text);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.dsl.document.linetracker.LineTracker#replace(int, int, java.lang.String)
+	 */
 	@Override
 	public void replace(int offset, int length, String text) throws BadLocationException {
 		if (hasActiveRewriteSession()) {
@@ -232,6 +298,9 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 	 */
 	protected abstract DelimiterInfo nextDelimiterInfo(String text, int offset);
 
+	/* (non-Javadoc)
+	 * @see org.springframework.dsl.document.linetracker.LineTrackerExtension#startRewriteSession(org.springframework.dsl.document.linetracker.DocumentRewriteSession)
+	 */
 	@Override
 	public final void startRewriteSession(DocumentRewriteSession session) {
 		if (fActiveRewriteSession != null)
@@ -240,6 +309,9 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 		fPendingRequests= new ArrayList<>(20);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.dsl.document.linetracker.LineTrackerExtension#stopRewriteSession(org.springframework.dsl.document.linetracker.DocumentRewriteSession, java.lang.String)
+	 */
 	@Override
 	public final void stopRewriteSession(DocumentRewriteSession session, String text) {
 		if (fActiveRewriteSession == session) {

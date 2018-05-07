@@ -15,19 +15,36 @@
  */
 package org.springframework.dsl.document;
 
+import org.springframework.dsl.DslException;
+
 /**
- * This exception is raised when operations on a document
- * fail because they are operating on invalid locations.
+ * This exception is raised when operations on a {@link Document} fail because
+ * they are operating on invalid location.
+ *
+ * @author Kris De Volder
+ * @author Janne Valkealahti
+ *
  */
-public class BadLocationException extends Exception {
+public class BadLocationException extends DslException {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -8518215437927854537L;
 
-	public BadLocationException(Throwable e) {
-		super(e);
+	/**
+	 * Instantiates a new bad location exception.
+	 *
+	 * @param message the message
+	 * @param e the exception
+	 */
+	public BadLocationException(String message, Exception e) {
+		super(message, e);
 	}
 
-	public BadLocationException() {
+	/**
+	 * Instantiates a new bad location exception.
+	 *
+	 * @param message the message
+	 */
+	public BadLocationException(String message) {
+		super(message);
 	}
-
 }

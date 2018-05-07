@@ -59,7 +59,7 @@ public abstract class AbstractAntlrCompletioner<L extends Lexer, P extends Parse
 
 	@Override
 	public final Flux<CompletionItem> complete(Document document, Position position) {
-		return completeInternal(document.get());
+		return completeInternal(document.content());
 	}
 
 	protected abstract Flux<CompletionItem> completeInternal(String content);

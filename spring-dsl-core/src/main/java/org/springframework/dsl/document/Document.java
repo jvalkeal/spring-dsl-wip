@@ -16,10 +16,10 @@
 package org.springframework.dsl.document;
 
 import org.springframework.dsl.lsp.domain.Position;
-import org.springframework.dsl.lsp.domain.Range;
 
 /**
- * Interface for accessing information about a document including its contents.
+ * Interface for accessing information about a document including its content.
+ * <p>
  * A {@code Document} instance is immutable and represents a snapshot of the
  * document state.
  *
@@ -35,15 +35,27 @@ public interface Document {
 	// (should only use methods based on start - end type character
 	// ranges)
 
-	String getUri();
+	String uri();
 
-	String get();
+	String content();
 
-	Region getLineInformationOfOffset(int offset);
+	/**
+	 * Gets an absolute position in a content representing a {@link Position}. As
+	 * {@link Position} work on a character position in a particular line, this
+	 * method gives a {@code caret} position in a content string. Useful for cases
+	 * where user of a document content parses content as a raw string and cares
+	 * only about position in a raw content without worrying about line delimiters.
+	 *
+	 * @param position the position
+	 * @return the caret position
+	 */
+	int caret(Position position);
 
-	int getLength();
+//	Region getLineInformationOfOffset(int offset);
 
-	String get(int start, int len) throws BadLocationException;
+	int length();
+
+	String content(int start, int len) throws BadLocationException;
 
 	int getNumberOfLines();
 
@@ -53,7 +65,7 @@ public interface Document {
 
 	int getLineOfOffset(int offset) throws BadLocationException;
 
-	Region getLineInformation(int line);
+//	Region getLineInformation(int line);
 
 	int getLineOffset(int line) throws BadLocationException;
 
@@ -65,7 +77,7 @@ public interface Document {
 
 	int getVersion();
 
-	Range toRange(Region asRegion) throws BadLocationException;
+//	Range toRange(Region asRegion) throws BadLocationException;
 
 	Position toPosition(int offset) throws BadLocationException;
 

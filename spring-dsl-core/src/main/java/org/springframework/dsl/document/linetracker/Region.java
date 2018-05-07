@@ -13,14 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.document;
+package org.springframework.dsl.document.linetracker;
 
 /**
- * Mimicks eclipse IRegion (i.e. a region is a offset + length).
- * 
- * TODO: Rmove this and try to consisently use ranges based on start / end instead
+ * Describes a raw reqion as offset as starting point and length as ending point.
  */
-@Deprecated
 public interface Region {
 
 	int getOffset();

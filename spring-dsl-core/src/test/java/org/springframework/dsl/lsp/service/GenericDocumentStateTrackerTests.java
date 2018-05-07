@@ -40,7 +40,7 @@ public class GenericDocumentStateTrackerTests {
 
 		tracker.didOpen(didOpenparams);
 		assertThat(tracker.getDocument("uri1")).isNotNull();
-		assertThat(tracker.getDocument("uri1").get()).isEqualTo("1");
+		assertThat(tracker.getDocument("uri1").content()).isEqualTo("1");
 
 		DidChangeTextDocumentParams didChangeParams = new DidChangeTextDocumentParams();
 		Position start = new Position(0, 1);
@@ -54,7 +54,7 @@ public class GenericDocumentStateTrackerTests {
 
 		tracker.didChange(didChangeParams);
 		assertThat(tracker.getDocument("uri1")).isNotNull();
-		assertThat(tracker.getDocument("uri1").get()).isEqualTo("12");
+		assertThat(tracker.getDocument("uri1").content()).isEqualTo("12");
 
 		start.setCharacter(2);
 		end.setCharacter(2);
@@ -63,7 +63,7 @@ public class GenericDocumentStateTrackerTests {
 
 		tracker.didChange(didChangeParams);
 		assertThat(tracker.getDocument("uri1")).isNotNull();
-		assertThat(tracker.getDocument("uri1").get()).isEqualTo("123");
+		assertThat(tracker.getDocument("uri1").content()).isEqualTo("123");
 
 
 //		DidSaveTextDocumentParams didSaveParams = new DidSaveTextDocumentParams();

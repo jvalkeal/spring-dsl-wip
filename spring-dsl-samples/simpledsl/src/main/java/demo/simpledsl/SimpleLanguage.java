@@ -106,7 +106,7 @@ public class SimpleLanguage {
 	public static SimpleLanguage build(Document document) {
 		ArrayList<Line> lines = new ArrayList<>();
 
-		String content = document.get();
+		String content = document.content();
 		Matcher matcher = REGEX.matcher(content);
 
 		int position = 0;

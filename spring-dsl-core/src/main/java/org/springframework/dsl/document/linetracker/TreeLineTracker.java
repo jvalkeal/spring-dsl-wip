@@ -1,13 +1,18 @@
-/*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/*
+ * Copyright 2018 the original author or authors.
  *
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.springframework.dsl.document.linetracker;
 
 import java.util.Arrays;
@@ -16,8 +21,6 @@ import java.util.List;
 import java.util.ListIterator;
 
 import org.springframework.dsl.document.BadLocationException;
-import org.springframework.dsl.document.DefaultRegion;
-import org.springframework.dsl.document.Region;
 import org.springframework.dsl.document.linetracker.AbstractLineTracker.DelimiterInfo;
 import org.springframework.util.Assert;
 
@@ -41,11 +44,8 @@ import org.springframework.util.Assert;
  * is the number of lines in the document. The modification operations roughly perform in <i>O(l *
  * log n)</i> where <var>n</var> is the number of lines in the document and <var>l</var> is the
  * sum of the number of removed, added or modified lines.
- * </p>
- *
- * @since 3.2
  */
-abstract class TreeLineTracker implements ILineTracker {
+abstract class TreeLineTracker implements LineTracker {
 	/*
 	 * Differential Balanced Binary Tree
 	 *
@@ -1049,8 +1049,8 @@ abstract class TreeLineTracker implements ILineTracker {
 	 * @param offset the illegal character or line offset that caused the exception
 	 * @throws BadLocationException always
 	 */
-	private void fail(int offset) throws BadLocationException {
-		throw new BadLocationException();
+	private void fail(int offset) {
+		throw new BadLocationException("Line not in bounds");
 	}
 
 	/**

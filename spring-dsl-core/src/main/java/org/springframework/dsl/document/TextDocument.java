@@ -21,7 +21,8 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dsl.document.linetracker.DefaultLineTracker;
-import org.springframework.dsl.document.linetracker.ILineTracker;
+import org.springframework.dsl.document.linetracker.LineTracker;
+import org.springframework.dsl.document.linetracker.Region;
 import org.springframework.dsl.lsp.domain.DidChangeTextDocumentParams;
 import org.springframework.dsl.lsp.domain.Position;
 import org.springframework.dsl.lsp.domain.Range;
@@ -38,6 +39,9 @@ import javolution.text.Text;
  */
 public class TextDocument implements Document {
 
+	private static final Logger log = LoggerFactory.getLogger(TextDocument.class);
+	private static final Pattern NEWLINE = Pattern.compile("\\r(\\n)?|\\n");
+
 	//TODO: should try to avoid haveing any methods returning String
 	// This defeats the point of using javaolution.Text (i.e. converion into
 	// String can cause massive string copying)
@@ -48,31 +52,28 @@ public class TextDocument implements Document {
 	//   representing a read-only snapshot of the document contents.
 	// - replace line tracker with something better.
 
-	private static final Logger log = LoggerFactory.getLogger(TextDocument.class);
 
-	ILineTracker lineTracker = new DefaultLineTracker();
-	private static final Pattern NEWLINE = Pattern.compile("\\r(\\n)?|\\n");
-
+	private LineTracker lineTracker = new DefaultLineTracker();
 	private final LanguageId languageId;
 	private final String uri;
 	private Text text = new Text("");
 	private int version;
 
-	/**
-	 * Instantiates a new text document.
-	 *
-	 * @param uri the uri
-	 * @param languageId the language id
-	 */
+	public TextDocument(String content) {
+		this(null, null, 0, content);
+	}
+
 	public TextDocument(String uri, LanguageId languageId) {
 		this(uri, languageId, 0, "");
 	}
 
-	/**
-	 * Instantiates a new text document.
-	 *
-	 * @param other the other
-	 */
+	public TextDocument(String uri, LanguageId languageId, int version, String text) {
+		this.uri = uri;
+		this.languageId = languageId;
+		this.version = version;
+		setText(text);
+	}
+
 	private TextDocument(TextDocument other) {
 		this.uri = other.uri;
 		this.languageId = other.getLanguageId();
@@ -81,52 +82,28 @@ public class TextDocument implements Document {
 		this.version = other.version;
 	}
 
-	/**
-	 * Instantiates a new text document.
-	 *
-	 * @param uri the uri
-	 * @param languageId the language id
-	 * @param version the version
-	 * @param text the text
-	 */
-	public TextDocument(String uri, LanguageId languageId, int version, String text) {
-		this.uri = uri;
-		this.languageId = languageId;
-		this.version = version;
-		setText(text);
-	}
-
 	@Override
-	public String getUri() {
+	public String uri() {
 		return uri;
 	}
 
 	@Override
-	public String get() {
+	public String content() {
 		return getText().toString();
+	}
+
+	@Override
+	public int caret(Position position) {
+		return lineTracker.getLineOffset(position.getLine()) + position.getCharacter();
 	}
 
 	public synchronized Text getText() {
 		return text;
 	}
 
-	public synchronized void setText(String text) {
-		this.text = new Text(text);
-		this.lineTracker.set(text);
-	}
-
-	private void apply(TextDocumentContentChangeEvent change) throws BadLocationException {
-		log.trace("Old content before apply is '{}'", get());
-		Range rng = change.getRange();
-		if (rng==null) {
-			//full sync mode
-			setText(change.getText());
-		} else {
-			int start = toOffset(rng.getStart());
-			int end = toOffset(rng.getEnd());
-			replace(start, end-start, change.getText());
-		}
-		log.trace("New content after apply is '{}'", get());
+	public synchronized void setText(String content) {
+		this.text = new Text(content);
+		this.lineTracker.set(content);
 	}
 
 	public synchronized void apply(DidChangeTextDocumentParams params) throws BadLocationException {
@@ -153,7 +130,7 @@ public class TextDocument implements Document {
 	 * @throws BadLocationException the bad location exception
 	 */
 	public Range toRange(int offset, int length) throws BadLocationException {
-		int end = Math.min(offset + length, getLength());
+		int end = Math.min(offset + length, length());
 		Range range = new Range();
 		range.setStart(toPosition(offset));
 		range.setEnd(toPosition(end));
@@ -169,6 +146,20 @@ public class TextDocument implements Document {
 	 */
 	private int lineNumber(int offset) throws BadLocationException {
 		return lineTracker.getLineNumberOfOffset(offset);
+	}
+
+	private void apply(TextDocumentContentChangeEvent change) throws BadLocationException {
+		log.trace("Old content before apply is '{}'", content());
+		Range rng = change.getRange();
+		if (rng==null) {
+			//full sync mode
+			setText(change.getText());
+		} else {
+			int start = toOffset(rng.getStart());
+			int end = toOffset(rng.getEnd());
+			replace(start, end-start, change.getText());
+		}
+		log.trace("New content after apply is '{}'", content());
 	}
 
 	@Override
@@ -187,30 +178,30 @@ public class TextDocument implements Document {
 		return region.getOffset();
 	}
 
-	@Override
-	public Region getLineInformationOfOffset(int offset) {
-		try {
-			if (offset<=getLength()) {
-				int line = lineNumber(offset);
-				return getLineInformation(line);
-			}
-		} catch (BadLocationException e) {
-			//outside document.
-		}
-		return null;
-	}
+//	@Override
+//	public Region getLineInformationOfOffset(int offset) {
+//		try {
+//			if (offset<=getLength()) {
+//				int line = lineNumber(offset);
+//				return getLineInformation(line);
+//			}
+//		} catch (BadLocationException e) {
+//			//outside document.
+//		}
+//		return null;
+//	}
 
 	@Override
-	public int getLength() {
+	public int length() {
 		return text.length();
 	}
 
 	@Override
-	public String get(int start, int len) throws BadLocationException {
+	public String content(int start, int len) throws BadLocationException {
 		try {
 			return text.subtext(start, start+len).toString();
 		} catch (Exception e) {
-			throw new BadLocationException(e);
+			throw new BadLocationException("Error processing subtext", e);
 		}
 	}
 
@@ -230,10 +221,10 @@ public class TextDocument implements Document {
 
 	@Override
 	public char getChar(int offset) throws BadLocationException {
-		if (offset>=0 && offset<text.length()) {
+		if (offset >= 0 && offset < text.length()) {
 			return text.charAt(offset);
 		}
-		throw new BadLocationException();
+		throw new BadLocationException("Offset location not in bounds");
 	}
 
 	@Override
@@ -241,15 +232,15 @@ public class TextDocument implements Document {
 		return lineTracker.getLineNumberOfOffset(offset);
 	}
 
-	@Override
-	public Region getLineInformation(int line) {
-		try {
-			return lineTracker.getLineInformation(line);
-		} catch (BadLocationException e) {
-			//line doesn't exist
-		}
-		return null;
-	}
+//	@Override
+//	public Region getLineInformation(int line) {
+//		try {
+//			return lineTracker.getLineInformation(line);
+//		} catch (BadLocationException e) {
+//			//line doesn't exist
+//		}
+//		return null;
+//	}
 
 	@Override
 	public int getLineOffset(int line) throws BadLocationException {
@@ -277,7 +268,7 @@ public class TextDocument implements Document {
 
 	@Override
 	public String textBetween(int start, int end) throws BadLocationException {
-		return get(start, end-start);
+		return content(start, end-start);
 	}
 
 	@Override
@@ -295,29 +286,29 @@ public class TextDocument implements Document {
 	 * @param line the line
 	 * @return the line indentation
 	 */
-	public int getLineIndentation(int line) {
-		//TODO: this works fine only if we assume all indentation is done with spaces only.
-		// To generalize this it should probably return a String containing exactly the spaces
-		// and tabs at the front of the line.
-		Region r = getLineInformation(line);
-		if (r==null) {
-			//not a line in the document so it has no indentation
-			return -1;
-		}
-		int len = r.getLength();
-		int startOfLine = r.getOffset();
-		int leadingSpaces = 0;
-		while (leadingSpaces<len) {
-			char c = getSafeChar(startOfLine+leadingSpaces);
-			if (c==' ') {
-				leadingSpaces++;
-			} else if (c!=' ') {
-				return leadingSpaces;
-			}
-			leadingSpaces++;
-		}
-		return leadingSpaces;
-	}
+//	public int getLineIndentation(int line) {
+//		//TODO: this works fine only if we assume all indentation is done with spaces only.
+//		// To generalize this it should probably return a String containing exactly the spaces
+//		// and tabs at the front of the line.
+//		Region r = getLineInformation(line);
+//		if (r==null) {
+//			//not a line in the document so it has no indentation
+//			return -1;
+//		}
+//		int len = r.getLength();
+//		int startOfLine = r.getOffset();
+//		int leadingSpaces = 0;
+//		while (leadingSpaces<len) {
+//			char c = getSafeChar(startOfLine+leadingSpaces);
+//			if (c==' ') {
+//				leadingSpaces++;
+//			} else if (c!=' ') {
+//				return leadingSpaces;
+//			}
+//			leadingSpaces++;
+//		}
+//		return leadingSpaces;
+//	}
 
 	/**
 	 * Like getChar but never throws {@link BadLocationException}. Instead it
@@ -339,10 +330,10 @@ public class TextDocument implements Document {
 		return languageId;
 	}
 
-	@Override
-	public Range toRange(Region region) throws BadLocationException {
-		return toRange(region.getOffset(), region.getLength());
-	}
+//	@Override
+//	public Range toRange(Region region) throws BadLocationException {
+//		return toRange(region.getOffset(), region.getLength());
+//	}
 
 	@Override
 	public int getVersion() {

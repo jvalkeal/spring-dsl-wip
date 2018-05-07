@@ -1,21 +1,24 @@
-/*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/*
+ * Copyright 2018 the original author or authors.
  *
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.springframework.dsl.document.linetracker;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.dsl.document.BadLocationException;
-import org.springframework.dsl.document.DefaultRegion;
-import org.springframework.dsl.document.Region;
 import org.springframework.dsl.document.linetracker.AbstractLineTracker.DelimiterInfo;
 
 /**
@@ -32,9 +35,8 @@ import org.springframework.dsl.document.linetracker.AbstractLineTracker.Delimite
  * </ul>
  * This class must be subclassed.
  *
- * @since 3.2
  */
-abstract class ListLineTracker implements ILineTracker {
+abstract class ListLineTracker implements LineTracker {
 
 	/** The line information */
 	private final List<Line> fLines= new ArrayList<>();
@@ -124,7 +126,7 @@ abstract class ListLineTracker implements ILineTracker {
 		int lines= fLines.size();
 
 		if (line < 0 || line > lines)
-			throw new BadLocationException();
+			throw new BadLocationException("Line not in bounds");
 
 		if (lines == 0 || lines == line)
 			return 0;
@@ -136,7 +138,7 @@ abstract class ListLineTracker implements ILineTracker {
 	@Override
 	public final int getLineNumberOfOffset(int position) throws BadLocationException {
 		if (position < 0 || position > fTextLength)
-			throw new BadLocationException();
+			throw new BadLocationException("Offset location not in bounds");
 
 		if (position == fTextLength) {
 
@@ -152,9 +154,9 @@ abstract class ListLineTracker implements ILineTracker {
 	}
 
 	@Override
-	public final Region getLineInformationOfOffset(int position) throws BadLocationException {
+	public final Region getLineInformationOfOffset(int position) {
 		if (position > fTextLength)
-			throw new BadLocationException();
+			throw new BadLocationException("Position location not in bounds");
 
 		if (position == fTextLength) {
 			int size= fLines.size();
@@ -172,7 +174,7 @@ abstract class ListLineTracker implements ILineTracker {
 		int lines= fLines.size();
 
 		if (line < 0 || line > lines)
-			throw new BadLocationException();
+			throw new BadLocationException("Line not in bounds");
 
 		if (lines == 0)
 			return new Line(0, 0);
@@ -191,7 +193,7 @@ abstract class ListLineTracker implements ILineTracker {
 		int lines= fLines.size();
 
 		if (line < 0 || line > lines)
-			throw new BadLocationException();
+			throw new BadLocationException("Line not in bounds");
 
 		if (lines == 0)
 			return 0;
@@ -200,7 +202,7 @@ abstract class ListLineTracker implements ILineTracker {
 			Line l= fLines.get(line - 1);
 			if (l.delimiter != null)
 				return l.offset + l.length;
-			throw new BadLocationException();
+			throw new BadLocationException("Line not in bounds");
 		}
 
 		Line l= fLines.get(line);
@@ -222,7 +224,7 @@ abstract class ListLineTracker implements ILineTracker {
 	public final int getNumberOfLines(int position, int length) throws BadLocationException {
 
 		if (position < 0 || position + length > fTextLength)
-			throw new BadLocationException();
+			throw new BadLocationException("Position not in bounds");
 
 		if (length == 0) // optimization
 			return 1;
@@ -248,7 +250,7 @@ abstract class ListLineTracker implements ILineTracker {
 		int lines= fLines.size();
 
 		if (line < 0 || line > lines)
-			throw new BadLocationException();
+			throw new BadLocationException("Line not in bounds");
 
 		if (lines == 0)
 			return null;
