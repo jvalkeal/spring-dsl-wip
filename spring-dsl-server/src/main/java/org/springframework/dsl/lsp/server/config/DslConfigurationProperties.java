@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.autoconfigure;
+package org.springframework.dsl.lsp.server.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -39,6 +39,7 @@ public class DslConfigurationProperties {
 	public static class LspProperties {
 
 		private LspServerProperties server = new LspServerProperties();
+		private LspClientProperties client = new LspClientProperties();
 
 		public LspServerProperties getServer() {
 			return server;
@@ -47,10 +48,19 @@ public class DslConfigurationProperties {
 		public void setServer(LspServerProperties server) {
 			this.server = server;
 		}
+
+		public LspClientProperties getClient() {
+			return client;
+		}
+
+		public void setClient(LspClientProperties client) {
+			this.client = client;
+		}
 	}
 
 	public static class LspServerProperties {
 
+		private Integer port;
 		private LspServerSocketMode mode = LspServerSocketMode.PROCESS;
 
 		public LspServerSocketMode getMode() {
@@ -59,6 +69,27 @@ public class DslConfigurationProperties {
 
 		public void setMode(LspServerSocketMode mode) {
 			this.mode = mode;
+		}
+
+		public Integer getPort() {
+			return port;
+		}
+
+		public void setPort(Integer port) {
+			this.port = port;
+		}
+	}
+
+	public static class LspClientProperties {
+
+		private Integer port;
+
+		public Integer getPort() {
+			return port;
+		}
+
+		public void setPort(Integer port) {
+			this.port = port;
 		}
 	}
 

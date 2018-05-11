@@ -153,11 +153,13 @@ project('spring-dsl-server') {
 
 	dependencies {
 		compile project(':spring-dsl-core')
-		compile 'org.springframework:spring-context'
-		compile 'org.springframework:spring-web'
-		compile 'org.slf4j:slf4j-api'
+		compile 'org.springframework.boot:spring-boot-starter'
+//		compile 'org.springframework:spring-context'
+//		compile 'org.springframework:spring-web'
+//		compile 'org.slf4j:slf4j-api'
 		compile 'io.projectreactor:reactor-core'
 		compile 'org.javolution:javolution-core-java'
+		optional 'org.springframework.boot:spring-boot-configuration-processor'
 		optional 'com.google.code.gson:gson'
 		testCompile 'org.springframework.boot:spring-boot-starter-test'
 		testRuntime 'org.springframework.boot:spring-boot-starter'

@@ -15,20 +15,8 @@
  */
 package demo.simpledslsocketserver;
 
-import org.eclipse.lsp4j.jsonrpc.Launcher;
-import org.eclipse.lsp4j.launch.LSPLauncher;
-import org.eclipse.lsp4j.services.LanguageClient;
-import org.eclipse.lsp4j.services.LanguageServer;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
-import org.springframework.core.convert.ConversionService;
-import org.springframework.dsl.lsp.controller.GenericLanguageServerController;
-import org.springframework.dsl.lsp.server.LspHandler;
-import org.springframework.dsl.lsp.server.config.EnableLanguageServer;
-import org.springframework.dsl.lsp4j.Lsp4jLanguageServerAdapter;
 
 import demo.simpledsl.EnableSimpleLanguage;
 
@@ -38,23 +26,9 @@ import demo.simpledsl.EnableSimpleLanguage;
  * @author Janne Valkealahti
  *
  */
-@EnableLanguageServer
 @EnableSimpleLanguage
-@Import({ GenericLanguageServerController.class })
 @SpringBootApplication
 public class Application {
-
-	@Bean
-	public Lsp4jLanguageServerAdapter languageServer(LspHandler lspHandler,
-			@Qualifier("lspConversionService") ConversionService conversionService) {
-		return new Lsp4jLanguageServerAdapter(lspHandler, conversionService);
-	}
-
-	@Bean(initMethod = "startListening")
-	public Launcher<LanguageClient> lspServerLauncher(LanguageServer languageServer) {
-		return LSPLauncher.createServerLauncher(languageServer, System.in, System.out);
-	}
-
 
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);

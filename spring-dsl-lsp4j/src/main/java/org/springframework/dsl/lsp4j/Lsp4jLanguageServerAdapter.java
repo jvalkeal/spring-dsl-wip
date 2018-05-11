@@ -181,10 +181,13 @@ public class Lsp4jLanguageServerAdapter implements LanguageServer, LanguageClien
 
 			@Override
 			public CompletableFuture<Hover> hover(TextDocumentPositionParams position) {
-				log.trace("hover {}", position);
+				log.trace("hover request {}", position);
 				ServerLspExchange exchange = createExchange(LspMethod.TEXTDOCUMENT_HOVER, position, client, conversionService);
 				return lspHandler.handle(exchange)
 						.then(convert(exchange, Hover.class, conversionService))
+						.doOnNext(response -> {
+							log.trace("hover response {}", response);
+						})
 						.toFuture();
 			}
 
@@ -235,11 +238,14 @@ public class Lsp4jLanguageServerAdapter implements LanguageServer, LanguageClien
 			@Override
 			public CompletableFuture<Either<List<CompletionItem>, CompletionList>> completion(
 					CompletionParams params) {
-				log.trace("completion {}", params);
+				log.trace("completion request {}", params);
 				ServerLspExchange exchange = createExchange(LspMethod.TEXTDOCUMENT_COMPLETION, params, client, conversionService);
 				return lspHandler.handle(exchange)
 					.then(convert2(exchange, CompletionItem.class, conversionService))
 					.flatMap(list -> Mono.just(Either.<List<CompletionItem>, CompletionList>forRight(new CompletionList(list))))
+					.doOnNext(response -> {
+						log.trace("completion response {}", response);
+					})
 					.toFuture();
 			}
 
