@@ -15,13 +15,16 @@
  */
 package demo.simpledsl;
 
+import java.util.Collection;
+
 import org.springframework.dsl.document.Document;
 import org.springframework.dsl.lsp.domain.CompletionItem;
 import org.springframework.dsl.lsp.domain.Position;
 import org.springframework.dsl.lsp.service.Completioner;
 
-import demo.simpledsl.SimpleLanguage.Token;
+import demo.simpledsl.SimpleLanguage.TokenType;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * A {@link Completioner} implementation for a {@code simple} sample language.
@@ -34,19 +37,12 @@ public class SimpleLanguageCompletioner implements Completioner {
 
 	@Override
 	public Flux<CompletionItem> complete(Document document, Position position) {
-
 		SimpleLanguage simpleLanguage = SimpleLanguage.build(document);
-		Token token = simpleLanguage.getToken(position);
-		if (token != null) {
-			if (token.isKey()) {
-				if (token.getValue() != null) {
-					CompletionItem item = CompletionItem.completionItem()
-							.label(token.getValue())
-							.build();
-					return Flux.just(item);
-				}
-			}
-		}
-		return Flux.empty();
+		Collection<TokenType> tokens = simpleLanguage.resolveLegalTokens(position);
+		return Flux.fromIterable(tokens)
+				.filter(tokenType -> tokenType != TokenType.VALUE)
+				.flatMap(tt -> {
+					return Mono.just(CompletionItem.completionItem().label(tt.toString().toLowerCase()).build());
+				});
 	}
 }

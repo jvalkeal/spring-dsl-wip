@@ -23,8 +23,11 @@ import org.junit.Test;
 import org.springframework.dsl.document.Document;
 import org.springframework.dsl.document.LanguageId;
 import org.springframework.dsl.document.TextDocument;
+import org.springframework.dsl.lsp.domain.Position;
 
 import demo.simpledsl.SimpleLanguage.Line;
+import demo.simpledsl.SimpleLanguage.Token;
+import demo.simpledsl.SimpleLanguage.TokenType;
 
 public class SimpleLanguageTests {
 
@@ -65,7 +68,24 @@ public class SimpleLanguageTests {
 		document = new TextDocument("", LanguageId.PLAINTEXT, 0, content7);
 		lines = SimpleLanguage.build(document).getLines();
 		assertThat(lines.size()).isEqualTo(1);
-
 	}
 
+	@Test
+	public void testTokenFromPositions() {
+		Document document = new TextDocument("", LanguageId.PLAINTEXT, 0, content4);
+		List<Line> lines = SimpleLanguage.build(document).getLines();
+		SimpleLanguage language = new SimpleLanguage(document, lines);
+		Token token = language.getToken(Position.position().line(0).character(0).build());
+		assertThat(token).isNotNull();
+		assertThat(token.getType()).isEqualTo(TokenType.INT);
+
+		document = new TextDocument("", LanguageId.PLAINTEXT, 0, content5);
+		lines = SimpleLanguage.build(document).getLines();
+		language = new SimpleLanguage(document, lines);
+		token = language.getToken(Position.position().line(0).character(3).build());
+		assertThat(token).isNotNull();
+		assertThat(token.getType()).isEqualTo(TokenType.INT);
+		token = language.getToken(Position.position().line(0).character(4).build());
+		assertThat(token).isNull();
+	}
 }

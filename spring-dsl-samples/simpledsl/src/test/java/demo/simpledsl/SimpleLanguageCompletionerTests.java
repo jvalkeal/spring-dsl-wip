@@ -19,6 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.junit.Test;
 import org.springframework.dsl.document.Document;
@@ -40,8 +41,18 @@ public class SimpleLanguageCompletionerTests {
 		Flux<CompletionItem> complete = completioner.complete(document, new Position(0, 1));
 		assertThat(complete).isNotNull();
 		List<CompletionItem> items = complete.toStream().collect(Collectors.toList());
-		assertThat(items).hasSize(1);
-		assertThat(items.get(0).getLabel()).isEqualTo("int");
+		assertThat(items).hasSize(0);
+	}
+
+	@Test
+	public void testEmptyShouldReturnAllKeyTokens() {
+		Document document = new TextDocument("", LanguageId.PLAINTEXT, 0, "");
+		Flux<CompletionItem> complete = completioner.complete(document, Position.from(0, 0));
+		assertThat(complete).isNotNull();
+		List<CompletionItem> items = complete.toStream().collect(Collectors.toList());
+		assertThat(items).hasSize(4);
+		List<String> labels = items.stream().flatMap(item -> Stream.of(item.getLabel())).collect(Collectors.toList());
+		assertThat(labels).containsExactlyInAnyOrder("string", "int", "long", "double");
 	}
 
 }

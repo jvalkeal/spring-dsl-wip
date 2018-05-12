@@ -27,15 +27,6 @@ import org.springframework.dsl.lsp.server.config.EnableLanguageServer;
 /**
  * Meta annotation for enabling all supported services for a {@code simple} sample
  * language.
- * <p>
- * Grammar of a {@code simple} language is:
- * <ul>
- * <li>Every line entry is a key/value pair separated with character {@code =}.</li>
- * <li>Keys can be of type; int, long, double or string.</li>
- * <li>Values needs to be parsable into types defined by a key.</li>
- * <li>Key can only exist once, meaning there can be max of 4 valid lines.</li>
- * <li>Line can be commented out using character {@code #}.</li>
- * </ul>
  *
  * @author Janne Valkealahti
  *

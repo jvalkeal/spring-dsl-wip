@@ -16,12 +16,18 @@
 package demo.simpledsl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.springframework.dsl.document.Document;
 import org.springframework.dsl.lsp.domain.Position;
+import org.springframework.dsl.lsp.domain.Range;
+import org.springframework.dsl.support.DslUtils;
+import org.springframework.util.StringUtils;
 
 /**
  * {@code simple} language representation containing parser to tokenize a dsl
@@ -32,6 +38,16 @@ import org.springframework.dsl.lsp.domain.Position;
  * a real world, you'd probably be better off with some real language parser line
  * {@code ANTRL} or similar. But having said that, this gives ideas how things
  * work together without introducing additional logic using external libraries.
+ * <p>
+ * Grammar of a {@code simple} language is:
+ * <ul>
+ * <li>Every line entry is a key/value pair separated with character {@code =}.</li>
+ * <li>Keys can be of type; int, long, double or string.</li>
+ * <li>Values needs to be parsable into types defined by a key.</li>
+ * <li>Key can only exist once, meaning there can be max of 4 valid lines.</li>
+ * <li>Line can be commented out using character {@code #}.</li>
+ * <li>There can be empty lines.</li>
+ * </ul>
  *
  * @author Janne Valkealahti
  *
@@ -81,20 +97,39 @@ public class SimpleLanguage {
 	 */
 	public Token getToken(Position position) {
 		for (Line line : getLines()) {
-			if (line.getLine() == position.getLine()) {
-				Token keyToken = line.getKeyToken();
-				if (keyToken != null && keyToken.getStart() <= position.getCharacter()
-						&& keyToken.getEnd() >= position.getCharacter()) {
-					return keyToken;
-				}
-				Token valueToken = line.getValueToken();
-				if (valueToken != null && valueToken.getStart() <= position.getCharacter()
-						&& valueToken.getEnd() >= position.getCharacter()) {
-					return keyToken;
-				}
+			if (DslUtils.isPositionInRange(position, line.getKeyToken().getRange())) {
+				return line.getKeyToken();
 			}
 		}
 		return null;
+	}
+
+	public Collection<TokenType> resolveLegalTokens(Position position) {
+		// filter out tokens which already exist in lines,
+		// then from a given position check if we're expecting
+		// key or value.
+		Line line = getLine(position);
+		return Arrays.stream(TokenType.values())
+			.filter(tokenType -> {
+				return !lines.stream().anyMatch(l -> {
+					return l.getKeyToken().getType() == tokenType;
+				});
+			})
+			.filter(tokenType -> {
+				if (line == null) {
+					return true;
+				} else {
+					return DslUtils.isPositionInRange(position, line.getKeyToken().getRange());
+				}
+			})
+			.collect(Collectors.toList());
+	}
+
+	private Line getLine(Position position) {
+		return lines.stream()
+			.filter(line -> line.getLine() == position.getLine())
+			.findFirst()
+			.orElse(null);
 	}
 
 	/**
@@ -131,14 +166,22 @@ public class SimpleLanguage {
 	}
 
 	private static void processLine(ArrayList<Line> lines, String line, int lineIndex) {
+		if (!StringUtils.hasText(line)) {
+			return;
+		}
 		String[] split = line.split("=");
 		// content before '=' with surrounding white spaces stripped is a key,
 		// same for value after '='.
 		if (split.length == 1) {
-			lines.add(new Line(lineIndex, new KeyToken(split[0], 0, split[0].length(), resolveType(split[0])), null));
+			Range range = Range.range().start().line(lineIndex).character(0).and().end().line(lineIndex).character(split[0].length()).and().build();
+			KeyToken keyToken = new KeyToken(split[0], range, resolveType(split[0]));
+			lines.add(new Line(lineIndex, keyToken, null));
 		} else {
-			lines.add(new Line(lineIndex, new KeyToken(split[0], 0, split[0].length(), resolveType(split[0])),
-					new ValueToken(split[1], split[0].length() + 1, line.length())));
+			Range range1 = Range.range().start().line(lineIndex).character(0).and().end().line(lineIndex).character(split[0].length()).and().build();
+			Range range2 = Range.range().start().line(lineIndex).character(split[0].length() + 1).and().end().line(lineIndex).character(line.length()).and().build();
+			KeyToken keyToken = new KeyToken(split[0], range1, resolveType(split[0]));
+			ValueToken valueToken = new ValueToken(split[1], range2);
+			lines.add(new Line(lineIndex, keyToken, valueToken));
 		}
 	}
 
@@ -194,28 +237,22 @@ public class SimpleLanguage {
 	 */
 	public static class Token {
 
-		private final int start;
-		private final int end;
+		private Range range;
 		private final TokenType type;
 		private final String value;
 
-		public Token(String value, int start, int end, TokenType type) {
-			this.value = value;
-			this.start = start;
-			this.end = end;
+		public Token(TokenType type, String value, Range range) {
 			this.type = type;
+			this.value = value;
+			this.range = range;
+		}
+
+		public Range getRange() {
+			return range;
 		}
 
 		public String getValue() {
 			return value;
-		}
-
-		public int getStart() {
-			return start;
-		}
-
-		public int getEnd() {
-			return end;
 		}
 
 		public TokenType getType() {
@@ -229,15 +266,15 @@ public class SimpleLanguage {
 
 	private static class KeyToken extends Token {
 
-		public KeyToken(String key, int start, int end, TokenType type) {
-			super(key, start, end, type);
+		public KeyToken(String key, Range range, TokenType type) {
+			super(type, key, range);
 		}
 	}
 
 	private static class ValueToken extends Token {
 
-		public ValueToken(String key, int start, int end) {
-			super(key, start, end, TokenType.VALUE);
+		public ValueToken(String key, Range range) {
+			super(TokenType.VALUE, key, range);
 		}
 	}
 }

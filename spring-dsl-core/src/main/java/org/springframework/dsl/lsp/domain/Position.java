@@ -57,6 +57,10 @@ public class Position {
 		this.character = character;
 	}
 
+	public static Position from(int line, int character) {
+		return new Position(line, character);
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

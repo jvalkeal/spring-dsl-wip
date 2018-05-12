@@ -19,8 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.dsl.document.Document;
-import org.springframework.dsl.lsp.domain.Position;
-import org.springframework.dsl.lsp.domain.Range;
 import org.springframework.dsl.lsp.server.result.method.annotation.DefaultReconcileProblem;
 import org.springframework.dsl.reconcile.Linter;
 import org.springframework.dsl.reconcile.ProblemSeverity;
@@ -60,9 +58,8 @@ public class SimpleLanguageLinter implements Linter {
 
 		for (Line line : lines) {
 			if (line.getValueToken() == null) {
-				Position start = new Position(line.getLine(), line.getKeyToken().getStart());
-				Position end = new Position(line.getLine(), line.getKeyToken().getEnd());
-				problems.add(new DefaultReconcileProblem(PROBLEM, "Missing value", new Range(start, end), "xxx"));
+				problems.add(
+						new DefaultReconcileProblem(PROBLEM, "Missing value", line.getKeyToken().getRange(), "xxx"));
 			}
 		}
 		return Flux.fromIterable(problems);
