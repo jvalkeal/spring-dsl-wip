@@ -46,7 +46,7 @@ import org.springframework.dsl.lsp4j.config.Lsp4jServerLauncherConfiguration;
 import org.springframework.dsl.lsp4j.converter.GenericLsp4jObjectConverter;
 import org.springframework.dsl.lsp4j.result.method.annotation.Lsp4jDomainArgumentResolver;
 import org.springframework.dsl.reconcile.Linter;
-import org.springframework.dsl.reconcile.SimpleReconciler;
+import org.springframework.dsl.reconcile.DefaultReconciler;
 
 /**
  * {@link EnableAutoConfiguration Auto-configuration} integrating into {@code LSP4J} features.
@@ -83,7 +83,7 @@ public class Lsp4jAutoConfiguration {
 
 	@Bean
 	public Reconciler reconciler(Linter linter) {
-		return new SimpleReconciler(linter);
+		return new DefaultReconciler(linter);
 	}
 
 	@Bean

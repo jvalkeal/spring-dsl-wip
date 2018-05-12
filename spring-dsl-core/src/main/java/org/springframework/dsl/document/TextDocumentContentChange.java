@@ -19,17 +19,24 @@ import java.util.List;
 
 import org.springframework.dsl.lsp.domain.TextDocumentContentChangeEvent;
 
+/**
+ *
+ *
+ * @author Kris De Volder
+ * @author Janne Valkealahti
+ *
+ */
 public class TextDocumentContentChange {
 
-	private final TextDocument document;
+	private final Document document;
 	private final List<TextDocumentContentChangeEvent> changes;
 
-	public TextDocumentContentChange(TextDocument doc, List<TextDocumentContentChangeEvent> changes) {
+	public TextDocumentContentChange(Document doc, List<TextDocumentContentChangeEvent> changes) {
 		this.document = doc;
 		this.changes = changes;
 	}
 
-	public TextDocument getDocument() {
+	public Document getDocument() {
 		return document;
 	}
 

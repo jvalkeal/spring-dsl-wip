@@ -90,7 +90,6 @@ public class DefaultDocumentStateTracker implements DocumentStateTracker {
 				TextDocument doc = trackedDocument.getDocument();
 				doc.apply(params);
 
-//				TextDocumentContentChangeEvent change = new TextDocumentContentChangeEvent(null, null, doc.get());
 				List<TextDocumentContentChangeEvent> changes = params.getContentChanges();
 				TextDocumentContentChange evt = new TextDocumentContentChange(doc, changes);
 				return Mono.just(evt);
@@ -109,33 +108,8 @@ public class DefaultDocumentStateTracker implements DocumentStateTracker {
 		String url = identifier.getUri();
 		if (url != null) {
 			TrackedDocument trackedDocument = documents.get(url);
-//			try {
-//				trackedDocument.getDocument().apply(params);
-//			} catch (BadLocationException e) {
-//				log.error("", e);
-//			}
 		}
 
-//	  async.execute(() -> {
-//		String url = params.getTextDocument().getUri();
-//		if (url!=null) {
-//			TrackedDocument doc = documents.get(url);
-//			if (doc!=null) {
-//				if (doc.close()) {
-//					log.info("Closed: {}", url);
-//					//Clear diagnostics when a file is closed. This makes the errors disapear when the language is changed for
-//					// a document (this resulst in a dicClose even as being sent to the language server if that changes make the
-//					// document go 'out of scope'.
-//					documentCloseListeners.fire(doc.getDocument());
-//					documents.remove(url);
-//				} else {
-//					log.warn("Close event ignored! Assuming document still open because openCount = {}", doc.getOpenCount());
-//				}
-//			} else {
-//				log.warn("Document closed, but it didn't exist! Close event ignored");
-//			}
-//		}
-//	  });
 		return Mono.empty();
 	}
 
@@ -143,20 +117,6 @@ public class DefaultDocumentStateTracker implements DocumentStateTracker {
 	public Mono<TextDocumentContentChange> didSave(DidSaveTextDocumentParams params) {
 		return Mono.empty();
 	}
-
-//	void fireDidChangeContent(TextDocument doc, List<TextDocumentContentChangeEvent> changes) {
-//		documentChangeListeners.fire(new TextDocumentContentChange(doc, changes));
-//	}
-//
-//	@Override
-//	public Disposable onDidChangeContent(Consumer<TextDocumentContentChange> l) {
-//		return documentChangeListeners.add(l);
-//	}
-//
-//	@Override
-//	public Disposable onDidClose(Consumer<TextDocument> l) {
-//		return documentCloseListeners.add(l);
-//	}
 
 	private synchronized TextDocument getOrCreateDocument(String url) {
 		TrackedDocument doc = documents.get(url);
