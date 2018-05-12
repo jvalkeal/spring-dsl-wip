@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.lsp.controller;
+package org.springframework.dsl.lsp.server.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

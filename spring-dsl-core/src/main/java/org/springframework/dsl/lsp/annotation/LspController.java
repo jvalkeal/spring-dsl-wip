@@ -23,9 +23,14 @@ import java.lang.annotation.Target;
 
 import org.springframework.stereotype.Component;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Interface LspController.
+ * Indicates that an annotated class is a {@code LspController}.
+ * <p>
+ * This annotation serves as a specialization of {@link Component @Component},
+ * allowing for implementation classes to be autodetected through classpath scanning.
+ *
+ * @author Janne Valkealahti
+ *
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
