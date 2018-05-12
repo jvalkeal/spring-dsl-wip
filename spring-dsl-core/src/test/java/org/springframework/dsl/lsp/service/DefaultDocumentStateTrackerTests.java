@@ -29,11 +29,11 @@ import org.springframework.dsl.lsp.domain.TextDocumentContentChangeEvent;
 import org.springframework.dsl.lsp.domain.TextDocumentItem;
 import org.springframework.dsl.lsp.domain.VersionedTextDocumentIdentifier;
 
-public class GenericDocumentStateTrackerTests {
+public class DefaultDocumentStateTrackerTests {
 
 	@Test
 	public void testSimpleDocumentChangeFlow() {
-		GenericDocumentStateTracker tracker = new GenericDocumentStateTracker();
+		DefaultDocumentStateTracker tracker = new DefaultDocumentStateTracker();
 
 		TextDocumentItem textDocumentItem = new TextDocumentItem("uri1", LanguageId.PLAINTEXT.toString(), 0, "1");
 		DidOpenTextDocumentParams didOpenparams = new DidOpenTextDocumentParams(textDocumentItem);

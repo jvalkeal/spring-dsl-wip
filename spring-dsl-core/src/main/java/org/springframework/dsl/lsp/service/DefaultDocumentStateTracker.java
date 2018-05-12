@@ -45,13 +45,10 @@ import reactor.core.publisher.Mono;
  * @author Janne Valkealahti
  *
  */
-public class GenericDocumentStateTracker implements DocumentStateTracker/*, DocumentListenerManager*/ {
+public class DefaultDocumentStateTracker implements DocumentStateTracker {
 
-	private static final Logger log = LoggerFactory.getLogger(GenericDocumentStateTracker.class);
+	private static final Logger log = LoggerFactory.getLogger(DefaultDocumentStateTracker.class);
 	private Map<String, TrackedDocument> documents = new HashMap<>();
-
-//	private ListenerList<TextDocumentContentChange> documentChangeListeners = new ListenerList<>();
-//	private ListenerList<TextDocument> documentCloseListeners = new ListenerList<>();
 
 	@Override
 	public Document getDocument(String uri) {

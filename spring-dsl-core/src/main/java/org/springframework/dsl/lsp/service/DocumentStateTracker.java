@@ -76,5 +76,11 @@ public interface DocumentStateTracker {
 	 */
 	Mono<TextDocumentContentChange> didClose(DidCloseTextDocumentParams params);
 
+	/**
+	 * Gets a {@link Document} matching given {@code uri}.
+	 *
+	 * @param uri the document uri
+	 * @return the known document for uri
+	 */
 	Document getDocument(String uri);
 }

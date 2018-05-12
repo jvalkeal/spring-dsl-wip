@@ -39,7 +39,7 @@ import org.springframework.dsl.lsp.server.config.DslConfigurationProperties;
 import org.springframework.dsl.lsp.server.config.EnableLanguageServer;
 import org.springframework.dsl.lsp.server.controller.GenericLanguageServerController;
 import org.springframework.dsl.lsp.service.DocumentStateTracker;
-import org.springframework.dsl.lsp.service.GenericDocumentStateTracker;
+import org.springframework.dsl.lsp.service.DefaultDocumentStateTracker;
 import org.springframework.dsl.lsp.service.Reconciler;
 import org.springframework.dsl.lsp4j.Lsp4jLanguageServerAdapter;
 import org.springframework.dsl.lsp4j.config.Lsp4jServerLauncherConfiguration;
@@ -78,7 +78,7 @@ public class Lsp4jAutoConfiguration {
 
 	@Bean
 	public DocumentStateTracker documentStateTracker() {
-		return new GenericDocumentStateTracker();
+		return new DefaultDocumentStateTracker();
 	}
 
 	@Bean
