@@ -15,6 +15,9 @@
  */
 package org.springframework.dsl.lsp.domain;
 
+import org.springframework.dsl.lsp.domain.MarkupContent.MarkupContentBuilder;
+import org.springframework.dsl.lsp.domain.Range.RangeBuilder;
+
 public class Hover {
 
 	private MarkupContent contents;
@@ -73,5 +76,60 @@ public class Hover {
 		} else if (!range.equals(other.range))
 			return false;
 		return true;
+	}
+
+	public interface HoverBuilder<P> {
+		MarkupContentBuilder<HoverBuilder<P>> contents();
+		RangeBuilder<HoverBuilder<P>> range();
+		P and();
+		Hover build();
+	}
+
+	public static <P> HoverBuilder<P> hover() {
+		return new InternalHoverBuilder<>(null);
+	}
+
+	protected static <P> HoverBuilder<P> hover(P parent) {
+		return new InternalHoverBuilder<>(parent);
+	}
+
+	private static class InternalHoverBuilder<P> implements HoverBuilder<P> {
+
+		private final P parent;
+		MarkupContentBuilder<HoverBuilder<P>> markupContent;
+		RangeBuilder<HoverBuilder<P>> range;
+
+		InternalHoverBuilder(P parent) {
+			this.parent = parent;
+		}
+
+		@Override
+		public RangeBuilder<HoverBuilder<P>> range() {
+			this.range = Range.range(this);
+			return range;
+		}
+
+		@Override
+		public MarkupContentBuilder<HoverBuilder<P>> contents() {
+			this.markupContent = MarkupContent.markupContent(this);
+			return markupContent;
+		}
+
+		@Override
+		public P and() {
+			return parent;
+		}
+
+		@Override
+		public Hover build() {
+			Hover hover = new Hover();
+			if (markupContent != null) {
+				hover.setContents(markupContent.build());
+			}
+			if (range != null) {
+				hover.setRange(range.build());
+			}
+			return hover;
+		}
 	}
 }

@@ -17,7 +17,7 @@ package org.springframework.dsl.lsp.domain;
 
 public enum MarkupKind {
 
-	PlainText,
+	plaintext,
 
-	Markdown;
+	markdown;
 }

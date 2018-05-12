@@ -18,7 +18,6 @@ package org.springframework.dsl.lsp.domain;
 public class MarkupContent {
 
 	private MarkupKind kind;
-
 	private String value;
 
 	public MarkupContent() {
@@ -71,5 +70,53 @@ public class MarkupContent {
 		} else if (!value.equals(other.value))
 			return false;
 		return true;
+	}
+
+	public interface MarkupContentBuilder<P> {
+		MarkupContentBuilder<P> kind(MarkupKind kind);
+		MarkupContentBuilder<P> value(String value);
+		P and();
+		MarkupContent build();
+	}
+
+	public static <P> MarkupContentBuilder<P> markupContent() {
+		return new InternalMarkupContentBuilder<>(null);
+	}
+
+	protected static <P> MarkupContentBuilder<P> markupContent(P parent) {
+		return new InternalMarkupContentBuilder<>(parent);
+	}
+
+	private static class InternalMarkupContentBuilder<P> implements MarkupContentBuilder<P> {
+
+		final P parent;
+		MarkupKind kind;
+		String value;
+
+		InternalMarkupContentBuilder(P parent) {
+			this.parent = parent;
+		}
+
+		@Override
+		public MarkupContentBuilder<P> kind(MarkupKind kind) {
+			this.kind = kind;
+			return this;
+		}
+
+		@Override
+		public MarkupContentBuilder<P> value(String value) {
+			this.value = value;
+			return this;
+		}
+
+		@Override
+		public P and() {
+			return parent;
+		}
+
+		@Override
+		public MarkupContent build() {
+			return new MarkupContent(kind, value);
+		}
 	}
 }

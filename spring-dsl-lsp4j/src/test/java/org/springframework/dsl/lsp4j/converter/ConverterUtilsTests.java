@@ -93,17 +93,11 @@ public class ConverterUtilsTests {
 		assertMarkupContent(new MarkupContent());
 		assertMarkupContent(new org.eclipse.lsp4j.MarkupContent());
 
-		assertHover(new Hover());
-		assertHover(new org.eclipse.lsp4j.Hover());
-
 		assertCompletionContext(new CompletionContext());
 		assertCompletionContext(new org.eclipse.lsp4j.CompletionContext());
 
 		assertCompletionParams(new CompletionParams());
 		assertCompletionParams(new org.eclipse.lsp4j.CompletionParams());
-
-		assertPosition(new Position());
-		assertPosition(new org.eclipse.lsp4j.Position());
 
 		assertTextDocumentIdentifier(new TextDocumentIdentifier());
 		assertTextDocumentIdentifier(new org.eclipse.lsp4j.TextDocumentIdentifier());
@@ -114,14 +108,8 @@ public class ConverterUtilsTests {
 		assertTextDocumentPositionParams(new TextDocumentPositionParams());
 		assertTextDocumentPositionParams(new org.eclipse.lsp4j.TextDocumentPositionParams());
 
-		assertTextEdit(new TextEdit());
-		assertTextEdit(new org.eclipse.lsp4j.TextEdit());
-
 		assertCommand(new Command());
 		assertCommand(new org.eclipse.lsp4j.Command());
-
-		assertCompletionItem(new CompletionItem());
-		assertCompletionItem(new org.eclipse.lsp4j.CompletionItem());
 
 		assertCompletionOptions(new CompletionOptions());
 		assertCompletionOptions(new org.eclipse.lsp4j.CompletionOptions());
@@ -131,6 +119,134 @@ public class ConverterUtilsTests {
 
 		assertTextDocumentContentChangeEvent(new TextDocumentContentChangeEvent());
 		assertTextDocumentContentChangeEvent(new org.eclipse.lsp4j.TextDocumentContentChangeEvent());
+	}
+
+	@Test
+	public void testHover() {
+		assertHover(new Hover());
+		assertHover(new org.eclipse.lsp4j.Hover());
+
+		Hover from1 = Hover.hover()
+				.contents()
+					.kind(MarkupKind.plaintext)
+					.value("value")
+					.and()
+				.range()
+					.start()
+						.line(1)
+						.character(1)
+						.and()
+					.end()
+						.line(2)
+						.character(2)
+						.and()
+					.and()
+				.build();
+		assertHover(from1);
+
+		from1 = Hover.hover()
+				.contents()
+					.kind(MarkupKind.plaintext)
+					.value("value")
+					.and()
+				.build();
+		assertHover(from1);
+
+	}
+
+	@Test
+	public void testPosition() {
+		assertPosition(new Position());
+		assertPosition(new org.eclipse.lsp4j.Position());
+
+		Position from1 = Position.position()
+			.line(1)
+			.character(1)
+			.build();
+		assertPosition(from1);
+
+		org.eclipse.lsp4j.Position from2 = new org.eclipse.lsp4j.Position(1, 1);
+		assertPosition(from2);
+	}
+
+	@Test
+	public void testRange() {
+		assertRange(new Range());
+		assertRange(new org.eclipse.lsp4j.Range());
+
+		Range from1 = Range.range()
+			.start()
+				.line(1)
+				.character(1)
+				.and()
+			.end()
+				.line(2)
+				.character(2)
+				.and()
+			.build();
+		assertRange(from1);
+
+		org.eclipse.lsp4j.Range from2 = new org.eclipse.lsp4j.Range(new org.eclipse.lsp4j.Position(1, 1),
+				new org.eclipse.lsp4j.Position(2, 2));
+		assertRange(from2);
+	}
+
+	@Test
+	public void testTextEdit() {
+		assertTextEdit(new TextEdit());
+		assertTextEdit(new org.eclipse.lsp4j.TextEdit());
+
+		TextEdit from1 = TextEdit.textEdit()
+			.range()
+				.start()
+					.line(1)
+					.character(1)
+					.and()
+				.end()
+					.line(2)
+					.character(2)
+					.and()
+				.and()
+			.newText("text")
+			.build();
+		assertTextEdit(from1);
+
+	}
+
+	@Test
+	public void testCompletionItem() {
+		assertCompletionItem(new CompletionItem());
+		assertCompletionItem(new org.eclipse.lsp4j.CompletionItem());
+
+		CompletionItem from1 = CompletionItem.completionItem()
+			.label("label")
+			.textEdit()
+				.range()
+					.start()
+						.line(1)
+						.character(1)
+						.and()
+					.end()
+						.line(2)
+						.character(2)
+						.and()
+					.and()
+				.newText("text")
+			.and()
+			.build();
+		assertCompletionItem(from1);
+
+		from1 = CompletionItem.completionItem()
+				.label("label")
+				.build();
+		assertCompletionItem(from1);
+
+		org.eclipse.lsp4j.CompletionItem from2 = new org.eclipse.lsp4j.CompletionItem();
+		from2.setLabel("label");
+		org.eclipse.lsp4j.TextEdit textEdit = new org.eclipse.lsp4j.TextEdit(
+				new org.eclipse.lsp4j.Range(new org.eclipse.lsp4j.Position(1, 1), new org.eclipse.lsp4j.Position(2, 2)),
+				"text");
+		from2.setTextEdit(textEdit);
 	}
 
 	@Test
@@ -191,7 +307,7 @@ public class ConverterUtilsTests {
 		Range range = new Range(start, end);
 		hover.setRange(range);
 		MarkupContent contents = new MarkupContent();
-		contents.setKind(MarkupKind.PlainText);
+		contents.setKind(MarkupKind.plaintext);
 		contents.setValue("hi");
 		hover.setContents(contents);
 		assertHover(hover);
@@ -332,6 +448,14 @@ public class ConverterUtilsTests {
 
 	private static void assertPosition(org.eclipse.lsp4j.Position from) {
 		assertObjects(from, ConverterUtils.toPosition(ConverterUtils.toPosition(from)));
+	}
+
+	private static void assertRange(Range from) {
+		assertObjects(from, ConverterUtils.toRange(ConverterUtils.toRange(from)));
+	}
+
+	private static void assertRange(org.eclipse.lsp4j.Range from) {
+		assertObjects(from, ConverterUtils.toRange(ConverterUtils.toRange(from)));
 	}
 
 	private static void assertTextDocumentIdentifier(TextDocumentIdentifier from) {

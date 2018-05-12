@@ -17,7 +17,6 @@ package demo.simpledsl;
 
 import org.springframework.dsl.document.Document;
 import org.springframework.dsl.lsp.domain.Hover;
-import org.springframework.dsl.lsp.domain.MarkupContent;
 import org.springframework.dsl.lsp.domain.MarkupKind;
 import org.springframework.dsl.lsp.domain.Position;
 import org.springframework.dsl.lsp.service.Hoverer;
@@ -46,10 +45,12 @@ public class SimpleLanguageHoverer implements Hoverer {
 		SimpleLanguage simpleLanguage = SimpleLanguage.build(document);
 		Token token = simpleLanguage.getToken(position);
 		if (token != null) {
-			Hover hover = new Hover();
-			MarkupContent contents = new MarkupContent(MarkupKind.PlainText, token.getType().toString());
-			hover.setContents(contents);
-//			hover.setRange(range);
+			Hover hover = Hover.hover()
+					.contents()
+						.kind(MarkupKind.plaintext)
+						.value(token.getType().toString())
+						.and()
+					.build();
 			return Mono.just(hover);
 		} else {
 			return Mono.empty();

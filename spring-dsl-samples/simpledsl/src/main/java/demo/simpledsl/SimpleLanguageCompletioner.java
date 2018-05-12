@@ -40,8 +40,9 @@ public class SimpleLanguageCompletioner implements Completioner {
 		if (token != null) {
 			if (token.isKey()) {
 				if (token.getValue() != null) {
-					CompletionItem item = new CompletionItem();
-					item.setLabel(token.getValue());
+					CompletionItem item = CompletionItem.completionItem()
+							.label(token.getValue())
+							.build();
 					return Flux.just(item);
 				}
 			}

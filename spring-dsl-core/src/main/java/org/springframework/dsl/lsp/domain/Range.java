@@ -15,6 +15,8 @@
  */
 package org.springframework.dsl.lsp.domain;
 
+import org.springframework.dsl.lsp.domain.Position.PositionBuilder;
+
 /**
  * A range in a text document expressed as (zero-based) start and end positions.
  * <p>
@@ -101,5 +103,53 @@ public class Range {
 		} else if (!start.equals(other.start))
 			return false;
 		return true;
+	}
+
+	public interface RangeBuilder<P> {
+		PositionBuilder<RangeBuilder<P>> start();
+		PositionBuilder<RangeBuilder<P>> end();
+		P and();
+		Range build();
+	}
+
+	public static <P> RangeBuilder<P> range() {
+		return new InternalRangeBuilder<>(null);
+	}
+
+	protected static <P> RangeBuilder<P> range(P parent) {
+		return new InternalRangeBuilder<>(parent);
+	}
+
+	private static class InternalRangeBuilder<P> implements RangeBuilder<P> {
+
+		final P parent;
+		PositionBuilder<RangeBuilder<P>> start;
+		PositionBuilder<RangeBuilder<P>> end;
+
+		InternalRangeBuilder(P parent) {
+			this.parent = parent;
+		}
+
+		@Override
+		public PositionBuilder<RangeBuilder<P>> start() {
+			this.start = Position.position(this);
+			return start;
+		}
+
+		@Override
+		public PositionBuilder<RangeBuilder<P>> end() {
+			this.end = Position.position(this);
+			return end;
+		}
+
+		@Override
+		public P and() {
+			return parent;
+		}
+
+		@Override
+		public Range build() {
+			return new Range(start.build(), end.build());
+		}
 	}
 }

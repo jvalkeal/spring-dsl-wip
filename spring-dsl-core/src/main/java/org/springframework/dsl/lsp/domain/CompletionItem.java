@@ -17,6 +17,8 @@ package org.springframework.dsl.lsp.domain;
 
 import java.util.List;
 
+import org.springframework.dsl.lsp.domain.TextEdit.TextEditBuilder;
+
 public class CompletionItem {
 
 	private String label;
@@ -34,6 +36,11 @@ public class CompletionItem {
 	private Object data;
 
 	public CompletionItem() {
+	}
+
+	public CompletionItem(String label, TextEdit textEdit) {
+		this.label = label;
+		this.textEdit = textEdit;
 	}
 
 	public String getLabel() {
@@ -229,5 +236,58 @@ public class CompletionItem {
 		} else if (!textEdit.equals(other.textEdit))
 			return false;
 		return true;
+	}
+
+	public interface CompletionItemBuilder<P> {
+		CompletionItemBuilder<P> label(String label);
+		TextEditBuilder<CompletionItemBuilder<P>> textEdit();
+		P and();
+		CompletionItem build();
+	}
+
+	public static <P> CompletionItemBuilder<P> completionItem() {
+		return new InternalCompletionItemBuilder<>(null);
+	}
+
+	protected static <P> CompletionItemBuilder<P> completionItem(P parent) {
+		return new InternalCompletionItemBuilder<>(parent);
+	}
+
+	private static class InternalCompletionItemBuilder<P> implements CompletionItemBuilder<P> {
+
+		private final P parent;
+		String label;
+		TextEditBuilder<CompletionItemBuilder<P>> textEdit;
+
+		InternalCompletionItemBuilder(P parent) {
+			this.parent = parent;
+		}
+
+		@Override
+		public CompletionItemBuilder<P> label(String label) {
+			this.label = label;
+			return this;
+		}
+
+		@Override
+		public P and() {
+			return parent;
+		}
+
+		@Override
+		public TextEditBuilder<CompletionItemBuilder<P>> textEdit() {
+			this.textEdit = TextEdit.textEdit(this);
+			return textEdit;
+		}
+
+		@Override
+		public CompletionItem build() {
+			CompletionItem completionItem = new CompletionItem();
+			completionItem.setLabel(label);
+			if (textEdit != null) {
+				completionItem.setTextEdit(textEdit.build());
+			}
+			return completionItem;
+		}
 	}
 }

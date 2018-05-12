@@ -81,4 +81,88 @@ public class Position {
 			return false;
 		return true;
 	}
+
+	/**
+	 * Builder interface for {@link Position}.
+	 *
+	 * @param <P> the parent builder type
+	 */
+	public interface PositionBuilder<P> {
+
+		/**
+		 * Sets a line.
+		 *
+		 * @param line the line
+		 * @return the builder for chaining
+		 */
+		PositionBuilder<P> line(int line);
+
+		/**
+		 * Sets a character.
+		 *
+		 * @param line the line
+		 * @return the builder for chaining
+		 */
+		PositionBuilder<P> character(int character);
+
+		/**
+		 * Switches back to parent builder.
+		 *
+		 * @return the parent builder
+		 */
+		P and();
+
+		/**
+		 * Builds a configured {@link Position}.
+		 *
+		 * @return the build {@link Position}
+		 */
+		Position build();
+	}
+
+	/**
+	 * Gets a builder for {@link Position}
+	 *
+	 * @return the position builder
+	 */
+	public static <P> PositionBuilder<P> position() {
+		return new InternalPositionBuilder<>(null);
+	}
+
+	protected static <P> PositionBuilder<P> position(P parent) {
+		return new InternalPositionBuilder<>(parent);
+	}
+
+	private static class InternalPositionBuilder<P> implements PositionBuilder<P> {
+
+		private final P parent;
+		private int line;
+		private int character;
+
+		InternalPositionBuilder(P parent) {
+			this.parent = parent;
+		}
+
+		@Override
+		public PositionBuilder<P> line(int line) {
+			this.line = line;
+			return this;
+		}
+
+		@Override
+		public PositionBuilder<P> character(int character) {
+			this.character = character;
+			return this;
+		}
+
+		@Override
+		public P and() {
+			return parent;
+		}
+
+		@Override
+		public Position build() {
+			return new Position(line, character);
+		}
+	}
 }
