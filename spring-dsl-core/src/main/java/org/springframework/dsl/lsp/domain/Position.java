@@ -104,7 +104,7 @@ public class Position {
 		/**
 		 * Sets a character.
 		 *
-		 * @param line the line
+		 * @param character the character
 		 * @return the builder for chaining
 		 */
 		PositionBuilder<P> character(int character);
