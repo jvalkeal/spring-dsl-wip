@@ -26,8 +26,10 @@ export class Lsp4jComponent implements OnInit {
 
   // editorOptions = {theme: 'vs-dark', language: 'text/plain'};
   // editorOptions = {model: null, theme: 'vs-dark'};
-  editorOptions = {theme: 'vs', language: 'javascript'};
-  code = 'int=1\nlong=100\ndouble=1.0\nstring=hello\n';
+  // editorOptions = {theme: 'vs', language: 'javascript'};
+  editorOptions = {theme: 'vs', language: 'simple'};
+  // code = 'int=1\nlong=100\ndouble=1.0\nstring=hello\n';
+  code = '';
   private xxx: any;
   // private xxx: monaco.editor.IStandaloneCodeEditor;
 
@@ -76,7 +78,7 @@ export class Lsp4jComponent implements OnInit {
       name: 'Sample Language Client',
       clientOptions: {
         // use a language id as a document selector
-        documentSelector: ['javascript'],
+        documentSelector: ['simple'],
         synchronize: {
         },
         // disable the default error handler
