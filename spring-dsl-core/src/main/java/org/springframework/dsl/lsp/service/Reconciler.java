@@ -15,7 +15,7 @@
  */
 package org.springframework.dsl.lsp.service;
 
-import org.springframework.dsl.document.TextDocumentContentChange;
+import org.springframework.dsl.document.Document;
 import org.springframework.dsl.lsp.domain.PublishDiagnosticsParams;
 
 import reactor.core.publisher.Flux;
@@ -32,10 +32,10 @@ import reactor.core.publisher.Mono;
 public interface Reconciler {
 
 	/**
-	 * Reconcile a {@code document} and return {@link Mono} for completion.
+	 * Reconcile a {@link Document} and return {@link Mono} for completion.
 	 *
-	 * @param identifier the document identifier
+	 * @param document the document
 	 * @return a {@link Mono} indicating reconcile operation completion
 	 */
-	Flux<PublishDiagnosticsParams> reconcile(TextDocumentContentChange identifier);
+	Flux<PublishDiagnosticsParams> reconcile(Document document);
 }

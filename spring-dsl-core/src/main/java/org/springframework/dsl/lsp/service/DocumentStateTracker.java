@@ -16,7 +16,6 @@
 package org.springframework.dsl.lsp.service;
 
 import org.springframework.dsl.document.Document;
-import org.springframework.dsl.document.TextDocumentContentChange;
 import org.springframework.dsl.lsp.domain.DidChangeTextDocumentParams;
 import org.springframework.dsl.lsp.domain.DidCloseTextDocumentParams;
 import org.springframework.dsl.lsp.domain.DidOpenTextDocumentParams;
@@ -50,7 +49,7 @@ public interface DocumentStateTracker {
 	 * @param params the {@link DidOpenTextDocumentParams}
 	 * @return the {@link Mono} for completion
 	 */
-	Mono<TextDocumentContentChange> didOpen(DidOpenTextDocumentParams params);
+	Mono<Document> didOpen(DidOpenTextDocumentParams params);
 
 	/**
 	 * Handle {@code LSP didChange} and return a {@link Mono} for completion.
@@ -58,7 +57,7 @@ public interface DocumentStateTracker {
 	 * @param params the {@link DidChangeTextDocumentParams}
 	 * @return the {@link Mono} for completion
 	 */
-	Mono<TextDocumentContentChange> didChange(DidChangeTextDocumentParams params);
+	Mono<Document> didChange(DidChangeTextDocumentParams params);
 
 	/**
 	 * Handle {@code LSP didSave} and return a {@link Mono} for completion.
@@ -66,7 +65,7 @@ public interface DocumentStateTracker {
 	 * @param params the {@link DidSaveTextDocumentParams}
 	 * @return the {@link Mono} for completion
 	 */
-	Mono<TextDocumentContentChange> didSave(DidSaveTextDocumentParams params);
+	Mono<Document> didSave(DidSaveTextDocumentParams params);
 
 	/**
 	 * Handle {@code LSP didClose} and return a {@link Mono} for completion.
@@ -74,7 +73,7 @@ public interface DocumentStateTracker {
 	 * @param params the {@link DidCloseTextDocumentParams}
 	 * @return the {@link Mono} for completion
 	 */
-	Mono<TextDocumentContentChange> didClose(DidCloseTextDocumentParams params);
+	Mono<Document> didClose(DidCloseTextDocumentParams params);
 
 	/**
 	 * Gets a {@link Document} matching given {@code uri}.

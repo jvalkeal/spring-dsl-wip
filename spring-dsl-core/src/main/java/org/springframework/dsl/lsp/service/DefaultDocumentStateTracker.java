@@ -15,9 +15,7 @@
  */
 package org.springframework.dsl.lsp.service;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -26,12 +24,10 @@ import org.springframework.dsl.document.BadLocationException;
 import org.springframework.dsl.document.Document;
 import org.springframework.dsl.document.LanguageId;
 import org.springframework.dsl.document.TextDocument;
-import org.springframework.dsl.document.TextDocumentContentChange;
 import org.springframework.dsl.lsp.domain.DidChangeTextDocumentParams;
 import org.springframework.dsl.lsp.domain.DidCloseTextDocumentParams;
 import org.springframework.dsl.lsp.domain.DidOpenTextDocumentParams;
 import org.springframework.dsl.lsp.domain.DidSaveTextDocumentParams;
-import org.springframework.dsl.lsp.domain.TextDocumentContentChangeEvent;
 import org.springframework.dsl.lsp.domain.TextDocumentIdentifier;
 import org.springframework.dsl.lsp.domain.TextDocumentItem;
 import org.springframework.dsl.lsp.domain.VersionedTextDocumentIdentifier;
@@ -62,7 +58,7 @@ public class DefaultDocumentStateTracker implements DocumentStateTracker {
 	}
 
 	@Override
-	public Mono<TextDocumentContentChange> didOpen(DidOpenTextDocumentParams params) {
+	public Mono<Document> didOpen(DidOpenTextDocumentParams params) {
 
 		TextDocumentItem textDocument = params.getTextDocument();
 		String uri = textDocument.getUri();
@@ -72,15 +68,12 @@ public class DefaultDocumentStateTracker implements DocumentStateTracker {
 		String text = params.getTextDocument().getText();
 		TrackedDocument td = createDocument(uri, languageId, version, text).open();
 		TextDocument doc = td.getDocument();
-
-		TextDocumentContentChangeEvent change = new TextDocumentContentChangeEvent(null, null, text);
-		TextDocumentContentChange evt = new TextDocumentContentChange(doc, Arrays.asList(change));
-		return Mono.just(evt);
+		return Mono.just(doc);
 
 	}
 
 	@Override
-	public final Mono<TextDocumentContentChange> didChange(DidChangeTextDocumentParams params) {
+	public final Mono<Document> didChange(DidChangeTextDocumentParams params) {
 		VersionedTextDocumentIdentifier identifier = params.getTextDocument();
 		String url = identifier.getUri();
 		if (url != null) {
@@ -89,10 +82,7 @@ public class DefaultDocumentStateTracker implements DocumentStateTracker {
 			try {
 				TextDocument doc = trackedDocument.getDocument();
 				doc.apply(params);
-
-				List<TextDocumentContentChangeEvent> changes = params.getContentChanges();
-				TextDocumentContentChange evt = new TextDocumentContentChange(doc, changes);
-				return Mono.just(evt);
+				return Mono.just(doc);
 
 			} catch (BadLocationException e) {
 				log.error("", e);
@@ -103,7 +93,7 @@ public class DefaultDocumentStateTracker implements DocumentStateTracker {
 	}
 
 	@Override
-	public Mono<TextDocumentContentChange> didClose(DidCloseTextDocumentParams params) {
+	public Mono<Document> didClose(DidCloseTextDocumentParams params) {
 		TextDocumentIdentifier identifier = params.getTextDocument();
 		String url = identifier.getUri();
 		if (url != null) {
@@ -114,7 +104,7 @@ public class DefaultDocumentStateTracker implements DocumentStateTracker {
 	}
 
 	@Override
-	public Mono<TextDocumentContentChange> didSave(DidSaveTextDocumentParams params) {
+	public Mono<Document> didSave(DidSaveTextDocumentParams params) {
 		return Mono.empty();
 	}
 

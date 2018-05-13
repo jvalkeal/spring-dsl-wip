@@ -20,7 +20,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.dsl.document.Document;
-import org.springframework.dsl.document.TextDocumentContentChange;
 import org.springframework.dsl.lsp.LspClientContext;
 import org.springframework.dsl.lsp.annotation.LspCompletion;
 import org.springframework.dsl.lsp.annotation.LspController;
@@ -239,13 +238,13 @@ public class GenericLanguageServerController implements InitializingBean {
 		return Flux.empty();
 	}
 
-	private static void handle(Mono<TextDocumentContentChange> change, Reconciler reconciler, LspClientContext context,
+	private static void handle(Mono<Document> document, Reconciler reconciler, LspClientContext context,
 			String uri) {
-		change.doOnNext(c -> {
-			reconciler.reconcile(c)
+		document.doOnNext(doc -> {
+			reconciler.reconcile(doc)
 				.switchIfEmpty(Mono.just(new PublishDiagnosticsParams(uri)))
-				.doOnNext(d -> {
-					context.getClient().send(d);
+				.doOnNext(diag -> {
+					context.getClient().send(diag);
 				})
 				.subscribe();
 		})

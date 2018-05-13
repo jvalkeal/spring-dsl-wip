@@ -20,7 +20,6 @@ import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dsl.document.Document;
-import org.springframework.dsl.document.TextDocumentContentChange;
 import org.springframework.dsl.lsp.domain.Diagnostic;
 import org.springframework.dsl.lsp.domain.DiagnosticSeverity;
 import org.springframework.dsl.lsp.domain.PublishDiagnosticsParams;
@@ -54,17 +53,17 @@ public class DefaultReconciler implements Reconciler {
 	}
 
 	@Override
-	public Flux<PublishDiagnosticsParams> reconcile(TextDocumentContentChange event) {
-		log.debug("Reconciling {}", event);
-		Document doc = event.getDocument();
-		Flux<ReconcileProblem> problems = linter.lint(event.getDocument());
+	public Flux<PublishDiagnosticsParams> reconcile(Document document) {
+		log.debug("Reconciling {}", document);
+//		Document doc = event.getDocument();
+		Flux<ReconcileProblem> problems = linter.lint(document);
 		//TODO:  make this 'smarter' to ensure responsiveness, support cancelation etc.s
 
 		return problems
 			.filter(p -> getDiagnosticSeverity(p) != null)
-			.flatMap(p -> toDiagnostic(doc, p))
+			.flatMap(p -> toDiagnostic(document, p))
 			.flatMap(d -> {
-				return Mono.just(new PublishDiagnosticsParams(event.getDocument().uri(), Arrays.asList(d)));
+				return Mono.just(new PublishDiagnosticsParams(document.uri(), Arrays.asList(d)));
 			}
 			);
 
