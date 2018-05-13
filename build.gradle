@@ -10,6 +10,7 @@ buildscript {
 		asciidoctorVersion = '1.5.3'
 		docbookRererenceVersion = '0.3.1'
 		javolutionVersion = '6.0.0'
+		findBugsVersion = '3.0.2'
 	}
 	repositories {
 		mavenCentral()
@@ -71,6 +72,7 @@ configure(allprojects) {
 				exclude 'org.osgi:org.osgi.core'
 				exclude 'org.osgi:org.osgi.compendium'
 			}
+			dependency "com.google.code.findbugs:jsr305:$findBugsVersion"
 		}
 	}
 
@@ -143,6 +145,7 @@ project('spring-dsl-core') {
 		compile 'io.projectreactor:reactor-core'
 		compile 'org.javolution:javolution-core-java'
 		optional 'com.google.code.gson:gson'
+		optional 'com.google.code.findbugs:jsr305'
 		testCompile 'org.springframework.boot:spring-boot-starter-test'
 		testRuntime 'org.springframework.boot:spring-boot-starter'
 	}
@@ -154,13 +157,11 @@ project('spring-dsl-server') {
 	dependencies {
 		compile project(':spring-dsl-core')
 		compile 'org.springframework.boot:spring-boot-starter'
-//		compile 'org.springframework:spring-context'
-//		compile 'org.springframework:spring-web'
-//		compile 'org.slf4j:slf4j-api'
 		compile 'io.projectreactor:reactor-core'
 		compile 'org.javolution:javolution-core-java'
 		optional 'org.springframework.boot:spring-boot-configuration-processor'
 		optional 'com.google.code.gson:gson'
+		optional 'com.google.code.findbugs:jsr305'
 		testCompile 'org.springframework.boot:spring-boot-starter-test'
 		testRuntime 'org.springframework.boot:spring-boot-starter'
 	}
