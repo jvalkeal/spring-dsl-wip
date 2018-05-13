@@ -26,6 +26,6 @@ import org.springframework.dsl.lsp.LspMethod;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@LspRequestMapping(method = LspMethod.DIDCLOSE)
+@LspRequestMapping(method = LspMethod.TEXTDOCUMENT_DIDCLOSE)
 public @interface LspDidClose {
 }

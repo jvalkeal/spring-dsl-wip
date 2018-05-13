@@ -32,6 +32,8 @@ import org.springframework.dsl.lsp.annotation.LspInitialize;
 import org.springframework.dsl.lsp.annotation.LspInitialized;
 import org.springframework.dsl.lsp.annotation.LspNoResponseBody;
 import org.springframework.dsl.lsp.annotation.LspResponseBody;
+import org.springframework.dsl.lsp.annotation.LspWillSave;
+import org.springframework.dsl.lsp.annotation.LspWillSaveWaitUntil;
 import org.springframework.dsl.lsp.domain.CompletionItem;
 import org.springframework.dsl.lsp.domain.CompletionOptions;
 import org.springframework.dsl.lsp.domain.CompletionParams;
@@ -47,6 +49,8 @@ import org.springframework.dsl.lsp.domain.PublishDiagnosticsParams;
 import org.springframework.dsl.lsp.domain.ServerCapabilities;
 import org.springframework.dsl.lsp.domain.TextDocumentPositionParams;
 import org.springframework.dsl.lsp.domain.TextDocumentSyncKind;
+import org.springframework.dsl.lsp.domain.TextEdit;
+import org.springframework.dsl.lsp.domain.WillSaveTextDocumentParams;
 import org.springframework.dsl.lsp.service.Completioner;
 import org.springframework.dsl.lsp.service.DocumentStateTracker;
 import org.springframework.dsl.lsp.service.Hoverer;
@@ -205,6 +209,33 @@ public class GenericLanguageServerController implements InitializingBean {
 	}
 
 	/**
+	 * Method handling {@code LSP client willSave} request and dispatching into
+	 * {@link DocumentStateTracker}.
+	 *
+	 * @param params the {@link WillSaveTextDocumentParams}
+	 * @param context the lsp client context
+	 */
+	@LspWillSave
+	@LspNoResponseBody
+	public void clientDocumentWillSave(WillSaveTextDocumentParams params, LspClientContext context) {
+		handle(this.documentStateTracker.willSave(params), reconciler, context, params.getTextDocument().getUri());
+	}
+
+	/**
+	 * Method handling {@code LSP client willSaveWaitUntil} request and dispatching into
+	 * {@link DocumentStateTracker}.
+	 *
+	 * @param params the {@link WillSaveTextDocumentParams}
+	 * @param context the lsp client context
+	 * @return a flux of textedit's
+	 */
+	@LspWillSaveWaitUntil
+	@LspResponseBody
+	public Flux<TextEdit> clientDocumentWillSaveWaitUntil(WillSaveTextDocumentParams params, LspClientContext context) {
+		return Flux.empty();
+	}
+
+	/**
 	 * Method handling {@code LSP client hover} request and dispatching into
 	 * {@link Hoverer}.
 	 *
@@ -240,6 +271,7 @@ public class GenericLanguageServerController implements InitializingBean {
 
 	private static void handle(Mono<Document> document, Reconciler reconciler, LspClientContext context,
 			String uri) {
+		log.trace("Handling document {}, reconciler {}, context {}, uri {}", document, reconciler, context, uri);
 		document.doOnNext(doc -> {
 			reconciler.reconcile(doc)
 				.switchIfEmpty(Mono.just(new PublishDiagnosticsParams(uri)))

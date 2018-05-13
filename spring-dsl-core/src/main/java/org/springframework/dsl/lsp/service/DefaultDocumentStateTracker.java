@@ -31,6 +31,7 @@ import org.springframework.dsl.lsp.domain.DidSaveTextDocumentParams;
 import org.springframework.dsl.lsp.domain.TextDocumentIdentifier;
 import org.springframework.dsl.lsp.domain.TextDocumentItem;
 import org.springframework.dsl.lsp.domain.VersionedTextDocumentIdentifier;
+import org.springframework.dsl.lsp.domain.WillSaveTextDocumentParams;
 import org.springframework.dsl.lsp.model.TrackedDocument;
 
 import reactor.core.publisher.Mono;
@@ -59,17 +60,15 @@ public class DefaultDocumentStateTracker implements DocumentStateTracker {
 
 	@Override
 	public Mono<Document> didOpen(DidOpenTextDocumentParams params) {
-
 		TextDocumentItem textDocument = params.getTextDocument();
+
 		String uri = textDocument.getUri();
 		LanguageId languageId = LanguageId.of(textDocument.getLanguageId());
 		int version = textDocument.getVersion();
+		String text = textDocument.getText();
 
-		String text = params.getTextDocument().getText();
-		TrackedDocument td = createDocument(uri, languageId, version, text).open();
-		TextDocument doc = td.getDocument();
-		return Mono.just(doc);
-
+		TrackedDocument trackedDocument = createDocument(uri, languageId, version, text).open();
+		return Mono.just(trackedDocument.getDocument());
 	}
 
 	@Override
@@ -93,6 +92,11 @@ public class DefaultDocumentStateTracker implements DocumentStateTracker {
 	}
 
 	@Override
+	public Mono<Document> didSave(DidSaveTextDocumentParams params) {
+		return Mono.empty();
+	}
+
+	@Override
 	public Mono<Document> didClose(DidCloseTextDocumentParams params) {
 		TextDocumentIdentifier identifier = params.getTextDocument();
 		String url = identifier.getUri();
@@ -104,27 +108,27 @@ public class DefaultDocumentStateTracker implements DocumentStateTracker {
 	}
 
 	@Override
-	public Mono<Document> didSave(DidSaveTextDocumentParams params) {
+	public Mono<Document> willSave(WillSaveTextDocumentParams params) {
 		return Mono.empty();
 	}
 
-	private synchronized TextDocument getOrCreateDocument(String url) {
-		TrackedDocument doc = documents.get(url);
-		if (doc==null) {
-			log.warn("Trying to get document ["+url+"] but it did not exists. Creating it with language-id 'plaintext'");
-			doc = createDocument(url, LanguageId.PLAINTEXT, 0, "");
-		}
-		return doc.getDocument();
-	}
+//	private synchronized TextDocument getOrCreateDocument(String url) {
+//		TrackedDocument doc = documents.get(url);
+//		if (doc==null) {
+//			log.warn("Trying to get document ["+url+"] but it did not exists. Creating it with language-id 'plaintext'");
+//			doc = createDocument(url, LanguageId.PLAINTEXT, 0, "");
+//		}
+//		return doc.getDocument();
+//	}
 
 	private synchronized TrackedDocument createDocument(String url, LanguageId languageId, int version, String text) {
-		TrackedDocument existingDoc = documents.get(url);
-		if (existingDoc!=null) {
-			log.warn("Creating document ["+url+"] but it already exists. Reusing existing!");
-			return existingDoc;
+		TrackedDocument trackedDocument = documents.get(url);
+		if (trackedDocument != null) {
+			log.warn("Creating document [{}] but it already exists. Reusing existing!", url);
+			return trackedDocument;
 		}
-		TrackedDocument doc = new TrackedDocument(new TextDocument(url, languageId, version, text));
-		documents.put(url, doc);
-		return doc;
+		trackedDocument = new TrackedDocument(new TextDocument(url, languageId, version, text));
+		documents.put(url, trackedDocument);
+		return trackedDocument;
 	}
 }

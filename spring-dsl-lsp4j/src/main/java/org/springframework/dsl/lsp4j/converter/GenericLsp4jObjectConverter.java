@@ -98,14 +98,18 @@ public class GenericLsp4jObjectConverter implements GenericConverter {
 
 		if (ClassUtils.isAssignable(InitializeResult.class, sourceType.getType())) {
 			return ConverterUtils.toInitializeResult((InitializeResult) source);
-		} else if (ClassUtils.isAssignable(InitializeParams.class, sourceType.getType())) {
+		}
+		if (ClassUtils.isAssignable(InitializeParams.class, sourceType.getType())) {
 			return ConverterUtils.toInitializeParams((InitializeParams) source);
-		} else if (ClassUtils.isAssignable(DidChangeTextDocumentParams.class, sourceType.getType())) {
+		}
+		if (ClassUtils.isAssignable(DidChangeTextDocumentParams.class, sourceType.getType())) {
 			return ConverterUtils.toDidChangeTextDocumentParams((DidChangeTextDocumentParams) source);
-		} else if (ClassUtils.isAssignable(DidSaveTextDocumentParams.class, sourceType.getType())) {
+		}
+		if (ClassUtils.isAssignable(DidSaveTextDocumentParams.class, sourceType.getType())) {
 			return ConverterUtils.toDidSaveTextDocumentParams((DidSaveTextDocumentParams) source);
 
-		} else if (ClassUtils.isAssignable(org.eclipse.lsp4j.InitializeParams.class, sourceType.getType())) {
+		}
+		if (ClassUtils.isAssignable(org.eclipse.lsp4j.InitializeParams.class, sourceType.getType())) {
 			return ConverterUtils.toInitializeParams((org.eclipse.lsp4j.InitializeParams) source);
 		}
 

@@ -46,6 +46,7 @@ import org.eclipse.lsp4j.SignatureHelp;
 import org.eclipse.lsp4j.SymbolInformation;
 import org.eclipse.lsp4j.TextDocumentPositionParams;
 import org.eclipse.lsp4j.TextEdit;
+import org.eclipse.lsp4j.WillSaveTextDocumentParams;
 import org.eclipse.lsp4j.WorkspaceEdit;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.services.LanguageClient;
@@ -117,7 +118,7 @@ public class Lsp4jLanguageServerAdapter implements LanguageServer, LanguageClien
 		log.trace("initialize {}", params);
 		ServerLspExchange exchange = createExchange(LspMethod.INITIALIZE, params);
 		return lspHandler.handle(exchange)
-				.then(convert(exchange, InitializeResult.class, conversionService))
+				.then(singleConvert(exchange, InitializeResult.class, conversionService))
 				.toFuture();
 	}
 
@@ -184,7 +185,7 @@ public class Lsp4jLanguageServerAdapter implements LanguageServer, LanguageClien
 				log.trace("hover request {}", position);
 				ServerLspExchange exchange = createExchange(LspMethod.TEXTDOCUMENT_HOVER, position, client, conversionService);
 				return lspHandler.handle(exchange)
-						.then(convert(exchange, Hover.class, conversionService))
+						.then(singleConvert(exchange, Hover.class, conversionService))
 						.doOnNext(response -> {
 							log.trace("hover response {}", response);
 						})
@@ -208,26 +209,44 @@ public class Lsp4jLanguageServerAdapter implements LanguageServer, LanguageClien
 
 			@Override
 			public void didSave(DidSaveTextDocumentParams params) {
-				log.trace("didSave {}", params);
-				lspHandler.handle(createExchange(LspMethod.DIDSAVE, params, client, conversionService)).subscribe();
+				log.trace("didSave request {}", params);
+				lspHandler.handle(createExchange(LspMethod.TEXTDOCUMENT_DIDSAVE, params, client, conversionService)).subscribe();
 			}
 
 			@Override
 			public void didOpen(DidOpenTextDocumentParams params) {
-				log.trace("didOpen {}", params);
-				lspHandler.handle(createExchange(LspMethod.DIDOPEN, params, client, conversionService)).subscribe();
+				log.trace("didOpen request {}", params);
+				lspHandler.handle(createExchange(LspMethod.TEXTDOCUMENT_DIDOPEN, params, client, conversionService)).subscribe();
 			}
 
 			@Override
 			public void didClose(DidCloseTextDocumentParams params) {
-				log.trace("didClose {}", params);
-				lspHandler.handle(createExchange(LspMethod.DIDCLOSE, params, client, conversionService)).subscribe();
+				log.trace("didClose request {}", params);
+				lspHandler.handle(createExchange(LspMethod.TEXTDOCUMENT_DIDCLOSE, params, client, conversionService)).subscribe();
 			}
 
 			@Override
 			public void didChange(DidChangeTextDocumentParams params) {
-				log.trace("didChange {}", params);
-				lspHandler.handle(createExchange(LspMethod.DIDCHANGE, params, client, conversionService)).subscribe();
+				log.trace("didChange request {}", params);
+				lspHandler.handle(createExchange(LspMethod.TEXTDOCUMENT_DIDCHANGE, params, client, conversionService)).subscribe();
+			}
+
+			@Override
+			public void willSave(WillSaveTextDocumentParams params) {
+				log.trace("willSave request {}", params);
+				lspHandler.handle(createExchange(LspMethod.TEXTDOCUMENT_WILLSAVE, params, client, conversionService)).subscribe();
+			}
+
+			@Override
+			public CompletableFuture<List<TextEdit>> willSaveWaitUntil(WillSaveTextDocumentParams params) {
+				log.trace("willSaveWaitUntil request {}", params);
+				ServerLspExchange exchange = createExchange(LspMethod.TEXTDOCUMENT_WILLSAVEWAITUNTIL, params, client, conversionService);
+				return lspHandler.handle(exchange)
+						.then(listConvert(exchange, TextEdit.class, conversionService))
+						.doOnNext(response -> {
+							log.trace("willSaveWaitUntil response {}", response);
+						})
+						.toFuture();
 			}
 
 			@Override
@@ -241,7 +260,7 @@ public class Lsp4jLanguageServerAdapter implements LanguageServer, LanguageClien
 				log.trace("completion request {}", params);
 				ServerLspExchange exchange = createExchange(LspMethod.TEXTDOCUMENT_COMPLETION, params, client, conversionService);
 				return lspHandler.handle(exchange)
-					.then(convert2(exchange, CompletionItem.class, conversionService))
+					.then(listConvert(exchange, CompletionItem.class, conversionService))
 					.flatMap(list -> Mono.just(Either.<List<CompletionItem>, CompletionList>forRight(new CompletionList(list))))
 					.doOnNext(response -> {
 						log.trace("completion response {}", response);
@@ -284,8 +303,7 @@ public class Lsp4jLanguageServerAdapter implements LanguageServer, LanguageClien
 		return new DefaultServerCoapExchange(request, response);
 	}
 
-	private static <T> Mono<T> convert(ServerLspExchange exchange, Class<T> clazz, ConversionService conversionService) {
-//		return Mono.fromSupplier(() -> conversionService.convert(exchange.getResponse().getBody(), clazz));
+	private static <T> Mono<T> singleConvert(ServerLspExchange exchange, Class<T> clazz, ConversionService conversionService) {
 		return Mono.fromSupplier(() -> {
 			Object[] bodys = exchange.getResponse().getBody();
 			if (bodys.length > 0) {
@@ -293,10 +311,10 @@ public class Lsp4jLanguageServerAdapter implements LanguageServer, LanguageClien
 			} else {
 				return null;
 			}
-			});
+		});
 	}
 
-	private static <T> Mono<List<T>> convert2(ServerLspExchange exchange, Class<T> clazz, ConversionService conversionService) {
+	private static <T> Mono<List<T>> listConvert(ServerLspExchange exchange, Class<T> clazz, ConversionService conversionService) {
 		return Mono.fromSupplier(() -> {
 			ArrayList<T> list = new ArrayList<>();
 			for (Object body : exchange.getResponse().getBody()) {

@@ -15,13 +15,25 @@
  */
 package org.springframework.dsl.lsp.domain;
 
+import org.springframework.dsl.lsp.domain.TextDocumentIdentifier.TextDocumentIdentifierBuilder;
+import org.springframework.dsl.support.AbstractDomainBuilder;
+import org.springframework.dsl.support.DomainBuilder;
+
+/**
+ *
+ * @author Janne Valkealahti
+ *
+ */
 public class DidSaveTextDocumentParams {
 
 	private TextDocumentIdentifier textDocument;
-
 	private String text;
 
 	public DidSaveTextDocumentParams() {
+	}
+
+	public DidSaveTextDocumentParams(String text) {
+		this.text = text;
 	}
 
 	public DidSaveTextDocumentParams(TextDocumentIdentifier textDocument, String text) {
@@ -74,5 +86,73 @@ public class DidSaveTextDocumentParams {
 		} else if (!textDocument.equals(other.textDocument))
 			return false;
 		return true;
+	}
+
+	/**
+	 * Builder interface for {@link DidSaveTextDocumentParams}.
+	 *
+	 * @param <P> the parent builder type
+	 */
+	public interface DidSaveTextDocumentParamsBuilder<P> extends DomainBuilder<DidSaveTextDocumentParams, P> {
+
+		/**
+		 * Gets a text document identifier builder.
+		 *
+		 * @return the builder for chaining
+		 */
+		TextDocumentIdentifierBuilder<DidSaveTextDocumentParamsBuilder<P>> textDocument();
+
+		/**
+		 * Sets a text.
+		 *
+		 * @param text the text
+		 * @return the builder for chaining
+		 */
+		DidSaveTextDocumentParamsBuilder<P> text(String text);
+	}
+
+	/**
+	 * Gets a builder for {@link DidSaveTextDocumentParams}
+	 *
+	 * @return the did save text document params builder
+	 */
+	public static <P> DidSaveTextDocumentParamsBuilder<P> didSaveTextDocumentParams() {
+		return new InternalDidSaveTextDocumentParamsBuilder<>(null);
+	}
+
+	protected static <P> DidSaveTextDocumentParamsBuilder<P> didSaveTextDocumentParams(P parent) {
+		return new InternalDidSaveTextDocumentParamsBuilder<>(parent);
+	}
+
+	private static class InternalDidSaveTextDocumentParamsBuilder<P> extends AbstractDomainBuilder<DidSaveTextDocumentParams, P>
+			implements DidSaveTextDocumentParamsBuilder<P> {
+
+		private TextDocumentIdentifierBuilder<DidSaveTextDocumentParamsBuilder<P>> textDocument;
+		private String text;
+
+		InternalDidSaveTextDocumentParamsBuilder(P parent) {
+			super(parent);
+		}
+
+		@Override
+		public TextDocumentIdentifierBuilder<DidSaveTextDocumentParamsBuilder<P>> textDocument() {
+			this.textDocument = TextDocumentIdentifier.textDocumentIdentifier(this);
+			return textDocument;
+		}
+
+		@Override
+		public DidSaveTextDocumentParamsBuilder<P> text(String text) {
+			this.text = text;
+			return this;
+		}
+
+		@Override
+		public DidSaveTextDocumentParams build() {
+			DidSaveTextDocumentParams didSaveTextDocumentParams = new DidSaveTextDocumentParams(text);
+			if (textDocument != null) {
+				didSaveTextDocumentParams.setTextDocument(textDocument.build());
+			}
+			return didSaveTextDocumentParams;
+		}
 	}
 }

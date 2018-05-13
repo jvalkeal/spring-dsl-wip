@@ -47,6 +47,7 @@ import org.springframework.dsl.lsp.domain.TextDocumentPositionParams;
 import org.springframework.dsl.lsp.domain.TextDocumentSyncOptions;
 import org.springframework.dsl.lsp.domain.TextEdit;
 import org.springframework.dsl.lsp.domain.VersionedTextDocumentIdentifier;
+import org.springframework.dsl.lsp.domain.WillSaveTextDocumentParams;
 
 /**
  * Tests for {@link ConverterUtils}.
@@ -120,6 +121,25 @@ public class ConverterUtilsTests {
 	public void testDidSaveTextDocumentParams() {
 		assertDidSaveTextDocumentParams(new DidSaveTextDocumentParams());
 		assertDidSaveTextDocumentParams(new org.eclipse.lsp4j.DidSaveTextDocumentParams());
+
+		DidSaveTextDocumentParams from1 = DidSaveTextDocumentParams.didSaveTextDocumentParams()
+			.textDocument()
+				.uri("uri")
+				.and()
+			.text("text")
+			.build();
+		assertDidSaveTextDocumentParams(from1);
+
+		org.eclipse.lsp4j.DidSaveTextDocumentParams from2 = new org.eclipse.lsp4j.DidSaveTextDocumentParams();
+		from2.setText("text");
+		from2.setTextDocument(new org.eclipse.lsp4j.TextDocumentIdentifier("uri"));
+		assertDidSaveTextDocumentParams(from2);
+	}
+
+	@Test
+	public void testWillSaveTextDocumentParams() {
+		assertWillSaveTextDocumentParams(new WillSaveTextDocumentParams());
+		assertWillSaveTextDocumentParams(new org.eclipse.lsp4j.WillSaveTextDocumentParams());
 	}
 
 	@Test
@@ -213,6 +233,14 @@ public class ConverterUtilsTests {
 				.build();
 		assertHover(from1);
 
+		org.eclipse.lsp4j.Hover from2 = new org.eclipse.lsp4j.Hover();
+		from2.setRange(new org.eclipse.lsp4j.Range(new org.eclipse.lsp4j.Position(1, 1),
+				new org.eclipse.lsp4j.Position(2, 2)));
+		org.eclipse.lsp4j.MarkupContent markupContent = new org.eclipse.lsp4j.MarkupContent();
+		markupContent.setKind("plaintext");
+		markupContent.setValue("value");
+		from2.setContents(markupContent);
+		assertHover(from2);
 	}
 
 	@Test
@@ -477,6 +505,14 @@ public class ConverterUtilsTests {
 
 	private static void assertDidSaveTextDocumentParams(org.eclipse.lsp4j.DidSaveTextDocumentParams from) {
 		assertObjects(from, ConverterUtils.toDidSaveTextDocumentParams(ConverterUtils.toDidSaveTextDocumentParams(from)));
+	}
+
+	private static void assertWillSaveTextDocumentParams(WillSaveTextDocumentParams from) {
+		assertObjects(from, ConverterUtils.toWillSaveTextDocumentParams(ConverterUtils.toWillSaveTextDocumentParams(from)));
+	}
+
+	private static void assertWillSaveTextDocumentParams(org.eclipse.lsp4j.WillSaveTextDocumentParams from) {
+		assertObjects(from, ConverterUtils.toWillSaveTextDocumentParams(ConverterUtils.toWillSaveTextDocumentParams(from)));
 	}
 
 	private static void assertMarkupContent(MarkupContent from) {

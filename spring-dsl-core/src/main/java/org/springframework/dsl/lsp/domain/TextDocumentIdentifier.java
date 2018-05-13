@@ -15,6 +15,14 @@
  */
 package org.springframework.dsl.lsp.domain;
 
+import org.springframework.dsl.support.AbstractDomainBuilder;
+import org.springframework.dsl.support.DomainBuilder;
+
+/**
+ *
+ * @author Janne Valkealahti
+ *
+ */
 public class TextDocumentIdentifier {
 
 	private String uri;
@@ -57,5 +65,56 @@ public class TextDocumentIdentifier {
 		} else if (!uri.equals(other.uri))
 			return false;
 		return true;
+	}
+
+
+	/**
+	 * Builder interface for {@link TextDocumentIdentifier}.
+	 *
+	 * @param <P> the parent builder type
+	 */
+	public interface TextDocumentIdentifierBuilder<P> extends DomainBuilder<TextDocumentIdentifier, P>{
+
+		/**
+		 * Sets an uri.
+		 *
+		 * @param uri the uri
+		 * @return the builder for chaining
+		 */
+		TextDocumentIdentifierBuilder<P> uri(String uri);
+	}
+
+	/**
+	 * Gets a builder for {@link TextDocumentIdentifier}
+	 *
+	 * @return the text document identifier builder
+	 */
+	public static <P> TextDocumentIdentifierBuilder<P> textDocumentIdentifier() {
+		return new InternalTextDocumentIdentifierBuilder<>(null);
+	}
+
+	protected static <P> TextDocumentIdentifierBuilder<P> textDocumentIdentifier(P parent) {
+		return new InternalTextDocumentIdentifierBuilder<>(parent);
+	}
+
+	private static class InternalTextDocumentIdentifierBuilder<P>
+			extends AbstractDomainBuilder<TextDocumentIdentifier, P> implements TextDocumentIdentifierBuilder<P> {
+
+		private String uri;
+
+		InternalTextDocumentIdentifierBuilder(P parent) {
+			super(parent);
+		}
+
+		@Override
+		public TextDocumentIdentifierBuilder<P> uri(String uri) {
+			this.uri = uri;
+			return this;
+		}
+
+		@Override
+		public TextDocumentIdentifier build() {
+			return new TextDocumentIdentifier(uri);
+		}
 	}
 }

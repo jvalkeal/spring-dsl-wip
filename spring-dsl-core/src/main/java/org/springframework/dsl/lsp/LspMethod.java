@@ -30,20 +30,24 @@ public enum LspMethod {
 
 	INITIALIZED,
 
-	DIDOPEN,
+	TEXTDOCUMENT_DIDOPEN,
 
-	DIDCHANGE,
+	TEXTDOCUMENT_DIDCHANGE,
 
-	DIDSAVE,
+	TEXTDOCUMENT_DIDSAVE,
 
-	DIDCLOSE,
+	TEXTDOCUMENT_DIDCLOSE,
+
+	TEXTDOCUMENT_WILLSAVE,
+
+	TEXTDOCUMENT_WILLSAVEWAITUNTIL,
 
 	TEXTDOCUMENT_COMPLETION,
 
 	TEXTDOCUMENT_HOVER;
 
 	/** The Constant mappings. */
-	private static final Map<String, LspMethod> mappings = new HashMap<String, LspMethod>(4);
+	private static final Map<String, LspMethod> mappings = new HashMap<String, LspMethod>(10);
 
 	static {
 		for (LspMethod method : values()) {

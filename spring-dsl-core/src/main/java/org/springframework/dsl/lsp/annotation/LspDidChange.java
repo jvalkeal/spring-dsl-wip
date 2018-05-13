@@ -26,6 +26,6 @@ import org.springframework.dsl.lsp.LspMethod;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@LspRequestMapping(method = LspMethod.DIDCHANGE)
+@LspRequestMapping(method = LspMethod.TEXTDOCUMENT_DIDCHANGE)
 public @interface LspDidChange {
 }

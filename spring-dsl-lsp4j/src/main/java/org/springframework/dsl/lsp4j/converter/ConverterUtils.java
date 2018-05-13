@@ -52,6 +52,7 @@ import org.springframework.dsl.lsp.domain.TextDocumentSyncKind;
 import org.springframework.dsl.lsp.domain.TextDocumentSyncOptions;
 import org.springframework.dsl.lsp.domain.TextEdit;
 import org.springframework.dsl.lsp.domain.VersionedTextDocumentIdentifier;
+import org.springframework.dsl.lsp.domain.WillSaveTextDocumentParams;
 
 /**
  * Utilities to convert {@code POJO}s between {@code LSP4J} and
@@ -394,6 +395,8 @@ public final class ConverterUtils {
 			return null;
 		}
 		org.eclipse.lsp4j.DidSaveTextDocumentParams to = new org.eclipse.lsp4j.DidSaveTextDocumentParams();
+		to.setTextDocument(toTextDocumentIdentifier(from.getTextDocument()));
+		to.setText(from.getText());
 		return to;
 	}
 
@@ -410,6 +413,40 @@ public final class ConverterUtils {
 			return null;
 		}
 		DidSaveTextDocumentParams to = new DidSaveTextDocumentParams();
+		to.setTextDocument(toTextDocumentIdentifier(from.getTextDocument()));
+		to.setText(from.getText());
+		return to;
+	}
+
+	/**
+	 * Convert {@code Spring DSL} {@link WillSaveTextDocumentParams} to {@code LSP4J}
+	 * {@link org.eclipse.lsp4j.WillSaveTextDocumentParams}.
+	 *
+	 * @param from the {@code Spring DSL WillSaveTextDocumentParams}
+	 * @return {@code LSP4J WillSaveTextDocumentParams}
+	 */
+	public static org.eclipse.lsp4j.WillSaveTextDocumentParams toWillSaveTextDocumentParams(
+			WillSaveTextDocumentParams from) {
+		if (from == null) {
+			return null;
+		}
+		org.eclipse.lsp4j.WillSaveTextDocumentParams to = new org.eclipse.lsp4j.WillSaveTextDocumentParams();
+		return to;
+	}
+
+	/**
+	 * Convert {@code LSP4J} {@link org.eclipse.lsp4j.WillSaveTextDocumentParams} to {@code Spring DSL}
+	 * {@link WillSaveTextDocumentParams}.
+	 *
+	 * @param from the {@code LSP4J WillSaveTextDocumentParams}
+	 * @return {@code Spring DSL WillSaveTextDocumentParams}
+	 */
+	public static WillSaveTextDocumentParams toWillSaveTextDocumentParams(
+			org.eclipse.lsp4j.WillSaveTextDocumentParams from) {
+		if (from == null) {
+			return null;
+		}
+		WillSaveTextDocumentParams to = new WillSaveTextDocumentParams();
 		return to;
 	}
 

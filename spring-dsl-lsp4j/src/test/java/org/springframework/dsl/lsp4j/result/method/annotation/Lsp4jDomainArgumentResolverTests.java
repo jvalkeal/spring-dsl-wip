@@ -92,22 +92,22 @@ public class Lsp4jDomainArgumentResolverTests {
 		object = this.resolver.resolveArgument(paramInitializeParams, exchange).block();
 		assertThat(object).isInstanceOf(InitializeParams.class);
 
-		exchange = createExchange(LspMethod.DIDCHANGE,
+		exchange = createExchange(LspMethod.TEXTDOCUMENT_DIDCHANGE,
 				new org.eclipse.lsp4j.DidChangeTextDocumentParams());
 		object = this.resolver.resolveArgument(paramDidChangeTextDocumentParams, exchange).block();
 		assertThat(object).isInstanceOf(DidChangeTextDocumentParams.class);
 
-		exchange = createExchange(LspMethod.DIDCLOSE,
+		exchange = createExchange(LspMethod.TEXTDOCUMENT_DIDCLOSE,
 				new org.eclipse.lsp4j.DidCloseTextDocumentParams());
 		object = this.resolver.resolveArgument(paramDidCloseTextDocumentParams, exchange).block();
 		assertThat(object).isInstanceOf(DidCloseTextDocumentParams.class);
 
-		exchange = createExchange(LspMethod.DIDOPEN,
+		exchange = createExchange(LspMethod.TEXTDOCUMENT_DIDOPEN,
 				new org.eclipse.lsp4j.DidOpenTextDocumentParams());
 		object = this.resolver.resolveArgument(paramDidOpenTextDocumentParams, exchange).block();
 		assertThat(object).isInstanceOf(DidOpenTextDocumentParams.class);
 
-		exchange = createExchange(LspMethod.DIDSAVE,
+		exchange = createExchange(LspMethod.TEXTDOCUMENT_DIDSAVE,
 				new org.eclipse.lsp4j.DidSaveTextDocumentParams());
 		object = this.resolver.resolveArgument(paramDidSaveTextDocumentParams, exchange).block();
 		assertThat(object).isInstanceOf(DidSaveTextDocumentParams.class);

@@ -20,6 +20,7 @@ import org.springframework.dsl.lsp.domain.DidChangeTextDocumentParams;
 import org.springframework.dsl.lsp.domain.DidCloseTextDocumentParams;
 import org.springframework.dsl.lsp.domain.DidOpenTextDocumentParams;
 import org.springframework.dsl.lsp.domain.DidSaveTextDocumentParams;
+import org.springframework.dsl.lsp.domain.WillSaveTextDocumentParams;
 
 import reactor.core.publisher.Mono;
 
@@ -58,6 +59,14 @@ public interface DocumentStateTracker {
 	 * @return the {@link Mono} for completion
 	 */
 	Mono<Document> didChange(DidChangeTextDocumentParams params);
+
+	/**
+	 * Handle {@code LSP willSave} and return a {@link Mono} for completion.
+	 *
+	 * @param params the {@link WillSaveTextDocumentParams}
+	 * @return the {@link Mono} for completion
+	 */
+	Mono<Document> willSave(WillSaveTextDocumentParams params);
 
 	/**
 	 * Handle {@code LSP didSave} and return a {@link Mono} for completion.
