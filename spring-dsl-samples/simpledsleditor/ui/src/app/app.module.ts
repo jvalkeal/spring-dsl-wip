@@ -4,16 +4,8 @@ import { FormsModule } from '@angular/forms';
 
 import { AppComponent } from './app.component';
 import { Lsp4jComponent } from './lsp4j/lsp4j.component';
-import { MonacoEditorModule, NgxMonacoEditorConfig } from 'ngx-monaco-editor';
+import { MonacoEditorModule } from 'ngx-monaco-editor';
 
-const monacoConfig: NgxMonacoEditorConfig = {
-  // baseUrl: 'app-name/assets',
-  // defaultOptions: { scrollBeyondLastLine: false },
-  onMonacoLoad: () => {
-    console.log((<any>window).monaco);
-    (<any>window).monaco.languages.register({ id: 'simple' });
-  }
-};
 
 @NgModule({
   declarations: [
@@ -23,7 +15,7 @@ const monacoConfig: NgxMonacoEditorConfig = {
   imports: [
     BrowserModule,
     FormsModule,
-    MonacoEditorModule.forRoot(monacoConfig)
+    MonacoEditorModule.forRoot()
   ],
   providers: [],
   bootstrap: [AppComponent]
