@@ -62,6 +62,7 @@ public class DslConfigurationProperties {
 
 		private Integer port;
 		private LspServerSocketMode mode = LspServerSocketMode.PROCESS;
+		private boolean forceJvmExitOnShutdown;
 
 		public LspServerSocketMode getMode() {
 			return mode;
@@ -77,6 +78,14 @@ public class DslConfigurationProperties {
 
 		public void setPort(Integer port) {
 			this.port = port;
+		}
+
+		public boolean isForceJvmExitOnShutdown() {
+			return forceJvmExitOnShutdown;
+		}
+
+		public void setForceJvmExitOnShutdown(boolean forceJvmExitOnShutdown) {
+			this.forceJvmExitOnShutdown = forceJvmExitOnShutdown;
 		}
 	}
 

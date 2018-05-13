@@ -66,6 +66,7 @@ import org.springframework.dsl.lsp.server.ServerLspExchange;
 import org.springframework.dsl.lsp.server.support.DefaultServerCoapExchange;
 import org.springframework.dsl.lsp.server.support.GenericServerLspRequest;
 import org.springframework.dsl.lsp.server.support.GenericServerLspResponse;
+import org.springframework.dsl.lsp.server.support.LspExiter;
 import org.springframework.util.Assert;
 
 import reactor.core.publisher.Mono;
@@ -94,6 +95,8 @@ public class Lsp4jLanguageServerAdapter implements LanguageServer, LanguageClien
 	private final LspHandler lspHandler;
 	private final ConversionService conversionService;
 	private LanguageClient client;
+	private LspExiter lspExiter = LspExiter.NOOP_LSPEXITER;
+	private boolean forceJvmExitOnShutdown;
 
 	/**
 	 * Instantiates a new lsp4j language server adapter.
@@ -131,12 +134,20 @@ public class Lsp4jLanguageServerAdapter implements LanguageServer, LanguageClien
 	@Override
 	public CompletableFuture<Object> shutdown() {
 		log.trace("shutdown");
-		return CompletableFuture.completedFuture(null);
+		return CompletableFuture.supplyAsync(() -> {
+			if (forceJvmExitOnShutdown) {
+				// TODO: this is nasty, should find a better way
+				log.info("Forcing jvm exit");
+				lspExiter.exit(0);
+			}
+			return new Object();
+		});
 	}
 
 	@Override
 	public void exit() {
 		log.trace("exit");
+		lspExiter.exit(0);
 		// TODO: if we're in a process mode, this should exit jvm. If we're in embedded mode, like websocket
 		//       should not do anything.
 	}
@@ -284,6 +295,25 @@ public class Lsp4jLanguageServerAdapter implements LanguageServer, LanguageClien
 	public WorkspaceService getWorkspaceService() {
 		log.trace("getWorkspaceService");
 		return null;
+	}
+
+	/**
+	 * Sets the lsp exiter.
+	 *
+	 * @param lspExiter the new lsp exiter
+	 */
+	public void setLspExiter(LspExiter lspExiter) {
+		Assert.notNull(lspExiter, "lspExiter cannot be null");
+		this.lspExiter = lspExiter;
+	}
+
+	/**
+	 * Sets the force jvm exit on shutdown.
+	 *
+	 * @param forceJvmExitOnShutdown the new force jvm exit on shutdown
+	 */
+	public void setForceJvmExitOnShutdown(boolean forceJvmExitOnShutdown) {
+		this.forceJvmExitOnShutdown = forceJvmExitOnShutdown;
 	}
 
 	private static ServerLspExchange createExchange(LspMethod lspMethod, Object body) {

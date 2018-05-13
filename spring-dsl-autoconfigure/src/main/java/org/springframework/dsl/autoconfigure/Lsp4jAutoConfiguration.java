@@ -31,8 +31,10 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.dsl.DslSystemConstants;
 import org.springframework.dsl.lsp.server.LspHandler;
 import org.springframework.dsl.lsp.server.config.DslConfigurationProperties;
+import org.springframework.dsl.lsp.server.config.DslConfigurationProperties.LspServerSocketMode;
 import org.springframework.dsl.lsp.server.config.EnableLanguageServer;
 import org.springframework.dsl.lsp.server.controller.GenericLanguageServerController;
+import org.springframework.dsl.lsp.server.support.JvmLspExiter;
 import org.springframework.dsl.lsp.service.DefaultDocumentStateTracker;
 import org.springframework.dsl.lsp.service.DocumentStateTracker;
 import org.springframework.dsl.lsp.service.Reconciler;
@@ -83,7 +85,13 @@ public class Lsp4jAutoConfiguration {
 
 	@Bean
 	public Lsp4jLanguageServerAdapter languageServer(LspHandler lspHandler,
-			@Qualifier("lspConversionService") ConversionService conversionService) {
-		return new Lsp4jLanguageServerAdapter(lspHandler, conversionService);
+			@Qualifier("lspConversionService") ConversionService conversionService,
+			DslConfigurationProperties properties) {
+		Lsp4jLanguageServerAdapter adapter = new Lsp4jLanguageServerAdapter(lspHandler, conversionService);
+		if (properties.getLsp().getServer().getMode() != LspServerSocketMode.WEBSOCKET) {
+			adapter.setLspExiter(new JvmLspExiter());
+		}
+		adapter.setForceJvmExitOnShutdown(properties.getLsp().getServer().isForceJvmExitOnShutdown());
+		return adapter;
 	}
 }
