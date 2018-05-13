@@ -15,6 +15,9 @@
  */
 package org.springframework.dsl.lsp.domain;
 
+import org.springframework.dsl.support.AbstractDomainBuilder;
+import org.springframework.dsl.support.DomainBuilder;
+
 /**
  * Position in a text document expressed as zero-based line and character
  * offset. The offsets are based on a UTF-16 string representation. So a string
@@ -91,7 +94,7 @@ public class Position {
 	 *
 	 * @param <P> the parent builder type
 	 */
-	public interface PositionBuilder<P> {
+	public interface PositionBuilder<P> extends DomainBuilder<Position, P>{
 
 		/**
 		 * Sets a line.
@@ -108,20 +111,6 @@ public class Position {
 		 * @return the builder for chaining
 		 */
 		PositionBuilder<P> character(int character);
-
-		/**
-		 * Switches back to parent builder.
-		 *
-		 * @return the parent builder
-		 */
-		P and();
-
-		/**
-		 * Builds a configured {@link Position}.
-		 *
-		 * @return the build {@link Position}
-		 */
-		Position build();
 	}
 
 	/**
@@ -137,14 +126,13 @@ public class Position {
 		return new InternalPositionBuilder<>(parent);
 	}
 
-	private static class InternalPositionBuilder<P> implements PositionBuilder<P> {
+	private static class InternalPositionBuilder<P> extends AbstractDomainBuilder<Position, P> implements PositionBuilder<P>{
 
-		private final P parent;
 		private int line;
 		private int character;
 
 		InternalPositionBuilder(P parent) {
-			this.parent = parent;
+			super(parent);
 		}
 
 		@Override
@@ -157,11 +145,6 @@ public class Position {
 		public PositionBuilder<P> character(int character) {
 			this.character = character;
 			return this;
-		}
-
-		@Override
-		public P and() {
-			return parent;
 		}
 
 		@Override

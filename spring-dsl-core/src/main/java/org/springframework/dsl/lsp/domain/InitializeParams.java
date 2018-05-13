@@ -15,17 +15,56 @@
  */
 package org.springframework.dsl.lsp.domain;
 
+import org.springframework.dsl.lsp.domain.ClientCapabilities.ClientCapabilitiesBuilder;
+import org.springframework.dsl.support.AbstractDomainBuilder;
+import org.springframework.dsl.support.DomainBuilder;
+
 public class InitializeParams {
 
 	private Integer processId;
-
 	private String rootUri;
-
 	private Object initializationOptions;
-
 	private ClientCapabilities capabilities;
-
 	private String trace;
+
+	/**
+	 * Instantiates a new initialize params.
+	 */
+	public InitializeParams() {
+	}
+
+	/**
+	 * Instantiates a new initialize params.
+	 *
+	 * @param processId the process id
+	 * @param rootUri the root uri
+	 * @param initializationOptions the initialization options
+	 * @param trace the trace
+	 */
+	public InitializeParams(Integer processId, String rootUri, Object initializationOptions, String trace) {
+		this.processId = processId;
+		this.rootUri = rootUri;
+		this.initializationOptions = initializationOptions;
+		this.trace = trace;
+	}
+
+	/**
+	 * Instantiates a new initialize params.
+	 *
+	 * @param processId the process id
+	 * @param rootUri the root uri
+	 * @param initializationOptions the initialization options
+	 * @param capabilities the capabilities
+	 * @param trace the trace
+	 */
+	public InitializeParams(Integer processId, String rootUri, Object initializationOptions,
+			ClientCapabilities capabilities, String trace) {
+		this.processId = processId;
+		this.rootUri = rootUri;
+		this.initializationOptions = initializationOptions;
+		this.capabilities = capabilities;
+		this.trace = trace;
+	}
 
 	public Integer getProcessId() {
 		return processId;
@@ -114,5 +153,118 @@ public class InitializeParams {
 		} else if (!trace.equals(other.trace))
 			return false;
 		return true;
+	}
+
+	/**
+	 * Builder interface for {@link InitializeParams}.
+	 *
+	 * @param <P> the parent builder type
+	 */
+	public interface InitializeParamsBuilder<P> extends DomainBuilder<InitializeParams, P> {
+
+		/**
+		 * Sets a process id.
+		 *
+		 * @param processId the process id
+		 * @return the builder for chaining
+		 */
+		InitializeParamsBuilder<P> processId(Integer processId);
+
+		/**
+		 * Sets a root uri.
+		 *
+		 * @param rootUri the root uri
+		 * @return the builder for chaining
+		 */
+		InitializeParamsBuilder<P> rootUri(String rootUri);
+
+		/**
+		 * Sets a initialization options
+		 *
+		 * @param initializationOptions the initialization options
+		 * @return the builder for chaining
+		 */
+		InitializeParamsBuilder<P> initializationOptions(Object initializationOptions);
+
+		/**
+		 * Sets a trace.
+		 *
+		 * @param trace the trace
+		 * @return the builder for chaining
+		 */
+		InitializeParamsBuilder<P> trace(String trace);
+
+		/**
+		 * Gets a builder for capabilities.
+		 *
+		 * @return the builder for chaining
+		 */
+		ClientCapabilitiesBuilder<InitializeParamsBuilder<P>> capabilities();
+	}
+
+	/**
+	 * Gets a builder for {@link InitializeParams}.
+	 *
+	 * @return the initialize params builder
+	 */
+	public static <P> InitializeParamsBuilder<P> initializeParams() {
+		return new InternalInitializeParamsBuilder<>(null);
+	}
+
+	protected static <P> InitializeParamsBuilder<P> initializeParams(P parent) {
+		return new InternalInitializeParamsBuilder<>(parent);
+	}
+
+	private static class InternalInitializeParamsBuilder<P> extends AbstractDomainBuilder<InitializeParams, P>
+			implements InitializeParamsBuilder<P> {
+
+		private Integer processId;
+		private String rootUri;
+		private Object initializationOptions;
+		private ClientCapabilitiesBuilder<InitializeParamsBuilder<P>> capabilities;
+		private String trace;
+
+		InternalInitializeParamsBuilder(P parent) {
+			super(parent);
+		}
+
+		@Override
+		public InitializeParamsBuilder<P> processId(Integer processId) {
+			this.processId = processId;
+			return this;
+		}
+
+		@Override
+		public InitializeParamsBuilder<P> rootUri(String rootUri) {
+			this.rootUri = rootUri;
+			return this;
+		}
+
+		@Override
+		public InitializeParamsBuilder<P> initializationOptions(Object initializationOptions) {
+			this.initializationOptions = initializationOptions;
+			return this;
+		}
+
+		@Override
+		public InitializeParamsBuilder<P> trace(String trace) {
+			this.trace = trace;
+			return this;
+		}
+
+		@Override
+		public ClientCapabilitiesBuilder<InitializeParamsBuilder<P>> capabilities() {
+			this.capabilities = ClientCapabilities.clientCapabilities(this);
+			return capabilities;
+		}
+
+		@Override
+		public InitializeParams build() {
+			InitializeParams initializeParams = new InitializeParams(processId, rootUri, initializationOptions, trace);
+			if (capabilities != null) {
+				initializeParams.setCapabilities(capabilities.build());
+			}
+			return initializeParams;
+		}
 	}
 }

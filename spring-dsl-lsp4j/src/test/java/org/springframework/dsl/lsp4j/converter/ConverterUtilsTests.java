@@ -20,6 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.Arrays;
 
 import org.junit.Test;
+import org.springframework.dsl.lsp.domain.ClientCapabilities;
 import org.springframework.dsl.lsp.domain.Command;
 import org.springframework.dsl.lsp.domain.CompletionContext;
 import org.springframework.dsl.lsp.domain.CompletionItem;
@@ -56,67 +57,127 @@ import org.springframework.dsl.lsp.domain.VersionedTextDocumentIdentifier;
 public class ConverterUtilsTests {
 
 	@Test
-	public void testGenericConversionsUsingDefaultConstructors() {
-		// test back and forward conversion from spring dsl and lsp4j
-		// to both directions which should catch most common mistakes.
-
+	public void testInitializeParams() {
 		assertInitializeParams(new InitializeParams());
 		assertInitializeParams(new org.eclipse.lsp4j.InitializeParams());
+	}
 
+	@Test
+	public void testClientCapabilities() {
+		assertClientCapabilities(new ClientCapabilities());
+		assertClientCapabilities(new org.eclipse.lsp4j.ClientCapabilities());
+	}
+
+	@Test
+	public void testInitializedParams() {
 		assertInitializedParams(new InitializedParams());
 		assertInitializedParams(new org.eclipse.lsp4j.InitializedParams());
+	}
 
+	@Test
+	public void testInitializeResult() {
 		assertInitializeResult(new InitializeResult());
 		assertInitializeResult(new org.eclipse.lsp4j.InitializeResult());
+	}
 
+	@Test
+	public void testServerCapabilities() {
 		assertServerCapabilities(new ServerCapabilities());
 		assertServerCapabilities(new org.eclipse.lsp4j.ServerCapabilities());
+	}
 
+	@Test
+	public void testTextDocumentSyncOptions() {
 		assertTextDocumentSyncOptions(new TextDocumentSyncOptions());
 		assertTextDocumentSyncOptions(new org.eclipse.lsp4j.TextDocumentSyncOptions());
+	}
 
+	@Test
+	public void testDidChangeTextDocumentParams() {
 		assertDidChangeTextDocumentParams(new DidChangeTextDocumentParams());
 		assertDidChangeTextDocumentParams(new org.eclipse.lsp4j.DidChangeTextDocumentParams());
+	}
 
+	@Test
+	public void testDidCloseTextDocumentParams() {
 		assertDidCloseTextDocumentParams(new DidCloseTextDocumentParams());
 		assertDidCloseTextDocumentParams(new org.eclipse.lsp4j.DidCloseTextDocumentParams());
+	}
 
+	@Test
+	public void testTextDocumentItem() {
 		assertTextDocumentItem(new TextDocumentItem());
 		assertTextDocumentItem(new org.eclipse.lsp4j.TextDocumentItem());
+	}
 
+	@Test
+	public void testDidOpenTextDocumentParams() {
 		assertDidOpenTextDocumentParams(new DidOpenTextDocumentParams());
 		assertDidOpenTextDocumentParams(new org.eclipse.lsp4j.DidOpenTextDocumentParams());
+	}
 
+	@Test
+	public void testDidSaveTextDocumentParams() {
 		assertDidSaveTextDocumentParams(new DidSaveTextDocumentParams());
 		assertDidSaveTextDocumentParams(new org.eclipse.lsp4j.DidSaveTextDocumentParams());
+	}
 
+	@Test
+	public void testMarkupContent() {
 		assertMarkupContent(new MarkupContent());
 		assertMarkupContent(new org.eclipse.lsp4j.MarkupContent());
+	}
 
+	@Test
+	public void testCompletionContext() {
 		assertCompletionContext(new CompletionContext());
 		assertCompletionContext(new org.eclipse.lsp4j.CompletionContext());
+	}
 
+	@Test
+	public void testCompletionParams() {
 		assertCompletionParams(new CompletionParams());
 		assertCompletionParams(new org.eclipse.lsp4j.CompletionParams());
+	}
 
+	@Test
+	public void testTextDocumentIdentifier() {
 		assertTextDocumentIdentifier(new TextDocumentIdentifier());
 		assertTextDocumentIdentifier(new org.eclipse.lsp4j.TextDocumentIdentifier());
+	}
 
+	@Test
+	public void testVersionedTextDocumentIdentifier() {
 		assertVersionedTextDocumentIdentifier(new VersionedTextDocumentIdentifier());
 		assertVersionedTextDocumentIdentifier(new org.eclipse.lsp4j.VersionedTextDocumentIdentifier());
+	}
 
+	@Test
+	public void testTextDocumentPositionParams() {
 		assertTextDocumentPositionParams(new TextDocumentPositionParams());
 		assertTextDocumentPositionParams(new org.eclipse.lsp4j.TextDocumentPositionParams());
+	}
 
+	@Test
+	public void testCommand() {
 		assertCommand(new Command());
 		assertCommand(new org.eclipse.lsp4j.Command());
+	}
 
+	@Test
+	public void testCompletionOptions() {
 		assertCompletionOptions(new CompletionOptions());
 		assertCompletionOptions(new org.eclipse.lsp4j.CompletionOptions());
+	}
 
+	@Test
+	public void testPublishDiagnosticsParams() {
 		assertPublishDiagnosticsParams(new PublishDiagnosticsParams());
 		assertPublishDiagnosticsParams(new org.eclipse.lsp4j.PublishDiagnosticsParams());
+	}
 
+	@Test
+	public void testTextDocumentContentChangeEvent() {
 		assertTextDocumentContentChangeEvent(new TextDocumentContentChangeEvent());
 		assertTextDocumentContentChangeEvent(new org.eclipse.lsp4j.TextDocumentContentChangeEvent());
 	}
@@ -336,6 +397,14 @@ public class ConverterUtilsTests {
 
 	private static void assertInitializeParams(org.eclipse.lsp4j.InitializeParams from) {
 		assertObjects(from, ConverterUtils.toInitializeParams(ConverterUtils.toInitializeParams(from)));
+	}
+
+	private static void assertClientCapabilities(ClientCapabilities from) {
+		assertObjects(from, ConverterUtils.toClientCapabilities(ConverterUtils.toClientCapabilities(from)));
+	}
+
+	private static void assertClientCapabilities(org.eclipse.lsp4j.ClientCapabilities from) {
+		assertObjects(from, ConverterUtils.toClientCapabilities(ConverterUtils.toClientCapabilities(from)));
 	}
 
 	private static void assertInitializedParams(InitializedParams from) {

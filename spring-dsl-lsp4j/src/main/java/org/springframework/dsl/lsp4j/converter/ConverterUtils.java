@@ -18,6 +18,7 @@ package org.springframework.dsl.lsp4j.converter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.dsl.lsp.domain.ClientCapabilities;
 import org.springframework.dsl.lsp.domain.Command;
 import org.springframework.dsl.lsp.domain.CompletionContext;
 import org.springframework.dsl.lsp.domain.CompletionItem;
@@ -106,6 +107,32 @@ public final class ConverterUtils {
 	 */
 	public static InitializedParams toInitializedParams(org.eclipse.lsp4j.InitializedParams from) {
 		InitializedParams to = new InitializedParams();
+		return to;
+	}
+
+	/**
+	 * Convert {@code Spring DSL} {@link ClientCapabilities} to {@code LSP4J}
+	 * {@link org.eclipse.lsp4j.ClientCapabilities}.
+	 *
+	 * @param from the {@code Spring DSL ClientCapabilities}
+	 * @return {@code LSP4J ClientCapabilities}
+	 */
+	public static org.eclipse.lsp4j.ClientCapabilities toClientCapabilities(ClientCapabilities from) {
+		org.eclipse.lsp4j.ClientCapabilities to = new org.eclipse.lsp4j.ClientCapabilities();
+		to.setExperimental(from.getExperimental());
+		return to;
+	}
+
+	/**
+	 * Convert {@code Spring DSL} {@link ClientCapabilities} to {@code LSP4J}
+	 * {@link org.eclipse.lsp4j.ClientCapabilities}.
+	 *
+	 * @param from the {@code Spring DSL ClientCapabilities}
+	 * @return {@code LSP4J ClientCapabilities}
+	 */
+	public static ClientCapabilities toClientCapabilities(org.eclipse.lsp4j.ClientCapabilities from) {
+		ClientCapabilities to = new ClientCapabilities();
+		to.setExperimental(from.getExperimental());
 		return to;
 	}
 
