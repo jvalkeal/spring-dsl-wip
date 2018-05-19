@@ -94,6 +94,22 @@ public class ConverterUtilsTests {
 	}
 
 	@Test
+	public void testDidOpenTextDocumentParams() {
+		assertDidOpenTextDocumentParams(new DidOpenTextDocumentParams());
+		assertDidOpenTextDocumentParams(new org.eclipse.lsp4j.DidOpenTextDocumentParams());
+
+		DidOpenTextDocumentParams from1 = DidOpenTextDocumentParams.didOpenTextDocumentParams()
+				.textDocument()
+					.uri("uri")
+					.languageId("language")
+					.version(1)
+					.text("text")
+					.and()
+				.build();
+		assertDidOpenTextDocumentParams(from1);
+	}
+
+	@Test
 	public void testDidChangeTextDocumentParams() {
 		assertDidChangeTextDocumentParams(new DidChangeTextDocumentParams());
 		assertDidChangeTextDocumentParams(new org.eclipse.lsp4j.DidChangeTextDocumentParams());
@@ -146,12 +162,14 @@ public class ConverterUtilsTests {
 	public void testTextDocumentItem() {
 		assertTextDocumentItem(new TextDocumentItem());
 		assertTextDocumentItem(new org.eclipse.lsp4j.TextDocumentItem());
-	}
 
-	@Test
-	public void testDidOpenTextDocumentParams() {
-		assertDidOpenTextDocumentParams(new DidOpenTextDocumentParams());
-		assertDidOpenTextDocumentParams(new org.eclipse.lsp4j.DidOpenTextDocumentParams());
+		TextDocumentItem from1 = TextDocumentItem.textDocumentItem()
+				.uri("uri")
+				.languageId("language")
+				.version(1)
+				.text("text")
+				.build();
+		assertTextDocumentItem(from1);
 	}
 
 	@Test

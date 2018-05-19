@@ -15,6 +15,16 @@
  */
 package org.springframework.dsl.lsp.domain;
 
+import org.springframework.dsl.lsp.domain.TextDocumentItem.TextDocumentItemBuilder;
+import org.springframework.dsl.support.AbstractDomainBuilder;
+import org.springframework.dsl.support.DomainBuilder;
+
+/**
+ *
+ *
+ * @author Janne Valkealahti
+ *
+ */
 public class DidOpenTextDocumentParams {
 
 	private TextDocumentItem textDocument;
@@ -57,5 +67,58 @@ public class DidOpenTextDocumentParams {
 		} else if (!textDocument.equals(other.textDocument))
 			return false;
 		return true;
+	}
+
+	/**
+	 * Builder interface for {@link DidOpenTextDocumentParams}.
+	 *
+	 * @param <P> the parent builder type
+	 */
+	public interface DidOpenTextDocumentParamsBuilder<P> extends DomainBuilder<DidOpenTextDocumentParams, P> {
+
+		/**
+		 * Gets a builder for {@link TextDocumentItemBuilder}.
+		 *
+		 * @return the text document identifier builder
+		 */
+		TextDocumentItemBuilder<DidOpenTextDocumentParamsBuilder<P>> textDocument();
+	}
+
+	/**
+	 * Gets a builder for {@link DidOpenTextDocumentParams}
+	 *
+	 * @return the range builder
+	 */
+	public static <P> DidOpenTextDocumentParamsBuilder<P> didOpenTextDocumentParams() {
+		return new InternalDidOpenTextDocumentParamsBuilder<>(null);
+	}
+
+	protected static <P> DidOpenTextDocumentParamsBuilder<P> didOpenTextDocumentParams(P parent) {
+		return new InternalDidOpenTextDocumentParamsBuilder<>(parent);
+	}
+
+	private static class InternalDidOpenTextDocumentParamsBuilder<P>
+			extends AbstractDomainBuilder<DidOpenTextDocumentParams, P> implements DidOpenTextDocumentParamsBuilder<P> {
+
+		private TextDocumentItemBuilder<DidOpenTextDocumentParamsBuilder<P>> textDocument;
+
+		public InternalDidOpenTextDocumentParamsBuilder(P parent) {
+			super(parent);
+		}
+
+		@Override
+		public TextDocumentItemBuilder<DidOpenTextDocumentParamsBuilder<P>> textDocument() {
+			this.textDocument = TextDocumentItem.textDocumentItem(this);
+			return textDocument;
+		}
+
+		@Override
+		public DidOpenTextDocumentParams build() {
+			DidOpenTextDocumentParams params = new DidOpenTextDocumentParams();
+			if (textDocument != null) {
+				params.setTextDocument(textDocument.build());
+			}
+			return params;
+		}
 	}
 }

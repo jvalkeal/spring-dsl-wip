@@ -15,6 +15,15 @@
  */
 package org.springframework.dsl.lsp.domain;
 
+import org.springframework.dsl.support.AbstractDomainBuilder;
+import org.springframework.dsl.support.DomainBuilder;
+
+/**
+ *
+ *
+ * @author Janne Valkealahti
+ *
+ */
 public class TextDocumentItem {
 
 	private String uri;
@@ -22,9 +31,20 @@ public class TextDocumentItem {
 	private int version;
 	private String text;
 
+	/**
+	 * Instantiates a new text document item.
+	 */
 	public TextDocumentItem() {
 	}
 
+	/**
+	 * Instantiates a new text document item.
+	 *
+	 * @param uri the uri
+	 * @param languageId the language id
+	 * @param version the version
+	 * @param text the text
+	 */
 	public TextDocumentItem(String uri, String languageId, int version, String text) {
 		super();
 		this.uri = uri;
@@ -103,5 +123,100 @@ public class TextDocumentItem {
 		if (version != other.version)
 			return false;
 		return true;
+	}
+
+
+	/**
+	 * Builder interface for {@link TextDocumentItem}.
+	 *
+	 * @param <P> the parent builder type
+	 */
+	public interface TextDocumentItemBuilder<P> extends DomainBuilder<TextDocumentItem, P>{
+
+		/**
+		 * Sets an uri.
+		 *
+		 * @param uri the uri
+		 * @return the builder for chaining
+		 */
+		TextDocumentItemBuilder<P> uri(String uri);
+
+		/**
+		 * Sets a languageId.
+		 *
+		 * @param languageId the languageId
+		 * @return the builder for chaining
+		 */
+		TextDocumentItemBuilder<P> languageId(String languageId);
+
+		/**
+		 * Sets a version.
+		 *
+		 * @param version the version
+		 * @return the builder for chaining
+		 */
+		TextDocumentItemBuilder<P> version(int version);
+
+		/**
+		 * Sets a text.
+		 *
+		 * @param text the text
+		 * @return the builder for chaining
+		 */
+		TextDocumentItemBuilder<P> text(String text);
+	}
+
+	/**
+	 * Gets a builder for {@link TextDocumentItem}
+	 *
+	 * @return the text document item builder
+	 */
+	public static <P> TextDocumentItemBuilder<P> textDocumentItem() {
+		return new InternalTextDocumentItemBuilder<>(null);
+	}
+
+	protected static <P> TextDocumentItemBuilder<P> textDocumentItem(P parent) {
+		return new InternalTextDocumentItemBuilder<>(parent);
+	}
+
+	private static class InternalTextDocumentItemBuilder<P> extends AbstractDomainBuilder<TextDocumentItem, P> implements TextDocumentItemBuilder<P>{
+
+		private String uri;
+		private String languageId;
+		private int version;
+		private String text;
+
+		InternalTextDocumentItemBuilder(P parent) {
+			super(parent);
+		}
+
+		@Override
+		public TextDocumentItemBuilder<P> uri(String uri) {
+			this.uri = uri;
+			return this;
+		}
+
+		@Override
+		public TextDocumentItemBuilder<P> languageId(String languageId) {
+			this.languageId = languageId;
+			return this;
+		}
+
+		@Override
+		public TextDocumentItemBuilder<P> version(int version) {
+			this.version = version;
+			return this;
+		}
+
+		@Override
+		public TextDocumentItemBuilder<P> text(String text) {
+			this.text = text;
+			return this;
+		}
+
+		@Override
+		public TextDocumentItem build() {
+			return new TextDocumentItem(uri, languageId, version, text);
+		}
 	}
 }
