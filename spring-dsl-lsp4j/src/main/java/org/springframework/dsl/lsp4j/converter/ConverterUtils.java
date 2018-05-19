@@ -137,6 +137,13 @@ public final class ConverterUtils {
 		return to;
 	}
 
+	/**
+	 * Convert {@code Spring DSL} {@link InitializeResult} to {@code LSP4J}
+	 * {@link org.eclipse.lsp4j.InitializeResult}.
+	 *
+	 * @param from the {@code Spring DSL InitializeResult}
+	 * @return {@code LSP4J InitializeResult}
+	 */
 	public static InitializeResult toInitializeResult(org.eclipse.lsp4j.InitializeResult from) {
 		InitializeResult to = new InitializeResult();
 		if (from.getCapabilities() != null) {
@@ -145,6 +152,13 @@ public final class ConverterUtils {
 		return to;
 	}
 
+	/**
+	 * Convert {@code Spring DSL} {@link InitializeResult} to {@code LSP4J}
+	 * {@link org.eclipse.lsp4j.InitializeResult}.
+	 *
+	 * @param from the {@code Spring DSL InitializeResult}
+	 * @return {@code LSP4J InitializeResult}
+	 */
 	public static org.eclipse.lsp4j.InitializeResult toInitializeResult(InitializeResult from) {
 		org.eclipse.lsp4j.InitializeResult to = new org.eclipse.lsp4j.InitializeResult();
 		if (from.getCapabilities() != null) {
@@ -153,13 +167,13 @@ public final class ConverterUtils {
 		return to;
 	}
 
-	public static ServerCapabilities toServerCapabilities(org.eclipse.lsp4j.ServerCapabilities from) {
-		ServerCapabilities to = new ServerCapabilities();
-		to.setHoverProvider(from.getHoverProvider());
-		to.setCompletionProvider(toCompletionOptions(from.getCompletionProvider()));
-		return to;
-	}
-
+	/**
+	 * Convert {@code Spring DSL} {@link ServerCapabilities} to {@code LSP4J}
+	 * {@link org.eclipse.lsp4j.ServerCapabilities}.
+	 *
+	 * @param from the {@code Spring DSL ServerCapabilities}
+	 * @return {@code LSP4J ServerCapabilities}
+	 */
 	public static org.eclipse.lsp4j.ServerCapabilities toServerCapabilities(ServerCapabilities from) {
 		org.eclipse.lsp4j.ServerCapabilities to = new org.eclipse.lsp4j.ServerCapabilities();
 		to.setHoverProvider(from.getHoverProvider());
@@ -172,28 +186,70 @@ public final class ConverterUtils {
 		return to;
 	}
 
-	public static TextDocumentSyncOptions toTextDocumentSyncOptions(org.eclipse.lsp4j.TextDocumentSyncOptions from) {
-		TextDocumentSyncOptions to = new TextDocumentSyncOptions();
+	/**
+	 * Convert {@code Spring DSL} {@link ServerCapabilities} to {@code LSP4J}
+	 * {@link org.eclipse.lsp4j.ServerCapabilities}.
+	 *
+	 * @param from the {@code Spring DSL ServerCapabilities}
+	 * @return {@code LSP4J ServerCapabilities}
+	 */
+	public static ServerCapabilities toServerCapabilities(org.eclipse.lsp4j.ServerCapabilities from) {
+		ServerCapabilities to = new ServerCapabilities();
+		to.setHoverProvider(from.getHoverProvider());
+		to.setCompletionProvider(toCompletionOptions(from.getCompletionProvider()));
 		return to;
 	}
 
+	/**
+	 * Convert {@code Spring DSL} {@link TextDocumentSyncOptions} to {@code LSP4J}
+	 * {@link org.eclipse.lsp4j.TextDocumentSyncOptions}.
+	 *
+	 * @param from the {@code Spring DSL TextDocumentSyncOptions}
+	 * @return {@code LSP4J TextDocumentSyncOptions}
+	 */
 	public static org.eclipse.lsp4j.TextDocumentSyncOptions toTextDocumentSyncOptions(TextDocumentSyncOptions from) {
 		org.eclipse.lsp4j.TextDocumentSyncOptions to = new org.eclipse.lsp4j.TextDocumentSyncOptions();
 		return to;
 	}
 
-	public static TextDocumentSyncKind toTextDocumentSyncKind(org.eclipse.lsp4j.TextDocumentSyncKind from) {
-		if (from == null) {
-			return null;
-		}
-		return TextDocumentSyncKind.valueOf(from.name());
+	/**
+	 * Convert {@code Spring DSL} {@link TextDocumentSyncOptions} to {@code LSP4J}
+	 * {@link org.eclipse.lsp4j.TextDocumentSyncOptions}.
+	 *
+	 * @param from the {@code Spring DSL TextDocumentSyncOptions}
+	 * @return {@code LSP4J TextDocumentSyncOptions}
+	 */
+	public static TextDocumentSyncOptions toTextDocumentSyncOptions(org.eclipse.lsp4j.TextDocumentSyncOptions from) {
+		TextDocumentSyncOptions to = new TextDocumentSyncOptions();
+		return to;
 	}
 
+	/**
+	 * Convert {@code Spring DSL} {@link TextDocumentSyncKind} to {@code LSP4J}
+	 * {@link org.eclipse.lsp4j.TextDocumentSyncKind}.
+	 *
+	 * @param from the {@code Spring DSL TextDocumentSyncKind}
+	 * @return {@code LSP4J TextDocumentSyncKind}
+	 */
 	public static org.eclipse.lsp4j.TextDocumentSyncKind toTextDocumentSyncKind(TextDocumentSyncKind from) {
 		if (from == null) {
 			return null;
 		}
 		return org.eclipse.lsp4j.TextDocumentSyncKind.valueOf(from.name());
+	}
+
+	/**
+	 * Convert {@code Spring DSL} {@link TextDocumentSyncKind} to {@code LSP4J}
+	 * {@link org.eclipse.lsp4j.TextDocumentSyncKind}.
+	 *
+	 * @param from the {@code Spring DSL TextDocumentSyncKind}
+	 * @return {@code LSP4J TextDocumentSyncKind}
+	 */
+	public static TextDocumentSyncKind toTextDocumentSyncKind(org.eclipse.lsp4j.TextDocumentSyncKind from) {
+		if (from == null) {
+			return null;
+		}
+		return TextDocumentSyncKind.valueOf(from.name());
 	}
 
 	/**
