@@ -61,6 +61,17 @@ public class ConverterUtilsTests {
 	public void testInitializeParams() {
 		assertInitializeParams(new InitializeParams());
 		assertInitializeParams(new org.eclipse.lsp4j.InitializeParams());
+
+		InitializeParams from1 = InitializeParams.initializeParams()
+				.processId(1)
+				.rootUri("rootUri")
+				.initializationOptions("hi")
+				.capabilities()
+					.experimental("hi")
+					.and()
+				.trace("trace")
+				.build();
+		assertInitializeParams(from1);
 	}
 
 	@Test

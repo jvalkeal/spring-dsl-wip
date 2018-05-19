@@ -84,7 +84,7 @@ public class ClientCapabilities {
 		 * @param experimental the experimental
 		 * @return the builder for chaining
 		 */
-		ClientCapabilitiesBuilder<P> line(Object experimental);
+		ClientCapabilitiesBuilder<P> experimental(Object experimental);
 	}
 
 	/**
@@ -110,7 +110,7 @@ public class ClientCapabilities {
 		}
 
 		@Override
-		public ClientCapabilitiesBuilder<P> line(Object experimental) {
+		public ClientCapabilitiesBuilder<P> experimental(Object experimental) {
 			this.experimental = experimental;
 			return this;
 		}

@@ -72,6 +72,11 @@ public final class ConverterUtils {
 	 */
 	public static org.eclipse.lsp4j.InitializeParams toInitializeParams(InitializeParams from) {
 		org.eclipse.lsp4j.InitializeParams to = new org.eclipse.lsp4j.InitializeParams();
+		to.setProcessId(from.getProcessId());
+		to.setRootUri(from.getRootUri());
+		to.setInitializationOptions(from.getInitializationOptions());
+		to.setCapabilities(toClientCapabilities(from.getCapabilities()));
+		to.setTrace(from.getTrace());
 		return to;
 	}
 
@@ -84,6 +89,11 @@ public final class ConverterUtils {
 	 */
 	public static InitializeParams toInitializeParams(org.eclipse.lsp4j.InitializeParams from) {
 		InitializeParams to = new InitializeParams();
+		to.setProcessId(from.getProcessId());
+		to.setRootUri(from.getRootUri());
+		to.setInitializationOptions(from.getInitializationOptions());
+		to.setCapabilities(toClientCapabilities(from.getCapabilities()));
+		to.setTrace(from.getTrace());
 		return to;
 	}
 
@@ -119,8 +129,13 @@ public final class ConverterUtils {
 	 * @return {@code LSP4J ClientCapabilities}
 	 */
 	public static org.eclipse.lsp4j.ClientCapabilities toClientCapabilities(ClientCapabilities from) {
+		if (from == null) {
+			return null;
+		}
 		org.eclipse.lsp4j.ClientCapabilities to = new org.eclipse.lsp4j.ClientCapabilities();
-		to.setExperimental(from.getExperimental());
+		if (from.getExperimental() != null) {
+			to.setExperimental(from.getExperimental());
+		}
 		return to;
 	}
 
@@ -132,8 +147,13 @@ public final class ConverterUtils {
 	 * @return {@code LSP4J ClientCapabilities}
 	 */
 	public static ClientCapabilities toClientCapabilities(org.eclipse.lsp4j.ClientCapabilities from) {
+		if (from == null) {
+			return null;
+		}
 		ClientCapabilities to = new ClientCapabilities();
-		to.setExperimental(from.getExperimental());
+		if (from.getExperimental() != null) {
+			to.setExperimental(from.getExperimental());
+		}
 		return to;
 	}
 
