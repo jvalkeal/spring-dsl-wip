@@ -97,6 +97,43 @@ public class ConverterUtilsTests {
 	public void testDidChangeTextDocumentParams() {
 		assertDidChangeTextDocumentParams(new DidChangeTextDocumentParams());
 		assertDidChangeTextDocumentParams(new org.eclipse.lsp4j.DidChangeTextDocumentParams());
+
+		DidChangeTextDocumentParams from1 = DidChangeTextDocumentParams.didChangeTextDocumentParams()
+				.textDocument()
+					.uri("uri")
+					.version(1)
+					.and()
+				.contentChanges()
+					.text("text1")
+					.rangeLength(1)
+					.range()
+						.start()
+							.line(1)
+							.character(1)
+							.and()
+						.end()
+							.line(2)
+							.character(2)
+							.and()
+						.and()
+					.and()
+				.contentChanges()
+					.text("text2")
+					.rangeLength(2)
+					.range()
+						.start()
+							.line(3)
+							.character(3)
+							.and()
+						.end()
+							.line(4)
+							.character(4)
+							.and()
+						.and()
+					.and()
+				.build();
+		assertThat(from1.getContentChanges().size()).isEqualTo(2);
+		assertDidChangeTextDocumentParams(from1);
 	}
 
 	@Test
@@ -164,12 +201,23 @@ public class ConverterUtilsTests {
 	public void testTextDocumentIdentifier() {
 		assertTextDocumentIdentifier(new TextDocumentIdentifier());
 		assertTextDocumentIdentifier(new org.eclipse.lsp4j.TextDocumentIdentifier());
+
+		TextDocumentIdentifier from1 = TextDocumentIdentifier.textDocumentIdentifier()
+				.uri("uri")
+				.build();
+		assertTextDocumentIdentifier(from1);
 	}
 
 	@Test
 	public void testVersionedTextDocumentIdentifier() {
 		assertVersionedTextDocumentIdentifier(new VersionedTextDocumentIdentifier());
 		assertVersionedTextDocumentIdentifier(new org.eclipse.lsp4j.VersionedTextDocumentIdentifier());
+
+		VersionedTextDocumentIdentifier from1 = VersionedTextDocumentIdentifier.versionedTextDocumentIdentifier()
+				.version(1)
+				.uri("uri")
+				.build();
+		assertVersionedTextDocumentIdentifier(from1);
 	}
 
 	@Test
@@ -200,6 +248,22 @@ public class ConverterUtilsTests {
 	public void testTextDocumentContentChangeEvent() {
 		assertTextDocumentContentChangeEvent(new TextDocumentContentChangeEvent());
 		assertTextDocumentContentChangeEvent(new org.eclipse.lsp4j.TextDocumentContentChangeEvent());
+
+		TextDocumentContentChangeEvent from1 = TextDocumentContentChangeEvent.textDocumentContentChangeEvent()
+				.text("text")
+				.rangeLength(1)
+				.range()
+					.start()
+						.line(1)
+						.character(1)
+						.and()
+					.end()
+						.line(2)
+						.character(2)
+						.and()
+					.and()
+				.build();
+		assertTextDocumentContentChangeEvent(from1);
 	}
 
 	@Test

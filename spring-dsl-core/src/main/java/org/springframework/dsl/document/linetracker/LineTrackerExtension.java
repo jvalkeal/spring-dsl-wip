@@ -32,7 +32,7 @@ public interface LineTrackerExtension {
 	 * @throws IllegalStateException in case there is already an active rewrite
 	 *             session
 	 */
-	void startRewriteSession(DocumentRewriteSession session) throws IllegalStateException;
+//	void startRewriteSession(DocumentRewriteSession session) throws IllegalStateException;
 
 	/**
 	 * Tells the line tracker that the rewrite session has finished. This method
@@ -43,5 +43,5 @@ public interface LineTrackerExtension {
 	 * @param session the rewrite session
 	 * @param text the text with which to re-initialize the line tracker
 	 */
-	void stopRewriteSession(DocumentRewriteSession session, String text);
+//	void stopRewriteSession(DocumentRewriteSession session, String text);
 }

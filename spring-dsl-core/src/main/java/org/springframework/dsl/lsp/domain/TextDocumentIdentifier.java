@@ -27,9 +27,17 @@ public class TextDocumentIdentifier {
 
 	private String uri;
 
+	/**
+	 * Instantiates a new text document identifier.
+	 */
 	public TextDocumentIdentifier() {
 	}
 
+	/**
+	 * Instantiates a new text document identifier.
+	 *
+	 * @param uri the uri
+	 */
 	public TextDocumentIdentifier(String uri) {
 		this.uri = uri;
 	}
@@ -73,7 +81,7 @@ public class TextDocumentIdentifier {
 	 *
 	 * @param <P> the parent builder type
 	 */
-	public interface TextDocumentIdentifierBuilder<P> extends DomainBuilder<TextDocumentIdentifier, P>{
+	public interface TextDocumentIdentifierBuilder<P> extends DomainBuilder<TextDocumentIdentifier, P> {
 
 		/**
 		 * Sets an uri.

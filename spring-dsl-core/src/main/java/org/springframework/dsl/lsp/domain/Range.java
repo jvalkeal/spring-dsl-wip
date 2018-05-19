@@ -16,6 +16,8 @@
 package org.springframework.dsl.lsp.domain;
 
 import org.springframework.dsl.lsp.domain.Position.PositionBuilder;
+import org.springframework.dsl.support.AbstractDomainBuilder;
+import org.springframework.dsl.support.DomainBuilder;
 
 /**
  * A range in a text document expressed as (zero-based) start and end positions.
@@ -105,13 +107,33 @@ public class Range {
 		return true;
 	}
 
-	public interface RangeBuilder<P> {
+	/**
+	 * Builder interface for {@link Range}.
+	 *
+	 * @param <P> the parent builder type
+	 */
+	public interface RangeBuilder<P> extends DomainBuilder<Range, P> {
+
+		/**
+		 * Gets a builder for start {@link Position}.
+		 *
+		 * @return the position builder
+		 */
 		PositionBuilder<RangeBuilder<P>> start();
+
+		/**
+		 * Gets a builder for end {@link Position}.
+		 *
+		 * @return the position builder
+		 */
 		PositionBuilder<RangeBuilder<P>> end();
-		P and();
-		Range build();
 	}
 
+	/**
+	 * Gets a builder for {@link Range}
+	 *
+	 * @return the range builder
+	 */
 	public static <P> RangeBuilder<P> range() {
 		return new InternalRangeBuilder<>(null);
 	}
@@ -120,14 +142,14 @@ public class Range {
 		return new InternalRangeBuilder<>(parent);
 	}
 
-	private static class InternalRangeBuilder<P> implements RangeBuilder<P> {
+	private static class InternalRangeBuilder<P>
+			extends AbstractDomainBuilder<Range, P> implements RangeBuilder<P> {
 
-		final P parent;
 		PositionBuilder<RangeBuilder<P>> start;
 		PositionBuilder<RangeBuilder<P>> end;
 
 		InternalRangeBuilder(P parent) {
-			this.parent = parent;
+			super(parent);
 		}
 
 		@Override
@@ -143,13 +165,15 @@ public class Range {
 		}
 
 		@Override
-		public P and() {
-			return parent;
-		}
-
-		@Override
 		public Range build() {
-			return new Range(start.build(), end.build());
+			Range range = new Range();
+			if (start != null) {
+				range.setStart(start.build());
+			}
+			if (end != null) {
+				range.setEnd(end.build());
+			}
+			return range;
 		}
 	}
 }

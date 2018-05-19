@@ -37,7 +37,7 @@ import org.springframework.dsl.document.BadLocationException;
  * This class must be subclassed.
  * </p>
  */
-public abstract class AbstractLineTracker implements LineTracker, LineTrackerExtension {
+public abstract class AbstractLineTracker implements LineTracker/*, LineTrackerExtension*/ {
 
 	/**
 	 * Tells whether this class is in debug mode.
@@ -118,7 +118,7 @@ public abstract class AbstractLineTracker implements LineTracker, LineTrackerExt
 	 *
 	 * @since 3.1
 	 */
-	private DocumentRewriteSession fActiveRewriteSession;
+//	private DocumentRewriteSession fActiveRewriteSession;
 
 	/**
 	 * The list of pending requests.
@@ -166,7 +166,7 @@ public abstract class AbstractLineTracker implements LineTracker, LineTrackerExt
 	 */
 	@Override
 	public String getLineDelimiter(int line) throws BadLocationException {
-		checkRewriteSession();
+//		checkRewriteSession();
 		return fDelegate.getLineDelimiter(line);
 	}
 
@@ -175,7 +175,7 @@ public abstract class AbstractLineTracker implements LineTracker, LineTrackerExt
 	 */
 	@Override
 	public Region getLineInformation(int line) {
-		checkRewriteSession();
+//		checkRewriteSession();
 		return fDelegate.getLineInformation(line);
 	}
 
@@ -184,7 +184,7 @@ public abstract class AbstractLineTracker implements LineTracker, LineTrackerExt
 	 */
 	@Override
 	public Region getLineInformationOfOffset(int offset) throws BadLocationException {
-		checkRewriteSession();
+//		checkRewriteSession();
 		return fDelegate.getLineInformationOfOffset(offset);
 	}
 
@@ -193,7 +193,7 @@ public abstract class AbstractLineTracker implements LineTracker, LineTrackerExt
 	 */
 	@Override
 	public int getLineLength(int line) throws BadLocationException {
-		checkRewriteSession();
+//		checkRewriteSession();
 		return fDelegate.getLineLength(line);
 	}
 
@@ -202,7 +202,7 @@ public abstract class AbstractLineTracker implements LineTracker, LineTrackerExt
 	 */
 	@Override
 	public int getLineNumberOfOffset(int offset) throws BadLocationException {
-		checkRewriteSession();
+//		checkRewriteSession();
 		return fDelegate.getLineNumberOfOffset(offset);
 	}
 
@@ -211,7 +211,7 @@ public abstract class AbstractLineTracker implements LineTracker, LineTrackerExt
 	 */
 	@Override
 	public int getLineOffset(int line) throws BadLocationException {
-		checkRewriteSession();
+//		checkRewriteSession();
 		return fDelegate.getLineOffset(line);
 	}
 
@@ -220,11 +220,11 @@ public abstract class AbstractLineTracker implements LineTracker, LineTrackerExt
 	 */
 	@Override
 	public int getNumberOfLines() {
-		try {
-			checkRewriteSession();
-		} catch (BadLocationException x) {
-			// TODO there is currently no way to communicate that exception back to the document
-		}
+//		try {
+//			checkRewriteSession();
+//		} catch (BadLocationException x) {
+//			// TODO there is currently no way to communicate that exception back to the document
+//		}
 		return fDelegate.getNumberOfLines();
 	}
 
@@ -233,7 +233,7 @@ public abstract class AbstractLineTracker implements LineTracker, LineTrackerExt
 	 */
 	@Override
 	public int getNumberOfLines(int offset, int length) throws BadLocationException {
-		checkRewriteSession();
+//		checkRewriteSession();
 		return fDelegate.getNumberOfLines(offset, length);
 	}
 
@@ -242,11 +242,11 @@ public abstract class AbstractLineTracker implements LineTracker, LineTrackerExt
 	 */
 	@Override
 	public void set(String text) {
-		if (hasActiveRewriteSession()) {
-			fPendingRequests.clear();
-			fPendingRequests.add(new Request(text));
-			return;
-		}
+//		if (hasActiveRewriteSession()) {
+//			fPendingRequests.clear();
+//			fPendingRequests.add(new Request(text));
+//			return;
+//		}
 
 		fDelegate.set(text);
 	}
@@ -256,10 +256,10 @@ public abstract class AbstractLineTracker implements LineTracker, LineTrackerExt
 	 */
 	@Override
 	public void replace(int offset, int length, String text) throws BadLocationException {
-		if (hasActiveRewriteSession()) {
-			fPendingRequests.add(new Request(offset, length, text));
-			return;
-		}
+//		if (hasActiveRewriteSession()) {
+//			fPendingRequests.add(new Request(offset, length, text));
+//			return;
+//		}
 
 		checkImplementation();
 
@@ -301,25 +301,25 @@ public abstract class AbstractLineTracker implements LineTracker, LineTrackerExt
 	/* (non-Javadoc)
 	 * @see org.springframework.dsl.document.linetracker.LineTrackerExtension#startRewriteSession(org.springframework.dsl.document.linetracker.DocumentRewriteSession)
 	 */
-	@Override
-	public final void startRewriteSession(DocumentRewriteSession session) {
-		if (fActiveRewriteSession != null)
-			throw new IllegalStateException();
-		fActiveRewriteSession= session;
-		fPendingRequests= new ArrayList<>(20);
-	}
+//	@Override
+//	public final void startRewriteSession(DocumentRewriteSession session) {
+//		if (fActiveRewriteSession != null)
+//			throw new IllegalStateException();
+//		fActiveRewriteSession= session;
+//		fPendingRequests= new ArrayList<>(20);
+//	}
 
 	/* (non-Javadoc)
 	 * @see org.springframework.dsl.document.linetracker.LineTrackerExtension#stopRewriteSession(org.springframework.dsl.document.linetracker.DocumentRewriteSession, java.lang.String)
 	 */
-	@Override
-	public final void stopRewriteSession(DocumentRewriteSession session, String text) {
-		if (fActiveRewriteSession == session) {
-			fActiveRewriteSession= null;
-			fPendingRequests= null;
-			set(text);
-		}
-	}
+//	@Override
+//	public final void stopRewriteSession(DocumentRewriteSession session, String text) {
+//		if (fActiveRewriteSession == session) {
+//			fActiveRewriteSession= null;
+//			fPendingRequests= null;
+//			set(text);
+//		}
+//	}
 
 	/**
 	 * Tells whether there's an active rewrite session.
@@ -328,9 +328,9 @@ public abstract class AbstractLineTracker implements LineTracker, LineTrackerExt
 	 *         otherwise
 	 * @since 3.1
 	 */
-	protected final boolean hasActiveRewriteSession() {
-		return fActiveRewriteSession != null;
-	}
+//	protected final boolean hasActiveRewriteSession() {
+//		return fActiveRewriteSession != null;
+//	}
 
 	/**
 	 * Flushes the active rewrite session.
@@ -338,23 +338,23 @@ public abstract class AbstractLineTracker implements LineTracker, LineTrackerExt
 	 * @throws BadLocationException in case the recorded requests cannot be processed correctly
 	 * @since 3.1
 	 */
-	protected final void flushRewriteSession() throws BadLocationException {
-		if (DEBUG)
-			System.out.println("AbstractLineTracker: Flushing rewrite session: " + fActiveRewriteSession); //$NON-NLS-1$
-
-		Iterator<Request> e= fPendingRequests.iterator();
-
-		fPendingRequests= null;
-		fActiveRewriteSession= null;
-
-		while (e.hasNext()) {
-			Request request= e.next();
-			if (request.isReplaceRequest())
-				replace(request.offset, request.length, request.text);
-			else
-				set(request.text);
-		}
-	}
+//	protected final void flushRewriteSession() throws BadLocationException {
+//		if (DEBUG)
+//			System.out.println("AbstractLineTracker: Flushing rewrite session: " + fActiveRewriteSession); //$NON-NLS-1$
+//
+//		Iterator<Request> e= fPendingRequests.iterator();
+//
+//		fPendingRequests= null;
+//		fActiveRewriteSession= null;
+//
+//		while (e.hasNext()) {
+//			Request request= e.next();
+//			if (request.isReplaceRequest())
+//				replace(request.offset, request.length, request.text);
+//			else
+//				set(request.text);
+//		}
+//	}
 
 	/**
 	 * Checks the presence of a rewrite session and flushes it.
@@ -362,8 +362,8 @@ public abstract class AbstractLineTracker implements LineTracker, LineTrackerExt
 	 * @throws BadLocationException in case flushing does not succeed
 	 * @since 3.1
 	 */
-	protected final void checkRewriteSession() throws BadLocationException {
-		if (hasActiveRewriteSession())
-			flushRewriteSession();
-	}
+//	protected final void checkRewriteSession() throws BadLocationException {
+//		if (hasActiveRewriteSession())
+//			flushRewriteSession();
+//	}
 }

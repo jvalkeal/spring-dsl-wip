@@ -55,23 +55,23 @@ public interface Document {
 
 	int length();
 
-	String content(int start, int len) throws BadLocationException;
+	String content(int start, int len);
 
 	int getNumberOfLines();
 
 	String getDefaultLineDelimiter();
 
-	char getChar(int offset) throws BadLocationException;
+	char getChar(int offset);
 
-	int getLineOfOffset(int offset) throws BadLocationException;
+	int getLineOfOffset(int offset);
 
 //	Region getLineInformation(int line);
 
-	int getLineOffset(int line) throws BadLocationException;
+	int getLineOffset(int line);
 
-	void replace(int start, int len, String text) throws BadLocationException;
+	void replace(int start, int len, String text);
 
-	String textBetween(int start, int end) throws BadLocationException;
+	String textBetween(int start, int end);
 
 	LanguageId getLanguageId();
 
@@ -79,6 +79,6 @@ public interface Document {
 
 //	Range toRange(Region asRegion) throws BadLocationException;
 
-	Position toPosition(int offset) throws BadLocationException;
+	Position toPosition(int offset);
 
 }

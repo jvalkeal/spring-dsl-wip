@@ -15,6 +15,15 @@
  */
 package org.springframework.dsl.lsp.domain;
 
+import org.springframework.dsl.support.AbstractDomainBuilder;
+import org.springframework.dsl.support.DomainBuilder;
+
+/**
+ *
+ *
+ * @author Janne Valkealahti
+ *
+ */
 public class VersionedTextDocumentIdentifier extends TextDocumentIdentifier {
 
 	private Integer version;
@@ -22,7 +31,12 @@ public class VersionedTextDocumentIdentifier extends TextDocumentIdentifier {
 	public VersionedTextDocumentIdentifier() {
 	}
 
-	public VersionedTextDocumentIdentifier(int version) {
+	public VersionedTextDocumentIdentifier(Integer version) {
+		this(version, null);
+	}
+
+	public VersionedTextDocumentIdentifier(Integer version, String uri) {
+		super(uri);
 		this.version = version;
 	}
 
@@ -57,5 +71,70 @@ public class VersionedTextDocumentIdentifier extends TextDocumentIdentifier {
 		} else if (!version.equals(other.version))
 			return false;
 		return true;
+	}
+
+	/**
+	 * Builder interface for {@link VersionedTextDocumentIdentifier}.
+	 *
+	 * @param <P> the parent builder type
+	 */
+	public interface VersionedTextDocumentIdentifierBuilder<P> extends DomainBuilder<VersionedTextDocumentIdentifier, P> {
+
+		/**
+		 * Sets an uri.
+		 *
+		 * @param uri the uri
+		 * @return the builder for chaining
+		 */
+		VersionedTextDocumentIdentifierBuilder<P> uri(String uri);
+
+		/**
+		 * Sets a version.
+		 *
+		 * @param version the version
+		 * @return the builder for chaining
+		 */
+		VersionedTextDocumentIdentifierBuilder<P> version(Integer version);
+	}
+
+	/**
+	 * Gets a builder for {@link VersionedTextDocumentIdentifier}
+	 *
+	 * @return the versioned text document identifier builder
+	 */
+	public static <P> VersionedTextDocumentIdentifierBuilder<P> versionedTextDocumentIdentifier() {
+		return new InternalVersionedTextDocumentIdentifierBuilder<>(null);
+	}
+
+	protected static <P> VersionedTextDocumentIdentifierBuilder<P> versionedTextDocumentIdentifier(P parent) {
+		return new InternalVersionedTextDocumentIdentifierBuilder<>(parent);
+	}
+
+	private static class InternalVersionedTextDocumentIdentifierBuilder<P>
+			extends AbstractDomainBuilder<VersionedTextDocumentIdentifier, P> implements VersionedTextDocumentIdentifierBuilder<P> {
+
+		private String uri;
+		private Integer version;
+
+		InternalVersionedTextDocumentIdentifierBuilder(P parent) {
+			super(parent);
+		}
+
+		@Override
+		public VersionedTextDocumentIdentifierBuilder<P> uri(String uri) {
+			this.uri = uri;
+			return this;
+		}
+
+		@Override
+		public VersionedTextDocumentIdentifierBuilder<P> version(Integer version) {
+			this.version = version;
+			return this;
+		}
+
+		@Override
+		public VersionedTextDocumentIdentifier build() {
+			return new VersionedTextDocumentIdentifier(version, uri);
+		}
 	}
 }
