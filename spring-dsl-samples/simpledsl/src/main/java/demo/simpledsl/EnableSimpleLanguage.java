@@ -22,7 +22,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.springframework.context.annotation.Import;
-import org.springframework.dsl.lsp.server.config.EnableLanguageServer;
 
 /**
  * Meta annotation for enabling all supported services for a {@code simple} sample
@@ -35,6 +34,5 @@ import org.springframework.dsl.lsp.server.config.EnableLanguageServer;
 @Target(ElementType.TYPE)
 @Documented
 @Import(SimpleLanguageConfiguration.class)
-@EnableLanguageServer
 public @interface EnableSimpleLanguage {
 }

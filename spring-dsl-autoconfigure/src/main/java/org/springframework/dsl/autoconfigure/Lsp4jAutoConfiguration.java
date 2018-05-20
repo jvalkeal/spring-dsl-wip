@@ -16,12 +16,18 @@
 package org.springframework.dsl.autoconfigure;
 
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Set;
 
+import org.eclipse.lsp4j.jsonrpc.json.JsonRpcMethod;
+import org.eclipse.lsp4j.jsonrpc.json.MessageJsonHandler;
+import org.eclipse.lsp4j.jsonrpc.services.ServiceEndpoints;
+import org.eclipse.lsp4j.services.LanguageClient;
 import org.eclipse.lsp4j.services.LanguageServer;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,17 +39,15 @@ import org.springframework.dsl.lsp.server.LspHandler;
 import org.springframework.dsl.lsp.server.config.DslConfigurationProperties;
 import org.springframework.dsl.lsp.server.config.DslConfigurationProperties.LspServerSocketMode;
 import org.springframework.dsl.lsp.server.config.EnableLanguageServer;
-import org.springframework.dsl.lsp.server.controller.GenericLanguageServerController;
 import org.springframework.dsl.lsp.server.support.JvmLspExiter;
-import org.springframework.dsl.lsp.service.DefaultDocumentStateTracker;
-import org.springframework.dsl.lsp.service.DocumentStateTracker;
-import org.springframework.dsl.lsp.service.Reconciler;
+import org.springframework.dsl.lsp.server.websocket.LspTextWebSocketHandler;
+import org.springframework.dsl.lsp.server.websocket.LspWebSocketConfig;
 import org.springframework.dsl.lsp4j.Lsp4jLanguageServerAdapter;
 import org.springframework.dsl.lsp4j.config.Lsp4jServerLauncherConfiguration;
 import org.springframework.dsl.lsp4j.converter.GenericLsp4jObjectConverter;
 import org.springframework.dsl.lsp4j.result.method.annotation.Lsp4jDomainArgumentResolver;
-import org.springframework.dsl.reconcile.DefaultReconciler;
-import org.springframework.dsl.reconcile.Linter;
+import org.springframework.dsl.lsp4j.rpc.StreamMessageProducerAdapter;
+import org.springframework.web.socket.WebSocketHandler;
 
 /**
  * {@link EnableAutoConfiguration Auto-configuration} integrating into {@code LSP4J} features.
@@ -53,8 +57,8 @@ import org.springframework.dsl.reconcile.Linter;
  */
 @Configuration
 @ConditionalOnClass(LanguageServer.class)
+@ConditionalOnProperty(prefix = "spring.dsl.lsp.server", name = "mode")
 @EnableConfigurationProperties(DslConfigurationProperties.class)
-@Import({ GenericLanguageServerController.class, Lsp4jServerLauncherConfiguration.class })
 @EnableLanguageServer
 public class Lsp4jAutoConfiguration {
 
@@ -74,16 +78,6 @@ public class Lsp4jAutoConfiguration {
 	}
 
 	@Bean
-	public DocumentStateTracker documentStateTracker() {
-		return new DefaultDocumentStateTracker();
-	}
-
-	@Bean
-	public Reconciler reconciler(Linter linter) {
-		return new DefaultReconciler(linter);
-	}
-
-	@Bean
 	public Lsp4jLanguageServerAdapter languageServer(LspHandler lspHandler,
 			@Qualifier("lspConversionService") ConversionService conversionService,
 			DslConfigurationProperties properties) {
@@ -93,5 +87,42 @@ public class Lsp4jAutoConfiguration {
 		}
 		adapter.setForceJvmExitOnShutdown(properties.getLsp().getServer().isForceJvmExitOnShutdown());
 		return adapter;
+	}
+
+	@ConditionalOnProperty(prefix = "spring.dsl.lsp.server", name = "mode", havingValue = "WEBSOCKET")
+	@ConditionalOnClass(value = WebSocketHandler.class)
+	@Import({ LspWebSocketConfig.class })
+	public static class DslServerWebsocketConfig {
+
+		@Bean
+		public MessageJsonHandler messageJsonHandler() {
+			LinkedHashMap<String, JsonRpcMethod> supportedMethods = new LinkedHashMap<String, JsonRpcMethod>();
+			supportedMethods.putAll(ServiceEndpoints.getSupportedMethods(LanguageClient.class));
+			supportedMethods.putAll(ServiceEndpoints.getSupportedMethods(LanguageServer.class));
+			MessageJsonHandler jsonHandler = new MessageJsonHandler(supportedMethods);
+			return jsonHandler;
+		}
+
+		@Bean
+		public StreamMessageProducerAdapter streamMessageProducerAdapter(MessageJsonHandler jsonHandler,
+				LanguageServer languageServer) {
+			return new StreamMessageProducerAdapter(jsonHandler, languageServer);
+		}
+
+		@Bean
+		public LspTextWebSocketHandler lspTextWebSocketHandler(
+				StreamMessageProducerAdapter streamMessageProducerAdapter) {
+			return new LspTextWebSocketHandler(streamMessageProducerAdapter);
+		}
+	}
+
+	@ConditionalOnProperty(prefix = "spring.dsl.lsp.server", name = "mode", havingValue = "PROCESS")
+	@Import({ Lsp4jServerLauncherConfiguration.class })
+	public static class DslServerProcessConfig {
+	}
+
+	@ConditionalOnProperty(prefix = "spring.dsl.lsp.server", name = "mode", havingValue = "SOCKET")
+	@Import({ Lsp4jServerLauncherConfiguration.class })
+	public static class DslServerSocketConfig {
 	}
 }

@@ -113,13 +113,14 @@ public class Lsp4jLanguageServerAdapter implements LanguageServer, LanguageClien
 
 	@Override
 	public void connect(LanguageClient client) {
+		log.info("Connecting client {}", client);
 		this.client = client;
 	}
 
 	@Override
 	public CompletableFuture<InitializeResult> initialize(InitializeParams params) {
 		log.trace("initialize {}", params);
-		ServerLspExchange exchange = createExchange(LspMethod.INITIALIZE, params);
+		ServerLspExchange exchange = createExchange(LspMethod.INITIALIZE, params, client, conversionService);
 		return lspHandler.handle(exchange)
 				.then(singleConvert(exchange, InitializeResult.class, conversionService))
 				.toFuture();
@@ -316,16 +317,15 @@ public class Lsp4jLanguageServerAdapter implements LanguageServer, LanguageClien
 		this.forceJvmExitOnShutdown = forceJvmExitOnShutdown;
 	}
 
-	private static ServerLspExchange createExchange(LspMethod lspMethod, Object body) {
-		return createExchange(lspMethod, body, null, null);
-	}
-
 	private static ServerLspExchange createExchange(LspMethod lspMethod, Object body, LanguageClient languageClient,
 			ConversionService conversionService) {
 		GenericServerLspRequest request = new GenericServerLspRequest(body);
 
+		log.trace("Creating exchange, languageClient is {}", languageClient);
 		if (languageClient != null) {
 			request.setContext(new Lsp4jLspClientContext(languageClient, conversionService));
+		} else {
+			request.setContext(new NoopLspClientContext());
 		}
 
 		request.setMethod(lspMethod);
@@ -352,6 +352,21 @@ public class Lsp4jLanguageServerAdapter implements LanguageServer, LanguageClien
 			}
 			return list;
 		});
+	}
+
+	private static class NoopLspClientContext implements LspClientContext {
+
+		@Override
+		public LspClient getClient() {
+			return new LspClient() {
+
+				@Override
+				public Mono<Void> send(PublishDiagnosticsParams diagnostics) {
+					return Mono.empty();
+				}
+			};
+		}
+
 	}
 
 	private static class Lsp4jLspClientContext implements LspClientContext {

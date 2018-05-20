@@ -61,6 +61,11 @@ public class DelegatingLspConfiguration {
 		return new LspResponseBodyResultHandler();
 	}
 
+	/**
+	 * Lsp no response body result handler.
+	 *
+	 * @return the lsp no response body result handler
+	 */
 	@Bean
 	public LspNoResponseBodyResultHandler lspNoResponseBodyResultHandler() {
 		return new LspNoResponseBodyResultHandler();
@@ -76,6 +81,11 @@ public class DelegatingLspConfiguration {
 		return new LspRequestMappingHandlerMapping();
 	}
 
+	/**
+	 * Server lsp exchange argument resolver.
+	 *
+	 * @return the server lsp exchange argument resolver
+	 */
 	@Bean
 	public ServerLspExchangeArgumentResolver serverLspExchangeArgumentResolver() {
 		return new ServerLspExchangeArgumentResolver();

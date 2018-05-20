@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.websocket;
+package org.springframework.dsl.lsp.server.websocket;
 
 import java.util.function.Function;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -27,7 +28,7 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 import reactor.core.publisher.Mono;
 
 /**
- *
+ * {@code LSP} related message handling via websocket.
  *
  * @author Janne Valkealahti
  *
@@ -37,7 +38,13 @@ public class LspTextWebSocketHandler extends TextWebSocketHandler {
 	private static final Logger log = LoggerFactory.getLogger(LspTextWebSocketHandler.class);
 	private final Function<byte[], Mono<String>> consumer;
 
+	/**
+	 * Instantiates a new lsp text web socket handler.
+	 *
+	 * @param consumer the consumer
+	 */
 	public LspTextWebSocketHandler(Function<byte[], Mono<String>> consumer) {
+		Assert.notNull(consumer, "'consumer' must be set");
 		this.consumer = consumer;
 	}
 
@@ -49,12 +56,9 @@ public class LspTextWebSocketHandler extends TextWebSocketHandler {
 	@Override
 	protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
 		log.debug("handleTextMessage {} {}", session.getId(), message.getPayload());
-
 		byte[] payload = message.getPayload().getBytes();
-
 		Mono<String> response = consumer.apply(payload);
 		session.sendMessage(new TextMessage(response.block().getBytes()));
-
 	}
 
 	@Override

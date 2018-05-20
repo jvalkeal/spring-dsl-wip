@@ -43,7 +43,6 @@ import org.eclipse.lsp4j.services.LanguageServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.ApplicationArguments;
 import org.springframework.dsl.lsp.server.config.DslConfigurationProperties;
 
 import reactor.core.Disposable;
@@ -52,17 +51,11 @@ import reactor.core.Disposables;
 public class Lsp4jServerLauncher {
 
 	private static final Logger log = LoggerFactory.getLogger(Lsp4jServerLauncher.class);
-
 	private Disposable.Composite disposables = Disposables.composite();
-
 	private final LanguageServer languageServer;
 	private final DslConfigurationProperties dslConfigurationProperties;
 
-
-	// @Value("${jdbc.driverClassName}")
-	// -Dspring.lsp.client-port=45556 -Dserver.port=45556 -Dsts.lsp.client=vscode -Dsts.log.file=/tmp/vscode-simple-1526031253571.log
-
-	// temporary hack to support vscode integration done in sts space
+	// temporary hacks to support vscode integration done in sts space
 	@Value("${spring.lsp.client-port:}")
 	private Integer clientPort;
 
