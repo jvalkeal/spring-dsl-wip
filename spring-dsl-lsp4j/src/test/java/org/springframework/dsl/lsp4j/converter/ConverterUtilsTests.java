@@ -78,6 +78,11 @@ public class ConverterUtilsTests {
 	public void testClientCapabilities() {
 		assertClientCapabilities(new ClientCapabilities());
 		assertClientCapabilities(new org.eclipse.lsp4j.ClientCapabilities());
+
+		ClientCapabilities from1 = ClientCapabilities.clientCapabilities()
+				.experimental("hi")
+				.build();
+		assertClientCapabilities(from1);
 	}
 
 	@Test
@@ -96,6 +101,8 @@ public class ConverterUtilsTests {
 	public void testServerCapabilities() {
 		assertServerCapabilities(new ServerCapabilities());
 		assertServerCapabilities(new org.eclipse.lsp4j.ServerCapabilities());
+
+
 	}
 
 	@Test
