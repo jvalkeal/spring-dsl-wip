@@ -62,7 +62,6 @@ public class Lsp4jServerLauncher {
 	@Value("${server.port:}")
 	private Integer serverPort;
 
-
 	public Lsp4jServerLauncher(LanguageServer languageServer, DslConfigurationProperties dslConfigurationProperties) {
 		this.languageServer = languageServer;
 		this.dslConfigurationProperties = dslConfigurationProperties;

@@ -325,6 +325,7 @@ public class Lsp4jLanguageServerAdapter implements LanguageServer, LanguageClien
 		if (languageClient != null) {
 			request.setContext(new Lsp4jLspClientContext(languageClient, conversionService));
 		} else {
+			// TODO: no good, just dump thing for websocket not to error out
 			request.setContext(new NoopLspClientContext());
 		}
 
@@ -362,11 +363,11 @@ public class Lsp4jLanguageServerAdapter implements LanguageServer, LanguageClien
 
 				@Override
 				public Mono<Void> send(PublishDiagnosticsParams diagnostics) {
+					log.warn("Bummer, should send {}", diagnostics);
 					return Mono.empty();
 				}
 			};
 		}
-
 	}
 
 	private static class Lsp4jLspClientContext implements LspClientContext {
@@ -392,6 +393,5 @@ public class Lsp4jLanguageServerAdapter implements LanguageServer, LanguageClien
 
 			};
 		}
-
 	}
 }

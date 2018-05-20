@@ -23,12 +23,25 @@ import org.eclipse.lsp4j.jsonrpc.messages.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class StreamMessageConsumerAdapter extends StreamMessageConsumer {
+/**
+ * Custom {@link StreamMessageConsumer} which does a slight hack to intercept
+ * message consuming and then storing payload internally to get exposed to a
+ * user of this class. All this is needed for custom communication channels like
+ * websockets.
+ *
+ * @author Janne Valkealahti
+ *
+ */
+class StreamMessageConsumerAdapter extends StreamMessageConsumer {
 
 	private static final Logger log = LoggerFactory.getLogger(StreamMessageConsumerAdapter.class);
-
 	private String currentPayload = null;
 
+	/**
+	 * Instantiates a new stream message consumer adapter.
+	 *
+	 * @param jsonHandler the json handler
+	 */
 	public StreamMessageConsumerAdapter(MessageJsonHandler jsonHandler) {
 		super(new ByteArrayOutputStream(), jsonHandler);
 	}
@@ -41,6 +54,11 @@ public class StreamMessageConsumerAdapter extends StreamMessageConsumer {
 		setOutput(new ByteArrayOutputStream());
 	}
 
+	/**
+	 * Gets the current payload.
+	 *
+	 * @return the current payload
+	 */
 	public String getCurrentPayload() {
 		return currentPayload;
 	}

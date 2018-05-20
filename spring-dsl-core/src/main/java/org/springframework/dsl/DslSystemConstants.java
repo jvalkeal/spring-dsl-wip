@@ -15,8 +15,14 @@
  */
 package org.springframework.dsl;
 
+/**
+ * Various constants defined for a whole {@code LSP} space.
+ *
+ * @author Janne Valkealahti
+ *
+ */
 public final class DslSystemConstants {
 
+	/** Bean name for lsp domain object converstion service */
 	public final static String LSP_CONVERSION_SERVICE_BEAN_NAME = "lspConversionService";
-
 }

@@ -28,7 +28,10 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 import reactor.core.publisher.Mono;
 
 /**
- * {@code LSP} related message handling via websocket.
+ * {@code LSP} related message handling via websocket. Although this
+ * implementation doesn't really have anything {@code LSP} related but it is
+ * expecting to use {@link Function} with a spesific types used in other places
+ * dispatching to actual {@code LSP} classes.
  *
  * @author Janne Valkealahti
  *
