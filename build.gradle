@@ -222,6 +222,21 @@ project('spring-dsl-antlr') {
 	}
 }
 
+project('spring-dsl-jsonrpc') {
+	description = "Spring Dsl JSON RPC"
+
+	dependencies {
+		compile 'org.springframework:spring-messaging'
+		compile 'org.springframework.boot:spring-boot-starter'
+		compile 'io.projectreactor:reactor-core'
+		compile 'io.projectreactor.ipc:reactor-netty'
+		testCompile 'org.hamcrest:hamcrest-core'
+		testCompile 'org.hamcrest:hamcrest-library'
+		testCompile 'junit:junit'
+		testCompile 'org.springframework.boot:spring-boot-starter-test'
+	}
+}
+
 project('spring-dsl-lsp4j') {
 	description = "Spring Dsl Lsp4J"
 
