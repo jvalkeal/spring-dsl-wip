@@ -1,4 +1,4 @@
-package org.springframework.dsl.jsonrpc;
+package org.springframework.dsl.lsp.server.jsonrpc;
 
 import java.nio.charset.Charset;
 import java.time.Duration;
@@ -7,6 +7,8 @@ import java.util.function.BiFunction;
 import org.reactivestreams.Processor;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
+import org.springframework.dsl.jsonrpc.support.DefaultJsonRpcRequest;
+import org.springframework.dsl.jsonrpc.support.DefaultJsonRpcResponse;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -22,11 +24,11 @@ import reactor.ipc.netty.tcp.TcpServer;
 
 public class JsonRpcServer {
 
-	private final Subscriber<JsonRpcRequest> requests;
-	private final Publisher<JsonRpcResponse> responses;
+	private final Subscriber<DefaultJsonRpcRequest> requests;
+	private final Publisher<DefaultJsonRpcResponse> responses;
 	private WorkQueueProcessor<ByteBuf> workProcessor;
 
-	public JsonRpcServer(Subscriber<JsonRpcRequest> requests, Publisher<JsonRpcResponse> responses) {
+	public JsonRpcServer(Subscriber<DefaultJsonRpcRequest> requests, Publisher<DefaultJsonRpcResponse> responses) {
 		this.requests = requests;
 		this.responses = responses;
 	}
@@ -46,11 +48,11 @@ public class JsonRpcServer {
 
 
 		NettyContext connectedServer = server.newHandler((in, out) -> {
-			in.context().addHandlerLast(new JsonRpcDecoder());
+			in.context().addHandlerLast(new LspJsonRpcDecoder());
 
 			in.receive()
 				.map(bb -> {
-					JsonRpcRequest request = new JsonRpcRequest();
+					DefaultJsonRpcRequest request = new DefaultJsonRpcRequest();
 					String content = bb.retain().duplicate().toString(Charset.defaultCharset());
 //					request.setId(content);
 					return request;

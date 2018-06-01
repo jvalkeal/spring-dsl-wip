@@ -15,35 +15,26 @@
  */
 package org.springframework.dsl.jsonrpc;
 
-public class JsonRpcRequest {
+/**
+ * Contract for an JSONRPC request-response interaction. Provides access to the
+ * JSONRPC request and response.
+ *
+ * @author Janne Valkealahti
+ *
+ */
+public interface ServerJsonRpcExchange {
 
-	private String jsonrpc;
-	private Integer id;
-	private String method;
-	private String params;
+	/**
+	 * Gets the current JSONRPC request.
+	 *
+	 * @return the JSONRPC request
+	 */
+	JsonRpcInputMessage getRequest();
 
-	public String getJsonrpc() {
-		return jsonrpc;
-	}
-	public void setJsonrpc(String jsonrpc) {
-		this.jsonrpc = jsonrpc;
-	}
-	public Integer getId() {
-		return id;
-	}
-	public void setId(Integer id) {
-		this.id = id;
-	}
-	public String getMethod() {
-		return method;
-	}
-	public void setMethod(String method) {
-		this.method = method;
-	}
-	public String getParams() {
-		return params;
-	}
-	public void setParams(String params) {
-		this.params = params;
-	}
+	/**
+	 * Gets the current JSONRPC response.
+	 *
+	 * @return the JSONRPC response
+	 */
+	JsonRpcOutputMessage getResponse();
 }

@@ -156,8 +156,11 @@ project('spring-dsl-server') {
 
 	dependencies {
 		compile project(':spring-dsl-core')
+		compile project(':spring-dsl-jsonrpc')
+		compile 'org.springframework:spring-messaging'
 		compile 'org.springframework.boot:spring-boot-starter'
 		compile 'io.projectreactor:reactor-core'
+		compile 'io.projectreactor.ipc:reactor-netty'
 		compile 'org.javolution:javolution-core-java'
 		optional 'org.springframework.boot:spring-boot-configuration-processor'
 		optional 'com.google.code.gson:gson'
@@ -226,9 +229,7 @@ project('spring-dsl-jsonrpc') {
 	description = "Spring Dsl JSON RPC"
 
 	dependencies {
-		compile 'org.springframework:spring-messaging'
 		compile 'org.springframework.boot:spring-boot-starter'
-		compile 'io.projectreactor:reactor-core'
 		compile 'io.projectreactor.ipc:reactor-netty'
 		testCompile 'org.hamcrest:hamcrest-core'
 		testCompile 'org.hamcrest:hamcrest-library'

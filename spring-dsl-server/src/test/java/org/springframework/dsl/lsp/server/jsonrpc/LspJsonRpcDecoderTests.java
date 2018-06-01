@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.jsonrpc;
+package org.springframework.dsl.lsp.server.jsonrpc;
 
 import org.junit.Test;
+import org.springframework.dsl.lsp.server.jsonrpc.LspJsonRpcDecoder;
 import org.springframework.messaging.Message;
 
 import io.netty.buffer.Unpooled;
@@ -24,7 +25,7 @@ import io.netty.channel.embedded.EmbeddedChannel;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
-public class JsonRpcDecoderTests {
+public class LspJsonRpcDecoderTests {
 
 	private static final byte[] CONTENT1 = createContent("{\"jsonrpc\": \"2.0\",\"id\": 1}");
 
@@ -44,7 +45,7 @@ public class JsonRpcDecoderTests {
 	}
 
 	private static void testDecodeWholeRequestAtOnce(byte[] content) {
-        EmbeddedChannel channel = new EmbeddedChannel(new JsonRpcDecoder());
+        EmbeddedChannel channel = new EmbeddedChannel(new LspJsonRpcDecoder());
         assertThat(channel.writeInbound(Unpooled.wrappedBuffer(content))).isTrue();
         Message<String> req = channel.readInbound();
         assertThat(req).isNotNull();

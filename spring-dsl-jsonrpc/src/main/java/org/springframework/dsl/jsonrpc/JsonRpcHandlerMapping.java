@@ -17,13 +17,8 @@ package org.springframework.dsl.jsonrpc;
 
 import reactor.core.publisher.Mono;
 
-/**
- * Contract to handle a {@code JSONRCP} request.
- *
- * @author Janne Valkealahti
- *
- */
-public interface JsonRpcHandler {
+public interface JsonRpcHandlerMapping {
 
-	Mono<Void> handle(ServerJsonRpcExchange exchange);
+	Mono<Object> getHandler(ServerJsonRpcExchange request);
+
 }

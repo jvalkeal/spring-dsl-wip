@@ -15,23 +15,21 @@
  */
 package org.springframework.dsl.jsonrpc;
 
-public class JsonRpcResponse {
+import org.reactivestreams.Publisher;
+import org.springframework.core.io.buffer.DataBuffer;
 
-	private String jsonrpc;
-	private Integer id;
+import reactor.core.publisher.Mono;
 
-	public String getJsonrpc() {
-		return jsonrpc;
-	}
-	public void setJsonrpc(String jsonrpc) {
-		this.jsonrpc = jsonrpc;
-	}
-	public Integer getId() {
-		return id;
-	}
-	public void setId(Integer id) {
-		this.id = id;
-	}
+public interface JsonRpcOutputMessage extends JsonRpcMessage {
 
+	/**
+	 * Use the given {@link Publisher} to write the body of the message to the
+	 * underlying JSONRPC layer.
+	 *
+	 * @param body the body content publisher
+	 * @return a {@link Mono} that indicates completion or error
+	 */
+	Mono<Void> writeWith(Publisher<? extends DataBuffer> body);
 
+	Mono<Void> setComplete();
 }

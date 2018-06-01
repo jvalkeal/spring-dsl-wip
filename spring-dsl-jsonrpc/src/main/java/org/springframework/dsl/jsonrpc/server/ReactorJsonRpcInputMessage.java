@@ -13,17 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.jsonrpc;
+package org.springframework.dsl.jsonrpc.server;
 
-import reactor.core.publisher.Mono;
+import org.springframework.core.io.buffer.NettyDataBufferFactory;
+import org.springframework.dsl.jsonrpc.support.AbstractJsonRpcInputMessage;
 
-/**
- * Contract to handle a {@code JSONRCP} request.
- *
- * @author Janne Valkealahti
- *
- */
-public interface JsonRpcHandler {
+import reactor.ipc.netty.NettyInbound;
 
-	Mono<Void> handle(ServerJsonRpcExchange exchange);
+public class ReactorJsonRpcInputMessage extends AbstractJsonRpcInputMessage {
+
+	private final NettyInbound in;
+	private final NettyDataBufferFactory bufferFactory;
+
+	public ReactorJsonRpcInputMessage(NettyInbound in, NettyDataBufferFactory bufferFactory) {
+		this.in = in;
+		this.bufferFactory = bufferFactory;
+	}
+
+
 }

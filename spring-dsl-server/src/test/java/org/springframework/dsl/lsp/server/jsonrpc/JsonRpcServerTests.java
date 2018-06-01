@@ -1,9 +1,12 @@
-package org.springframework.dsl.jsonrpc;
+package org.springframework.dsl.lsp.server.jsonrpc;
 
 import java.nio.charset.Charset;
 
 import org.junit.Test;
 import org.reactivestreams.Processor;
+import org.springframework.dsl.jsonrpc.support.DefaultJsonRpcRequest;
+import org.springframework.dsl.jsonrpc.support.DefaultJsonRpcResponse;
+import org.springframework.dsl.lsp.server.jsonrpc.JsonRpcServer;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -14,15 +17,15 @@ public class JsonRpcServerTests {
 
 	@Test
 	public void test() throws InterruptedException {
-		Processor<JsonRpcRequest, JsonRpcRequest> requestProcessor = WorkQueueProcessor.create();
-		WorkQueueProcessor<JsonRpcResponse> responseProcessor = WorkQueueProcessor.create();
+		Processor<DefaultJsonRpcRequest, DefaultJsonRpcRequest> requestProcessor = WorkQueueProcessor.create();
+		WorkQueueProcessor<DefaultJsonRpcResponse> responseProcessor = WorkQueueProcessor.create();
 		JsonRpcServer server = new JsonRpcServer(requestProcessor, responseProcessor);
 		server.start();
 
 		Flux.from(requestProcessor)
 			.log("ddd")
 			.doOnNext(request -> {
-				JsonRpcResponse response = new JsonRpcResponse();
+				DefaultJsonRpcResponse response = new DefaultJsonRpcResponse();
 //				response.setId("R" + request.getId());
 				responseProcessor.onNext(response);
 			})

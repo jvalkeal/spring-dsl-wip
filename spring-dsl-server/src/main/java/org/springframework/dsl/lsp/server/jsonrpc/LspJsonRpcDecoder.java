@@ -13,30 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.jsonrpc;
+package org.springframework.dsl.lsp.server.jsonrpc;
 
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.messaging.Message;
-import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.support.MessageBuilder;
-
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
-import io.netty.handler.codec.ReplayingDecoder;
 import io.netty.handler.codec.TooLongFrameException;
-import io.netty.handler.codec.http.HttpUtil;
 import io.netty.util.ByteProcessor;
 import io.netty.util.internal.AppendableCharSequence;
 
-public class JsonRpcDecoder extends ByteToMessageDecoder {
+/**
+ * {@code Netty} decoder for a {@code LSP} spesific protocol.
+ *
+ * @author Janne Valkealahti
+ *
+ */
+public class LspJsonRpcDecoder extends ByteToMessageDecoder {
 
     public static final byte CR = 13;
     public static final byte LF = 10;
@@ -44,9 +43,7 @@ public class JsonRpcDecoder extends ByteToMessageDecoder {
     private static final String EMPTY_VALUE = "";
     private final HeaderParser headerParser;
     private final LineParser lineParser;
-//    private Message<JsonRpcRequest> message;
     private Map<String, String> headers = new HashMap<>(1);
-//    private JsonRpcRequest payload;
 	private State currentState = State.READ_HEADER;
     private CharSequence name;
     private CharSequence value;
@@ -58,7 +55,7 @@ public class JsonRpcDecoder extends ByteToMessageDecoder {
 		READ_FIXED_LENGTH_CONTENT;
 	}
 
-	public JsonRpcDecoder() {
+	public LspJsonRpcDecoder() {
         AppendableCharSequence seq = new AppendableCharSequence(128);
         lineParser = new LineParser(seq, 4096);
         headerParser = new HeaderParser(seq, 256);

@@ -13,17 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.jsonrpc;
+package org.springframework.dsl.jsonrpc.server;
+
+import org.springframework.dsl.jsonrpc.JsonRpcInputMessage;
+import org.springframework.dsl.jsonrpc.JsonRpcOutputMessage;
 
 import reactor.core.publisher.Mono;
 
-/**
- * Contract to handle a {@code JSONRCP} request.
- *
- * @author Janne Valkealahti
- *
- */
-public interface JsonRpcHandler {
+public interface RpcHandler {
 
-	Mono<Void> handle(ServerJsonRpcExchange exchange);
+	Mono<Void> handle(JsonRpcInputMessage request, JsonRpcOutputMessage response);
 }

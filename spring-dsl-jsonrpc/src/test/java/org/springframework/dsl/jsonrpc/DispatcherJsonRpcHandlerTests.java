@@ -15,15 +15,14 @@
  */
 package org.springframework.dsl.jsonrpc;
 
-import reactor.core.publisher.Mono;
+import org.springframework.dsl.jsonrpc.support.DispatcherJsonRpcHandler;
 
 /**
- * Contract to handle a {@code JSONRCP} request.
+ * Tests for {@link DispatcherJsonRpcHandler}.
  *
  * @author Janne Valkealahti
  *
  */
-public interface JsonRpcHandler {
+public class DispatcherJsonRpcHandlerTests {
 
-	Mono<Void> handle(ServerJsonRpcExchange exchange);
 }

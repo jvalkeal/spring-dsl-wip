@@ -15,15 +15,25 @@
  */
 package org.springframework.dsl.jsonrpc;
 
-import org.springframework.messaging.Message;
+/**
+ * Base {@code JSONRPC} message aware of {@code jsonrpc} and {@code id} mandatory fields.
+ *
+ * @author Janne Valkealahti
+ *
+ */
+public interface JsonRpcMessage {
 
-import reactor.core.publisher.Mono;
+	/**
+	 * Gets the jsonrpc field.
+	 *
+	 * @return the jsonrpc
+	 */
+	String getJsonrpc();
 
-public class DispatcherJsonRpcHandler implements JsonRpcHandler {
-
-	@Override
-	public Mono<Void> handle(Message<String> message) {
-		return null;
-	}
-
+	/**
+	 * Gets the id fiels.
+	 *
+	 * @return the id
+	 */
+	Integer getId();
 }
