@@ -13,23 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.jsonrpc;
+package org.springframework.dsl.lsp.server.jsonrpc;
+
+import org.springframework.dsl.jsonrpc.JsonRpcInputMessage;
+import org.springframework.dsl.jsonrpc.JsonRpcOutputMessage;
 
 import reactor.core.publisher.Mono;
 
 /**
- * Contract to handle a {@code JSONRCP} request.
+ * Lowest level contract for reactive JSONRPC request handling that serves as a
+ * common denominator across different runtimes.
  *
  * @author Janne Valkealahti
  *
  */
-public interface JsonRpcHandler {
+public interface RpcHandler {
 
 	/**
-	 * Handle the json rpc exchange.
+	 * Handle the given request and write to the response.
 	 *
-	 * @param exchange the current json rpc exchange
-	 * @return {@code Mono<Void>} to indicate when request handling is complete
+	 * @param request the current request
+	 * @param response the current response
+	 * @return indicates completion of request handling
 	 */
-	Mono<Void> handle(ServerJsonRpcExchange exchange);
+	Mono<Void> handle(JsonRpcInputMessage request, JsonRpcOutputMessage response);
 }

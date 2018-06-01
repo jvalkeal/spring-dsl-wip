@@ -13,14 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.jsonrpc.server;
+package org.springframework.dsl.lsp.server.jsonrpc;
 
-import org.springframework.dsl.jsonrpc.JsonRpcInputMessage;
-import org.springframework.dsl.jsonrpc.JsonRpcOutputMessage;
+import org.springframework.core.io.buffer.NettyDataBufferFactory;
+import org.springframework.dsl.jsonrpc.support.AbstractJsonRpcInputMessage;
 
-import reactor.core.publisher.Mono;
+import reactor.ipc.netty.NettyInbound;
 
-public interface RpcHandler {
+public class ReactorJsonRpcInputMessage extends AbstractJsonRpcInputMessage {
 
-	Mono<Void> handle(JsonRpcInputMessage request, JsonRpcOutputMessage response);
+	private final NettyInbound in;
+	private final NettyDataBufferFactory bufferFactory;
+
+	public ReactorJsonRpcInputMessage(NettyInbound in, NettyDataBufferFactory bufferFactory) {
+		this.in = in;
+		this.bufferFactory = bufferFactory;
+	}
+
+
 }

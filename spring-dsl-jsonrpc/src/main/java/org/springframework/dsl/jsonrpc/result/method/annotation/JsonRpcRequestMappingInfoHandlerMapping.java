@@ -16,16 +16,21 @@
 package org.springframework.dsl.jsonrpc.result.method.annotation;
 
 import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Method;
+import java.util.Comparator;
 
 import org.springframework.context.EmbeddedValueResolverAware;
 import org.springframework.core.annotation.AnnotatedElementUtils;
+import org.springframework.dsl.jsonrpc.ServerJsonRpcExchange;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcController;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcRequestMapping;
+import org.springframework.dsl.jsonrpc.result.condition.JsonRpcRequestCondition;
+import org.springframework.dsl.jsonrpc.result.method.AbstractHandlerMethodMapping;
 import org.springframework.dsl.jsonrpc.result.method.JsonRpcRequestMappingInfo;
 import org.springframework.lang.Nullable;
 import org.springframework.util.StringValueResolver;
 
-public class JsonRpcRequestMappingHandlerMapping extends AbstractHandlerMethodMapping
+public class JsonRpcRequestMappingInfoHandlerMapping extends AbstractHandlerMethodMapping<JsonRpcRequestMappingInfo>
 		implements EmbeddedValueResolverAware {
 
 	@Nullable
@@ -37,11 +42,18 @@ public class JsonRpcRequestMappingHandlerMapping extends AbstractHandlerMethodMa
 				AnnotatedElementUtils.hasAnnotation(beanType, JsonRpcRequestMapping.class));
 	}
 
-	@Override
-	protected JsonRpcRequestMappingInfo createRequestMappingInfo(AnnotatedElement element) {
-		JsonRpcRequestMapping requestMapping = AnnotatedElementUtils.findMergedAnnotation(element,
-				JsonRpcRequestMapping.class);
-		return requestMapping != null ? createRequestMappingInfo(requestMapping) : null;
+//	@Override
+//	protected JsonRpcRequestMappingInfo createRequestMappingInfo(AnnotatedElement element) {
+//		JsonRpcRequestMapping requestMapping = AnnotatedElementUtils.findMergedAnnotation(element,
+//				JsonRpcRequestMapping.class);
+//		return requestMapping != null ? createRequestMappingInfo(requestMapping) : null;
+//	}
+
+	private JsonRpcRequestMappingInfo createRequestMappingInfo(AnnotatedElement element) {
+		JsonRpcRequestMapping requestMapping = AnnotatedElementUtils.findMergedAnnotation(element, JsonRpcRequestMapping.class);
+		JsonRpcRequestCondition<?> condition = (element instanceof Class ?
+				getCustomTypeCondition((Class<?>) element) : getCustomMethodCondition((Method) element));
+		return (requestMapping != null ? createRequestMappingInfo(requestMapping, condition) : null);
 	}
 
 	@Override
@@ -67,10 +79,42 @@ public class JsonRpcRequestMappingHandlerMapping extends AbstractHandlerMethodMa
 		}
 	}
 
-	private JsonRpcRequestMappingInfo createRequestMappingInfo(JsonRpcRequestMapping requestMapping) {
+	private JsonRpcRequestMappingInfo createRequestMappingInfo(JsonRpcRequestMapping requestMapping, JsonRpcRequestCondition<?> customCondition) {
 		JsonRpcRequestMappingInfo.Builder builder = JsonRpcRequestMappingInfo
 				.builder()
 				.methods(requestMapping.method());
 		return builder.build();
+	}
+
+	protected JsonRpcRequestCondition<?> getCustomTypeCondition(Class<?> handlerType) {
+		return null;
+	}
+
+	protected JsonRpcRequestCondition<?> getCustomMethodCondition(Method method) {
+		return null;
+	}
+
+
+	@Override
+	protected Comparator<JsonRpcRequestMappingInfo> getMappingComparator(ServerJsonRpcExchange exchange) {
+		return (info1, info2) -> info1.compareTo(info2, exchange);
+	}
+
+	@Override
+	protected JsonRpcRequestMappingInfo getMatchingMapping(JsonRpcRequestMappingInfo info,
+			ServerJsonRpcExchange exchange) {
+		return info.getMatchingCondition(exchange);
+	}
+
+	@Override
+	protected JsonRpcRequestMappingInfo getMappingForMethod(Method method, Class<?> handlerType) {
+		JsonRpcRequestMappingInfo info = createRequestMappingInfo(method);
+		if (info != null) {
+			JsonRpcRequestMappingInfo typeInfo = createRequestMappingInfo(handlerType);
+			if (typeInfo != null) {
+				info = typeInfo.combine(info);
+			}
+		}
+		return info;
 	}
 }

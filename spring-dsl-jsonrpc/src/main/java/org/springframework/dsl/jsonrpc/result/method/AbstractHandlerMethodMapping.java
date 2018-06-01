@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.jsonrpc.result.method.annotation;
+package org.springframework.dsl.jsonrpc.result.method;
 
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
@@ -22,8 +22,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,8 +35,6 @@ import org.springframework.context.support.ApplicationObjectSupport;
 import org.springframework.core.MethodIntrospector;
 import org.springframework.dsl.jsonrpc.JsonRpcHandlerMapping;
 import org.springframework.dsl.jsonrpc.ServerJsonRpcExchange;
-import org.springframework.dsl.jsonrpc.result.method.HandlerMethod;
-import org.springframework.dsl.jsonrpc.result.method.JsonRpcRequestMappingInfo;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
@@ -46,7 +46,7 @@ import reactor.core.publisher.Mono;
  * @author Janne Valkealahti
  *
  */
-public abstract class AbstractHandlerMethodMapping extends ApplicationObjectSupport implements JsonRpcHandlerMapping, InitializingBean {
+public abstract class AbstractHandlerMethodMapping<T> extends ApplicationObjectSupport implements JsonRpcHandlerMapping, InitializingBean {
 
 	/** The Constant log. */
 	private static final Log log = LogFactory.getLog(AbstractHandlerMethodMapping.class);
@@ -55,13 +55,28 @@ public abstract class AbstractHandlerMethodMapping extends ApplicationObjectSupp
 	private static final String SCOPED_TARGET_NAME_PREFIX = "scopedTarget.";
 
 	/** The registry. */
-	private Map<JsonRpcRequestMappingInfo, HandlerMethod> registry = new HashMap<>();
+//	private Map<JsonRpcRequestMappingInfo, HandlerMethod> registry = new HashMap<>();
+
+
+	private final MappingRegistry mappingRegistry = new MappingRegistry();
 
 	@Override
 	public Mono<Object> getHandler(ServerJsonRpcExchange exchange) {
 		return getHandlerInternal(exchange).map(handler -> {
 			return handler;
 		});
+	}
+
+	public void registerMapping(T mapping, Object handler, Method method) {
+		this.mappingRegistry.register(mapping, handler, method);
+	}
+
+	public void unregisterMapping(T mapping) {
+		this.mappingRegistry.unregister(mapping);
+	}
+
+	public MappingRegistry getMappingRegistry() {
+		return mappingRegistry;
 	}
 
 	/**
@@ -102,8 +117,8 @@ public abstract class AbstractHandlerMethodMapping extends ApplicationObjectSupp
 	protected HandlerMethod lookupHandlerMethod(ServerJsonRpcExchange exchange)
 			throws Exception {
 		List<Match> matches = new ArrayList<>();
-//		addMatchingMappings(this.mappingRegistry.getMappings().keySet(), matches, exchange);
-		addMatchingMappings(registry.keySet(), matches, exchange);
+		addMatchingMappings(this.mappingRegistry.getMappings().keySet(), matches, exchange);
+//		addMatchingMappings(registry.keySet(), matches, exchange);
 
 		if (!matches.isEmpty()) {
 			Comparator<Match> comparator = new MatchComparator(getMappingComparator(exchange));
@@ -136,9 +151,7 @@ public abstract class AbstractHandlerMethodMapping extends ApplicationObjectSupp
 	 * @param exchange the exchange
 	 * @return the mapping comparator
 	 */
-	protected Comparator<JsonRpcRequestMappingInfo> getMappingComparator(final ServerJsonRpcExchange exchange) {
-		return (info1, info2) -> info1.compareTo(info2, exchange);
-	}
+	protected abstract Comparator<T> getMappingComparator(ServerJsonRpcExchange exchange);
 
 	/**
 	 * Handle match.
@@ -147,7 +160,7 @@ public abstract class AbstractHandlerMethodMapping extends ApplicationObjectSupp
 	 * @param handlerMethod the handler method
 	 * @param exchange the exchange
 	 */
-	protected void handleMatch(JsonRpcRequestMappingInfo info, HandlerMethod handlerMethod,
+	protected void handleMatch(T info, HandlerMethod handlerMethod,
 			ServerJsonRpcExchange exchange) {
 
 //		PathContainer lookupPath = exchange.getRequest().getPath().pathWithinApplication();
@@ -189,12 +202,12 @@ public abstract class AbstractHandlerMethodMapping extends ApplicationObjectSupp
 	 * @param matches the matches
 	 * @param exchange the exchange
 	 */
-	private void addMatchingMappings(Collection<JsonRpcRequestMappingInfo> mappings, List<Match> matches, ServerJsonRpcExchange exchange) {
-		for (JsonRpcRequestMappingInfo mapping : mappings) {
-			JsonRpcRequestMappingInfo match = getMatchingMapping(mapping, exchange);
+	private void addMatchingMappings(Collection<T> mappings, List<Match> matches, ServerJsonRpcExchange exchange) {
+		for (T mapping : mappings) {
+			T match = getMatchingMapping(mapping, exchange);
 			if (match != null) {
-//				matches.add(new Match(match, this.mappingRegistry.getMappings().get(mapping)));
-				matches.add(new Match(match, registry.get(mapping)));
+				matches.add(new Match(match, this.mappingRegistry.getMappings().get(mapping)));
+//				matches.add(new Match(match, registry.get(mapping)));
 			}
 		}
 	}
@@ -206,9 +219,7 @@ public abstract class AbstractHandlerMethodMapping extends ApplicationObjectSupp
 	 * @param exchange the exchange
 	 * @return the matching mapping
 	 */
-	protected JsonRpcRequestMappingInfo getMatchingMapping(JsonRpcRequestMappingInfo info, ServerJsonRpcExchange exchange) {
-		return info.getMatchingCondition(exchange);
-	}
+	protected abstract T getMatchingMapping(T mapping, ServerJsonRpcExchange exchange);
 
 	/**
 	 * Inits the handler methods.
@@ -254,10 +265,10 @@ public abstract class AbstractHandlerMethodMapping extends ApplicationObjectSupp
 
 		if (handlerType != null) {
 			final Class<?> userType = ClassUtils.getUserClass(handlerType);
-//			Map<Method, ?> methods = MethodIntrospector.selectMethods(userType,
-//					(MethodIntrospector.MetadataLookup<?>) method -> getMappingForMethod(method, userType));
-			Map<Method, JsonRpcRequestMappingInfo> methods = MethodIntrospector.selectMethods(userType,
-					(MethodIntrospector.MetadataLookup<JsonRpcRequestMappingInfo>) method -> getMappingForMethod(method, userType));
+			Map<Method, T> methods = MethodIntrospector.selectMethods(userType,
+					(MethodIntrospector.MetadataLookup<T>) method -> getMappingForMethod(method, userType));
+//			Map<Method, JsonRpcRequestMappingInfo> methods = MethodIntrospector.selectMethods(userType,
+//					(MethodIntrospector.MetadataLookup<JsonRpcRequestMappingInfo>) method -> getMappingForMethod(method, userType));
 			if (log.isDebugEnabled()) {
 				log.debug(methods.size() + " request handler methods found on " + userType + ": " + methods);
 			}
@@ -275,9 +286,10 @@ public abstract class AbstractHandlerMethodMapping extends ApplicationObjectSupp
 	 * @param method the method
 	 * @param mapping the mapping
 	 */
-	protected void registerHandlerMethod(Object handler, Method method, JsonRpcRequestMappingInfo mapping) {
-		HandlerMethod handlerMethod = createHandlerMethod(handler, method);
-		registry.put(mapping, handlerMethod);
+	protected void registerHandlerMethod(Object handler, Method method, T mapping) {
+//		HandlerMethod handlerMethod = createHandlerMethod(handler, method);
+//		registry.put(mapping, handlerMethod);
+		this.mappingRegistry.register(mapping, handler, method);
 	}
 
 	/**
@@ -308,16 +320,7 @@ public abstract class AbstractHandlerMethodMapping extends ApplicationObjectSupp
 	 * @param handlerType the handler type
 	 * @return the mapping for method
 	 */
-	protected JsonRpcRequestMappingInfo getMappingForMethod(Method method, Class<?> handlerType) {
-		JsonRpcRequestMappingInfo info = createRequestMappingInfo(method);
-		if (info != null) {
-			JsonRpcRequestMappingInfo typeInfo = createRequestMappingInfo(handlerType);
-			if (typeInfo != null) {
-				info = typeInfo.combine(info);
-			}
-		}
-		return info;
-	}
+	protected abstract T getMappingForMethod(Method method, Class<?> handlerType);
 
 	/**
 	 * Creates the request mapping info.
@@ -325,8 +328,69 @@ public abstract class AbstractHandlerMethodMapping extends ApplicationObjectSupp
 	 * @param element the element
 	 * @return the lsp request mapping info
 	 */
-	protected abstract JsonRpcRequestMappingInfo createRequestMappingInfo(AnnotatedElement element);
+//	protected abstract JsonRpcRequestMappingInfo createRequestMappingInfo(AnnotatedElement element);
 
+	class MappingRegistry {
+
+		private final Map<T, MappingRegistration<T>> registry = new HashMap<>();
+		private final Map<T, HandlerMethod> mappingLookup = new LinkedHashMap<>();
+		private final ReentrantReadWriteLock readWriteLock = new ReentrantReadWriteLock();
+
+		public Map<T, HandlerMethod> getMappings() {
+			return this.mappingLookup;
+		}
+
+		public void acquireReadLock() {
+			this.readWriteLock.readLock().lock();
+		}
+
+		public void releaseReadLock() {
+			this.readWriteLock.readLock().unlock();
+		}
+
+		public void register(T mapping, Object handler, Method method) {
+			this.readWriteLock.writeLock().lock();
+			try {
+				HandlerMethod handlerMethod = createHandlerMethod(handler, method);
+				assertUniqueMethodMapping(handlerMethod, mapping);
+
+				if (logger.isInfoEnabled()) {
+					logger.info("Mapped \"" + mapping + "\" onto " + handlerMethod);
+				}
+				this.mappingLookup.put(mapping, handlerMethod);
+				this.registry.put(mapping, new MappingRegistration<>(mapping, handlerMethod));
+			}
+			finally {
+				this.readWriteLock.writeLock().unlock();
+			}
+		}
+
+		private void assertUniqueMethodMapping(HandlerMethod newHandlerMethod, T mapping) {
+			HandlerMethod handlerMethod = this.mappingLookup.get(mapping);
+			if (handlerMethod != null && !handlerMethod.equals(newHandlerMethod)) {
+				throw new IllegalStateException(
+						"Ambiguous mapping. Cannot map '" + newHandlerMethod.getBean() + "' method \n" +
+								newHandlerMethod + "\nto " + mapping + ": There is already '" +
+								handlerMethod.getBean() + "' bean method\n" + handlerMethod + " mapped.");
+			}
+		}
+
+		public void unregister(T mapping) {
+			this.readWriteLock.writeLock().lock();
+			try {
+				MappingRegistration<T> definition = this.registry.remove(mapping);
+				if (definition == null) {
+					return;
+				}
+
+				this.mappingLookup.remove(definition.getMapping());
+			}
+			finally {
+				this.readWriteLock.writeLock().unlock();
+			}
+		}
+
+	}
 
 	/**
 	 * The Class MappingRegistration.
@@ -381,10 +445,7 @@ public abstract class AbstractHandlerMethodMapping extends ApplicationObjectSupp
 	 */
 	private class Match {
 
-		/** The mapping. */
-		private final JsonRpcRequestMappingInfo mapping;
-
-		/** The handler method. */
+		private final T mapping;
 		private final HandlerMethod handlerMethod;
 
 		/**
@@ -393,7 +454,7 @@ public abstract class AbstractHandlerMethodMapping extends ApplicationObjectSupp
 		 * @param mapping the mapping
 		 * @param handlerMethod the handler method
 		 */
-		public Match(JsonRpcRequestMappingInfo mapping, HandlerMethod handlerMethod) {
+		public Match(T mapping, HandlerMethod handlerMethod) {
 			this.mapping = mapping;
 			this.handlerMethod = handlerMethod;
 		}
@@ -405,20 +466,11 @@ public abstract class AbstractHandlerMethodMapping extends ApplicationObjectSupp
 	}
 
 
-	/**
-	 * The Class MatchComparator.
-	 */
 	private class MatchComparator implements Comparator<Match> {
 
-		/** The comparator. */
-		private final Comparator<JsonRpcRequestMappingInfo> comparator;
+		private final Comparator<T> comparator;
 
-		/**
-		 * Instantiates a new match comparator.
-		 *
-		 * @param comparator the comparator
-		 */
-		public MatchComparator(Comparator<JsonRpcRequestMappingInfo> comparator) {
+		public MatchComparator(Comparator<T> comparator) {
 			this.comparator = comparator;
 		}
 

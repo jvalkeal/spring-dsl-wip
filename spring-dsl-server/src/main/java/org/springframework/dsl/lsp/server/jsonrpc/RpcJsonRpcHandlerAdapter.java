@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.jsonrpc.server;
+package org.springframework.dsl.lsp.server.jsonrpc;
 
 import org.springframework.dsl.jsonrpc.JsonRpcHandler;
 import org.springframework.dsl.jsonrpc.JsonRpcInputMessage;

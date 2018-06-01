@@ -15,12 +15,35 @@
  */
 package org.springframework.dsl.jsonrpc;
 
+import org.springframework.dsl.jsonrpc.support.DispatcherJsonRpcHandler;
+
 import reactor.core.publisher.Mono;
 
+/**
+ * Contract that decouples the {@link DispatcherJsonRpcHandler} from the details
+ * of invoking a handler and makes it possible to support any handler type.
+ *
+ * @author Janne Valkealahti
+ *
+ */
 public interface JsonRpcHandlerAdapter {
 
+	/**
+	 * Whether this {@code JsonRpcHandlerAdapter} supports the given {@code handler}.
+	 *
+	 * @param handler handler object to check
+	 * @return whether or not the handler is supported
+	 */
 	boolean supports(Object handler);
 
-	Mono<JsonRpcHandlerResult> handle(ServerJsonRpcExchange request, Object handler);
-
+	/**
+	 * Handle the request with the given handler.
+	 *
+	 * @param exchange current json rpc server exchange
+	 * @param handler the selected handler which must have been previously
+	 *                checked via {@link #supports(Object)}
+	 * @return {@link Mono} that emits a single {@code JsonRpcHandlerResult} or none if
+	 *         the request has been fully handled and doesn't require further handling.
+	 */
+	Mono<JsonRpcHandlerResult> handle(ServerJsonRpcExchange exchange, Object handler);
 }

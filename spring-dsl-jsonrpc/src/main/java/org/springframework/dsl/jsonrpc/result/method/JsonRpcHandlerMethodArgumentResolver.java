@@ -22,7 +22,7 @@ import reactor.core.publisher.Mono;
 
 /**
  * Strategy to resolve the argument value for a method parameter in the context
- * of the current {@code LSP} request.
+ * of the current {@code JSONRPC} request.
  *
  * @author Janne Valkealahti
  *
@@ -41,7 +41,7 @@ public interface JsonRpcHandlerMethodArgumentResolver {
 	 * Resolve the value for the method parameter.
 	 *
 	 * @param parameter the method parameter
-	 * @param exchange the current exchange
+	 * @param exchange the current json rpc exchange
 	 * @return {@code Mono} for the argument value, possibly empty
 	 */
 	Mono<Object> resolveArgument(MethodParameter parameter, ServerJsonRpcExchange exchange);

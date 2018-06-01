@@ -15,16 +15,9 @@
  */
 package org.springframework.dsl.jsonrpc.config;
 
-import java.time.Duration;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.dsl.jsonrpc.server.NettyTcpServer;
-import org.springframework.dsl.jsonrpc.server.ReactorJsonRpcHandlerAdapter;
-import org.springframework.dsl.jsonrpc.server.RpcJsonRpcHandlerAdapter;
 import org.springframework.dsl.jsonrpc.support.DispatcherJsonRpcHandler;
-
-import reactor.ipc.netty.tcp.TcpServer;
 
 @Configuration
 public class DelegatingJsonRpcConfiguration {
@@ -34,21 +27,21 @@ public class DelegatingJsonRpcConfiguration {
 		return new DispatcherJsonRpcHandler();
 	}
 
-	@Bean
-	public RpcJsonRpcHandlerAdapter rpcJsonRpcHandlerAdapter(DispatcherJsonRpcHandler dispatcherJsonRpcHandler) {
-		return new RpcJsonRpcHandlerAdapter(dispatcherJsonRpcHandler);
-	}
-
-	@Bean
-	public ReactorJsonRpcHandlerAdapter reactorJsonRpcHandlerAdapter(RpcJsonRpcHandlerAdapter rpcJsonRpcHandlerAdapter) {
-		return new ReactorJsonRpcHandlerAdapter(rpcJsonRpcHandlerAdapter);
-	}
-
-	@Bean(initMethod = "start")
-	public NettyTcpServer nettyTcpServer(ReactorJsonRpcHandlerAdapter handlerAdapter) {
-		TcpServer tcpServer = TcpServer.create(9999);
-		NettyTcpServer nettyTcpServer = new NettyTcpServer(tcpServer, handlerAdapter, null);
-		return nettyTcpServer;
-	}
+//	@Bean
+//	public RpcJsonRpcHandlerAdapter rpcJsonRpcHandlerAdapter(DispatcherJsonRpcHandler dispatcherJsonRpcHandler) {
+//		return new RpcJsonRpcHandlerAdapter(dispatcherJsonRpcHandler);
+//	}
+//
+//	@Bean
+//	public ReactorJsonRpcHandlerAdapter reactorJsonRpcHandlerAdapter(RpcJsonRpcHandlerAdapter rpcJsonRpcHandlerAdapter) {
+//		return new ReactorJsonRpcHandlerAdapter(rpcJsonRpcHandlerAdapter);
+//	}
+//
+//	@Bean(initMethod = "start")
+//	public NettyTcpServer nettyTcpServer(ReactorJsonRpcHandlerAdapter handlerAdapter) {
+//		TcpServer tcpServer = TcpServer.create(9999);
+//		NettyTcpServer nettyTcpServer = new NettyTcpServer(tcpServer, handlerAdapter, null);
+//		return nettyTcpServer;
+//	}
 
 }
