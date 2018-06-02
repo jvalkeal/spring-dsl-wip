@@ -30,6 +30,30 @@ import reactor.ipc.netty.NettyPipeline;
 
 public class ReactorJsonRpcHandlerAdapter implements BiFunction<NettyInbound, NettyOutbound, Mono<Void>> {
 
+
+//	Processor<DefaultJsonRpcRequest, DefaultJsonRpcRequest> requestProcessor = WorkQueueProcessor.create();
+//	WorkQueueProcessor<DefaultJsonRpcResponse> responseProcessor = WorkQueueProcessor.create();
+//
+//	Flux.from(requestProcessor)
+//	.log("ddd")
+//	.doOnNext(request -> {
+//		DefaultJsonRpcResponse response = new DefaultJsonRpcResponse();
+//		responseProcessor.onNext(response);
+//	})
+//	.subscribe();
+
+//	private final Subscriber<DefaultJsonRpcRequest> requests;
+//	private final Publisher<DefaultJsonRpcResponse> responses;
+//	private WorkQueueProcessor<ByteBuf> workProcessor;
+
+	//			workProcessor = WorkQueueProcessor.create("jsonrpc-worker", 8192);
+
+	//	Flux<ByteBuf> stream = Flux.from(responses).map(r -> {
+//	return Unpooled.copiedBuffer(r.getId().getBytes());
+//}).subscribeWith(workProcessor);
+
+//  in.context().addHandlerLast(new LspJsonRpcDecoder());
+
 	private static final Logger log = LoggerFactory.getLogger(ReactorJsonRpcHandlerAdapter.class);
 	private final RpcHandler rpcHandler;
 
