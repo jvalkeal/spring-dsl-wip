@@ -33,6 +33,12 @@ public class MockJsonRpcInputMessage implements JsonRpcInputMessage {
 		this.body = Flux.from(body);
 	}
 
+	@Override
+	public Flux<DataBuffer> getBody() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	public static Builder get(String method) {
 		return new DefaultBuilder(method);
 	}

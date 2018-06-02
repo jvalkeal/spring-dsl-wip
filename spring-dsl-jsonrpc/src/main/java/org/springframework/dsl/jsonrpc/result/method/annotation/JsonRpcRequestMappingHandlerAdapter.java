@@ -15,6 +15,7 @@
  */
 package org.springframework.dsl.jsonrpc.result.method.annotation;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.InitializingBean;
@@ -23,12 +24,15 @@ import org.springframework.dsl.jsonrpc.JsonRpcHandlerResult;
 import org.springframework.dsl.jsonrpc.ServerJsonRpcExchange;
 import org.springframework.dsl.jsonrpc.result.method.HandlerMethod;
 import org.springframework.dsl.jsonrpc.result.method.JsonRpcHandlerMethodArgumentResolver;
+import org.springframework.dsl.jsonrpc.support.ControllerMethodResolver;
+import org.springframework.util.Assert;
 
 import reactor.core.publisher.Mono;
 
 public class JsonRpcRequestMappingHandlerAdapter implements JsonRpcHandlerAdapter, InitializingBean {
 
 	private final List<JsonRpcHandlerMethodArgumentResolver> resolvers;
+	private ControllerMethodResolver methodResolver;
 
 	public JsonRpcRequestMappingHandlerAdapter(List<JsonRpcHandlerMethodArgumentResolver> resolvers) {
 		this.resolvers = resolvers;
@@ -36,6 +40,9 @@ public class JsonRpcRequestMappingHandlerAdapter implements JsonRpcHandlerAdapte
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
+		List<JsonRpcHandlerMethodArgumentResolver> requestMappingResolvers = new ArrayList<>();
+		requestMappingResolvers.addAll(this.resolvers);
+		this.methodResolver = new ControllerMethodResolver(requestMappingResolvers);
 	}
 
 	@Override
@@ -44,8 +51,10 @@ public class JsonRpcRequestMappingHandlerAdapter implements JsonRpcHandlerAdapte
 	}
 
 	@Override
-	public Mono<JsonRpcHandlerResult> handle(ServerJsonRpcExchange request, Object handler) {
-		return null;
+	public Mono<JsonRpcHandlerResult> handle(ServerJsonRpcExchange exchange, Object handler) {
+		Assert.notNull(handler, "Expected handler");
+		HandlerMethod handlerMethod = (HandlerMethod) handler;
+		Mono<JsonRpcHandlerResult> invoke = this.methodResolver.getRequestMappingMethod(handlerMethod).invoke(exchange);
+		return invoke;
 	}
-
 }

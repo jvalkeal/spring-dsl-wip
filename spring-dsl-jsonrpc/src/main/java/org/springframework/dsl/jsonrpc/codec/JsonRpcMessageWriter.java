@@ -13,18 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.jsonrpc.config;
+package org.springframework.dsl.jsonrpc.codec;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.dsl.jsonrpc.support.DispatcherJsonRpcHandler;
+import java.util.Map;
 
-@Configuration
-public class DelegatingJsonRpcConfiguration {
+import org.reactivestreams.Publisher;
+import org.springframework.core.ResolvableType;
+import org.springframework.dsl.jsonrpc.JsonRpcOutputMessage;
+import org.springframework.lang.Nullable;
 
-	@Bean
-	public DispatcherJsonRpcHandler dispatcherJsonRpcHandler() {
-		return new DispatcherJsonRpcHandler();
-	}
+import reactor.core.publisher.Mono;
+
+public interface JsonRpcMessageWriter<T> {
+
+	boolean canWrite(ResolvableType elementType);
+
+	Mono<Void> write(Publisher<? extends T> inputStream, ResolvableType elementType, JsonRpcOutputMessage message,
+			Map<String, Object> hints);
 
 }

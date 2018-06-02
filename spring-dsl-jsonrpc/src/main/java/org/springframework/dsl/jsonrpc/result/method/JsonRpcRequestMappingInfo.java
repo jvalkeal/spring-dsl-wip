@@ -18,24 +18,31 @@ package org.springframework.dsl.jsonrpc.result.method;
 import org.springframework.dsl.jsonrpc.ServerJsonRpcExchange;
 import org.springframework.dsl.jsonrpc.result.condition.JsonRcpRequestMethodsRequestCondition;
 import org.springframework.dsl.jsonrpc.result.condition.JsonRpcRequestCondition;
+import org.springframework.lang.Nullable;
+import org.springframework.util.StringUtils;
 
 public class JsonRpcRequestMappingInfo implements JsonRpcRequestCondition<JsonRpcRequestMappingInfo> {
+
+	@Nullable
+	private final String name;
 
 	private final JsonRcpRequestMethodsRequestCondition methodsCondition;
 
 	/**
 	 * Instantiates a new json rpc request mapping info.
 	 *
+	 * @param name the name
 	 * @param methodsCondition the methods condition
 	 */
-	public JsonRpcRequestMappingInfo(JsonRcpRequestMethodsRequestCondition methodsCondition) {
-		this.methodsCondition = methodsCondition;
+	public JsonRpcRequestMappingInfo(@Nullable String name, JsonRcpRequestMethodsRequestCondition methods) {
+		this.name = (StringUtils.hasText(name) ? name : null);
+		this.methodsCondition = methods != null ? methods : new JsonRcpRequestMethodsRequestCondition();
 	}
 
 	@Override
 	public JsonRpcRequestMappingInfo combine(JsonRpcRequestMappingInfo other) {
-		JsonRcpRequestMethodsRequestCondition methods = this.methodsCondition.combine(other.methodsCondition);
-		return new JsonRpcRequestMappingInfo(methods);
+		JsonRcpRequestMethodsRequestCondition methods = methodsCondition.combine(other.methodsCondition);
+		return new JsonRpcRequestMappingInfo(name, methods);
 	}
 
 	@Override
@@ -44,12 +51,36 @@ public class JsonRpcRequestMappingInfo implements JsonRpcRequestCondition<JsonRp
 		if (methods == null) {
 			return null;
 		}
-		return new JsonRpcRequestMappingInfo(methods);
+		return new JsonRpcRequestMappingInfo(name, methods);
 	}
 
 	@Override
 	public int compareTo(JsonRpcRequestMappingInfo other, ServerJsonRpcExchange exchange) {
+		int result = methodsCondition.compareTo(other.getMethodsCondition(), exchange);
+		if (result != 0) {
+			return result;
+		}
 		return 0;
+	}
+
+	/**
+	 * Return the name for this mapping, or {@code null}.
+	 *
+	 * @return the name for this mapping
+	 */
+	@Nullable
+	public String getName() {
+		return this.name;
+	}
+
+	/**
+	 * Gets the JSONRPC request methods of this {@link JsonRpcRequestMappingInfo};
+	 * or instance with 0 request methods, never {@code null}.
+	 *
+	 * @return the methods condition
+	 */
+	public JsonRcpRequestMethodsRequestCondition getMethodsCondition() {
+		return methodsCondition;
 	}
 
 	public static Builder builder() {
@@ -70,6 +101,14 @@ public class JsonRpcRequestMappingInfo implements JsonRpcRequestCondition<JsonRp
 		Builder methods(String... methods);
 
 		/**
+		 * Set the mapping name.
+		 *
+		 * @param name the mapping name
+		 * @return the builder for chaining
+		 */
+		Builder mappingName(String name);
+
+		/**
 		 * Builds the {@link JsonRpcRequestMappingInfo}.
 		 *
 		 * @return the json rpc request mapping info
@@ -79,7 +118,11 @@ public class JsonRpcRequestMappingInfo implements JsonRpcRequestCondition<JsonRp
 
 	private static class DefaultBuilder implements Builder {
 
+		@Nullable
 		private String[] methods;
+
+		@Nullable
+		private String mappingName;
 
 		@Override
 		public Builder methods(String... methods) {
@@ -88,8 +131,14 @@ public class JsonRpcRequestMappingInfo implements JsonRpcRequestCondition<JsonRp
 		}
 
 		@Override
+		public Builder mappingName(String name) {
+			this.mappingName = name;
+			return this;
+		}
+
+		@Override
 		public JsonRpcRequestMappingInfo build() {
-			return new JsonRpcRequestMappingInfo(new JsonRcpRequestMethodsRequestCondition(methods));
+			return new JsonRpcRequestMappingInfo(mappingName, new JsonRcpRequestMethodsRequestCondition(methods));
 		}
 	}
 }

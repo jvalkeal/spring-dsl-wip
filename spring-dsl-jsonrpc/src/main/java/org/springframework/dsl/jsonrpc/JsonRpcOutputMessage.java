@@ -17,6 +17,7 @@ package org.springframework.dsl.jsonrpc;
 
 import org.reactivestreams.Publisher;
 import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.core.io.buffer.DataBufferFactory;
 
 import reactor.core.publisher.Mono;
 
@@ -32,4 +33,6 @@ public interface JsonRpcOutputMessage extends JsonRpcMessage {
 	Mono<Void> writeWith(Publisher<? extends DataBuffer> body);
 
 	Mono<Void> setComplete();
+
+	DataBufferFactory bufferFactory();
 }

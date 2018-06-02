@@ -15,6 +15,8 @@
  */
 package org.springframework.dsl.lsp.server.jsonrpc;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dsl.jsonrpc.JsonRpcHandler;
 import org.springframework.dsl.jsonrpc.JsonRpcInputMessage;
 import org.springframework.dsl.jsonrpc.JsonRpcOutputMessage;
@@ -26,6 +28,7 @@ import reactor.core.publisher.Mono;
 
 public class RpcJsonRpcHandlerAdapter implements RpcHandler {
 
+	private static final Logger log = LoggerFactory.getLogger(RpcJsonRpcHandlerAdapter.class);
 	private final JsonRpcHandler delegate;
 
 	public RpcJsonRpcHandlerAdapter(JsonRpcHandler delegate) {
@@ -46,6 +49,7 @@ public class RpcJsonRpcHandlerAdapter implements RpcHandler {
 	}
 
 	private Mono<Void> handleFailure(JsonRpcInputMessage request, JsonRpcOutputMessage response, Throwable ex) {
-		return Mono.empty();
+		log.error("Unhandled failure: " + ex.getMessage() + ", response already set");
+		return Mono.error(ex);
 	}
 }

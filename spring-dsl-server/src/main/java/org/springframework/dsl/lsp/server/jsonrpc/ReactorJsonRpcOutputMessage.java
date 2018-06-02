@@ -20,6 +20,8 @@ import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.NettyDataBufferFactory;
 import org.springframework.dsl.jsonrpc.support.AbstractJsonRpcOutputMessage;
 
+import io.netty.buffer.ByteBuf;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.ipc.netty.NettyOutbound;
 
@@ -45,11 +47,14 @@ public class ReactorJsonRpcOutputMessage extends AbstractJsonRpcOutputMessage {
 	}
 
 	@Override
-	protected Mono<Void> writeWithInternal(Publisher<? extends DataBuffer> body) {
-		// TODO Auto-generated method stub
-		return null;
+	protected Mono<Void> writeWithInternal(Publisher<? extends DataBuffer> publisher) {
+		Publisher<ByteBuf> body = toByteBufs(publisher);
+		return this.response.send(body).then();
 	}
 
+	private static Publisher<ByteBuf> toByteBufs(Publisher<? extends DataBuffer> dataBuffers) {
+		return Flux.from(dataBuffers).map(NettyDataBufferFactory::toByteBuf);
+	}
 
 
 }

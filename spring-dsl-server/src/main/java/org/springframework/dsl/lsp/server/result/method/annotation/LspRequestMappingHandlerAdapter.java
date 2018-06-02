@@ -38,11 +38,14 @@ import reactor.core.publisher.Mono;
  */
 public class LspRequestMappingHandlerAdapter implements HandlerAdapter, InitializingBean {
 
-	/** The method resolver. */
 	private ControllerMethodResolver methodResolver;
-
 	private List<LspHandlerMethodArgumentResolver> resolvers;
 
+	/**
+	 * Instantiates a new lsp request mapping handler adapter.
+	 *
+	 * @param resolvers the resolvers
+	 */
 	public LspRequestMappingHandlerAdapter(List<LspHandlerMethodArgumentResolver> resolvers) {
 		this.resolvers = resolvers;
 	}
@@ -63,7 +66,6 @@ public class LspRequestMappingHandlerAdapter implements HandlerAdapter, Initiali
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		List<LspHandlerMethodArgumentResolver> requestMappingResolvers = new ArrayList<>();
-//		requestMappingResolvers.add(new ServerLspExchangeArgumentResolver());
 		requestMappingResolvers.addAll(this.resolvers);
 		this.methodResolver = new ControllerMethodResolver(requestMappingResolvers);
 	}

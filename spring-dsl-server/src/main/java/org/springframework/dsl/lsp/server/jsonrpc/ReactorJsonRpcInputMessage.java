@@ -15,9 +15,11 @@
  */
 package org.springframework.dsl.lsp.server.jsonrpc;
 
+import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.NettyDataBufferFactory;
 import org.springframework.dsl.jsonrpc.support.AbstractJsonRpcInputMessage;
 
+import reactor.core.publisher.Flux;
 import reactor.ipc.netty.NettyInbound;
 
 public class ReactorJsonRpcInputMessage extends AbstractJsonRpcInputMessage {
@@ -30,5 +32,9 @@ public class ReactorJsonRpcInputMessage extends AbstractJsonRpcInputMessage {
 		this.bufferFactory = bufferFactory;
 	}
 
+	@Override
+	public Flux<DataBuffer> getBody() {
+		return in.receive().retain().map(bufferFactory::wrap);
+	}
 
 }

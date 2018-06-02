@@ -22,8 +22,16 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.dsl.jsonrpc.JsonRpcInputMessage;
 import org.springframework.dsl.jsonrpc.ServerJsonRpcExchange;
 
+/**
+ * A logical disjunction (' || ') request condition that matches a request
+ * against a set of JSONRPC request methods.
+ *
+ * @author Janne Valkealahti
+ *
+ */
 public class JsonRcpRequestMethodsRequestCondition
 		extends AbstractRequestCondition<JsonRcpRequestMethodsRequestCondition> {
 
@@ -49,9 +57,13 @@ public class JsonRcpRequestMethodsRequestCondition
 		if (getMethods().isEmpty()) {
 			return this;
 		}
+
+		JsonRpcInputMessage request = exchange.getRequest();
+
+		return matchRequestMethod("hi");
 //		return matchRequestMethod(exchange.getRequest().getMethod());
 
-		return null;
+//		return null;
 	}
 
 	@Override
@@ -66,11 +78,18 @@ public class JsonRcpRequestMethodsRequestCondition
 
 	@Override
 	protected String getToStringInfix() {
-		return null;
+		return " || ";
 	}
 
 	public Set<String> getMethods() {
 		return methods;
+	}
+
+	private JsonRcpRequestMethodsRequestCondition matchRequestMethod(String method) {
+		if (method != null) {
+			return new JsonRcpRequestMethodsRequestCondition(method);
+		}
+		return null;
 	}
 
 	private static List<String> asList(String... requestMethods) {

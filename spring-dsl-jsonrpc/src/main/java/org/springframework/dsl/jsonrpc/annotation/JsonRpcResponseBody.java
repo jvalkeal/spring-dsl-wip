@@ -13,18 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.jsonrpc.config;
+package org.springframework.dsl.jsonrpc.annotation;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.dsl.jsonrpc.support.DispatcherJsonRpcHandler;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-@Configuration
-public class DelegatingJsonRpcConfiguration {
-
-	@Bean
-	public DispatcherJsonRpcHandler dispatcherJsonRpcHandler() {
-		return new DispatcherJsonRpcHandler();
-	}
-
+@Target({ElementType.TYPE, ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface JsonRpcResponseBody {
 }

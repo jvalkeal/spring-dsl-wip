@@ -41,20 +41,29 @@ public class ReactorJsonRpcHandlerAdapter implements BiFunction<NettyInbound, Ne
 	public Mono<Void> apply(NettyInbound in, NettyOutbound out) {
 		NettyDataBufferFactory bufferFactory = new NettyDataBufferFactory(out.alloc());
 
-//		in.receive()
-//			.subscribe(bb -> {
-//				log.info("receive bb {}", bb);
-//			});
-//
-//
-//		return out.options(NettyPipeline.SendOptions::flushOnEach)
-//				.neverComplete();
+		in.receive()
+			.subscribe(bb -> {
+				log.info("receive bb {}", bb);
 
-		JsonRpcInputMessage adaptedRequest = new ReactorJsonRpcInputMessage(in, bufferFactory);
-		JsonRpcOutputMessage adaptedResponse = new ReactorJsonRpcOutputMessage(out, bufferFactory);
+				JsonRpcInputMessage adaptedRequest = new ReactorJsonRpcInputMessage(in, bufferFactory);
+				JsonRpcOutputMessage adaptedResponse = new ReactorJsonRpcOutputMessage(out, bufferFactory);
 
-		return rpcHandler.handle(adaptedRequest, adaptedResponse)
-				.doOnError(ex -> log.error("Handling completed with error", ex))
-				.doOnSuccess(aVoid -> log.debug("Handling completed with success"));
+				rpcHandler.handle(adaptedRequest, adaptedResponse)
+						.doOnError(ex -> log.error("Handling completed with error", ex))
+						.doOnSuccess(aVoid -> log.debug("Handling completed with success"))
+						.subscribe();
+
+			});
+
+
+		return out.options(NettyPipeline.SendOptions::flushOnEach)
+				.neverComplete();
+
+//		JsonRpcInputMessage adaptedRequest = new ReactorJsonRpcInputMessage(in, bufferFactory);
+//		JsonRpcOutputMessage adaptedResponse = new ReactorJsonRpcOutputMessage(out, bufferFactory);
+//
+//		return rpcHandler.handle(adaptedRequest, adaptedResponse)
+//				.doOnError(ex -> log.error("Handling completed with error", ex))
+//				.doOnSuccess(aVoid -> log.debug("Handling completed with success"));
 	}
 }
