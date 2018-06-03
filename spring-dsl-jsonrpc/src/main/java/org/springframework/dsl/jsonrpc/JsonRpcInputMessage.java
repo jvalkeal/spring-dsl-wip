@@ -21,5 +21,6 @@ import reactor.core.publisher.Flux;
 
 public interface JsonRpcInputMessage extends JsonRpcMessage {
 
+	String getMethod();
 	Flux<DataBuffer> getBody();
 }

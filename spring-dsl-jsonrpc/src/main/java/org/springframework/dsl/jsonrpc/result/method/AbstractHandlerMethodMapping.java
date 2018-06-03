@@ -110,9 +110,10 @@ public abstract class AbstractHandlerMethodMapping<T> extends ApplicationObjectS
 			if (matches.size() > 1) {
 				Match secondBestMatch = matches.get(1);
 				if (comparator.compare(bestMatch, secondBestMatch) == 0) {
-					throw new IllegalStateException("Ambiguous handler methods mapped");
-//					throw new IllegalStateException("Ambiguous handler methods mapped for HTTP path '" +
-//							exchange.getRequest().getPath() + "': {" + m1 + ", " + m2 + "}");
+					Method m1 = bestMatch.handlerMethod.getMethod();
+					Method m2 = secondBestMatch.handlerMethod.getMethod();
+					throw new IllegalStateException("Ambiguous handler methods mapped for JSONRCP method '" +
+							exchange.getRequest().getMethod() + "': {" + m1 + ", " + m2 + "}");
 				}
 			}
 			handleMatch(bestMatch.mapping, bestMatch.handlerMethod, exchange);

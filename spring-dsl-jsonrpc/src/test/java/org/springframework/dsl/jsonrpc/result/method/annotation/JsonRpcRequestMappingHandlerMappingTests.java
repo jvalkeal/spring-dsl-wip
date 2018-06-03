@@ -46,6 +46,7 @@ public class JsonRpcRequestMappingHandlerMappingTests {
 	@Test
 	public void testMapping() throws Exception {
 		assertAnnotationMapping("handlerMethod1");
+		assertAnnotationMapping("handlerMethod2");
 	}
 
 	private JsonRpcRequestMappingInfo assertAnnotationMapping(String methodName) throws Exception {
@@ -56,7 +57,7 @@ public class JsonRpcRequestMappingHandlerMappingTests {
 		assertThat(info).isNotNull();
 
 		Set<String> methods = info.getMethodsCondition().getMethods();
-		assertThat(methods).containsExactlyInAnyOrder("handlerMethod1");
+		assertThat(methods).containsExactlyInAnyOrder(methodName);
 		return info;
 	}
 
@@ -65,6 +66,10 @@ public class JsonRpcRequestMappingHandlerMappingTests {
 
 		@JsonRpcRequestMapping(method = "handlerMethod1")
 		public void handlerMethod1() {
+		}
+
+		@JsonRpcRequestMapping(method = "handlerMethod2")
+		public void handlerMethod2() {
 		}
 	}
 }

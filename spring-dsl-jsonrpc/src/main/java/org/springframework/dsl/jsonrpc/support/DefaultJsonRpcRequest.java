@@ -93,4 +93,10 @@ public class DefaultJsonRpcRequest extends AbstractJsonRpcObject {
 	public void setParams(String params) {
 		this.params = params;
 	}
+
+	@Override
+	public String toString() {
+		return "DefaultJsonRpcRequest [method=" + method + ", params=" + params + ", getJsonrpc()=" + getJsonrpc()
+				+ ", getId()=" + getId() + "]";
+	}
 }

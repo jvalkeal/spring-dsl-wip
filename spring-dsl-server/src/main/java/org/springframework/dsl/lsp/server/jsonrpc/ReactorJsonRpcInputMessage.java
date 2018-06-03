@@ -37,4 +37,8 @@ public class ReactorJsonRpcInputMessage extends AbstractJsonRpcInputMessage {
 		return in.receive().retain().map(bufferFactory::wrap);
 	}
 
+	@Override
+	public String getMethod() {
+		return null;
+	}
 }

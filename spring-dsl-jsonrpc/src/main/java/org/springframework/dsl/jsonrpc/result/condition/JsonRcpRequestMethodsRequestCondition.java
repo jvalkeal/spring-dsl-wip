@@ -22,8 +22,10 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.springframework.dsl.jsonrpc.JsonRpcInputMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dsl.jsonrpc.ServerJsonRpcExchange;
+import org.springframework.util.ObjectUtils;
 
 /**
  * A logical disjunction (' || ') request condition that matches a request
@@ -35,6 +37,7 @@ import org.springframework.dsl.jsonrpc.ServerJsonRpcExchange;
 public class JsonRcpRequestMethodsRequestCondition
 		extends AbstractRequestCondition<JsonRcpRequestMethodsRequestCondition> {
 
+	private static final Logger log = LoggerFactory.getLogger(JsonRcpRequestMethodsRequestCondition.class);
 	private final Set<String> methods;
 
 	public JsonRcpRequestMethodsRequestCondition(String... requestMethods) {
@@ -57,13 +60,9 @@ public class JsonRcpRequestMethodsRequestCondition
 		if (getMethods().isEmpty()) {
 			return this;
 		}
-
-		JsonRpcInputMessage request = exchange.getRequest();
-
-		return matchRequestMethod("hi");
-//		return matchRequestMethod(exchange.getRequest().getMethod());
-
-//		return null;
+		String method = exchange.getRequest().getMethod();
+		log.debug("Checking method {}", method);
+		return matchRequestMethod(exchange.getRequest().getMethod());
 	}
 
 	@Override
@@ -87,7 +86,11 @@ public class JsonRcpRequestMethodsRequestCondition
 
 	private JsonRcpRequestMethodsRequestCondition matchRequestMethod(String method) {
 		if (method != null) {
-			return new JsonRcpRequestMethodsRequestCondition(method);
+			for (String m : methods) {
+				if (ObjectUtils.nullSafeEquals(m, method)) {
+					return new JsonRcpRequestMethodsRequestCondition(method);
+				}
+			}
 		}
 		return null;
 	}

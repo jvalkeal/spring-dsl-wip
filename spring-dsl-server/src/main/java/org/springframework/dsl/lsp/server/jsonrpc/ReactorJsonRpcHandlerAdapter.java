@@ -15,14 +15,24 @@
  */
 package org.springframework.dsl.lsp.server.jsonrpc;
 
+import java.io.IOException;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.NettyDataBufferFactory;
 import org.springframework.dsl.jsonrpc.JsonRpcInputMessage;
 import org.springframework.dsl.jsonrpc.JsonRpcOutputMessage;
+import org.springframework.dsl.jsonrpc.support.DefaultJsonRpcRequest;
+import org.springframework.messaging.Message;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.ipc.netty.NettyInbound;
 import reactor.ipc.netty.NettyOutbound;
@@ -63,16 +73,57 @@ public class ReactorJsonRpcHandlerAdapter implements BiFunction<NettyInbound, Ne
 
 	@Override
 	public Mono<Void> apply(NettyInbound in, NettyOutbound out) {
+		ObjectMapper mapper = new ObjectMapper();
 		NettyDataBufferFactory bufferFactory = new NettyDataBufferFactory(out.alloc());
 
-		in.receive()
+		Function<String, DefaultJsonRpcRequest> jsonDecoder = s -> {
+			try {
+				return mapper.readValue(s, DefaultJsonRpcRequest.class);
+			} catch(Exception e) {
+				throw new RuntimeException(e);
+			}
+		};
+
+		in.context().addHandlerLast(new LspJsonRpcDecoder());
+
+		in
+			.receiveObject()
+			.ofType(Message.class)
+			.map(m -> {
+				return m.getPayload().toString();
+			})
+			.map(jsonDecoder)
 			.subscribe(bb -> {
 				log.info("receive bb {}", bb);
+
+				JsonRpcInputMessage i = new JsonRpcInputMessage() {
+
+					@Override
+					public String getJsonrpc() {
+						return null;
+					}
+
+					@Override
+					public Integer getId() {
+						return null;
+					}
+
+
+					@Override
+					public Flux<DataBuffer> getBody() {
+						return null;
+					}
+
+					@Override
+					public String getMethod() {
+						return bb.getMethod();
+					}
+				};
 
 				JsonRpcInputMessage adaptedRequest = new ReactorJsonRpcInputMessage(in, bufferFactory);
 				JsonRpcOutputMessage adaptedResponse = new ReactorJsonRpcOutputMessage(out, bufferFactory);
 
-				rpcHandler.handle(adaptedRequest, adaptedResponse)
+				rpcHandler.handle(i, adaptedResponse)
 						.doOnError(ex -> log.error("Handling completed with error", ex))
 						.doOnSuccess(aVoid -> log.debug("Handling completed with success"))
 						.subscribe();
@@ -90,4 +141,5 @@ public class ReactorJsonRpcHandlerAdapter implements BiFunction<NettyInbound, Ne
 //				.doOnError(ex -> log.error("Handling completed with error", ex))
 //				.doOnSuccess(aVoid -> log.debug("Handling completed with success"));
 	}
+
 }

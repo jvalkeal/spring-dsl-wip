@@ -98,4 +98,9 @@ public abstract class AbstractJsonRpcObject implements JsonRpcMessage {
 	public void setId(Integer id) {
 		this.id = id;
 	}
+
+	@Override
+	public String toString() {
+		return "AbstractJsonRpcObject [jsonrpc=" + jsonrpc + ", id=" + id + "]";
+	}
 }

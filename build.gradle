@@ -231,6 +231,8 @@ project('spring-dsl-jsonrpc') {
 	dependencies {
 		compile 'org.springframework.boot:spring-boot-starter'
 		compile 'io.projectreactor.ipc:reactor-netty'
+		compile 'com.fasterxml.jackson.core:jackson-core'
+		compile 'com.fasterxml.jackson.core:jackson-databind'
 		testCompile 'org.hamcrest:hamcrest-core'
 		testCompile 'org.hamcrest:hamcrest-library'
 		testCompile 'junit:junit'

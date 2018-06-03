@@ -24,10 +24,18 @@ import io.netty.channel.embedded.EmbeddedChannel;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.io.ByteArrayOutputStream;
 
+/**
+ * Tests for {@link LspJsonRpcDecoder}.
+ *
+ * @author Janne Valkealahti
+ *
+ */
 public class LspJsonRpcDecoderTests {
 
-	private static final byte[] CONTENT1 = createContent("{\"jsonrpc\": \"2.0\",\"id\": 1}");
+	private static final byte[] CONTENT1 = createContent("{\"jsonrpc\": \"2.0\",\"id\": 100}");
+	private static final byte[] CONTENT2 = createContent("{\"jsonrpc\": \"2.0\",\"id\": 200}");
 
 	private static byte[] createContent(String... lines) {
 		StringBuilder buf = new StringBuilder();
@@ -40,30 +48,55 @@ public class LspJsonRpcDecoderTests {
 	}
 
 	@Test
-	public void test() {
-		testDecodeWholeRequestAtOnce(CONTENT1);
+	public void testSingleRequest() {
+		testSingleRequestAtOnce(CONTENT1);
 	}
 
-	private static void testDecodeWholeRequestAtOnce(byte[] content) {
+	@Test
+	public void testDoubleRequest() throws Exception {
+		testDoubleRequestAtOnce(concat(CONTENT1, CONTENT2));
+	}
+
+	private static void testSingleRequestAtOnce(byte[] content) {
         EmbeddedChannel channel = new EmbeddedChannel(new LspJsonRpcDecoder());
         assertThat(channel.writeInbound(Unpooled.wrappedBuffer(content))).isTrue();
         Message<String> req = channel.readInbound();
         assertThat(req).isNotNull();
         assertThat(req.getPayload()).isNotNull();
         assertThat(req.getPayload()).contains("2.0");
+        assertThat(req.getPayload()).contains("100");
 
         assertThat(channel.finish()).isFalse();
         Object readInbound = channel.readInbound();
         assertThat(readInbound).isNull();
-//        checkHeaders(req.headers());
-//        LastHttpContent c = channel.readInbound();
-//        assertEquals(CONTENT_LENGTH, c.content().readableBytes());
-//        assertEquals(
-//                Unpooled.wrappedBuffer(content, content.length - CONTENT_LENGTH, CONTENT_LENGTH),
-//                c.content().readSlice(CONTENT_LENGTH));
-//        c.release();
-//
-//        assertFalse(channel.finish());
-//        assertNull(channel.readInbound());
+	}
+
+	private static void testDoubleRequestAtOnce(byte[] content) {
+        EmbeddedChannel channel = new EmbeddedChannel(new LspJsonRpcDecoder());
+        assertThat(channel.writeInbound(Unpooled.wrappedBuffer(content))).isTrue();
+        Message<String> req = channel.readInbound();
+        assertThat(req).isNotNull();
+        assertThat(req.getPayload()).isNotNull();
+        assertThat(req.getPayload()).contains("2.0");
+        assertThat(req.getPayload()).contains("100");
+        assertThat(req.getPayload()).doesNotContain("200");
+
+        req = channel.readInbound();
+        assertThat(req).isNotNull();
+        assertThat(req.getPayload()).isNotNull();
+        assertThat(req.getPayload()).contains("2.0");
+        assertThat(req.getPayload()).contains("200");
+
+        assertThat(channel.finish()).isFalse();
+        Object readInbound = channel.readInbound();
+        assertThat(readInbound).isNull();
+	}
+
+	private static byte[] concat(byte[]... arrays) throws Exception {
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		for (byte[] array : arrays) {
+			outputStream.write(array);
+		}
+		return outputStream.toByteArray();
 	}
 }

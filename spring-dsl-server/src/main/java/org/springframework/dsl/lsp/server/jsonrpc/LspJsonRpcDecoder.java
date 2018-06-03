@@ -37,54 +37,53 @@ import io.netty.util.internal.AppendableCharSequence;
  */
 public class LspJsonRpcDecoder extends ByteToMessageDecoder {
 
-    public static final byte CR = 13;
-    public static final byte LF = 10;
+	public static final byte CR = 13;
+	public static final byte LF = 10;
 
-    private static final String EMPTY_VALUE = "";
-    private final HeaderParser headerParser;
-    private final LineParser lineParser;
-    private Map<String, String> headers = new HashMap<>(1);
+	private static final String EMPTY_VALUE = "";
+	private final HeaderParser headerParser;
+	private final LineParser lineParser;
+	private Map<String, String> headers = new HashMap<>(1);
 	private State currentState = State.READ_HEADER;
-    private CharSequence name;
-    private CharSequence value;
-    private long contentLength = Long.MIN_VALUE;
-    private volatile boolean resetRequested;
-
-	public enum State {
-		READ_HEADER,
-		READ_FIXED_LENGTH_CONTENT;
-	}
+	private CharSequence name;
+	private CharSequence value;
+	private long contentLength = Long.MIN_VALUE;
+	private volatile boolean resetRequested;
 
 	public LspJsonRpcDecoder() {
-        AppendableCharSequence seq = new AppendableCharSequence(128);
-        lineParser = new LineParser(seq, 4096);
-        headerParser = new HeaderParser(seq, 256);
+		AppendableCharSequence seq = new AppendableCharSequence(128);
+		lineParser = new LineParser(seq, 4096);
+		headerParser = new HeaderParser(seq, 256);
 	}
 
 	@Override
 	protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
-        if (resetRequested) {
-            resetNow();
-        }
+		if (resetRequested) {
+			resetNow();
+		}
 
 		switch (currentState) {
 		case READ_HEADER:
 
-            State nextState = readHeaders(in);
-            if (nextState == null) {
-                return;
-            }
-            currentState = nextState;
+			State nextState = readHeaders(in);
+			if (nextState == null) {
+				return;
+			}
+			currentState = nextState;
 
 			break;
 		case READ_FIXED_LENGTH_CONTENT:
 			int readLimit = in.readableBytes();
-            if (readLimit == 0) {
-                return;
-            }
-            ByteBuf content = in.readRetainedSlice(readLimit);
-            String payload = content.retain().duplicate().toString(Charset.defaultCharset());
-            out.add(MessageBuilder.withPayload(payload).copyHeaders(headers).build());
+			if (readLimit == 0) {
+				return;
+			}
+
+			int toRead = Math.min(readLimit, (int)contentLength());
+
+			ByteBuf content = in.readRetainedSlice(toRead);
+			String payload = content.retain().duplicate().toString(Charset.defaultCharset());
+			out.add(MessageBuilder.withPayload(payload).copyHeaders(headers).build());
+			reset();
 			break;
 
 		default:
@@ -93,213 +92,212 @@ public class LspJsonRpcDecoder extends ByteToMessageDecoder {
 
 	}
 
-    private void resetNow() {
+	/**
+	 * Resets the state of the decoder so that it is ready to decode a new message.
+	 */
+	private void reset() {
+		resetRequested = true;
+	}
 
-        name = null;
-        value = null;
-        headers.clear();
-        contentLength = Long.MIN_VALUE;
-        lineParser.reset();
-        headerParser.reset();
-        resetRequested = false;
-        currentState = State.READ_HEADER;
-    }
+	private void resetNow() {
+
+		name = null;
+		value = null;
+		headers.clear();
+		contentLength = Long.MIN_VALUE;
+		lineParser.reset();
+		headerParser.reset();
+		resetRequested = false;
+		currentState = State.READ_HEADER;
+	}
 
 	private State readHeaders(ByteBuf in) {
-//		message = createMessage();
-//		MessageHeaders headers = message.getHeaders();
+		AppendableCharSequence line = headerParser.parse(in);
+		if (line == null) {
+			return null;
+		}
+		if (line.length() > 0) {
+			do {
+				splitHeader(line);
 
-        AppendableCharSequence line = headerParser.parse(in);
-        if (line == null) {
-            return null;
-        }
-        if (line.length() > 0) {
-            do {
-                splitHeader(line);
+				if (name != null) {
+					headers.put(name.toString(), value.toString());
+				}
 
-                if (name != null) {
-                	headers.put(name.toString(), value.toString());
-                }
+				// char firstChar = line.charAt(0);
+				// if (name != null && (firstChar == ' ' || firstChar == '\t')) {
+				// String trimmedLine = line.toString().trim();
+				// String valueStr = String.valueOf(value);
+				// value = valueStr + ' ' + trimmedLine;
+				// } else {
+				// if (name != null) {
+				// headers.put(name.toString(), value.toString());
+				// }
+				// splitHeader(line);
+				// }
 
-
-//                char firstChar = line.charAt(0);
-//                if (name != null && (firstChar == ' ' || firstChar == '\t')) {
-//                    String trimmedLine = line.toString().trim();
-//                    String valueStr = String.valueOf(value);
-//                    value = valueStr + ' ' + trimmedLine;
-//                } else {
-//                    if (name != null) {
-//                        headers.put(name.toString(), value.toString());
-//                    }
-//                    splitHeader(line);
-//                }
-
-                line = headerParser.parse(in);
-                if (line == null) {
-                    return null;
-                }
-            } while (line.length() > 0);
-        }
-        name = null;
-        value = null;
-
+				line = headerParser.parse(in);
+				if (line == null) {
+					return null;
+				}
+			} while (line.length() > 0);
+		}
+		name = null;
+		value = null;
 
 		State nextState;
 
 		if (contentLength() >= 0) {
-            nextState = State.READ_FIXED_LENGTH_CONTENT;
-        } else {
-            nextState = State.READ_HEADER;
-        }
+			nextState = State.READ_FIXED_LENGTH_CONTENT;
+		} else {
+			nextState = State.READ_HEADER;
+		}
 
 		return nextState;
 	}
 
-//	private Message<JsonRpcRequest> createMessage() {
-//		JsonRpcRequest payload = new JsonRpcRequest();
-//		payload.setJsonrpc("2.0");
-//		return MessageBuilder.withPayload(payload).build();
-//	}
+	private long contentLength() {
+		if (contentLength == Long.MIN_VALUE) {
+			String value = headers.get("Content-Length");
+			if (value != null) {
+				return Long.parseLong(value);
+			}
+		}
+		return contentLength;
+	}
 
-    private long contentLength() {
-        if (contentLength == Long.MIN_VALUE) {
-        	String value = headers.get("Content-Length");
-            if (value != null) {
-                return Long.parseLong(value);
-            }
-        }
-        return contentLength;
-    }
+	private void splitHeader(AppendableCharSequence sb) {
+		final int length = sb.length();
+		int nameStart;
+		int nameEnd;
+		int colonEnd;
+		int valueStart;
+		int valueEnd;
 
+		nameStart = findNonWhitespace(sb, 0);
+		for (nameEnd = nameStart; nameEnd < length; nameEnd++) {
+			char ch = sb.charAt(nameEnd);
+			if (ch == ':' || Character.isWhitespace(ch)) {
+				break;
+			}
+		}
 
-    private void splitHeader(AppendableCharSequence sb) {
-        final int length = sb.length();
-        int nameStart;
-        int nameEnd;
-        int colonEnd;
-        int valueStart;
-        int valueEnd;
+		for (colonEnd = nameEnd; colonEnd < length; colonEnd++) {
+			if (sb.charAt(colonEnd) == ':') {
+				colonEnd++;
+				break;
+			}
+		}
 
-        nameStart = findNonWhitespace(sb, 0);
-        for (nameEnd = nameStart; nameEnd < length; nameEnd ++) {
-            char ch = sb.charAt(nameEnd);
-            if (ch == ':' || Character.isWhitespace(ch)) {
-                break;
-            }
-        }
+		name = sb.subStringUnsafe(nameStart, nameEnd);
+		valueStart = findNonWhitespace(sb, colonEnd);
+		if (valueStart == length) {
+			value = EMPTY_VALUE;
+		} else {
+			valueEnd = findEndOfString(sb);
+			value = sb.subStringUnsafe(valueStart, valueEnd);
+		}
+	}
 
-        for (colonEnd = nameEnd; colonEnd < length; colonEnd ++) {
-            if (sb.charAt(colonEnd) == ':') {
-                colonEnd ++;
-                break;
-            }
-        }
+	private static int findNonWhitespace(AppendableCharSequence sb, int offset) {
+		for (int result = offset; result < sb.length(); ++result) {
+			if (!Character.isWhitespace(sb.charAtUnsafe(result))) {
+				return result;
+			}
+		}
+		return sb.length();
+	}
 
-        name = sb.subStringUnsafe(nameStart, nameEnd);
-        valueStart = findNonWhitespace(sb, colonEnd);
-        if (valueStart == length) {
-            value = EMPTY_VALUE;
-        } else {
-            valueEnd = findEndOfString(sb);
-            value = sb.subStringUnsafe(valueStart, valueEnd);
-        }
-    }
+	// private static int findWhitespace(AppendableCharSequence sb, int offset) {
+	// for (int result = offset; result < sb.length(); ++result) {
+	// if (Character.isWhitespace(sb.charAtUnsafe(result))) {
+	// return result;
+	// }
+	// }
+	// return sb.length();
+	// }
 
-    private static int findNonWhitespace(AppendableCharSequence sb, int offset) {
-        for (int result = offset; result < sb.length(); ++result) {
-            if (!Character.isWhitespace(sb.charAtUnsafe(result))) {
-                return result;
-            }
-        }
-        return sb.length();
-    }
+	private static int findEndOfString(AppendableCharSequence sb) {
+		for (int result = sb.length() - 1; result > 0; --result) {
+			if (!Character.isWhitespace(sb.charAtUnsafe(result))) {
+				return result + 1;
+			}
+		}
+		return 0;
+	}
 
-    private static int findWhitespace(AppendableCharSequence sb, int offset) {
-        for (int result = offset; result < sb.length(); ++result) {
-            if (Character.isWhitespace(sb.charAtUnsafe(result))) {
-                return result;
-            }
-        }
-        return sb.length();
-    }
+	private static class HeaderParser implements ByteProcessor {
+		private final AppendableCharSequence seq;
+		private final int maxLength;
+		private int size;
 
-    private static int findEndOfString(AppendableCharSequence sb) {
-        for (int result = sb.length() - 1; result > 0; --result) {
-            if (!Character.isWhitespace(sb.charAtUnsafe(result))) {
-                return result + 1;
-            }
-        }
-        return 0;
-    }
+		HeaderParser(AppendableCharSequence seq, int maxLength) {
+			this.seq = seq;
+			this.maxLength = maxLength;
+		}
 
-    private static class HeaderParser implements ByteProcessor {
-        private final AppendableCharSequence seq;
-        private final int maxLength;
-        private int size;
+		public AppendableCharSequence parse(ByteBuf buffer) {
+			final int oldSize = size;
+			seq.reset();
+			int i = buffer.forEachByte(this);
+			if (i == -1) {
+				size = oldSize;
+				return null;
+			}
+			buffer.readerIndex(i + 1);
+			return seq;
+		}
 
-        HeaderParser(AppendableCharSequence seq, int maxLength) {
-            this.seq = seq;
-            this.maxLength = maxLength;
-        }
+		public void reset() {
+			size = 0;
+		}
 
-        public AppendableCharSequence parse(ByteBuf buffer) {
-            final int oldSize = size;
-            seq.reset();
-            int i = buffer.forEachByte(this);
-            if (i == -1) {
-                size = oldSize;
-                return null;
-            }
-            buffer.readerIndex(i + 1);
-            return seq;
-        }
+		@Override
+		public boolean process(byte value) throws Exception {
+			char nextByte = (char) (value & 0xFF);
+			if (nextByte == CR) {
+				return true;
+			}
+			if (nextByte == LF) {
+				return false;
+			}
 
-        public void reset() {
-            size = 0;
-        }
+			if (++size > maxLength) {
+				// TODO: Respond with Bad Request and discard the traffic
+				// or close the connection.
+				// No need to notify the upstream handlers - just log.
+				// If decoding a response, just throw an exception.
+				throw newException(maxLength);
+			}
 
-        @Override
-        public boolean process(byte value) throws Exception {
-            char nextByte = (char) (value & 0xFF);
-            if (nextByte == CR) {
-                return true;
-            }
-            if (nextByte == LF) {
-                return false;
-            }
+			seq.append(nextByte);
+			return true;
+		}
 
-            if (++ size > maxLength) {
-                // TODO: Respond with Bad Request and discard the traffic
-                //    or close the connection.
-                //       No need to notify the upstream handlers - just log.
-                //       If decoding a response, just throw an exception.
-                throw newException(maxLength);
-            }
+		protected TooLongFrameException newException(int maxLength) {
+			return new TooLongFrameException("JSONRCP header is larger than " + maxLength + " bytes.");
+		}
+	}
 
-            seq.append(nextByte);
-            return true;
-        }
+	private static final class LineParser extends HeaderParser {
 
-        protected TooLongFrameException newException(int maxLength) {
-            return new TooLongFrameException("JSONRCP header is larger than " + maxLength + " bytes.");
-        }
-    }
+		LineParser(AppendableCharSequence seq, int maxLength) {
+			super(seq, maxLength);
+		}
 
-    private static final class LineParser extends HeaderParser {
+		@Override
+		public AppendableCharSequence parse(ByteBuf buffer) {
+			reset();
+			return super.parse(buffer);
+		}
 
-        LineParser(AppendableCharSequence seq, int maxLength) {
-            super(seq, maxLength);
-        }
+		@Override
+		protected TooLongFrameException newException(int maxLength) {
+			return new TooLongFrameException("An JSONRCP line is larger than " + maxLength + " bytes.");
+		}
+	}
 
-        @Override
-        public AppendableCharSequence parse(ByteBuf buffer) {
-            reset();
-            return super.parse(buffer);
-        }
-
-        @Override
-        protected TooLongFrameException newException(int maxLength) {
-            return new TooLongFrameException("An JSONRCP line is larger than " + maxLength + " bytes.");
-        }
-    }
+	private enum State {
+		READ_HEADER, READ_FIXED_LENGTH_CONTENT;
+	}
 }
