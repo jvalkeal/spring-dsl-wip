@@ -175,6 +175,7 @@ project('spring-dsl-autoconfigure') {
 
 	dependencies {
 		compile project(':spring-dsl-core')
+		optional project(':spring-dsl-jsonrpc')
 		optional project(':spring-dsl-server')
 		optional project(':spring-dsl-lsp4j')
 		optional project(':spring-dsl-antlr')
