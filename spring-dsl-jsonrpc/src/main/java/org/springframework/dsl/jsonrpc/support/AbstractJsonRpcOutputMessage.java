@@ -52,6 +52,7 @@ public abstract class AbstractJsonRpcOutputMessage implements JsonRpcOutputMessa
 		this.dataBufferFactory = dataBufferFactory;
 	}
 
+	@Override
 	public final DataBufferFactory bufferFactory() {
 		return this.dataBufferFactory;
 	}
@@ -72,17 +73,21 @@ public abstract class AbstractJsonRpcOutputMessage implements JsonRpcOutputMessa
 				writePublisher -> doCommit(() -> writeWithInternal(writePublisher)));
 	}
 
+	@Override
+	public final Mono<Void> writeAndFlushWith(Publisher<? extends Publisher<? extends DataBuffer>> body) {
+		return new ChannelSendOperator<>(body,
+				writePublisher -> doCommit(() -> writeAndFlushWithInternal(writePublisher)));
+	}
+
 //	@Override
+	@Override
 	public Mono<Void> setComplete() {
 		return !isCommitted() ? doCommit(null) : Mono.empty();
 	}
 
-	/**
-	 * Write to the underlying the response.
-	 *
-	 * @param body the publisher to write with
-	 */
 	protected abstract Mono<Void> writeWithInternal(Publisher<? extends DataBuffer> body);
+
+	protected abstract Mono<Void> writeAndFlushWithInternal(Publisher<? extends Publisher<? extends DataBuffer>> body);
 
 	/**
 	 * A variant of {@link #doCommit(Supplier)} for a response without no body.

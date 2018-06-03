@@ -82,7 +82,8 @@ public class LspJsonRpcDecoder extends ByteToMessageDecoder {
 
 			ByteBuf content = in.readRetainedSlice(toRead);
 			String payload = content.retain().duplicate().toString(Charset.defaultCharset());
-			out.add(MessageBuilder.withPayload(payload).copyHeaders(headers).build());
+//			out.add(MessageBuilder.withPayload(payload).copyHeaders(headers).build());
+			out.add(payload);
 			reset();
 			break;
 

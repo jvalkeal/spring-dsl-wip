@@ -15,13 +15,15 @@
  */
 package org.springframework.dsl.jsonrpc.support;
 
+import org.springframework.dsl.jsonrpc.JsonRpcRequest;
+
 /**
  * Represents a {@code JSONRPC Request Object}.
  *
  * @author Janne Valkealahti
  *
  */
-public class DefaultJsonRpcRequest extends AbstractJsonRpcObject {
+public class DefaultJsonRpcRequest extends AbstractJsonRpcObject implements JsonRpcRequest {
 
 	private String method;
 	private String params;
@@ -63,6 +65,7 @@ public class DefaultJsonRpcRequest extends AbstractJsonRpcObject {
 	 *
 	 * @return the method
 	 */
+	@Override
 	public String getMethod() {
 		return method;
 	}
@@ -81,6 +84,7 @@ public class DefaultJsonRpcRequest extends AbstractJsonRpcObject {
 	 *
 	 * @return the params
 	 */
+	@Override
 	public String getParams() {
 		return params;
 	}

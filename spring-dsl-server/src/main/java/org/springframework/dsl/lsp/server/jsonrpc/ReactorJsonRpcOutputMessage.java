@@ -35,26 +35,19 @@ public class ReactorJsonRpcOutputMessage extends AbstractJsonRpcOutputMessage {
 	}
 
 	@Override
-	public String getJsonrpc() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Integer getId() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	protected Mono<Void> writeWithInternal(Publisher<? extends DataBuffer> publisher) {
 		Publisher<ByteBuf> body = toByteBufs(publisher);
 		return this.response.send(body).then();
 	}
 
+	@Override
+	protected Mono<Void> writeAndFlushWithInternal(Publisher<? extends Publisher<? extends DataBuffer>> publisher) {
+		Publisher<Publisher<ByteBuf>> body = Flux.from(publisher)
+				.map(ReactorJsonRpcOutputMessage::toByteBufs);
+		return this.response.sendGroups(body).then();
+	}
+
 	private static Publisher<ByteBuf> toByteBufs(Publisher<? extends DataBuffer> dataBuffers) {
 		return Flux.from(dataBuffers).map(NettyDataBufferFactory::toByteBuf);
 	}
-
-
 }

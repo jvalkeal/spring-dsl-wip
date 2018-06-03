@@ -48,19 +48,24 @@ public class MockJsonRpcOutputMessage extends AbstractJsonRpcOutputMessage {
 	}
 
 	@Override
+	protected Mono<Void> writeAndFlushWithInternal(Publisher<? extends Publisher<? extends DataBuffer>> body) {
+		return this.writeHandler.apply(Flux.from(body).concatMap(Flux::from));
+	}
+
+	@Override
 	public Mono<Void> setComplete() {
 		return doCommit(() -> Mono.defer(() -> this.writeHandler.apply(Flux.empty())));
 	}
 
-	@Override
-	public String getJsonrpc() {
-		return null;
-	}
-
-	@Override
-	public Integer getId() {
-		return null;
-	}
+//	@Override
+//	public String getJsonrpc() {
+//		return null;
+//	}
+//
+//	@Override
+//	public Integer getId() {
+//		return null;
+//	}
 
 	public Flux<DataBuffer> getBody() {
 		return this.body;

@@ -26,11 +26,22 @@ import org.springframework.util.Assert;
 
 import reactor.core.publisher.Mono;
 
+/**
+ * {@link RpcHandler} delegating to {@link JsonRpcHandler}.
+ *
+ * @author Janne Valkealahti
+ *
+ */
 public class RpcJsonRpcHandlerAdapter implements RpcHandler {
 
 	private static final Logger log = LoggerFactory.getLogger(RpcJsonRpcHandlerAdapter.class);
 	private final JsonRpcHandler delegate;
 
+	/**
+	 * Instantiates a new rpc json rpc handler adapter.
+	 *
+	 * @param delegate the delegate
+	 */
 	public RpcJsonRpcHandlerAdapter(JsonRpcHandler delegate) {
 		Assert.notNull(delegate, "JsonRpcHandler must be set");
 		this.delegate = delegate;

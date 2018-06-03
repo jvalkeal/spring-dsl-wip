@@ -24,6 +24,12 @@ import org.springframework.util.Assert;
 import reactor.ipc.netty.tcp.BlockingNettyContext;
 import reactor.ipc.netty.tcp.TcpServer;
 
+/**
+ * Main entry point to handle lifecycle of a {@link TcpServer} and its used handler.
+ *
+ * @author Janne Valkealahti
+ *
+ */
 public class NettyTcpServer {
 
 	private static final Logger log = LoggerFactory.getLogger(NettyTcpServer.class);

@@ -60,13 +60,13 @@ public class LspJsonRpcDecoderTests {
 	private static void testSingleRequestAtOnce(byte[] content) {
         EmbeddedChannel channel = new EmbeddedChannel(new LspJsonRpcDecoder());
         assertThat(channel.writeInbound(Unpooled.wrappedBuffer(content))).isTrue();
-        Message<String> req = channel.readInbound();
+        String req = channel.readInbound();
         assertThat(req).isNotNull();
-        assertThat(req.getPayload()).isNotNull();
-        assertThat(req.getPayload()).contains("2.0");
-        assertThat(req.getPayload()).contains("100");
-
+        assertThat(req).isNotNull();
+        assertThat(req).contains("2.0");
+        assertThat(req).contains("100");
         assertThat(channel.finish()).isFalse();
+
         Object readInbound = channel.readInbound();
         assertThat(readInbound).isNull();
 	}
@@ -74,18 +74,18 @@ public class LspJsonRpcDecoderTests {
 	private static void testDoubleRequestAtOnce(byte[] content) {
         EmbeddedChannel channel = new EmbeddedChannel(new LspJsonRpcDecoder());
         assertThat(channel.writeInbound(Unpooled.wrappedBuffer(content))).isTrue();
-        Message<String> req = channel.readInbound();
+        String req = channel.readInbound();
         assertThat(req).isNotNull();
-        assertThat(req.getPayload()).isNotNull();
-        assertThat(req.getPayload()).contains("2.0");
-        assertThat(req.getPayload()).contains("100");
-        assertThat(req.getPayload()).doesNotContain("200");
+        assertThat(req).isNotNull();
+        assertThat(req).contains("2.0");
+        assertThat(req).contains("100");
+        assertThat(req).doesNotContain("200");
 
         req = channel.readInbound();
         assertThat(req).isNotNull();
-        assertThat(req.getPayload()).isNotNull();
-        assertThat(req.getPayload()).contains("2.0");
-        assertThat(req.getPayload()).contains("200");
+        assertThat(req).isNotNull();
+        assertThat(req).contains("2.0");
+        assertThat(req).contains("200");
 
         assertThat(channel.finish()).isFalse();
         Object readInbound = channel.readInbound();

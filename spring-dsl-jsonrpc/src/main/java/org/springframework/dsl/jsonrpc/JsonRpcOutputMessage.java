@@ -21,7 +21,20 @@ import org.springframework.core.io.buffer.DataBufferFactory;
 
 import reactor.core.publisher.Mono;
 
-public interface JsonRpcOutputMessage extends JsonRpcMessage {
+/**
+ * A reactive JSONRPC output message that accepts output as a {@link Publisher}.
+ *
+ * @author Janne Valkealahti
+ *
+ */
+public interface JsonRpcOutputMessage {
+
+	/**
+	 * Return a {@link DataBufferFactory} that can be used to create the body.
+	 *
+	 * @return the data buffer factory
+	 */
+	DataBufferFactory bufferFactory();
 
 	/**
 	 * Use the given {@link Publisher} to write the body of the message to the
@@ -32,7 +45,25 @@ public interface JsonRpcOutputMessage extends JsonRpcMessage {
 	 */
 	Mono<Void> writeWith(Publisher<? extends DataBuffer> body);
 
-	Mono<Void> setComplete();
+	/**
+	 * Use the given {@link Publisher} of {@code Publishers} to write the body of
+	 * the HttpOutputMessage to the underlying JSONRPC layer, flushing after each
+	 * {@code Publisher<DataBuffer>}.
+	 *
+	 * @param body the body content publisher
+	 * @return a {@link Mono} that indicates completion or error
+	 */
+	Mono<Void> writeAndFlushWith(Publisher<? extends Publisher<? extends DataBuffer>> body);
 
-	DataBufferFactory bufferFactory();
+	/**
+	 * Indicate that message handling is complete, allowing for any cleanup or
+	 * end-of-processing tasks to be performed.
+	 * <p>
+	 * This method should be automatically invoked at the end of message processing
+	 * so typically applications should not have to invoke it. If invoked multiple
+	 * times it should have no side effects.
+	 *
+	 * @return a {@link Mono} that indicates completion or error
+	 */
+	Mono<Void> setComplete();
 }

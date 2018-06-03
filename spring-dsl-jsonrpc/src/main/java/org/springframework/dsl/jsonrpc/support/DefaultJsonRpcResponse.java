@@ -15,13 +15,15 @@
  */
 package org.springframework.dsl.jsonrpc.support;
 
+import org.springframework.dsl.jsonrpc.JsonRpcResponse;
+
 /**
  * Represents a {@code JSONRPC Response Object}.
  *
  * @author Janne Valkealahti
  *
  */
-public class DefaultJsonRpcResponse extends AbstractJsonRpcObject {
+public class DefaultJsonRpcResponse extends AbstractJsonRpcObject implements JsonRpcResponse {
 
 	private String result;
 	private String error;
@@ -72,6 +74,7 @@ public class DefaultJsonRpcResponse extends AbstractJsonRpcObject {
 	 *
 	 * @return the result
 	 */
+	@Override
 	public String getResult() {
 		return result;
 	}
@@ -90,6 +93,7 @@ public class DefaultJsonRpcResponse extends AbstractJsonRpcObject {
 	 *
 	 * @return the error
 	 */
+	@Override
 	public String getError() {
 		return error;
 	}
