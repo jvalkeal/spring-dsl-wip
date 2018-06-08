@@ -155,7 +155,7 @@ public class NettyTcpServerIntegrationTests {
 	}
 
 	@Test
-	public void testError() throws InterruptedException {
+	public void testMethodNotMatchedError() throws InterruptedException {
 		context = new AnnotationConfigApplicationContext();
 		context.register(JsonRcpConfig.class, TestJsonRcpController.class);
 		context.refresh();

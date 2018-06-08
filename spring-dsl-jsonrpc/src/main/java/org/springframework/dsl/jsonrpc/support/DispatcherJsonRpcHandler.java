@@ -63,7 +63,7 @@ public class DispatcherJsonRpcHandler implements JsonRpcHandler, ApplicationCont
 
 	@Override
 	public Mono<Void> handle(ServerJsonRpcExchange exchange) {
-		log.debug("Handling exchange {}", exchange);
+		log.trace("Handling exchange {}", exchange);
 		return Flux.fromIterable(handlerMappings)
 			.concatMap(mapping -> mapping.getHandler(exchange))
 			.next()
@@ -99,6 +99,7 @@ public class DispatcherJsonRpcHandler implements JsonRpcHandler, ApplicationCont
 
 
 	private Mono<JsonRpcHandlerResult> invokeHandler(ServerJsonRpcExchange exchange, Object handler) {
+		log.trace("invokeHandler {}", handler);
 		for (JsonRpcHandlerAdapter handlerAdapter : this.handlerAdapters) {
 			if (handlerAdapter.supports(handler)) {
 				return handlerAdapter.handle(exchange, handler);
@@ -111,11 +112,12 @@ public class DispatcherJsonRpcHandler implements JsonRpcHandler, ApplicationCont
 		return getResultHandler(result)
 				.handleResult(exchange, result)
 				.onErrorResume(ex -> result.applyExceptionHandler(ex)
-				.flatMap(exceptionResult -> getResultHandler(exceptionResult)
-				.handleResult(exchange, exceptionResult)));
+						.flatMap(exceptionResult -> getResultHandler(exceptionResult)
+								.handleResult(exchange, exceptionResult)));
 	}
 
 	private JsonRpcHandlerResultHandler getResultHandler(JsonRpcHandlerResult handlerResult) {
+		log.debug("getResultHandler {}", handlerResult);
 		for (JsonRpcHandlerResultHandler resultHandler : this.resultHandlers) {
 			if (resultHandler.supports(handlerResult)) {
 				return resultHandler;

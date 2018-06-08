@@ -60,7 +60,7 @@ public class RpcJsonRpcHandlerAdapter implements RpcHandler {
 	public Mono<Void> handle(JsonRpcInputMessage request, JsonRpcOutputMessage response) {
 		ServerJsonRpcExchange exchange = createExchange(request, response);
 		return delegate.handle(exchange)
-				.onErrorResume(ex -> handleFailure(request, response, ex))
+				.onErrorResume(exception -> handleFailure(request, response, exception))
 				.then(Mono.defer(response::setComplete));
 	}
 
@@ -68,15 +68,14 @@ public class RpcJsonRpcHandlerAdapter implements RpcHandler {
 		return new DefaultServerJsonRpcExchange(request, response);
 	}
 
-	private Mono<Void> handleFailure(JsonRpcInputMessage request, JsonRpcOutputMessage response, Throwable ex) {
+	private Mono<Void> handleFailure(JsonRpcInputMessage request, JsonRpcOutputMessage response, Throwable exception) {
 //		EncoderJsonRpcMessageWriter<CharSequence> writer = new EncoderJsonRpcMessageWriter<>(CharSequenceEncoder.allMimeTypes());
 //		ResolvableType elementType = ResolvableType.forClass(String.class);
 //		Mono<String> publisher = Mono.just("error");
 //		return writer.write(publisher, elementType, response, Collections.emptyMap());
 //		return Mono.empty();
 
-		log.error("Unhandled failure: " + ex.getMessage() + ", response already set");
-		return Mono.error(ex);
+		log.error("Unhandled failure: " + exception.getMessage() + ", response already set");
+		return Mono.error(exception);
 	}
-
 }

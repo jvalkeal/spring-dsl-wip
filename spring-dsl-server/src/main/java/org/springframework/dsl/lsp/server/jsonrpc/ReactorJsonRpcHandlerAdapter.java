@@ -40,30 +40,6 @@ import reactor.ipc.netty.NettyPipeline;
 
 public class ReactorJsonRpcHandlerAdapter implements BiFunction<NettyInbound, NettyOutbound, Mono<Void>> {
 
-
-//	Processor<DefaultJsonRpcRequest, DefaultJsonRpcRequest> requestProcessor = WorkQueueProcessor.create();
-//	WorkQueueProcessor<DefaultJsonRpcResponse> responseProcessor = WorkQueueProcessor.create();
-//
-//	Flux.from(requestProcessor)
-//	.log("ddd")
-//	.doOnNext(request -> {
-//		DefaultJsonRpcResponse response = new DefaultJsonRpcResponse();
-//		responseProcessor.onNext(response);
-//	})
-//	.subscribe();
-
-//	private final Subscriber<DefaultJsonRpcRequest> requests;
-//	private final Publisher<DefaultJsonRpcResponse> responses;
-//	private WorkQueueProcessor<ByteBuf> workProcessor;
-
-	//			workProcessor = WorkQueueProcessor.create("jsonrpc-worker", 8192);
-
-	//	Flux<ByteBuf> stream = Flux.from(responses).map(r -> {
-//	return Unpooled.copiedBuffer(r.getId().getBytes());
-//}).subscribeWith(workProcessor);
-
-//  in.context().addHandlerLast(new LspJsonRpcDecoder());
-
 	private static final Logger log = LoggerFactory.getLogger(ReactorJsonRpcHandlerAdapter.class);
 	private final RpcHandler rpcHandler;
 
@@ -129,13 +105,6 @@ public class ReactorJsonRpcHandlerAdapter implements BiFunction<NettyInbound, Ne
 
 		return out.options(NettyPipeline.SendOptions::flushOnEach)
 				.neverComplete();
-
-//		JsonRpcInputMessage adaptedRequest = new ReactorJsonRpcInputMessage(in, bufferFactory);
-//		JsonRpcOutputMessage adaptedResponse = new ReactorJsonRpcOutputMessage(out, bufferFactory);
-//
-//		return rpcHandler.handle(adaptedRequest, adaptedResponse)
-//				.doOnError(ex -> log.error("Handling completed with error", ex))
-//				.doOnSuccess(aVoid -> log.debug("Handling completed with success"));
 	}
 
 }
