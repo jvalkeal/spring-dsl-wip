@@ -61,7 +61,7 @@ public class JsonRcpRequestMethodsRequestCondition
 			return this;
 		}
 		String method = exchange.getRequest().getMethod();
-		log.debug("Checking method {}", method);
+		log.trace("Checking method {}", method);
 		return matchRequestMethod(exchange.getRequest().getMethod());
 	}
 

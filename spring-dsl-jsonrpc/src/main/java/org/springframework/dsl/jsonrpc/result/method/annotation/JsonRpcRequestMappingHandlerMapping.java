@@ -61,7 +61,7 @@ public class JsonRpcRequestMappingHandlerMapping extends AbstractHandlerMethodMa
 	@Override
 	protected HandlerMethod handleNoMatch(Set<JsonRpcRequestMappingInfo> mappings, ServerJsonRpcExchange exchange)
 			throws Exception {
-		throw new RuntimeException("ddd");
+		return null;
 	}
 
 	@Override

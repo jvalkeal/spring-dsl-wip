@@ -19,8 +19,8 @@ import java.util.Map;
 
 import org.reactivestreams.Publisher;
 import org.springframework.core.ResolvableType;
+import org.springframework.dsl.jsonrpc.JsonRpcInputMessage;
 import org.springframework.dsl.jsonrpc.JsonRpcOutputMessage;
-import org.springframework.lang.Nullable;
 
 import reactor.core.publisher.Mono;
 
@@ -28,7 +28,7 @@ public interface JsonRpcMessageWriter<T> {
 
 	boolean canWrite(ResolvableType elementType);
 
-	Mono<Void> write(Publisher<? extends T> inputStream, ResolvableType elementType, JsonRpcOutputMessage message,
+	Mono<Void> write(Publisher<? extends T> inputStream, ResolvableType elementType, JsonRpcInputMessage request, JsonRpcOutputMessage message,
 			Map<String, Object> hints);
 
 }

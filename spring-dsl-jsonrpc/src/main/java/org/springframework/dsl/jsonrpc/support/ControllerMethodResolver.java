@@ -20,6 +20,7 @@ import java.util.List;
 import org.springframework.dsl.jsonrpc.result.method.HandlerMethod;
 import org.springframework.dsl.jsonrpc.result.method.InvocableHandlerMethod;
 import org.springframework.dsl.jsonrpc.result.method.JsonRpcHandlerMethodArgumentResolver;
+import org.springframework.lang.Nullable;
 
 /**
  *
@@ -52,4 +53,13 @@ public class ControllerMethodResolver {
 		invocable.setArgumentResolvers(this.requestMappingResolvers);
 		return invocable;
 	}
+
+//	@Nullable
+//	public InvocableHandlerMethod getExceptionHandlerMethod(Throwable ex, HandlerMethod handlerMethod) {
+//		Class<?> handlerType = handlerMethod.getBeanType();
+//
+//		InvocableHandlerMethod invocable = new InvocableHandlerMethod(targetBean, targetMethod);
+//		invocable.setArgumentResolvers(this.exceptionHandlerResolvers);
+//		return invocable;
+//	}
 }

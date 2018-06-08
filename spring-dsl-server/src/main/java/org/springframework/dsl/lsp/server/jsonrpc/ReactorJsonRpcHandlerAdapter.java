@@ -90,18 +90,18 @@ public class ReactorJsonRpcHandlerAdapter implements BiFunction<NettyInbound, Ne
 			.ofType(String.class)
 			.map(jsonDecoder)
 			.subscribe(bb -> {
-				log.info("receive bb {}", bb);
+				log.info("Receive request {}", bb);
 
 				JsonRpcInputMessage i = new JsonRpcInputMessage() {
 
 					@Override
 					public String getJsonrpc() {
-						return null;
+						return bb.getJsonrpc();
 					}
 
 					@Override
 					public Integer getId() {
-						return null;
+						return bb.getId();
 					}
 
 

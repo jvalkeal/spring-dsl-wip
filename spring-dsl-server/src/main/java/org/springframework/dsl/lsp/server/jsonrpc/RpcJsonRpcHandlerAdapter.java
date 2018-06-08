@@ -15,8 +15,17 @@
  */
 package org.springframework.dsl.lsp.server.jsonrpc;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.NestedExceptionUtils;
+import org.springframework.core.ResolvableType;
+import org.springframework.core.codec.CharSequenceEncoder;
 import org.springframework.dsl.jsonrpc.JsonRpcHandler;
 import org.springframework.dsl.jsonrpc.JsonRpcInputMessage;
 import org.springframework.dsl.jsonrpc.JsonRpcOutputMessage;
@@ -60,7 +69,14 @@ public class RpcJsonRpcHandlerAdapter implements RpcHandler {
 	}
 
 	private Mono<Void> handleFailure(JsonRpcInputMessage request, JsonRpcOutputMessage response, Throwable ex) {
+//		EncoderJsonRpcMessageWriter<CharSequence> writer = new EncoderJsonRpcMessageWriter<>(CharSequenceEncoder.allMimeTypes());
+//		ResolvableType elementType = ResolvableType.forClass(String.class);
+//		Mono<String> publisher = Mono.just("error");
+//		return writer.write(publisher, elementType, response, Collections.emptyMap());
+//		return Mono.empty();
+
 		log.error("Unhandled failure: " + ex.getMessage() + ", response already set");
 		return Mono.error(ex);
 	}
+
 }

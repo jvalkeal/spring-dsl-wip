@@ -57,16 +57,6 @@ public class MockJsonRpcOutputMessage extends AbstractJsonRpcOutputMessage {
 		return doCommit(() -> Mono.defer(() -> this.writeHandler.apply(Flux.empty())));
 	}
 
-//	@Override
-//	public String getJsonrpc() {
-//		return null;
-//	}
-//
-//	@Override
-//	public Integer getId() {
-//		return null;
-//	}
-
 	public Flux<DataBuffer> getBody() {
 		return this.body;
 	}

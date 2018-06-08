@@ -19,6 +19,7 @@ import org.reactivestreams.Publisher;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.NettyDataBufferFactory;
 import org.springframework.dsl.jsonrpc.support.AbstractJsonRpcOutputMessage;
+import org.springframework.util.Assert;
 
 import io.netty.buffer.ByteBuf;
 import reactor.core.publisher.Flux;
@@ -29,8 +30,15 @@ public class ReactorJsonRpcOutputMessage extends AbstractJsonRpcOutputMessage {
 
 	private final NettyOutbound response;
 
+	/**
+	 * Instantiates a new reactor json rpc output message.
+	 *
+	 * @param response the response
+	 * @param bufferFactory the buffer factory
+	 */
 	public ReactorJsonRpcOutputMessage(NettyOutbound response, NettyDataBufferFactory bufferFactory) {
 		super(bufferFactory);
+		Assert.notNull(response, "NettyOutbound must be set");
 		this.response = response;
 	}
 

@@ -15,6 +15,8 @@
  */
 package org.springframework.dsl.jsonrpc;
 
+import java.util.function.Supplier;
+
 import org.reactivestreams.Publisher;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferFactory;
@@ -66,4 +68,18 @@ public interface JsonRpcOutputMessage {
 	 * @return a {@link Mono} that indicates completion or error
 	 */
 	Mono<Void> setComplete();
+
+	/**
+	 * Checks if message has been committed.
+	 *
+	 * @return true, if message has been committed
+	 */
+	boolean isCommitted();
+
+	/**
+	 * Register an action to apply just before the HttpOutputMessage is committed.
+	 *
+	 * @param action the action to apply
+	 */
+	void beforeCommit(Supplier<? extends Mono<Void>> action);
 }

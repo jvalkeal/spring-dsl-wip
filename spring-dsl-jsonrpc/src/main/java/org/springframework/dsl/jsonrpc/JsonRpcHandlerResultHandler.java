@@ -40,5 +40,5 @@ public interface JsonRpcHandlerResultHandler {
 	 * @param result the result from the handling
 	 * @return {@code Mono<Void>} to indicate when request handling is complete.
 	 */
-	Mono<Void> handleResult(ServerJsonRpcExchange request, JsonRpcHandlerResult result);
+	Mono<Void> handleResult(ServerJsonRpcExchange exchange, JsonRpcHandlerResult result);
 }

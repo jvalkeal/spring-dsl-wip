@@ -17,12 +17,14 @@ package org.springframework.dsl.jsonrpc.result.method.annotation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.dsl.jsonrpc.JsonRpcHandlerAdapter;
 import org.springframework.dsl.jsonrpc.JsonRpcHandlerResult;
 import org.springframework.dsl.jsonrpc.ServerJsonRpcExchange;
 import org.springframework.dsl.jsonrpc.result.method.HandlerMethod;
+import org.springframework.dsl.jsonrpc.result.method.InvocableHandlerMethod;
 import org.springframework.dsl.jsonrpc.result.method.JsonRpcHandlerMethodArgumentResolver;
 import org.springframework.dsl.jsonrpc.support.ControllerMethodResolver;
 import org.springframework.util.Assert;
@@ -54,7 +56,25 @@ public class JsonRpcRequestMappingHandlerAdapter implements JsonRpcHandlerAdapte
 	public Mono<JsonRpcHandlerResult> handle(ServerJsonRpcExchange exchange, Object handler) {
 		Assert.notNull(handler, "Expected handler");
 		HandlerMethod handlerMethod = (HandlerMethod) handler;
-		Mono<JsonRpcHandlerResult> invoke = this.methodResolver.getRequestMappingMethod(handlerMethod).invoke(exchange);
-		return invoke;
+
+		Function<Throwable, Mono<JsonRpcHandlerResult>> exceptionHandler =
+				ex -> handleException(ex, handlerMethod, exchange);
+
+		return methodResolver.getRequestMappingMethod(handlerMethod).invoke(exchange)
+			.doOnNext(result -> result.setExceptionHandler(exceptionHandler))
+			.onErrorResume(exceptionHandler);
+
+//
+//		Mono<JsonRpcHandlerResult> invoke = this.methodResolver.getRequestMappingMethod(handlerMethod).invoke(exchange);
+//		return invoke;
+	}
+
+	private Mono<JsonRpcHandlerResult> handleException(Throwable exception, HandlerMethod handlerMethod,
+			ServerJsonRpcExchange exchange) {
+
+//		InvocableHandlerMethod invocable = this.methodResolver.getExceptionHandlerMethod(exception, handlerMethod);
+
+
+		return Mono.error(exception);
 	}
 }

@@ -19,6 +19,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.reactivestreams.Publisher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.ReactiveAdapter;
 import org.springframework.core.ReactiveAdapterRegistry;
@@ -41,6 +43,7 @@ import reactor.core.publisher.Mono;
  */
 public abstract class AbstractMessageWriterResultHandler extends HandlerResultHandlerSupport {
 
+	private static final Logger log = LoggerFactory.getLogger(AbstractMessageWriterResultHandler.class);
 	private final List<JsonRpcMessageWriter<?>> messageWriters;
 
 	protected AbstractMessageWriterResultHandler(List<JsonRpcMessageWriter<?>> messageWriters, ReactiveAdapterRegistry adapterRegistry) {
@@ -53,6 +56,7 @@ public abstract class AbstractMessageWriterResultHandler extends HandlerResultHa
 		return this.writeBody(body, bodyParameter, null, exchange);
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected Mono<Void> writeBody(@Nullable Object body, MethodParameter bodyParameter,
 			@Nullable MethodParameter actualParameter, ServerJsonRpcExchange exchange) {
 
@@ -81,13 +85,14 @@ public abstract class AbstractMessageWriterResultHandler extends HandlerResultHa
 		JsonRpcInputMessage request = exchange.getRequest();
 		JsonRpcOutputMessage response = exchange.getResponse();
 
+		log.debug("request id {} method {}", request.getId(), request.getMethod());
+
 		for (JsonRpcMessageWriter<?> writer : messageWriters) {
 			if (writer.canWrite(elementType)) {
-				return writer.write((Publisher) publisher, elementType, response, Collections.emptyMap());
+				return writer.write((Publisher) publisher, elementType, request, response, Collections.emptyMap());
 			}
 		}
-
-		return Mono.error(new RuntimeException("xxx"));
+		return Mono.error(new IllegalStateException("No writer for : " + elementType));
 	}
 
 	private ResolvableType getElementType(ReactiveAdapter adapter, ResolvableType genericType) {

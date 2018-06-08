@@ -25,7 +25,10 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.ReactiveAdapterRegistry;
@@ -34,7 +37,7 @@ import org.springframework.core.codec.DataBufferEncoder;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcController;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcRequestMapping;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcResponseBody;
-import org.springframework.dsl.jsonrpc.codec.EncoderJsonRpcMessageWriter;
+import org.springframework.dsl.jsonrpc.codec.Jackson2JsonRpcMessageWriter;
 import org.springframework.dsl.jsonrpc.codec.JsonRpcMessageWriter;
 import org.springframework.dsl.jsonrpc.config.EnableJsonRcp;
 import org.springframework.dsl.jsonrpc.result.method.JsonRpcHandlerMethodArgumentResolver;
@@ -56,6 +59,8 @@ public class NettyTcpServerIntegrationTests {
 	private static final byte[] CONTENT1 = createContent("{\"jsonrpc\": \"2.0\",\"id\": 1}");
 	private static final byte[] CONTENT2 = createContent("{\"jsonrpc\": \"2.0\",\"id\": 2, \"method\": \"hi\"}");
 	private static final byte[] CONTENT3 = createContent("{\"jsonrpc\": \"2.0\",\"id\": 3, \"method\": \"bye\"}");
+	private static final byte[] CONTENT4 = createContent("{\"jsonrpc\": \"2.0\",\"id\": 3, \"method\": \"shouldnotexist\"}");
+	private static final byte[] CONTENT5 = createContent("{\"jsonrpc\": \"2.0\",\"id\": 4, \"method\": \"pojo1\"}");
 
 	private static byte[] createContent(String... lines) {
 		StringBuilder buf = new StringBuilder();
@@ -67,21 +72,24 @@ public class NettyTcpServerIntegrationTests {
 		return message.getBytes();
 	}
 
+	private AnnotationConfigApplicationContext context;
+
+	@Before
+	public void init() {
+		context = null;
+	}
+
+	@After
+	public void clean() {
+		if (context != null) {
+			context.close();
+		}
+		context = null;
+	}
+
 	@Test
-	public void test() throws InterruptedException {
-
-//		Function<List<Pojo>, ByteBuf> jsonEncoder = pojo -> {
-//			ByteArrayOutputStream out = new ByteArrayOutputStream();
-//			try {
-//				mapper.writeValue(out, pojo);
-//			} catch(Exception e) {
-//				throw new RuntimeException(e);
-//			}
-//			return Unpooled.copiedBuffer(out.toByteArray());
-//		};
-
-
-		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+	public void testOk1() throws InterruptedException {
+		context = new AnnotationConfigApplicationContext();
 		context.register(JsonRcpConfig.class, TestJsonRcpController.class);
 		context.refresh();
 		NettyTcpServer server = context.getBean(NettyTcpServer.class);
@@ -106,7 +114,77 @@ public class NettyTcpServerIntegrationTests {
 
 		assertThat(dataLatch.await(1, TimeUnit.SECONDS)).isTrue();
 
-		assertThat(responses).containsExactlyInAnyOrder("hi", "bye");
+		// {"jsonrpc": "2.0", "result": "bye", "id": 3}
+		// {"jsonrpc": "2.0", "result": "hi", "id": 4}
+		String response1 = "{\"jsonrpc\":\"2.0\",\"id\":2,\"result\":\"hi\"}";
+		String response2 = "{\"jsonrpc\":\"2.0\",\"id\":3,\"result\":\"bye\"}";
+
+		assertThat(responses).containsExactlyInAnyOrder(response1, response2);
+	}
+
+	@Test
+	public void testOk2() throws InterruptedException {
+		context = new AnnotationConfigApplicationContext();
+		context.register(JsonRcpConfig.class, TestJsonRcpController.class);
+		context.refresh();
+		NettyTcpServer server = context.getBean(NettyTcpServer.class);
+
+		CountDownLatch dataLatch = new CountDownLatch(1);
+		final List<String> responses = new ArrayList<>();
+
+		TcpClient.create(server.getPort())
+				.newHandler((in, out) -> {
+					in
+					.receive()
+					.subscribe(c -> {
+						responses.add(c.retain().duplicate().toString(Charset.defaultCharset()));
+						dataLatch.countDown();
+					});
+
+					return out
+							.send(Flux.just(Unpooled.copiedBuffer(CONTENT5)))
+							.neverComplete();
+				})
+				.block(Duration.ofSeconds(30));
+
+		assertThat(dataLatch.await(1, TimeUnit.SECONDS)).isTrue();
+
+		String response = "{\"jsonrpc\":\"2.0\",\"id\":4,\"result\":{\"message\":\"hi\"}}";
+
+		assertThat(responses).containsExactlyInAnyOrder(response);
+	}
+
+	@Test
+	public void testError() throws InterruptedException {
+		context = new AnnotationConfigApplicationContext();
+		context.register(JsonRcpConfig.class, TestJsonRcpController.class);
+		context.refresh();
+		NettyTcpServer server = context.getBean(NettyTcpServer.class);
+
+		CountDownLatch dataLatch = new CountDownLatch(1);
+		final List<String> responses = new ArrayList<>();
+
+		TcpClient.create(server.getPort())
+				.newHandler((in, out) -> {
+					in
+					.receive()
+					.log()
+					.subscribe(c -> {
+						responses.add(c.retain().duplicate().toString(Charset.defaultCharset()));
+						dataLatch.countDown();
+					});
+
+					return out
+							.send(Flux.just(Unpooled.copiedBuffer(CONTENT4)))
+							.neverComplete();
+				})
+				.block(Duration.ofSeconds(30));
+
+		String response = "{\"jsonrpc\":\"2.0\",\"id\":4,\"error\":{\"code\":-32601,\"message\":\"No matching handler\"}}";
+
+		assertThat(dataLatch.await(2, TimeUnit.SECONDS)).isTrue();
+
+		assertThat(responses).contains(response);
 	}
 
 	@EnableJsonRcp
@@ -118,8 +196,8 @@ public class NettyTcpServerIntegrationTests {
 		}
 
 		@Bean
-		public EncoderJsonRpcMessageWriter<?> encoderJsonRpcMessageWriter() {
-			return new EncoderJsonRpcMessageWriter<>(CharSequenceEncoder.allMimeTypes());
+		public Jackson2JsonRpcMessageWriter jackson2JsonRpcMessageWriter() {
+			return new Jackson2JsonRpcMessageWriter();
 		}
 
 		@Bean
@@ -175,6 +253,20 @@ public class NettyTcpServerIntegrationTests {
 		@JsonRpcResponseBody
 		public String bye() {
 			return "bye";
+		}
+
+		@JsonRpcRequestMapping(method = "pojo1")
+		@JsonRpcResponseBody
+		public Pojo1 pojo1() {
+			return new Pojo1();
+		}
+	}
+
+	private static class Pojo1 {
+		private String message = "hi";
+
+		public String getMessage() {
+			return message;
 		}
 	}
 }
