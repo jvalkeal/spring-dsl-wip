@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.lsp.server.result.method.annotation;
+package org.springframework.dsl.lsp.server.support;
 
 import org.springframework.dsl.lsp.domain.Range;
 import org.springframework.dsl.reconcile.ProblemType;

@@ -29,6 +29,6 @@ import org.springframework.context.annotation.Import;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Documented
-@Import(DelegatingLspConfiguration.class)
+//@Import(DelegatingLspConfiguration.class)
 public @interface EnableLanguageServer {
 }

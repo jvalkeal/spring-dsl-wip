@@ -18,8 +18,6 @@ package org.springframework.dsl.autoconfigure;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-import org.springframework.dsl.lsp.server.controller.GenericLanguageServerController;
 import org.springframework.dsl.lsp.service.DefaultDocumentStateTracker;
 import org.springframework.dsl.lsp.service.DocumentStateTracker;
 import org.springframework.dsl.lsp.service.Reconciler;
@@ -30,7 +28,7 @@ import org.springframework.dsl.reconcile.Linter;
 public class DslAutoConfiguration {
 
 	@ConditionalOnProperty(prefix = "spring.dsl.lsp.server", name = "mode")
-	@Import({ GenericLanguageServerController.class })
+//	@Import({ GenericLanguageServerController.class })
 	public static class DslServicesConfig {
 
 		@Bean

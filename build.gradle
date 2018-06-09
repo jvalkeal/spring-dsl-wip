@@ -3,8 +3,6 @@ buildscript {
 		springVersion = '5.0.5.RELEASE'
 		springBootVersion = '2.0.1.RELEASE'
 		antlr4Version = '4.7.1'
-		lsp4jVersion = '0.4.0'
-		xtendVersion = '2.13.0'
 		mooworkVersion = '1.2.0'
 		propdepsVersion = '0.0.8'
 		asciidoctorVersion = '1.5.3'
@@ -66,8 +64,6 @@ configure(allprojects) {
 		dependencies {
 			dependency "org.antlr:antlr4:$antlr4Version"
 			dependency "org.antlr:antlr4-runtime:$antlr4Version"
-			dependency "org.eclipse.lsp4j:org.eclipse.lsp4j:$lsp4jVersion"
-			dependency "org.eclipse.xtend:org.eclipse.xtend.lib:$xtendVersion"
 			dependency("org.javolution:javolution-core-java:$javolutionVersion") {
 				exclude 'org.osgi:org.osgi.core'
 				exclude 'org.osgi:org.osgi.compendium'
@@ -177,7 +173,6 @@ project('spring-dsl-autoconfigure') {
 		compile project(':spring-dsl-core')
 		optional project(':spring-dsl-jsonrpc')
 		optional project(':spring-dsl-server')
-		optional project(':spring-dsl-lsp4j')
 		optional project(':spring-dsl-antlr')
 		optional project(':spring-dsl-websocket')
 		optional 'org.springframework.boot:spring-boot-configuration-processor'
@@ -238,20 +233,6 @@ project('spring-dsl-jsonrpc') {
 		testCompile 'org.hamcrest:hamcrest-library'
 		testCompile 'junit:junit'
 		testCompile 'org.springframework.boot:spring-boot-starter-test'
-	}
-}
-
-project('spring-dsl-lsp4j') {
-	description = "Spring Dsl Lsp4J"
-
-	dependencies {
-		compile project(":spring-dsl-server")
-		compile 'org.eclipse.lsp4j:org.eclipse.lsp4j'
-		testCompile 'org.hamcrest:hamcrest-core'
-		testCompile 'org.hamcrest:hamcrest-library'
-		testCompile 'junit:junit'
-		testCompile 'org.springframework.boot:spring-boot-starter-test'
-		testRuntime 'org.apache.logging.log4j:log4j-core'
 	}
 }
 
