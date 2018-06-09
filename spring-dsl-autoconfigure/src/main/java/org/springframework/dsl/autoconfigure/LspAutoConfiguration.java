@@ -42,7 +42,7 @@ import org.springframework.web.socket.WebSocketHandler;
  *
  */
 @Configuration
-@ConditionalOnProperty(prefix = "spring.dsl.lsp.server", name = "mode")
+//@ConditionalOnProperty(prefix = "spring.dsl.lsp.server", name = "mode")
 @EnableConfigurationProperties(DslConfigurationProperties.class)
 @EnableLanguageServer
 public class LspAutoConfiguration {

@@ -41,4 +41,9 @@ public class ReactorJsonRpcInputMessage extends AbstractJsonRpcInputMessage {
 	public String getMethod() {
 		return null;
 	}
+
+	@Override
+	public String getParams() {
+		return null;
+	}
 }

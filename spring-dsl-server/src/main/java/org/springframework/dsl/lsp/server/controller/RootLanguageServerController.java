@@ -77,7 +77,7 @@ public class RootLanguageServerController implements InitializingBean {
 	@JsonRpcRequestMapping(method = "initialize")
 	@JsonRpcResponseBody
 	Mono<InitializeResult> initialize(InitializeParams params) {
-		log.trace("initialize {}", params);
+		log.debug("initialize {}", params);
 		ServerCapabilities serverCapabilities = new ServerCapabilities();
 		serverCapabilities.setHoverProvider(hovererProvider.getIfAvailable() != null);
 		// TODO: think how to use sync kind None

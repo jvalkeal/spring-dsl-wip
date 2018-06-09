@@ -15,6 +15,7 @@
  */
 package org.springframework.dsl.lsp.server.controller;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.dsl.jsonrpc.ServerJsonRpcExchange;
@@ -28,6 +29,8 @@ import org.springframework.dsl.lsp.domain.InitializeParams;
 import org.springframework.dsl.lsp.domain.InitializedParams;
 import org.springframework.dsl.lsp.domain.TextDocumentPositionParams;
 import org.springframework.util.Assert;
+import org.springframework.util.ClassUtils;
+import org.springframework.util.ObjectUtils;
 
 import reactor.core.publisher.Mono;
 
@@ -70,11 +73,13 @@ public class LspDomainArgumentResolver implements JsonRpcHandlerMethodArgumentRe
 
 	@Override
 	public Mono<Object> resolveArgument(MethodParameter parameter, ServerJsonRpcExchange exchange) {
-		Object body = null;
-		if (exchange.getRequest() != null) {
-//			body = exchange.getRequest().getBody();
-		}
-		Class<?> clazz = parameter.getParameterType();
-		return Mono.just(conversionService.convert(body, clazz));
+		Class<?> paramType = parameter.getParameterType();
+
+		return Mono.just(BeanUtils.instantiateClass(paramType));
+//		Object body = null;
+//		if (exchange.getRequest() != null) {
+//		}
+//		Class<?> clazz = parameter.getParameterType();
+//		return Mono.just(conversionService.convert(body, clazz));
 	}
 }

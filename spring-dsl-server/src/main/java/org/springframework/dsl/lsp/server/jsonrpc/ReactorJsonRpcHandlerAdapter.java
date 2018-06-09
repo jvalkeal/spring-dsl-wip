@@ -80,7 +80,6 @@ public class ReactorJsonRpcHandlerAdapter implements BiFunction<NettyInbound, Ne
 						return bb.getId();
 					}
 
-
 					@Override
 					public Flux<DataBuffer> getBody() {
 						return null;
@@ -89,6 +88,11 @@ public class ReactorJsonRpcHandlerAdapter implements BiFunction<NettyInbound, Ne
 					@Override
 					public String getMethod() {
 						return bb.getMethod();
+					}
+
+					@Override
+					public String getParams() {
+						return bb.getParams();
 					}
 				};
 

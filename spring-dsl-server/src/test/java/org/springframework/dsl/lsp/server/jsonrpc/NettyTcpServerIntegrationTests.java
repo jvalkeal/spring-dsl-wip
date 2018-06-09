@@ -61,6 +61,7 @@ public class NettyTcpServerIntegrationTests {
 	private static final byte[] CONTENT3 = createContent("{\"jsonrpc\": \"2.0\",\"id\": 3, \"method\": \"bye\"}");
 	private static final byte[] CONTENT4 = createContent("{\"jsonrpc\": \"2.0\",\"id\": 3, \"method\": \"shouldnotexist\"}");
 	private static final byte[] CONTENT5 = createContent("{\"jsonrpc\": \"2.0\",\"id\": 4, \"method\": \"pojo1\"}");
+	private static final byte[] CONTENT6 = createContent("{\"jsonrpc\": \"2.0\",\"id\": 4, \"method\": \"methodparams\", \"params\":\"hi\"}");
 
 	private static byte[] createContent(String... lines) {
 		StringBuilder buf = new StringBuilder();
@@ -150,6 +151,38 @@ public class NettyTcpServerIntegrationTests {
 		assertThat(dataLatch.await(1, TimeUnit.SECONDS)).isTrue();
 
 		String response = "{\"jsonrpc\":\"2.0\",\"id\":4,\"result\":{\"message\":\"hi\"}}";
+
+		assertThat(responses).containsExactlyInAnyOrder(response);
+	}
+
+	@Test
+	public void testOk3() throws InterruptedException {
+		context = new AnnotationConfigApplicationContext();
+		context.register(JsonRcpConfig.class, TestJsonRcpController.class);
+		context.refresh();
+		NettyTcpServer server = context.getBean(NettyTcpServer.class);
+
+		CountDownLatch dataLatch = new CountDownLatch(1);
+		final List<String> responses = new ArrayList<>();
+
+		TcpClient.create(server.getPort())
+				.newHandler((in, out) -> {
+					in
+					.receive()
+					.subscribe(c -> {
+						responses.add(c.retain().duplicate().toString(Charset.defaultCharset()));
+						dataLatch.countDown();
+					});
+
+					return out
+							.send(Flux.just(Unpooled.copiedBuffer(CONTENT6)))
+							.neverComplete();
+				})
+				.block(Duration.ofSeconds(30));
+
+		assertThat(dataLatch.await(1, TimeUnit.SECONDS)).isTrue();
+
+		String response = "{\"jsonrpc\":\"2.0\",\"id\":4,\"result\":\"hi\"}";
 
 		assertThat(responses).containsExactlyInAnyOrder(response);
 	}
@@ -259,6 +292,12 @@ public class NettyTcpServerIntegrationTests {
 		@JsonRpcResponseBody
 		public Pojo1 pojo1() {
 			return new Pojo1();
+		}
+
+		@JsonRpcRequestMapping(method = "methodparams")
+		@JsonRpcResponseBody
+		public String methodparams(String params) {
+			return params;
 		}
 	}
 

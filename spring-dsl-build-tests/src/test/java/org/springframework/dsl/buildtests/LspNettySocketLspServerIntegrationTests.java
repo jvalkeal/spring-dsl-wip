@@ -31,6 +31,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.dsl.autoconfigure.LspAutoConfiguration;
 import org.springframework.dsl.buildtests.LspNettySocketLspServerIntegrationTests.Config1;
 import org.springframework.dsl.jsonrpc.config.EnableJsonRcp;
 import org.springframework.dsl.jsonrpc.support.DispatcherJsonRpcHandler;
@@ -103,14 +104,14 @@ public class LspNettySocketLspServerIntegrationTests extends AbstractLspIntegrat
 
 		assertThat(dataLatch.await(1, TimeUnit.SECONDS)).isTrue();
 
-		String response = "{\"jsonrpc\":\"2.0\",\"id\":2,\"result\":\"hi\"}";
+		String response = "{\"jsonrpc\":\"2.0\",\"id\":1,\"result\":{\"capabilities\":{\"textDocumentSyncOptions\":null,\"textDocumentSyncKind\":\"Full\",\"hoverProvider\":false,\"completionProvider\":null}}}";
 
 		assertThat(responses).containsExactlyInAnyOrder(response);
 
 	}
 
 	@EnableJsonRcp
-	@Import(RootLanguageServerController.class)
+	@Import({LspAutoConfiguration.class, RootLanguageServerController.class})
 	static class Config1 {
 
 		@MockBean

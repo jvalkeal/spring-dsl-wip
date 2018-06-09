@@ -45,6 +45,12 @@ public class MockJsonRpcInputMessage implements JsonRpcInputMessage {
 		return null;
 	}
 
+	@Override
+	public String getParams() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	public static Builder get(String method) {
 		return new DefaultBuilder(method);
 	}
