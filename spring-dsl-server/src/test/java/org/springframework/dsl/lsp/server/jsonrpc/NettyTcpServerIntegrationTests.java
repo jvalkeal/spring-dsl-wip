@@ -190,38 +190,38 @@ public class NettyTcpServerIntegrationTests {
 	@EnableJsonRcp
 	static class JsonRcpConfig {
 
-		@Bean
-		public ReactiveAdapterRegistry jsonRpcAdapterRegistry() {
-			return new ReactiveAdapterRegistry();
-		}
-
-		@Bean
-		public Jackson2JsonRpcMessageWriter jackson2JsonRpcMessageWriter() {
-			return new Jackson2JsonRpcMessageWriter();
-		}
-
-		@Bean
-		public JsonRpcResponseBodyResultHandler jsonRpcResponseBodyResultHandler(
-				List<JsonRpcMessageWriter<?>> messageWriters, ReactiveAdapterRegistry adapterRegistry) {
-			return new JsonRpcResponseBodyResultHandler(messageWriters, adapterRegistry);
-		}
-
-		@Bean
-		public JsonRpcRequestMappingHandlerMapping jsonRpcRequestMappingHandlerMapping() {
-			return new JsonRpcRequestMappingHandlerMapping();
-		}
-
-		@Bean
-		public ServerJsonRpcExchangeArgumentResolver serverJsonRpcExchangeArgumentResolver() {
-			return new ServerJsonRpcExchangeArgumentResolver();
-		}
-
-		@Bean
-		public JsonRpcRequestMappingHandlerAdapter jsonRpcRequestMappingHandlerAdapter(
-				List<JsonRpcHandlerMethodArgumentResolver> resolvers) {
-			return new JsonRpcRequestMappingHandlerAdapter(resolvers);
-		}
-
+//		@Bean
+//		public ReactiveAdapterRegistry jsonRpcAdapterRegistry() {
+//			return new ReactiveAdapterRegistry();
+//		}
+//
+//		@Bean
+//		public Jackson2JsonRpcMessageWriter jackson2JsonRpcMessageWriter() {
+//			return new Jackson2JsonRpcMessageWriter();
+//		}
+//
+//		@Bean
+//		public JsonRpcResponseBodyResultHandler jsonRpcResponseBodyResultHandler(
+//				List<JsonRpcMessageWriter<?>> messageWriters, ReactiveAdapterRegistry adapterRegistry) {
+//			return new JsonRpcResponseBodyResultHandler(messageWriters, adapterRegistry);
+//		}
+//
+//		@Bean
+//		public JsonRpcRequestMappingHandlerMapping jsonRpcRequestMappingHandlerMapping() {
+//			return new JsonRpcRequestMappingHandlerMapping();
+//		}
+//
+//		@Bean
+//		public ServerJsonRpcExchangeArgumentResolver serverJsonRpcExchangeArgumentResolver() {
+//			return new ServerJsonRpcExchangeArgumentResolver();
+//		}
+//
+//		@Bean
+//		public JsonRpcRequestMappingHandlerAdapter jsonRpcRequestMappingHandlerAdapter(
+//				List<JsonRpcHandlerMethodArgumentResolver> resolvers) {
+//			return new JsonRpcRequestMappingHandlerAdapter(resolvers);
+//		}
+//
 		@Bean
 		public RpcJsonRpcHandlerAdapter rpcJsonRpcHandlerAdapter(DispatcherJsonRpcHandler dispatcherJsonRpcHandler) {
 			return new RpcJsonRpcHandlerAdapter(dispatcherJsonRpcHandler);

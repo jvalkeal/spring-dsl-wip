@@ -15,8 +15,18 @@
  */
 package org.springframework.dsl.jsonrpc.config;
 
+import java.util.List;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.ReactiveAdapterRegistry;
+import org.springframework.dsl.jsonrpc.codec.Jackson2JsonRpcMessageWriter;
+import org.springframework.dsl.jsonrpc.codec.JsonRpcMessageWriter;
+import org.springframework.dsl.jsonrpc.result.method.JsonRpcHandlerMethodArgumentResolver;
+import org.springframework.dsl.jsonrpc.result.method.annotation.JsonRpcRequestMappingHandlerAdapter;
+import org.springframework.dsl.jsonrpc.result.method.annotation.JsonRpcRequestMappingHandlerMapping;
+import org.springframework.dsl.jsonrpc.result.method.annotation.JsonRpcResponseBodyResultHandler;
+import org.springframework.dsl.jsonrpc.result.method.annotation.ServerJsonRpcExchangeArgumentResolver;
 import org.springframework.dsl.jsonrpc.support.DispatcherJsonRpcHandler;
 
 @Configuration
@@ -27,4 +37,35 @@ public class DelegatingJsonRpcConfiguration {
 		return new DispatcherJsonRpcHandler();
 	}
 
+	@Bean
+	public ReactiveAdapterRegistry jsonRpcAdapterRegistry() {
+		return new ReactiveAdapterRegistry();
+	}
+
+	@Bean
+	public Jackson2JsonRpcMessageWriter jackson2JsonRpcMessageWriter() {
+		return new Jackson2JsonRpcMessageWriter();
+	}
+
+	@Bean
+	public JsonRpcResponseBodyResultHandler jsonRpcResponseBodyResultHandler(
+			List<JsonRpcMessageWriter<?>> messageWriters, ReactiveAdapterRegistry adapterRegistry) {
+		return new JsonRpcResponseBodyResultHandler(messageWriters, adapterRegistry);
+	}
+
+	@Bean
+	public JsonRpcRequestMappingHandlerMapping jsonRpcRequestMappingHandlerMapping() {
+		return new JsonRpcRequestMappingHandlerMapping();
+	}
+
+	@Bean
+	public ServerJsonRpcExchangeArgumentResolver serverJsonRpcExchangeArgumentResolver() {
+		return new ServerJsonRpcExchangeArgumentResolver();
+	}
+
+	@Bean
+	public JsonRpcRequestMappingHandlerAdapter jsonRpcRequestMappingHandlerAdapter(
+			List<JsonRpcHandlerMethodArgumentResolver> resolvers) {
+		return new JsonRpcRequestMappingHandlerAdapter(resolvers);
+	}
 }

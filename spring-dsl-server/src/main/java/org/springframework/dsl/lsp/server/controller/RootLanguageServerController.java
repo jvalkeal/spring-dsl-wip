@@ -36,12 +36,18 @@ import org.springframework.util.Assert;
 
 import reactor.core.publisher.Mono;
 
+/**
+ * A generic {@code JsonRpcController} implementation base root level features
+ * what a {@code Language Server} should provide.
+ *
+ * @author Janne Valkealahti
+ *
+ */
 @JsonRpcController
-public class BaseLanguageServerController implements InitializingBean {
+public class RootLanguageServerController implements InitializingBean {
 
-	private static final Logger log = LoggerFactory.getLogger(BaseLanguageServerController.class);
+	private static final Logger log = LoggerFactory.getLogger(RootLanguageServerController.class);
 	private final DocumentStateTracker documentStateTracker;
-	private final ObjectProvider<Reconciler> reconcilerProvider;
 	private final ObjectProvider<Completioner> completionerProvider;
 	private final ObjectProvider<Hoverer> hovererProvider;
 	private Completioner completioner;
@@ -54,12 +60,11 @@ public class BaseLanguageServerController implements InitializingBean {
 	 * @param completionerProvider the provider for completioner
 	 * @param hovererProvider the provider for hoverer
 	 */
-	public BaseLanguageServerController(DocumentStateTracker documentStateTracker,
+	public RootLanguageServerController(DocumentStateTracker documentStateTracker,
 			ObjectProvider<Reconciler> reconcilerProvider, ObjectProvider<Completioner> completionerProvider,
 			ObjectProvider<Hoverer> hovererProvider) {
 		Assert.notNull(documentStateTracker, "'documentStateTracker' must be set");
 		this.documentStateTracker = documentStateTracker;
-		this.reconcilerProvider = reconcilerProvider;
 		this.completionerProvider = completionerProvider;
 		this.hovererProvider = hovererProvider;
 	}

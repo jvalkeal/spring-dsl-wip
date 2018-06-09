@@ -41,6 +41,13 @@ import org.springframework.dsl.lsp.service.Reconciler;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+/**
+ * A {@code JsonRpcController} implementation {@code textDocument} features
+ * what a {@code Language Server} should provide.
+ *
+ * @author Janne Valkealahti
+ *
+ */
 @JsonRpcController
 @JsonRpcRequestMapping(method = "textDocument/")
 public class TextDocumentLanguageServerController {
