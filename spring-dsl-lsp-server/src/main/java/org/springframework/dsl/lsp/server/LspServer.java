@@ -15,26 +15,35 @@
  */
 package org.springframework.dsl.lsp.server;
 
-import org.springframework.context.ApplicationContext;
-
-// TODO: Auto-generated Javadoc
 /**
- * Factory interface that can be used to create a {@link LspServer}.
+ * Simple interface that represents a fully configured {@code lsp server}.
+ * Allows the server to be {@link #start() started} and {@link #stop() stopped}.
  *
  * @author Janne Valkealahti
- * @see LspServer
  *
  */
-@FunctionalInterface
-public interface LspServerFactory {
+public interface LspServer {
 
 	/**
-	 * Gets a new fully configured but paused {@link LspServer} instance.
-	 * Clients should not be able to connect to the returned server until
-	 * {@link LspServer#start()} is called (which happens when the
-	 * {@link ApplicationContext} has been fully refreshed).
+	 * Starts the lsp server. Calling this method on an already started server
+	 * has no effect.
 	 *
-	 * @return a fully configured {@link LspServer}
+	 * @throws LspServerException if the server cannot be started
 	 */
-	LspServer getLspServer();
+	void start() throws LspServerException;
+
+	/**
+	 * Stops the lsp server. Calling this method on an already stopped server
+	 * has no effect.
+	 *
+	 * @throws LspServerException if the server cannot be stopped
+	 */
+	void stop() throws LspServerException;
+
+	/**
+	 * Return the port this server is listening on.
+	 *
+	 * @return the port (or -1 if none)
+	 */
+	int getPort();
 }

@@ -4,7 +4,7 @@ project('spring-dsl-samples-simpledsl') {
 	description = 'Spring Dsl Simple Dsl Sample'
 	dependencies {
 		compile project(':spring-dsl-antlr')
-		compile project(':spring-dsl-server')
+		compile project(':spring-dsl-lsp-server')
 		testCompile 'junit:junit'
 		testCompile 'org.springframework.boot:spring-boot-starter-test'
 	}
@@ -17,7 +17,7 @@ project('spring-dsl-samples-simpledsleditor') {
 	description = 'Spring Dsl Simple Editor Sample'
 	
 	dependencies {
-		compile project(':spring-dsl-server')
+		compile project(':spring-dsl-lsp-server')
 		compile project(':spring-dsl-websocket')
 		compile project(':spring-dsl-autoconfigure')
 		compile project(':spring-dsl-samples-common:spring-dsl-samples-simpledsl')
@@ -59,7 +59,7 @@ project('spring-dsl-samples-simpledslprocessserver') {
 	apply plugin: 'org.springframework.boot'
 	description = 'Spring Dsl Simple Lsp Process Server Sample'
 	dependencies {
-		compile project(':spring-dsl-server')
+		compile project(':spring-dsl-lsp-server')
 		compile project(':spring-dsl-autoconfigure')
 		compile project(':spring-dsl-samples-common:spring-dsl-samples-simpledsl')
 		compile 'org.springframework.boot:spring-boot-starter'
@@ -73,7 +73,7 @@ project('spring-dsl-samples-simpledslsocketserver') {
 	apply plugin: 'org.springframework.boot'
 	description = 'Spring Dsl Simple Lsp Socket Server Sample'
 	dependencies {
-		compile project(':spring-dsl-server')
+		compile project(':spring-dsl-lsp-server')
 		compile project(':spring-dsl-autoconfigure')
 		compile project(':spring-dsl-samples-common:spring-dsl-samples-simpledsl')
 		compile 'org.springframework.boot:spring-boot-starter'

@@ -19,6 +19,7 @@ import java.time.Duration;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dsl.lsp.server.LspServer;
 import org.springframework.util.Assert;
 
 import reactor.ipc.netty.tcp.BlockingNettyContext;
@@ -30,7 +31,7 @@ import reactor.ipc.netty.tcp.TcpServer;
  * @author Janne Valkealahti
  *
  */
-public class NettyTcpServer {
+public class NettyTcpServer implements LspServer {
 
 	private static final Logger log = LoggerFactory.getLogger(NettyTcpServer.class);
 	private final TcpServer tcpServer;
@@ -53,6 +54,7 @@ public class NettyTcpServer {
 		this.lifecycleTimeout = lifecycleTimeout;
 	}
 
+	@Override
 	public void start() {
 		if (this.nettyContext == null) {
 			nettyContext = startServer();
@@ -60,6 +62,7 @@ public class NettyTcpServer {
 		log.info("Netty started on port(s) {}", getPort());
 	}
 
+	@Override
 	public void stop() {
 		if (nettyContext != null) {
 			nettyContext.shutdown();
@@ -67,6 +70,7 @@ public class NettyTcpServer {
 		}
 	}
 
+	@Override
 	public int getPort() {
 		if (nettyContext != null) {
 			return nettyContext.getPort();
