@@ -23,6 +23,13 @@ import java.lang.annotation.Target;
 
 import org.springframework.context.annotation.Import;
 
+/**
+ * Adding this annotation to an {@code @Configuration} class enables and imports
+ * needed functionalities for a {@code JSON RCP}.
+ *
+ * @author Janne Valkealahti
+ *
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Documented

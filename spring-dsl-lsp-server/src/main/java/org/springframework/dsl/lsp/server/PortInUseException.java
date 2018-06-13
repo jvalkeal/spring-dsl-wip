@@ -16,31 +16,33 @@
 package org.springframework.dsl.lsp.server;
 
 /**
- * Exceptions thrown by a lsp server.
+ * A {@code PortInUseException} is thrown when a lsp server fails to start due
+ * to a port already being in use.
  *
  * @author Janne Valkealahti
  *
  */
-public class LspServerException extends RuntimeException {
+public class PortInUseException extends LspServerException {
 
-	private static final long serialVersionUID = -1847306814419948739L;
+	private static final long serialVersionUID = 4800962432248919233L;
+	private final int port;
 
 	/**
-	 * Instantiates a new coap server exception.
+	 * Creates a new port in use exception for the given {@code port}.
 	 *
-	 * @param message the message
+	 * @param port the port that was in use
 	 */
-	public LspServerException(String message) {
-		super(message);
+	public PortInUseException(int port) {
+		super("Port " + port + " is already in use", null);
+		this.port = port;
 	}
 
 	/**
-	 * Instantiates a new coap server exception.
+	 * Returns the port that was in use.
 	 *
-	 * @param message the message
-	 * @param cause the cause
+	 * @return the port
 	 */
-	public LspServerException(String message, Throwable cause) {
-		super(message, cause);
+	public int getPort() {
+		return this.port;
 	}
 }

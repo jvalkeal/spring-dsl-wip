@@ -21,14 +21,18 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.springframework.context.annotation.Import;
+import org.springframework.dsl.jsonrpc.config.EnableJsonRcp;
 
 /**
- * The Interface EnableLanguageServer.
+ * Adding this annotation to an {@code @Configuration} class enables and imports
+ * needed functionalities for a {@code LSP Server}.
+ *
+ * @author Janne Valkealahti
+ *
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Documented
-//@Import(DelegatingLspConfiguration.class)
+@EnableJsonRcp
 public @interface EnableLanguageServer {
 }

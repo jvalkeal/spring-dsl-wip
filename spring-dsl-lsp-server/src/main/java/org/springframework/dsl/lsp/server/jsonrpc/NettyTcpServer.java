@@ -15,11 +15,16 @@
  */
 package org.springframework.dsl.lsp.server.jsonrpc;
 
+import java.net.BindException;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.time.Duration;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dsl.lsp.server.LspServer;
+import org.springframework.dsl.lsp.server.LspServerException;
+import org.springframework.dsl.lsp.server.PortInUseException;
 import org.springframework.util.Assert;
 
 import reactor.ipc.netty.tcp.BlockingNettyContext;
@@ -56,14 +61,28 @@ public class NettyTcpServer implements LspServer {
 
 	@Override
 	public void start() {
+		log.debug("Netty start called");
 		if (this.nettyContext == null) {
-			nettyContext = startServer();
+			try {
+				nettyContext = startServer();
+			} catch (Exception e) {
+				if (findBindException(e) != null) {
+					SocketAddress address = this.tcpServer.options().getAddress();
+					if (address instanceof InetSocketAddress) {
+						throw new PortInUseException(
+								((InetSocketAddress) address).getPort());
+					}
+				}
+				throw new LspServerException("Unable to start Netty", e);
+			}
+			log.info("Netty started on port(s) {}", getPort());
+			startDaemonAwaitThread(this.nettyContext);
 		}
-		log.info("Netty started on port(s) {}", getPort());
 	}
 
 	@Override
 	public void stop() {
+		log.debug("Netty stop called");
 		if (nettyContext != null) {
 			nettyContext.shutdown();
 			nettyContext = null;
@@ -75,7 +94,7 @@ public class NettyTcpServer implements LspServer {
 		if (nettyContext != null) {
 			return nettyContext.getPort();
 		}
-		return 0;
+		return -1;
 	}
 
 	private BlockingNettyContext startServer() {
@@ -83,5 +102,30 @@ public class NettyTcpServer implements LspServer {
 			return tcpServer.start(handlerAdapter, lifecycleTimeout);
 		}
 		return tcpServer.start(handlerAdapter);
+	}
+
+	private void startDaemonAwaitThread(BlockingNettyContext nettyContext) {
+		Thread awaitThread = new Thread("server") {
+
+			@Override
+			public void run() {
+				nettyContext.getContext().onClose().block();
+			}
+
+		};
+		awaitThread.setContextClassLoader(getClass().getClassLoader());
+		awaitThread.setDaemon(false);
+		awaitThread.start();
+	}
+
+	private BindException findBindException(Exception ex) {
+		Throwable candidate = ex;
+		while (candidate != null) {
+			if (candidate instanceof BindException) {
+				return (BindException) candidate;
+			}
+			candidate = candidate.getCause();
+		}
+		return null;
 	}
 }

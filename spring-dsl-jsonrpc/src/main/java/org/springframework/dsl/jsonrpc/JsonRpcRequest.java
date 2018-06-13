@@ -35,5 +35,5 @@ public interface JsonRpcRequest extends JsonRpcMessage {
 	 *
 	 * @return the params
 	 */
-	public String getParams();
+	public Object getParams();
 }

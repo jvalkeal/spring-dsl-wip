@@ -31,21 +31,41 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.dsl.DslSystemConstants;
 import org.springframework.dsl.lsp.server.config.DslConfigurationProperties;
 import org.springframework.dsl.lsp.server.config.EnableLanguageServer;
+import org.springframework.dsl.lsp.server.config.LspServerSocketConfiguration;
+import org.springframework.dsl.lsp.server.config.LspServerStdioConfiguration;
 import org.springframework.dsl.lsp.server.controller.LspDomainArgumentResolver;
+import org.springframework.dsl.lsp.server.controller.RootLanguageServerController;
+import org.springframework.dsl.lsp.server.controller.TextDocumentLanguageServerController;
 import org.springframework.dsl.lsp.server.websocket.LspWebSocketConfig;
+import org.springframework.dsl.lsp.service.DefaultDocumentStateTracker;
+import org.springframework.dsl.lsp.service.DocumentStateTracker;
+import org.springframework.dsl.lsp.service.Reconciler;
+import org.springframework.dsl.reconcile.DefaultReconciler;
+import org.springframework.dsl.reconcile.Linter;
 import org.springframework.web.socket.WebSocketHandler;
 
 /**
- * {@link EnableAutoConfiguration Auto-configuration} integrating into {@code LSP4J} features.
+ * {@link EnableAutoConfiguration Auto-configuration} integrating into {@code LSP} features.
  *
  * @author Janne Valkealahti
  *
  */
 @Configuration
-//@ConditionalOnProperty(prefix = "spring.dsl.lsp.server", name = "mode")
+@ConditionalOnProperty(prefix = "spring.dsl.lsp.server", name = "mode")
 @EnableConfigurationProperties(DslConfigurationProperties.class)
 @EnableLanguageServer
+@Import({ RootLanguageServerController.class, TextDocumentLanguageServerController.class })
 public class LspAutoConfiguration {
+
+	@Bean
+	public DocumentStateTracker documentStateTracker() {
+		return new DefaultDocumentStateTracker();
+	}
+
+	@Bean
+	public Reconciler reconciler(Linter linter) {
+		return new DefaultReconciler(linter);
+	}
 
 	@Bean(name = DslSystemConstants.LSP_CONVERSION_SERVICE_BEAN_NAME)
 	public ConversionServiceFactoryBean lspConversionService() {
@@ -70,12 +90,12 @@ public class LspAutoConfiguration {
 	}
 
 	@ConditionalOnProperty(prefix = "spring.dsl.lsp.server", name = "mode", havingValue = "PROCESS")
-//	@Import({ Lsp4jServerLauncherConfiguration.class })
+	@Import({ LspServerStdioConfiguration.class })
 	public static class DslServerProcessConfig {
 	}
 
 	@ConditionalOnProperty(prefix = "spring.dsl.lsp.server", name = "mode", havingValue = "SOCKET")
-//	@Import({ Lsp4jServerLauncherConfiguration.class })
+	@Import({ LspServerSocketConfiguration.class })
 	public static class DslServerSocketConfig {
 	}
 }

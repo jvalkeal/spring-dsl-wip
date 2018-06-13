@@ -48,9 +48,13 @@ import org.springframework.dsl.jsonrpc.result.method.annotation.ServerJsonRpcExc
 import org.springframework.dsl.jsonrpc.support.DispatcherJsonRpcHandler;
 import org.springframework.util.MimeTypeUtils;
 
+import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.json.JsonObjectDecoder;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
+import reactor.ipc.netty.NettyPipeline;
 import reactor.ipc.netty.tcp.TcpClient;
 import reactor.ipc.netty.tcp.TcpServer;
 
@@ -109,6 +113,54 @@ public class NettyTcpServerIntegrationTests {
 
 					return out
 							.send(Flux.just(Unpooled.copiedBuffer(CONTENT2), Unpooled.copiedBuffer(CONTENT3)))
+							.neverComplete();
+				})
+				.block(Duration.ofSeconds(30));
+
+		assertThat(dataLatch.await(1, TimeUnit.SECONDS)).isTrue();
+
+		// {"jsonrpc": "2.0", "result": "bye", "id": 3}
+		// {"jsonrpc": "2.0", "result": "hi", "id": 4}
+		String response1 = "{\"jsonrpc\":\"2.0\",\"id\":2,\"result\":\"hi\"}";
+		String response2 = "{\"jsonrpc\":\"2.0\",\"id\":3,\"result\":\"bye\"}";
+
+		assertThat(responses).containsExactlyInAnyOrder(response1, response2);
+	}
+
+
+	@Test
+	public void testOk1x() throws InterruptedException {
+		context = new AnnotationConfigApplicationContext();
+		context.register(JsonRcpConfig.class, TestJsonRcpController.class);
+		context.refresh();
+		NettyTcpServer server = context.getBean(NettyTcpServer.class);
+
+		Flux<ByteBuf> flux = Flux.just(Unpooled.copiedBuffer(CONTENT2), Unpooled.copiedBuffer(CONTENT3));
+
+		CountDownLatch dataLatch = new CountDownLatch(2);
+		final List<String> responses = new ArrayList<>();
+
+		TcpClient.create(server.getPort())
+				.newHandler((in, out) -> {
+					in
+					.receive()
+					.subscribe(c -> {
+						responses.add(c.retain().duplicate().toString(Charset.defaultCharset()));
+						dataLatch.countDown();
+					});
+
+					flux
+					.doOnNext(d -> {
+						out.send(Mono.just(d))
+						.then().subscribe()
+						;
+					})
+					.subscribe();
+
+
+					return out
+//							.send(Flux.just(Unpooled.copiedBuffer(CONTENT2), Unpooled.copiedBuffer(CONTENT3)))
+							.options(NettyPipeline.SendOptions::flushOnEach)
 							.neverComplete();
 				})
 				.block(Duration.ofSeconds(30));

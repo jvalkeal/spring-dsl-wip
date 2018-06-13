@@ -13,18 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.autoconfigure;
+package org.springframework.dsl.lsp.server.config;
 
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.dsl.lsp.server.jsonrpc.NettyTcpServer;
+import org.springframework.dsl.lsp.server.jsonrpc.ReactorJsonRpcHandlerAdapter;
+
+import reactor.ipc.netty.tcp.TcpServer;
 
 /**
- * {@link EnableAutoConfiguration Auto-configuration} integrating into {@code DSL} features.
+ *
  *
  * @author Janne Valkealahti
  *
  */
 @Configuration
-public class DslAutoConfiguration {
+@Import(GenericLspConfiguration.class)
+public class LspServerSocketConfiguration {
 
+	@Bean(initMethod = "start", destroyMethod = "stop")
+	public NettyTcpServer nettyTcpServer(ReactorJsonRpcHandlerAdapter handlerAdapter) {
+		TcpServer tcpServer = TcpServer.create();
+		NettyTcpServer nettyTcpServer = new NettyTcpServer(tcpServer, handlerAdapter, null);
+		return nettyTcpServer;
+	}
 }

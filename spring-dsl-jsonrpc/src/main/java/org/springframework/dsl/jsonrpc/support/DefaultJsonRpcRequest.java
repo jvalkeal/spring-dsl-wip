@@ -26,7 +26,7 @@ import org.springframework.dsl.jsonrpc.JsonRpcRequest;
 public class DefaultJsonRpcRequest extends AbstractJsonRpcObject implements JsonRpcRequest {
 
 	private String method;
-	private String params;
+	private Object params;
 
 	/**
 	 * Instantiates a new json rpc request.
@@ -42,7 +42,7 @@ public class DefaultJsonRpcRequest extends AbstractJsonRpcObject implements Json
 	 * @param method the method
 	 * @param params the params
 	 */
-	public DefaultJsonRpcRequest(Integer id, String method, String params) {
+	public DefaultJsonRpcRequest(Integer id, String method, Object params) {
 		this(null, id, method, params);
 	}
 
@@ -54,7 +54,7 @@ public class DefaultJsonRpcRequest extends AbstractJsonRpcObject implements Json
 	 * @param method the method
 	 * @param params the params
 	 */
-	public DefaultJsonRpcRequest(String jsonrpc, Integer id, String method, String params) {
+	public DefaultJsonRpcRequest(String jsonrpc, Integer id, String method, Object params) {
 		super(jsonrpc, id);
 		this.method = method;
 		this.params = params;
@@ -85,7 +85,7 @@ public class DefaultJsonRpcRequest extends AbstractJsonRpcObject implements Json
 	 * @return the params
 	 */
 	@Override
-	public String getParams() {
+	public Object getParams() {
 		return params;
 	}
 
@@ -94,7 +94,7 @@ public class DefaultJsonRpcRequest extends AbstractJsonRpcObject implements Json
 	 *
 	 * @param params the new params
 	 */
-	public void setParams(String params) {
+	public void setParams(Object params) {
 		this.params = params;
 	}
 

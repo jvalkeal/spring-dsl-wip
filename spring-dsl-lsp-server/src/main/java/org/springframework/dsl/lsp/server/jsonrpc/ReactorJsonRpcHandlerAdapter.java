@@ -91,7 +91,7 @@ public class ReactorJsonRpcHandlerAdapter implements BiFunction<NettyInbound, Ne
 					}
 
 					@Override
-					public String getParams() {
+					public Object getParams() {
 						return bb.getParams();
 					}
 				};

@@ -1,304 +1,153 @@
-/*
- * Copyright 2018 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.springframework.dsl.lsp.server.jsonrpc;
+
+import static io.netty.buffer.ByteBufUtil.readBytes;
 
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.messaging.support.MessageBuilder;
+import org.springframework.dsl.lsp.server.jsonrpc.LspJsonRpcDecoder.State;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.ByteToMessageDecoder;
+import io.netty.handler.codec.ReplayingDecoder;
 import io.netty.handler.codec.TooLongFrameException;
-import io.netty.util.ByteProcessor;
 import io.netty.util.internal.AppendableCharSequence;
 
-/**
- * {@code Netty} decoder for a {@code LSP} spesific protocol.
- *
- * @author Janne Valkealahti
- *
- */
-public class LspJsonRpcDecoder extends ByteToMessageDecoder {
+public class LspJsonRpcDecoder extends ReplayingDecoder<State> {
 
-	public static final byte CR = 13;
-	public static final byte LF = 10;
-
+	private static final byte CR = 13;
+	private static final byte LF = 10;
+	private static final byte COLON = 58;
 	private static final String EMPTY_VALUE = "";
-	private final HeaderParser headerParser;
-	private final LineParser lineParser;
-	private Map<String, String> headers = new HashMap<>(1);
-	private State currentState = State.READ_HEADER;
-	private CharSequence name;
-	private CharSequence value;
-	private long contentLength = Long.MIN_VALUE;
-	private volatile boolean resetRequested;
+	private static final String CONTENT_LENGTH = "Content-Length";
+
+	private final int maxLineLength;
+//	private final int maxChunkSize;
+	private long contentLength = -1;
+	private String lastContent;
+	private int alreadyReadChunkSize;
+
+	enum State {
+		READ_HEADERS, READ_CONTENT, FINALIZE_FRAME_READ;
+	}
 
 	public LspJsonRpcDecoder() {
-		AppendableCharSequence seq = new AppendableCharSequence(128);
-		lineParser = new LineParser(seq, 4096);
-		headerParser = new HeaderParser(seq, 256);
+		super(State.READ_HEADERS);
+		this.maxLineLength = 128;
+//		this.maxChunkSize = 1024;
 	}
 
 	@Override
 	protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
-		if (resetRequested) {
-			resetNow();
-		}
-
-		switch (currentState) {
-		case READ_HEADER:
-
-			State nextState = readHeaders(in);
-			if (nextState == null) {
-				return;
-			}
-			currentState = nextState;
-
-			break;
-		case READ_FIXED_LENGTH_CONTENT:
-			int readLimit = in.readableBytes();
-			if (readLimit == 0) {
-				return;
-			}
-
-			int toRead = Math.min(readLimit, (int)contentLength());
-
-			ByteBuf content = in.readRetainedSlice(toRead);
-			String payload = content.retain().duplicate().toString(Charset.defaultCharset());
-//			out.add(MessageBuilder.withPayload(payload).copyHeaders(headers).build());
-			out.add(payload);
-			reset();
-			break;
-
-		default:
-			break;
-		}
-
-	}
-
-	/**
-	 * Resets the state of the decoder so that it is ready to decode a new message.
-	 */
-	private void reset() {
-		resetRequested = true;
-	}
-
-	private void resetNow() {
-
-		name = null;
-		value = null;
-		headers.clear();
-		contentLength = Long.MIN_VALUE;
-		lineParser.reset();
-		headerParser.reset();
-		resetRequested = false;
-		currentState = State.READ_HEADER;
-	}
-
-	private State readHeaders(ByteBuf in) {
-		AppendableCharSequence line = headerParser.parse(in);
-		if (line == null) {
-			return null;
-		}
-		if (line.length() > 0) {
-			do {
-				splitHeader(line);
-
-				if (name != null) {
-					headers.put(name.toString(), value.toString());
-				}
-
-				// char firstChar = line.charAt(0);
-				// if (name != null && (firstChar == ' ' || firstChar == '\t')) {
-				// String trimmedLine = line.toString().trim();
-				// String valueStr = String.valueOf(value);
-				// value = valueStr + ' ' + trimmedLine;
-				// } else {
-				// if (name != null) {
-				// headers.put(name.toString(), value.toString());
-				// }
-				// splitHeader(line);
-				// }
-
-				line = headerParser.parse(in);
-				if (line == null) {
-					return null;
-				}
-			} while (line.length() > 0);
-		}
-		name = null;
-		value = null;
-
-		State nextState;
-
-		if (contentLength() >= 0) {
-			nextState = State.READ_FIXED_LENGTH_CONTENT;
-		} else {
-			nextState = State.READ_HEADER;
-		}
-
-		return nextState;
-	}
-
-	private long contentLength() {
-		if (contentLength == Long.MIN_VALUE) {
-			String value = headers.get("Content-Length");
-			if (value != null) {
-				return Long.parseLong(value);
-			}
-		}
-		return contentLength;
-	}
-
-	private void splitHeader(AppendableCharSequence sb) {
-		final int length = sb.length();
-		int nameStart;
-		int nameEnd;
-		int colonEnd;
-		int valueStart;
-		int valueEnd;
-
-		nameStart = findNonWhitespace(sb, 0);
-		for (nameEnd = nameStart; nameEnd < length; nameEnd++) {
-			char ch = sb.charAt(nameEnd);
-			if (ch == ':' || Character.isWhitespace(ch)) {
+		switch (state()) {
+			case READ_HEADERS:
+				Map<String, String> headers = new HashMap<>();
+				checkpoint(readHeaders(in, headers));
 				break;
-			}
-		}
-
-		for (colonEnd = nameEnd; colonEnd < length; colonEnd++) {
-			if (sb.charAt(colonEnd) == ':') {
-				colonEnd++;
+			case READ_CONTENT:
+                int toRead = in.readableBytes();
+                if (toRead == 0) {
+                    return;
+                }
+                if (contentLength > -1) {
+                	toRead = (int)contentLength;
+                }
+//                if (toRead > maxChunkSize) {
+//                    toRead = maxChunkSize;
+//                }
+                if (contentLength >= 0) {
+                    int remainingLength = (int) (contentLength - alreadyReadChunkSize);
+                    if (toRead > remainingLength) {
+                        toRead = remainingLength;
+                    }
+                    ByteBuf chunkBuffer = readBytes(ctx.alloc(), in, toRead);
+                    if ((alreadyReadChunkSize += toRead) >= contentLength) {
+                    	lastContent = chunkBuffer.retain().duplicate().toString(Charset.defaultCharset());
+                        checkpoint(State.FINALIZE_FRAME_READ);
+                    } else {
+                    	String payload = chunkBuffer.retain().duplicate().toString(Charset.defaultCharset());
+                    	out.add(payload);
+                        return;
+                    }
+                }
+			case FINALIZE_FRAME_READ:
+				out.add(lastContent);
+				resetDecoder();
+			default:
 				break;
-			}
-		}
-
-		name = sb.subStringUnsafe(nameStart, nameEnd);
-		valueStart = findNonWhitespace(sb, colonEnd);
-		if (valueStart == length) {
-			value = EMPTY_VALUE;
-		} else {
-			valueEnd = findEndOfString(sb);
-			value = sb.subStringUnsafe(valueStart, valueEnd);
 		}
 	}
 
-	private static int findNonWhitespace(AppendableCharSequence sb, int offset) {
-		for (int result = offset; result < sb.length(); ++result) {
-			if (!Character.isWhitespace(sb.charAtUnsafe(result))) {
-				return result;
-			}
-		}
-		return sb.length();
-	}
+    private State readHeaders(ByteBuf buffer, Map<String, String> headers) {
+        AppendableCharSequence buf = new AppendableCharSequence(128);
+        for (;;) {
+            boolean headerRead = readHeader(headers, buf, buffer);
+            if (!headerRead) {
+                if (headers.containsKey(CONTENT_LENGTH)) {
+                    contentLength = getContentLength(headers, 0);
+//                    if (contentLength == 0) {
+//                        return State.FINALIZE_FRAME_READ;
+//                    }
+                }
+                return State.READ_CONTENT;
+            }
+        }
+    }
 
-	// private static int findWhitespace(AppendableCharSequence sb, int offset) {
-	// for (int result = offset; result < sb.length(); ++result) {
-	// if (Character.isWhitespace(sb.charAtUnsafe(result))) {
-	// return result;
-	// }
-	// }
-	// return sb.length();
-	// }
+    private long getContentLength(Map<String, String> headers, long defaultValue) {
+    	String value = headers.get(CONTENT_LENGTH);
+    	if (value != null) {
+    		return Long.parseLong(value);
+    	}
+    	// TODO: handle parse error and negative value
+        return contentLength;
+    }
 
-	private static int findEndOfString(AppendableCharSequence sb) {
-		for (int result = sb.length() - 1; result > 0; --result) {
-			if (!Character.isWhitespace(sb.charAtUnsafe(result))) {
-				return result + 1;
-			}
-		}
-		return 0;
-	}
+	private void invalidLineLength() {
+        throw new TooLongFrameException("An JSRPC line is larger than " + maxLineLength + " bytes.");
+    }
 
-	private static class HeaderParser implements ByteProcessor {
-		private final AppendableCharSequence seq;
-		private final int maxLength;
-		private int size;
+    private boolean readHeader(Map<String, String> headers, AppendableCharSequence buf, ByteBuf buffer) {
+        buf.reset();
+        int lineLength = 0;
+        String key = null;
+        boolean valid = false;
 
-		HeaderParser(AppendableCharSequence seq, int maxLength) {
-			this.seq = seq;
-			this.maxLength = maxLength;
-		}
+        for (;;) {
+            byte nextByte = buffer.readByte();
 
-		public AppendableCharSequence parse(ByteBuf buffer) {
-			final int oldSize = size;
-			seq.reset();
-			int i = buffer.forEachByte(this);
-			if (i == -1) {
-				size = oldSize;
-				return null;
-			}
-			buffer.readerIndex(i + 1);
-			return seq;
-		}
+            if (nextByte == COLON && key == null) {
+                key = buf.toString();
+                valid = true;
+                buf.reset();
+            } else if (nextByte == CR) {
+                //do nothing
+            } else if (nextByte == LF) {
+                if (key == null && lineLength == 0) {
+                    return false;
+                } else if (valid) {
+                    headers.put(key, buf.toString().trim());
+                }
+                return true;
+            } else {
+                if (lineLength >= maxLineLength) {
+                    invalidLineLength();
+                }
+                if (nextByte == COLON && key != null) {
+                    valid = false;
+                }
+                lineLength ++;
+                buf.append((char) nextByte);
+            }
+        }
+    }
 
-		public void reset() {
-			size = 0;
-		}
-
-		@Override
-		public boolean process(byte value) throws Exception {
-			char nextByte = (char) (value & 0xFF);
-			if (nextByte == CR) {
-				return true;
-			}
-			if (nextByte == LF) {
-				return false;
-			}
-
-			if (++size > maxLength) {
-				// TODO: Respond with Bad Request and discard the traffic
-				// or close the connection.
-				// No need to notify the upstream handlers - just log.
-				// If decoding a response, just throw an exception.
-				throw newException(maxLength);
-			}
-
-			seq.append(nextByte);
-			return true;
-		}
-
-		protected TooLongFrameException newException(int maxLength) {
-			return new TooLongFrameException("JSONRCP header is larger than " + maxLength + " bytes.");
-		}
-	}
-
-	private static final class LineParser extends HeaderParser {
-
-		LineParser(AppendableCharSequence seq, int maxLength) {
-			super(seq, maxLength);
-		}
-
-		@Override
-		public AppendableCharSequence parse(ByteBuf buffer) {
-			reset();
-			return super.parse(buffer);
-		}
-
-		@Override
-		protected TooLongFrameException newException(int maxLength) {
-			return new TooLongFrameException("An JSONRCP line is larger than " + maxLength + " bytes.");
-		}
-	}
-
-	private enum State {
-		READ_HEADER, READ_FIXED_LENGTH_CONTENT;
-	}
+	private void resetDecoder() {
+        checkpoint(State.READ_HEADERS);
+        contentLength = -1;
+        alreadyReadChunkSize = 0;
+        lastContent = null;
+    }
 }
