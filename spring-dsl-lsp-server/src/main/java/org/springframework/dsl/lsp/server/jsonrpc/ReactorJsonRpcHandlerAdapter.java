@@ -61,6 +61,7 @@ public class ReactorJsonRpcHandlerAdapter implements BiFunction<NettyInbound, Ne
 		};
 
 		in.context().addHandlerLast(new LspJsonRpcDecoder());
+		out.context().addHandlerLast(new LspJsonRpcEncoder());
 
 		in.receiveObject()
 			.ofType(String.class)

@@ -83,8 +83,49 @@ public class Jackson2JsonRpcMessageWriter implements JsonRpcMessageWriter<Object
 		});
 	}
 
-
 	public DataBuffer encodeValue(Object value, DataBufferFactory bufferFactory,
+			ResolvableType elementType, @Nullable Map<String, Object> hints, JsonEncoding encoding, JsonRpcInputMessage request) {
+
+		JavaType javaType = getJavaType(elementType.getType(), null);
+		Class<?> jsonView = (hints != null ? (Class<?>) hints.get(JSON_VIEW_HINT) : null);
+		ObjectWriter writer = (jsonView != null ?
+				getObjectMapper().writerWithView(jsonView) : getObjectMapper().writer());
+
+		if (javaType.isContainerType()) {
+			writer = writer.forType(javaType);
+		}
+
+
+		DataBuffer buffer = bufferFactory.allocateBuffer();
+		OutputStream outputStream = buffer.asOutputStream();
+
+		try {
+			JsonGenerator generator = getObjectMapper().getFactory().createGenerator(outputStream, encoding);
+			generator.writeStartObject();
+			generator.writeStringField("jsonrpc", request.getJsonrpc());
+			generator.writeNumberField("id", request.getId());
+			generator.writeObjectField("result", value);
+			generator.writeEndObject();
+			generator.flush();
+		}
+		catch (InvalidDefinitionException ex) {
+			log.error("{}", ex);
+			throw new CodecException("Type definition error: " + ex.getType(), ex);
+		}
+		catch (JsonProcessingException ex) {
+			log.error("{}", ex);
+			throw new EncodingException("JSON encoding error: " + ex.getOriginalMessage(), ex);
+		}
+		catch (IOException ex) {
+			log.error("{}", ex);
+			throw new IllegalStateException("Unexpected I/O error while writing to data buffer", ex);
+		}
+
+		return buffer;
+	}
+
+
+	public DataBuffer encodeValuex(Object value, DataBufferFactory bufferFactory,
 			ResolvableType elementType, @Nullable Map<String, Object> hints, JsonEncoding encoding, JsonRpcInputMessage request) {
 
 		JavaType javaType = getJavaType(elementType.getType(), null);
