@@ -77,10 +77,17 @@ public class Jackson2JsonRpcMessageWriter implements JsonRpcMessageWriter<Object
 
 		JsonEncoding encoding = JsonEncoding.UTF8;
 
-		return Flux.from(inputStream).map(value -> {
-			DataBuffer buffer = encodeValue(value, bufferFactory, elementType, hints, encoding, request);
-			return buffer;
-		});
+		return Flux.from(inputStream)
+				.map(value -> {
+					return encodeValue(value, bufferFactory, elementType, hints, encoding, request);
+				})
+				.switchIfEmpty(Mono.just(encodeValue(null, bufferFactory, elementType, hints, encoding, request)));
+
+
+//		return Flux.from(inputStream).map(value -> {
+//			DataBuffer buffer = encodeValue(value, bufferFactory, elementType, hints, encoding, request);
+//			return buffer;
+//		});
 	}
 
 	public DataBuffer encodeValue(Object value, DataBufferFactory bufferFactory,
@@ -103,7 +110,9 @@ public class Jackson2JsonRpcMessageWriter implements JsonRpcMessageWriter<Object
 			JsonGenerator generator = getObjectMapper().getFactory().createGenerator(outputStream, encoding);
 			generator.writeStartObject();
 			generator.writeStringField("jsonrpc", request.getJsonrpc());
-			generator.writeNumberField("id", request.getId());
+			if (request.getId() != null) {
+				generator.writeNumberField("id", request.getId());
+			}
 			generator.writeObjectField("result", value);
 			generator.writeEndObject();
 			generator.flush();

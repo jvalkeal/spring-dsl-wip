@@ -46,7 +46,8 @@ public abstract class AbstractMessageWriterResultHandler extends HandlerResultHa
 	private static final Logger log = LoggerFactory.getLogger(AbstractMessageWriterResultHandler.class);
 	private final List<JsonRpcMessageWriter<?>> messageWriters;
 
-	protected AbstractMessageWriterResultHandler(List<JsonRpcMessageWriter<?>> messageWriters, ReactiveAdapterRegistry adapterRegistry) {
+	protected AbstractMessageWriterResultHandler(List<JsonRpcMessageWriter<?>> messageWriters,
+			ReactiveAdapterRegistry adapterRegistry) {
 		super(adapterRegistry);
 		this.messageWriters = messageWriters;
 	}
@@ -78,9 +79,9 @@ public abstract class AbstractMessageWriterResultHandler extends HandlerResultHa
 					ResolvableType.forInstance(body) : bodyType);
 		}
 
-		if (void.class == elementType.getRawClass() || Void.class == elementType.getRawClass()) {
-			return Mono.from((Publisher<Void>) publisher);
-		}
+//		if (void.class == elementType.getRawClass() || Void.class == elementType.getRawClass()) {
+//			return Mono.from((Publisher<Void>) publisher);
+//		}
 
 		JsonRpcInputMessage request = exchange.getRequest();
 		JsonRpcOutputMessage response = exchange.getResponse();

@@ -35,6 +35,7 @@ import org.springframework.core.ReactiveAdapterRegistry;
 import org.springframework.core.codec.CharSequenceEncoder;
 import org.springframework.core.codec.DataBufferEncoder;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcController;
+import org.springframework.dsl.jsonrpc.annotation.JsonRpcNotification;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcRequestMapping;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcResponseBody;
 import org.springframework.dsl.jsonrpc.codec.Jackson2JsonRpcMessageWriter;
@@ -66,6 +67,10 @@ public class NettyTcpServerIntegrationTests {
 	private static final byte[] CONTENT4 = createContent("{\"jsonrpc\": \"2.0\",\"id\": 3, \"method\": \"shouldnotexist\"}");
 	private static final byte[] CONTENT5 = createContent("{\"jsonrpc\": \"2.0\",\"id\": 4, \"method\": \"pojo1\"}");
 	private static final byte[] CONTENT6 = createContent("{\"jsonrpc\": \"2.0\",\"id\": 4, \"method\": \"methodparams\", \"params\":\"hi\"}");
+	private static final byte[] CONTENT7 = createContent("{\"jsonrpc\": \"2.0\",\"id\": 4, \"method\": \"monovoid\", \"params\":null}");
+	private static final byte[] CONTENT8 = createContent("{\"jsonrpc\": \"2.0\",\"id\": 4, \"method\": \"void\", \"params\":null}");
+	private static final byte[] CONTENT9 = createContent("{\"jsonrpc\": \"2.0\", \"method\": \"notificationsingleresponse\"}");
+	private static final byte[] CONTENT10 = createContent("{\"jsonrpc\": \"2.0\", \"method\": \"notificationmultiresponse\"}");
 
 	private static byte[] createContent(String... lines) {
 		StringBuilder buf = new StringBuilder();
@@ -154,7 +159,71 @@ public class NettyTcpServerIntegrationTests {
 
 		assertThat(dataLatch.await(1, TimeUnit.SECONDS)).isTrue();
 
-		String response = "{\"jsonrpc\":\"2.0\",\"id\":4,\"result\":{\"message\":\"hi\"}}";
+		String response = "Content-Length: 50\r\n\r\n{\"jsonrpc\":\"2.0\",\"id\":4,\"result\":{\"message\":\"hi\"}}";
+
+		assertThat(responses).containsExactlyInAnyOrder(response);
+	}
+
+	@Test
+	public void testOk4() throws InterruptedException {
+		context = new AnnotationConfigApplicationContext();
+		context.register(JsonRcpConfig.class, TestJsonRcpController.class);
+		context.refresh();
+		NettyTcpServer server = context.getBean(NettyTcpServer.class);
+
+		CountDownLatch dataLatch = new CountDownLatch(1);
+		final List<String> responses = new ArrayList<>();
+
+		TcpClient.create(server.getPort())
+				.newHandler((in, out) -> {
+					in
+					.receive()
+					.subscribe(c -> {
+						responses.add(c.retain().duplicate().toString(Charset.defaultCharset()));
+						dataLatch.countDown();
+					});
+
+					return out
+							.send(Flux.just(Unpooled.copiedBuffer(CONTENT7)))
+							.neverComplete();
+				})
+				.block(Duration.ofSeconds(30));
+
+		assertThat(dataLatch.await(1, TimeUnit.SECONDS)).isTrue();
+
+		String response = "Content-Length: 38\r\n\r\n{\"jsonrpc\":\"2.0\",\"id\":4,\"result\":null}";
+
+		assertThat(responses).containsExactlyInAnyOrder(response);
+	}
+
+	@Test
+	public void testOk5() throws InterruptedException {
+		context = new AnnotationConfigApplicationContext();
+		context.register(JsonRcpConfig.class, TestJsonRcpController.class);
+		context.refresh();
+		NettyTcpServer server = context.getBean(NettyTcpServer.class);
+
+		CountDownLatch dataLatch = new CountDownLatch(1);
+		final List<String> responses = new ArrayList<>();
+
+		TcpClient.create(server.getPort())
+				.newHandler((in, out) -> {
+					in
+					.receive()
+					.subscribe(c -> {
+						responses.add(c.retain().duplicate().toString(Charset.defaultCharset()));
+						dataLatch.countDown();
+					});
+
+					return out
+							.send(Flux.just(Unpooled.copiedBuffer(CONTENT8)))
+							.neverComplete();
+				})
+				.block(Duration.ofSeconds(30));
+
+		assertThat(dataLatch.await(1, TimeUnit.SECONDS)).isTrue();
+
+		String response = "Content-Length: 38\r\n\r\n{\"jsonrpc\":\"2.0\",\"id\":4,\"result\":null}";
 
 		assertThat(responses).containsExactlyInAnyOrder(response);
 	}
@@ -186,12 +255,78 @@ public class NettyTcpServerIntegrationTests {
 
 		assertThat(dataLatch.await(1, TimeUnit.SECONDS)).isTrue();
 
-		String response = "{\"jsonrpc\":\"2.0\",\"id\":4,\"result\":\"hi\"}";
+		String response = "Content-Length: 38\r\n\r\n{\"jsonrpc\":\"2.0\",\"id\":4,\"result\":\"hi\"}";
 
 		assertThat(responses).containsExactlyInAnyOrder(response);
 	}
 
 	@Test
+	public void testSingleNotification() throws InterruptedException {
+		context = new AnnotationConfigApplicationContext();
+		context.register(JsonRcpConfig.class, TestJsonRcpController.class);
+		context.refresh();
+		NettyTcpServer server = context.getBean(NettyTcpServer.class);
+
+		CountDownLatch dataLatch = new CountDownLatch(1);
+		final List<String> responses = new ArrayList<>();
+
+		TcpClient.create(server.getPort())
+				.newHandler((in, out) -> {
+					in
+					.receive()
+					.subscribe(c -> {
+						responses.add(c.retain().duplicate().toString(Charset.defaultCharset()));
+						dataLatch.countDown();
+					});
+
+					return out
+							.send(Flux.just(Unpooled.copiedBuffer(CONTENT9)))
+							.neverComplete();
+				})
+				.block(Duration.ofSeconds(30));
+
+		assertThat(dataLatch.await(1, TimeUnit.SECONDS)).isTrue();
+
+		String response = "Content-Length: 31\r\n\r\n{\"jsonrpc\":\"2.0\",\"result\":\"hi\"}";
+
+		assertThat(responses).containsExactlyInAnyOrder(response);
+	}
+
+	@Test
+	public void testMultiNotification() throws InterruptedException {
+		context = new AnnotationConfigApplicationContext();
+		context.register(JsonRcpConfig.class, TestJsonRcpController.class);
+		context.refresh();
+		NettyTcpServer server = context.getBean(NettyTcpServer.class);
+
+		CountDownLatch dataLatch = new CountDownLatch(2);
+		final List<String> responses = new ArrayList<>();
+
+		TcpClient.create(server.getPort())
+				.newHandler((in, out) -> {
+					in.context().addHandlerLast(new LspJsonRpcDecoder());
+					in.receiveObject()
+						.ofType(String.class)
+						.subscribe(c -> {
+							responses.add(c);
+							dataLatch.countDown();
+						});
+
+					return out
+							.send(Flux.just(Unpooled.copiedBuffer(CONTENT10)))
+							.neverComplete();
+				})
+				.block(Duration.ofSeconds(30));
+
+		assertThat(dataLatch.await(1, TimeUnit.SECONDS)).isTrue();
+
+		String response1 = "{\"jsonrpc\":\"2.0\",\"result\":\"hi\"}";
+		String response2 = "{\"jsonrpc\":\"2.0\",\"result\":\"bye\"}";
+
+		assertThat(responses).containsExactlyInAnyOrder(response1, response2);
+	}
+
+//	@Test
 	public void testMethodNotMatchedError() throws InterruptedException {
 		context = new AnnotationConfigApplicationContext();
 		context.register(JsonRcpConfig.class, TestJsonRcpController.class);
@@ -270,6 +405,29 @@ public class NettyTcpServerIntegrationTests {
 		@JsonRpcResponseBody
 		public String methodparams(String params) {
 			return params;
+		}
+
+		@JsonRpcRequestMapping(method = "monovoid")
+		@JsonRpcResponseBody
+		public Mono<Void> monovoid() {
+			return Mono.empty();
+		}
+
+		@JsonRpcRequestMapping(method = "void")
+		@JsonRpcResponseBody
+		public void justvoid() {
+		}
+
+		@JsonRpcRequestMapping(method = "notificationsingleresponse")
+		@JsonRpcNotification
+		public String notificationsingleresponse() {
+			return "hi";
+		}
+
+		@JsonRpcRequestMapping(method = "notificationmultiresponse")
+		@JsonRpcNotification
+		public Flux<String> notificationmultiresponse() {
+			return Flux.just("hi", "bye");
 		}
 	}
 

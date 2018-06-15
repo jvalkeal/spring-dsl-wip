@@ -93,6 +93,13 @@ public class RootLanguageServerController implements InitializingBean {
 	@JsonRpcRequestMapping(method = "initialized")
 	@JsonRpcResponseBody
 	public void initialized(InitializedParams params) {
-		log.trace("initialized {}", params);
+		log.debug("initialized {}", params);
+	}
+
+	@JsonRpcRequestMapping(method = "shutdown")
+	@JsonRpcResponseBody
+	public Mono<Void> shutdown() {
+		log.debug("shutdown");
+		return Mono.empty();
 	}
 }

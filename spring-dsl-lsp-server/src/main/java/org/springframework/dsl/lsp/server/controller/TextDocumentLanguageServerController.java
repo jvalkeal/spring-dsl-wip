@@ -70,6 +70,7 @@ public class TextDocumentLanguageServerController {
 	 */
 	@JsonRpcRequestMapping(method = "didOpen")
 	public void clientDocumentOpened(DidOpenTextDocumentParams params, LspClientContext context) {
+		log.debug("clientDocumentOpened {}", params);
 		handle(this.documentStateTracker.didOpen(params), reconciler, context, params.getTextDocument().getUri());
 	}
 
@@ -94,6 +95,7 @@ public class TextDocumentLanguageServerController {
 	 */
 	@JsonRpcRequestMapping(method = "didClose")
 	public void clientDocumentClosed(DidCloseTextDocumentParams params, LspClientContext context) {
+		log.debug("clientDocumentClosed {}", params);
 		handle(this.documentStateTracker.didClose(params), reconciler, context, params.getTextDocument().getUri());
 	}
 

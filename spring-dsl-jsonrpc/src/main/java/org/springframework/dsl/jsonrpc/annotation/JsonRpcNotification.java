@@ -23,7 +23,7 @@ import java.lang.annotation.Target;
 
 /**
  * Annotation that indicates a method return value should be bound to the
- * {@code JSONRPC} response result.
+ * {@code JSONRPC} responses as notifications.
  *
  * @author Janne Valkealahti
  *
@@ -31,5 +31,5 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface JsonRpcResponseBody {
+public @interface JsonRpcNotification {
 }
