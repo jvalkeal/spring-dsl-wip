@@ -50,8 +50,12 @@ public class JsonRcpRequestMethodsRequestCondition
 
 	@Override
 	public JsonRcpRequestMethodsRequestCondition combine(JsonRcpRequestMethodsRequestCondition other) {
-		Set<String> set = new LinkedHashSet<>(this.methods);
-		set.addAll(other.methods);
+		Set<String> set = new LinkedHashSet<>();
+		for (String s1 : this.methods) {
+			for (String s2 : other.methods) {
+				set.add(s1 + s2);
+			}
+		}
 		return new JsonRcpRequestMethodsRequestCondition(set);
 	}
 

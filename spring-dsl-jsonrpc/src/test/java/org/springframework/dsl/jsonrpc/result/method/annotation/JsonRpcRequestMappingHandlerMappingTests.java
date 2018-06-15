@@ -45,12 +45,13 @@ public class JsonRpcRequestMappingHandlerMappingTests {
 
 	@Test
 	public void testMapping() throws Exception {
-		assertAnnotationMapping("handlerMethod1");
-		assertAnnotationMapping("handlerMethod2");
+		assertAnnotationMapping("handlerMethod1", TestController1.class);
+		assertAnnotationMapping("handlerMethod2", TestController1.class);
+		assertAnnotationMapping("handlerMethod1", TestController2.class);
+		assertAnnotationMapping("handlerMethod2", TestController2.class);
 	}
 
-	private JsonRpcRequestMappingInfo assertAnnotationMapping(String methodName) throws Exception {
-		Class<?> clazz = TestController.class;
+	private JsonRpcRequestMappingInfo assertAnnotationMapping(String methodName, Class<?> clazz) throws Exception {
 		Method method = clazz.getMethod(methodName);
 		JsonRpcRequestMappingInfo info = this.handlerMapping.getMappingForMethod(method, clazz);
 
@@ -62,13 +63,26 @@ public class JsonRpcRequestMappingHandlerMappingTests {
 	}
 
 	@JsonRpcController
-	static class TestController {
+	private static class TestController1 {
 
 		@JsonRpcRequestMapping(method = "handlerMethod1")
 		public void handlerMethod1() {
 		}
 
 		@JsonRpcRequestMapping(method = "handlerMethod2")
+		public void handlerMethod2() {
+		}
+	}
+
+	@JsonRpcController
+	@JsonRpcRequestMapping(method = "handler")
+	private static class TestController2 {
+
+		@JsonRpcRequestMapping(method = "Method1")
+		public void handlerMethod1() {
+		}
+
+		@JsonRpcRequestMapping(method = "Method2")
 		public void handlerMethod2() {
 		}
 	}

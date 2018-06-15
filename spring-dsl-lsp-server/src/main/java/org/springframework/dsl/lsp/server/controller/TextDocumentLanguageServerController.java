@@ -17,8 +17,11 @@ package org.springframework.dsl.lsp.server.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.dsl.document.Document;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcController;
+import org.springframework.dsl.jsonrpc.annotation.JsonRpcNotification;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcRequestMapping;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcResponseBody;
 import org.springframework.dsl.lsp.LspClientContext;
@@ -50,13 +53,25 @@ import reactor.core.publisher.Mono;
  */
 @JsonRpcController
 @JsonRpcRequestMapping(method = "textDocument/")
-public class TextDocumentLanguageServerController {
+public class TextDocumentLanguageServerController implements InitializingBean {
 
 	private static final Logger log = LoggerFactory.getLogger(TextDocumentLanguageServerController.class);
-	private DocumentStateTracker documentStateTracker;
+	private final DocumentStateTracker documentStateTracker;
+	private final ObjectProvider<Reconciler> reconcilerProvider;
 	private Reconciler reconciler;
 	private Completioner completioner;
 	private Hoverer hoverer;
+
+	public TextDocumentLanguageServerController(DocumentStateTracker documentStateTracker,
+			ObjectProvider<Reconciler> reconcilerProvider) {
+		this.documentStateTracker = documentStateTracker;
+		this.reconcilerProvider = reconcilerProvider;
+	}
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		this.reconciler = reconcilerProvider.getIfAvailable();
+	}
 
 	/**
 	 * Method handling {@code LSP client didOpen} request and dispatching
@@ -66,12 +81,18 @@ public class TextDocumentLanguageServerController {
 	 * information stored and dispatched in this method.
 	 *
 	 * @param params the {@link DidOpenTextDocumentParams}
-	 * @param context the lsp client context
 	 */
 	@JsonRpcRequestMapping(method = "didOpen")
-	public void clientDocumentOpened(DidOpenTextDocumentParams params, LspClientContext context) {
+	@JsonRpcNotification
+	public Flux<PublishDiagnosticsParams> clientDocumentOpened(DidOpenTextDocumentParams params) {
 		log.debug("clientDocumentOpened {}", params);
-		handle(this.documentStateTracker.didOpen(params), reconciler, context, params.getTextDocument().getUri());
+
+		return Flux.from(this.documentStateTracker.didOpen(params))
+				.flatMap(document -> reconciler.reconcile(document));
+
+
+//		handle(this.documentStateTracker.didOpen(params), reconciler, params.getTextDocument().getUri());
+//		return Flux.empty();
 	}
 
 	/**
@@ -79,11 +100,10 @@ public class TextDocumentLanguageServerController {
 	 * {@link Reconciler} if available.
 	 *
 	 * @param params the {@link DidChangeTextDocumentParams}
-	 * @param context the lsp client context
 	 */
 	@JsonRpcRequestMapping(method = "didChange")
-	public void clientDocumentChanged(DidChangeTextDocumentParams params, LspClientContext context) {
-		handle(this.documentStateTracker.didChange(params), reconciler, context, params.getTextDocument().getUri());
+	public void clientDocumentChanged(DidChangeTextDocumentParams params) {
+		handle(this.documentStateTracker.didChange(params), reconciler, params.getTextDocument().getUri());
 	}
 
 	/**
@@ -91,12 +111,11 @@ public class TextDocumentLanguageServerController {
 	 * {@link DocumentStateTracker}.
 	 *
 	 * @param params the {@link DidCloseTextDocumentParams}
-	 * @param context the lsp client context
 	 */
 	@JsonRpcRequestMapping(method = "didClose")
-	public void clientDocumentClosed(DidCloseTextDocumentParams params, LspClientContext context) {
+	public void clientDocumentClosed(DidCloseTextDocumentParams params) {
 		log.debug("clientDocumentClosed {}", params);
-		handle(this.documentStateTracker.didClose(params), reconciler, context, params.getTextDocument().getUri());
+		handle(this.documentStateTracker.didClose(params), reconciler, params.getTextDocument().getUri());
 	}
 
 	/**
@@ -104,11 +123,10 @@ public class TextDocumentLanguageServerController {
 	 * {@link DocumentStateTracker}.
 	 *
 	 * @param params the {@link DidSaveTextDocumentParams}
-	 * @param context the lsp client context
 	 */
 	@JsonRpcRequestMapping(method = "didSave")
-	public void clientDocumentSaved(DidSaveTextDocumentParams params, LspClientContext context) {
-		handle(this.documentStateTracker.didSave(params), reconciler, context, params.getTextDocument().getUri());
+	public void clientDocumentSaved(DidSaveTextDocumentParams params) {
+		handle(this.documentStateTracker.didSave(params), reconciler, params.getTextDocument().getUri());
 	}
 
 	/**
@@ -116,11 +134,10 @@ public class TextDocumentLanguageServerController {
 	 * {@link DocumentStateTracker}.
 	 *
 	 * @param params the {@link WillSaveTextDocumentParams}
-	 * @param context the lsp client context
 	 */
 	@JsonRpcRequestMapping(method = "willSave")
-	public void clientDocumentWillSave(WillSaveTextDocumentParams params, LspClientContext context) {
-		handle(this.documentStateTracker.willSave(params), reconciler, context, params.getTextDocument().getUri());
+	public void clientDocumentWillSave(WillSaveTextDocumentParams params) {
+		handle(this.documentStateTracker.willSave(params), reconciler, params.getTextDocument().getUri());
 	}
 
 	/**
@@ -171,14 +188,12 @@ public class TextDocumentLanguageServerController {
 		return Flux.empty();
 	}
 
-	private static void handle(Mono<Document> document, Reconciler reconciler, LspClientContext context,
-			String uri) {
-		log.trace("Handling document {}, reconciler {}, context {}, uri {}", document, reconciler, context, uri);
+	private static void handle(Mono<Document> document, Reconciler reconciler, String uri) {
+		log.trace("Handling document {}, reconciler {}, uri {}", document, reconciler, uri);
 		document.doOnNext(doc -> {
 			reconciler.reconcile(doc)
 				.switchIfEmpty(Mono.just(new PublishDiagnosticsParams(uri)))
 				.doOnNext(diag -> {
-					context.getClient().send(diag);
 				})
 				.subscribe();
 		})

@@ -35,19 +35,16 @@ public class MockJsonRpcInputMessage implements JsonRpcInputMessage {
 
 	@Override
 	public Flux<DataBuffer> getBody() {
-		// TODO Auto-generated method stub
-		return null;
+		return body;
 	}
 
 	@Override
 	public String getMethod() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public String getParams() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -84,13 +81,11 @@ public class MockJsonRpcInputMessage implements JsonRpcInputMessage {
 
 	@Override
 	public String getJsonrpc() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Integer getId() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
