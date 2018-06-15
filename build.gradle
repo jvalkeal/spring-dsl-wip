@@ -300,7 +300,7 @@ project('spring-dsl-build-tests') {
 
 	dependencies {
 		testCompile project(":spring-dsl-lsp-server")
-		testRuntime project(":spring-dsl-autoconfigure")
+		testCompile project(":spring-dsl-autoconfigure")
 		testCompile 'org.springframework.boot:spring-boot-starter-test'
 		testCompile 'org.hamcrest:hamcrest-core'
 		testCompile 'org.hamcrest:hamcrest-library'
