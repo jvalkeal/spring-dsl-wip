@@ -61,9 +61,9 @@ import reactor.ipc.netty.tcp.TcpServer;
  * @author Janne Valkealahti
  *
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = Config1.class)
-@DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
+//@RunWith(SpringJUnit4ClassRunner.class)
+//@ContextConfiguration(classes = Config1.class)
+//@DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 public class LspNettySocketLspServerIntegrationTests extends AbstractLspIntegrationTests {
 
 
