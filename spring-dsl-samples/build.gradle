@@ -27,7 +27,7 @@ project('spring-dsl-samples-simpledsleditor') {
 	
 	node {
 		version = "8.9.4"
-		download = false
+		download = true
 		nodeModulesDir = file("ui")
 	}
 
