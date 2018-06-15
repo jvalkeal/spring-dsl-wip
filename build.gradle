@@ -153,6 +153,7 @@ project('spring-dsl-lsp-server') {
 	dependencies {
 		compile project(':spring-dsl-core')
 		compile project(':spring-dsl-jsonrpc')
+		testCompile project(':spring-dsl-jsonrpc').sourceSets.test.output
 		compile 'org.springframework:spring-messaging'
 		compile 'org.springframework.boot:spring-boot-starter'
 		compile 'io.projectreactor:reactor-core'
