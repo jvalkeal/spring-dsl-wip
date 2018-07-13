@@ -48,7 +48,7 @@ public class LspDomainArgumentResolverTests {
 
 	@Before
 	public void setup() {
-		this.resolver = new LspDomainArgumentResolver(null);
+		this.resolver = new LspDomainArgumentResolver();
 	}
 
 	@Test

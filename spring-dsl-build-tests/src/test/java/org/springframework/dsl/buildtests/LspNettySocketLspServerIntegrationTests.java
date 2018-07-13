@@ -124,7 +124,7 @@ public class LspNettySocketLspServerIntegrationTests extends AbstractLspIntegrat
 		// TODO: remove
 		@Bean
 		public LspDomainArgumentResolver lspDomainArgumentResolver() {
-			return new LspDomainArgumentResolver(null);
+			return new LspDomainArgumentResolver();
 		}
 
 		@Bean

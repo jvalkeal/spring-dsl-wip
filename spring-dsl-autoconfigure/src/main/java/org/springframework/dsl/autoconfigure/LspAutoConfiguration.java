@@ -76,26 +76,29 @@ public class LspAutoConfiguration {
 		return factoryBean;
 	}
 
+//	@Bean
+//	public LspDomainArgumentResolver lspDomainArgumentResolver(
+//			@Qualifier(DslSystemConstants.LSP_CONVERSION_SERVICE_BEAN_NAME) ConversionService conversionService) {
+//		return new LspDomainArgumentResolver(conversionService);
+//	}
 	@Bean
-	public LspDomainArgumentResolver lspDomainArgumentResolver(
-			@Qualifier(DslSystemConstants.LSP_CONVERSION_SERVICE_BEAN_NAME) ConversionService conversionService) {
-		return new LspDomainArgumentResolver(conversionService);
+	public LspDomainArgumentResolver lspDomainArgumentResolver() {
+		return new LspDomainArgumentResolver();
 	}
 
 	@ConditionalOnProperty(prefix = "spring.dsl.lsp.server", name = "mode", havingValue = "WEBSOCKET")
 	@ConditionalOnClass(value = WebSocketHandler.class)
 	@Import({ LspWebSocketConfig.class })
-	public static class DslServerWebsocketConfig {
-
+	public static class LspServerWebsocketConfig {
 	}
 
 	@ConditionalOnProperty(prefix = "spring.dsl.lsp.server", name = "mode", havingValue = "PROCESS")
 	@Import({ LspServerStdioConfiguration.class })
-	public static class DslServerProcessConfig {
+	public static class LspServerProcessConfig {
 	}
 
 	@ConditionalOnProperty(prefix = "spring.dsl.lsp.server", name = "mode", havingValue = "SOCKET")
 	@Import({ LspServerSocketConfiguration.class })
-	public static class DslServerSocketConfig {
+	public static class LspServerSocketConfig {
 	}
 }

@@ -70,7 +70,7 @@ import reactor.core.publisher.Mono;
  */
 public class LspDomainArgumentResolver implements JsonRpcHandlerMethodArgumentResolver {
 
-	private final ConversionService conversionService;
+//	private final ConversionService conversionService;
 	private Set<Class<?>> supportedClasses = Arrays.asList(
 			InitializeParams.class,
 			InitializedParams.class,
@@ -87,9 +87,9 @@ public class LspDomainArgumentResolver implements JsonRpcHandlerMethodArgumentRe
 	 *
 	 * @param conversionService the conversion service
 	 */
-	public LspDomainArgumentResolver(ConversionService conversionService) {
+	public LspDomainArgumentResolver(/*ConversionService conversionService*/) {
 //		Assert.notNull(conversionService, "'conversionService' must be set");
-		this.conversionService = conversionService;
+//		this.conversionService = conversionService;
 	}
 
 	@Override
