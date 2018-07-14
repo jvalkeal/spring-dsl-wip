@@ -23,40 +23,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.core.ReactiveAdapterRegistry;
-import org.springframework.core.codec.CharSequenceEncoder;
-import org.springframework.core.codec.DataBufferEncoder;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcController;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcNotification;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcRequestMapping;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcResponseBody;
-import org.springframework.dsl.jsonrpc.codec.Jackson2JsonRpcMessageWriter;
-import org.springframework.dsl.jsonrpc.codec.JsonRpcMessageWriter;
 import org.springframework.dsl.jsonrpc.config.EnableJsonRcp;
-import org.springframework.dsl.jsonrpc.result.method.JsonRpcHandlerMethodArgumentResolver;
-import org.springframework.dsl.jsonrpc.result.method.annotation.JsonRpcRequestMappingHandlerAdapter;
-import org.springframework.dsl.jsonrpc.result.method.annotation.JsonRpcRequestMappingHandlerMapping;
-import org.springframework.dsl.jsonrpc.result.method.annotation.JsonRpcResponseBodyResultHandler;
-import org.springframework.dsl.jsonrpc.result.method.annotation.ServerJsonRpcExchangeArgumentResolver;
 import org.springframework.dsl.jsonrpc.support.DispatcherJsonRpcHandler;
 import org.springframework.dsl.lsp.domain.InitializeParams;
-import org.springframework.util.MimeTypeUtils;
 
-import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import io.netty.handler.codec.json.JsonObjectDecoder;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
-import reactor.ipc.netty.NettyPipeline;
 import reactor.ipc.netty.tcp.TcpClient;
 import reactor.ipc.netty.tcp.TcpServer;
 
@@ -298,7 +281,7 @@ public class NettyTcpServerIntegrationTests {
 
 		assertThat(dataLatch.await(1, TimeUnit.SECONDS)).isTrue();
 
-		String response = "Content-Length: 180\r\n\r\n{\"jsonrpc\":\"2.0\",\"id\":4,\"result\":{\"processId\":1,\"rootUri\":\"rootUri\",\"initializationOptions\":\"initializationOptions\",\"capabilities\":{\"experimental\":\"experimental\"},\"trace\":\"trace\"}}";
+		String response = "Content-Length: 196\r\n\r\n{\"jsonrpc\":\"2.0\",\"id\":4,\"result\":{\"processId\":1,\"rootPath\":null,\"rootUri\":\"rootUri\",\"initializationOptions\":\"initializationOptions\",\"capabilities\":{\"experimental\":\"experimental\"},\"trace\":\"trace\"}}";
 
 		assertThat(responses).containsExactlyInAnyOrder(response);
 	}
@@ -369,7 +352,7 @@ public class NettyTcpServerIntegrationTests {
 		assertThat(responses).containsExactlyInAnyOrder(response1, response2);
 	}
 
-//	@Test
+	@Test
 	public void testMethodNotMatchedError() throws InterruptedException {
 		context = new AnnotationConfigApplicationContext();
 		context.register(JsonRcpConfig.class, TestJsonRcpController.class);
@@ -395,7 +378,7 @@ public class NettyTcpServerIntegrationTests {
 				})
 				.block(Duration.ofSeconds(30));
 
-		String response = "{\"jsonrpc\":\"2.0\",\"id\":4,\"error\":{\"code\":-32601,\"message\":\"No matching handler\"}}";
+		String response = "Content-Length: 86\r\n\r\n{\"jsonrpc\":\"2.0\", \"id\":3, \"error\":{\"code\":-32603, \"message\": \"internal server error\"}}";
 
 		assertThat(dataLatch.await(2, TimeUnit.SECONDS)).isTrue();
 

@@ -22,6 +22,7 @@ import org.springframework.dsl.support.DomainBuilder;
 public class InitializeParams {
 
 	private Integer processId;
+	private String rootPath;
 	private String rootUri;
 	private Object initializationOptions;
 	private ClientCapabilities capabilities;
@@ -74,6 +75,14 @@ public class InitializeParams {
 		this.processId = processId;
 	}
 
+	public String getRootPath() {
+		return rootPath;
+	}
+
+	public void setRootPath(String rootPath) {
+		this.rootPath = rootPath;
+	}
+
 	public String getRootUri() {
 		return rootUri;
 	}
@@ -113,6 +122,7 @@ public class InitializeParams {
 		result = prime * result + ((capabilities == null) ? 0 : capabilities.hashCode());
 		result = prime * result + ((initializationOptions == null) ? 0 : initializationOptions.hashCode());
 		result = prime * result + ((processId == null) ? 0 : processId.hashCode());
+		result = prime * result + ((rootPath == null) ? 0 : rootPath.hashCode());
 		result = prime * result + ((rootUri == null) ? 0 : rootUri.hashCode());
 		result = prime * result + ((trace == null) ? 0 : trace.hashCode());
 		return result;
@@ -142,6 +152,11 @@ public class InitializeParams {
 				return false;
 		} else if (!processId.equals(other.processId))
 			return false;
+		if (rootPath == null) {
+			if (other.rootPath != null)
+				return false;
+		} else if (!rootPath.equals(other.rootPath))
+			return false;
 		if (rootUri == null) {
 			if (other.rootUri != null)
 				return false;
@@ -169,6 +184,14 @@ public class InitializeParams {
 		 * @return the builder for chaining
 		 */
 		InitializeParamsBuilder<P> processId(Integer processId);
+
+		/**
+		 * Sets a root path.
+		 *
+		 * @param rootPath the root uri
+		 * @return the builder for chaining
+		 */
+		InitializeParamsBuilder<P> rootPath(String rootPath);
 
 		/**
 		 * Sets a root uri.
@@ -219,6 +242,7 @@ public class InitializeParams {
 			implements InitializeParamsBuilder<P> {
 
 		private Integer processId;
+		private String rootPath;
 		private String rootUri;
 		private Object initializationOptions;
 		private ClientCapabilitiesBuilder<InitializeParamsBuilder<P>> capabilities;
@@ -231,6 +255,12 @@ public class InitializeParams {
 		@Override
 		public InitializeParamsBuilder<P> processId(Integer processId) {
 			this.processId = processId;
+			return this;
+		}
+
+		@Override
+		public InitializeParamsBuilder<P> rootPath(String rootPath) {
+			this.rootPath = rootPath;
 			return this;
 		}
 
@@ -261,6 +291,7 @@ public class InitializeParams {
 		@Override
 		public InitializeParams build() {
 			InitializeParams initializeParams = new InitializeParams(processId, rootUri, initializationOptions, trace);
+			initializeParams.setRootPath(rootPath);
 			if (capabilities != null) {
 				initializeParams.setCapabilities(capabilities.build());
 			}
