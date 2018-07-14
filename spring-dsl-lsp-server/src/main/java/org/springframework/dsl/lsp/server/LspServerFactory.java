@@ -13,18 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.autoconfigure;
+package org.springframework.dsl.lsp.server;
 
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.ApplicationContext;
 
 /**
- * {@link EnableAutoConfiguration Auto-configuration} integrating into {@code DSL} features.
+ * Factory interface that can be used to create a {@link LspServer}.
  *
  * @author Janne Valkealahti
+ * @see LspServer
  *
  */
-@Configuration
-public class DslAutoConfiguration {
+@FunctionalInterface
+public interface LspServerFactory {
 
+	/**
+	 * Gets a new fully configured but paused {@link LspServer} instance.
+	 * Clients should not be able to connect to the returned server until
+	 * {@link LspServer#start()} is called (which happens when the
+	 * {@link ApplicationContext} has been fully refreshed).
+	 *
+	 * @return a fully configured {@link LspServer}
+	 */
+	LspServer getLspServer();
 }

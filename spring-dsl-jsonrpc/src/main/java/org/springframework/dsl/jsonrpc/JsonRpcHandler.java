@@ -13,18 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.autoconfigure;
+package org.springframework.dsl.jsonrpc;
 
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.context.annotation.Configuration;
+import reactor.core.publisher.Mono;
 
 /**
- * {@link EnableAutoConfiguration Auto-configuration} integrating into {@code DSL} features.
+ * Contract to handle a {@code JSONRCP} request.
  *
  * @author Janne Valkealahti
  *
  */
-@Configuration
-public class DslAutoConfiguration {
+public interface JsonRpcHandler {
 
+	/**
+	 * Handle the json rpc exchange.
+	 *
+	 * @param exchange the current json rpc exchange
+	 * @return {@code Mono<Void>} to indicate when request handling is complete
+	 */
+	Mono<Void> handle(ServerJsonRpcExchange exchange);
 }

@@ -13,18 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.autoconfigure;
+package org.springframework.dsl.lsp.server.jsonrpc;
 
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.dsl.jsonrpc.JsonRpcInputMessage;
+import org.springframework.dsl.jsonrpc.JsonRpcOutputMessage;
+
+import reactor.core.publisher.Mono;
 
 /**
- * {@link EnableAutoConfiguration Auto-configuration} integrating into {@code DSL} features.
+ * Lowest level contract for reactive JSONRPC request handling that serves as a
+ * common denominator across different runtimes.
  *
  * @author Janne Valkealahti
  *
  */
-@Configuration
-public class DslAutoConfiguration {
+public interface RpcHandler {
 
+	/**
+	 * Handle the given request and write to the response.
+	 *
+	 * @param request the current request
+	 * @param response the current response
+	 * @return indicates completion of request handling
+	 */
+	Mono<Void> handle(JsonRpcInputMessage request, JsonRpcOutputMessage response);
 }

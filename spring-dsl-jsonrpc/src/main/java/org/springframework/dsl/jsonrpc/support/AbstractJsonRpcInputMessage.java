@@ -13,18 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.autoconfigure;
+package org.springframework.dsl.jsonrpc.support;
 
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.dsl.jsonrpc.JsonRpcInputMessage;
+import org.springframework.dsl.jsonrpc.JsonRpcOutputMessage;
 
-/**
- * {@link EnableAutoConfiguration Auto-configuration} integrating into {@code DSL} features.
- *
- * @author Janne Valkealahti
- *
- */
-@Configuration
-public class DslAutoConfiguration {
+public abstract class AbstractJsonRpcInputMessage implements JsonRpcInputMessage {
+
 
 }

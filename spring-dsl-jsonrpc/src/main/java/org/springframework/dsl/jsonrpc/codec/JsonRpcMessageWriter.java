@@ -13,18 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.autoconfigure;
+package org.springframework.dsl.jsonrpc.codec;
 
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.context.annotation.Configuration;
+import java.util.Map;
 
-/**
- * {@link EnableAutoConfiguration Auto-configuration} integrating into {@code DSL} features.
- *
- * @author Janne Valkealahti
- *
- */
-@Configuration
-public class DslAutoConfiguration {
+import org.reactivestreams.Publisher;
+import org.springframework.core.ResolvableType;
+import org.springframework.dsl.jsonrpc.JsonRpcInputMessage;
+import org.springframework.dsl.jsonrpc.JsonRpcOutputMessage;
+
+import reactor.core.publisher.Mono;
+
+public interface JsonRpcMessageWriter<T> {
+
+	boolean canWrite(ResolvableType elementType);
+
+	Mono<Void> write(Publisher<? extends T> inputStream, ResolvableType elementType, JsonRpcInputMessage request, JsonRpcOutputMessage message,
+			Map<String, Object> hints);
 
 }

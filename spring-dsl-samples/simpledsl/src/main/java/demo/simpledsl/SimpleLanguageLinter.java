@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.dsl.document.Document;
-import org.springframework.dsl.lsp.server.result.method.annotation.DefaultReconcileProblem;
+import org.springframework.dsl.lsp.server.support.DefaultReconcileProblem;
 import org.springframework.dsl.reconcile.Linter;
 import org.springframework.dsl.reconcile.ProblemSeverity;
 import org.springframework.dsl.reconcile.ProblemType;

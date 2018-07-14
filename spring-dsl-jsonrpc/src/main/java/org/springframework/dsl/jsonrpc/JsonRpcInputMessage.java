@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.autoconfigure;
+package org.springframework.dsl.jsonrpc;
 
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.buffer.DataBuffer;
 
-/**
- * {@link EnableAutoConfiguration Auto-configuration} integrating into {@code DSL} features.
- *
- * @author Janne Valkealahti
- *
- */
-@Configuration
-public class DslAutoConfiguration {
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
+public interface JsonRpcInputMessage/* extends JsonRpcMessage*/ {
+
+	Mono<String> getJsonrpc();
+	Mono<Integer> getId();
+	Mono<String> getMethod();
+	Mono<String> getParams();
+//	Flux<DataBuffer> getBody();
 }

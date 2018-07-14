@@ -13,18 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.autoconfigure;
-
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.context.annotation.Configuration;
+package org.springframework.dsl.lsp.server;
 
 /**
- * {@link EnableAutoConfiguration Auto-configuration} integrating into {@code DSL} features.
+ * Exceptions thrown by a lsp server.
  *
  * @author Janne Valkealahti
  *
  */
-@Configuration
-public class DslAutoConfiguration {
+public class LspServerException extends RuntimeException {
 
+	private static final long serialVersionUID = -1847306814419948739L;
+
+	/**
+	 * Instantiates a new coap server exception.
+	 *
+	 * @param message the message
+	 */
+	public LspServerException(String message) {
+		super(message);
+	}
+
+	/**
+	 * Instantiates a new coap server exception.
+	 *
+	 * @param message the message
+	 * @param cause the cause
+	 */
+	public LspServerException(String message, Throwable cause) {
+		super(message, cause);
+	}
 }

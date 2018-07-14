@@ -13,18 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.autoconfigure;
-
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.context.annotation.Configuration;
+package org.springframework.dsl.jsonrpc;
 
 /**
- * {@link EnableAutoConfiguration Auto-configuration} integrating into {@code DSL} features.
+ * Base {@code JSONRPC} request message aware of {@code method} and {@code params} fields.
  *
  * @author Janne Valkealahti
  *
  */
-@Configuration
-public class DslAutoConfiguration {
+public interface JsonRpcRequest extends JsonRpcMessage {
 
+	/**
+	 * Gets the method.
+	 *
+	 * @return the method
+	 */
+	public String getMethod();
+
+	/**
+	 * Gets the params.
+	 *
+	 * @return the params
+	 */
+	public Object getParams();
 }

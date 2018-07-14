@@ -13,18 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.autoconfigure;
-
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.context.annotation.Configuration;
+package org.springframework.dsl.jsonrpc;
 
 /**
- * {@link EnableAutoConfiguration Auto-configuration} integrating into {@code DSL} features.
+ * Contract for an JSONRPC request-response interaction. Provides access to the
+ * JSONRPC request and response.
  *
  * @author Janne Valkealahti
  *
  */
-@Configuration
-public class DslAutoConfiguration {
+public interface ServerJsonRpcExchange {
 
+	/**
+	 * Gets the current JSONRPC request.
+	 *
+	 * @return the JSONRPC request
+	 */
+	JsonRpcInputMessage getRequest();
+
+	/**
+	 * Gets the current JSONRPC response.
+	 *
+	 * @return the JSONRPC response
+	 */
+	JsonRpcOutputMessage getResponse();
 }

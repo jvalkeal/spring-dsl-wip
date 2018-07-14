@@ -13,18 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.autoconfigure;
+package org.springframework.dsl.jsonrpc;
 
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.context.annotation.Configuration;
+import reactor.core.publisher.Mono;
 
-/**
- * {@link EnableAutoConfiguration Auto-configuration} integrating into {@code DSL} features.
- *
- * @author Janne Valkealahti
- *
- */
-@Configuration
-public class DslAutoConfiguration {
+public interface JsonRpcHandlerMapping {
+
+	Mono<Object> getHandler(ServerJsonRpcExchange request);
 
 }

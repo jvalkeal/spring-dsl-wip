@@ -3,8 +3,6 @@ buildscript {
 		springVersion = '5.0.5.RELEASE'
 		springBootVersion = '2.0.1.RELEASE'
 		antlr4Version = '4.7.1'
-		lsp4jVersion = '0.4.0'
-		xtendVersion = '2.13.0'
 		mooworkVersion = '1.2.0'
 		propdepsVersion = '0.0.8'
 		asciidoctorVersion = '1.5.3'
@@ -66,8 +64,6 @@ configure(allprojects) {
 		dependencies {
 			dependency "org.antlr:antlr4:$antlr4Version"
 			dependency "org.antlr:antlr4-runtime:$antlr4Version"
-			dependency "org.eclipse.lsp4j:org.eclipse.lsp4j:$lsp4jVersion"
-			dependency "org.eclipse.xtend:org.eclipse.xtend.lib:$xtendVersion"
 			dependency("org.javolution:javolution-core-java:$javolutionVersion") {
 				exclude 'org.osgi:org.osgi.core'
 				exclude 'org.osgi:org.osgi.compendium'
@@ -151,13 +147,17 @@ project('spring-dsl-core') {
 	}
 }
 
-project('spring-dsl-server') {
-	description = "Spring Dsl Server"
+project('spring-dsl-lsp-server') {
+	description = "Spring Dsl Lsp Server"
 
 	dependencies {
 		compile project(':spring-dsl-core')
+		compile project(':spring-dsl-jsonrpc')
+		testCompile project(':spring-dsl-jsonrpc').sourceSets.test.output
+		compile 'org.springframework:spring-messaging'
 		compile 'org.springframework.boot:spring-boot-starter'
 		compile 'io.projectreactor:reactor-core'
+		compile 'io.projectreactor.ipc:reactor-netty'
 		compile 'org.javolution:javolution-core-java'
 		optional 'org.springframework.boot:spring-boot-configuration-processor'
 		optional 'com.google.code.gson:gson'
@@ -172,8 +172,8 @@ project('spring-dsl-autoconfigure') {
 
 	dependencies {
 		compile project(':spring-dsl-core')
-		optional project(':spring-dsl-server')
-		optional project(':spring-dsl-lsp4j')
+		optional project(':spring-dsl-jsonrpc')
+		optional project(':spring-dsl-lsp-server')
 		optional project(':spring-dsl-antlr')
 		optional project(':spring-dsl-websocket')
 		optional 'org.springframework.boot:spring-boot-configuration-processor'
@@ -185,7 +185,7 @@ project('spring-dsl-websocket') {
 	description = "Spring Dsl Websocket"
 
 	dependencies {
-		compile project(':spring-dsl-server')
+		compile project(':spring-dsl-lsp-server')
 		compile 'org.springframework.boot:spring-boot-starter-websocket'
 		compile 'org.springframework.boot:spring-boot-starter-webflux'
 	}
@@ -222,17 +222,18 @@ project('spring-dsl-antlr') {
 	}
 }
 
-project('spring-dsl-lsp4j') {
-	description = "Spring Dsl Lsp4J"
+project('spring-dsl-jsonrpc') {
+	description = "Spring Dsl JSON RPC"
 
 	dependencies {
-		compile project(":spring-dsl-server")
-		compile 'org.eclipse.lsp4j:org.eclipse.lsp4j'
+		compile 'org.springframework.boot:spring-boot-starter'
+		compile 'io.projectreactor.ipc:reactor-netty'
+		compile 'com.fasterxml.jackson.core:jackson-core'
+		compile 'com.fasterxml.jackson.core:jackson-databind'
 		testCompile 'org.hamcrest:hamcrest-core'
 		testCompile 'org.hamcrest:hamcrest-library'
 		testCompile 'junit:junit'
 		testCompile 'org.springframework.boot:spring-boot-starter-test'
-		testRuntime 'org.apache.logging.log4j:log4j-core'
 	}
 }
 
@@ -290,6 +291,21 @@ project('spring-dsl-samples-common') {
 	dependencies {
 		compile project(':spring-dsl-core')
 		compile 'org.springframework.boot:spring-boot-starter'
+	}
+}
+
+project('spring-dsl-build-tests') {
+	description = "Spring Dsl Build Tests"
+	configurations.archives.artifacts.removeAll { it.archiveTask.is jar }
+	tasks.findByPath("artifactoryPublish")?.enabled = false
+
+	dependencies {
+		testCompile project(":spring-dsl-lsp-server")
+		testCompile project(":spring-dsl-autoconfigure")
+		testCompile 'org.springframework.boot:spring-boot-starter-test'
+		testCompile 'org.hamcrest:hamcrest-core'
+		testCompile 'org.hamcrest:hamcrest-library'
+		testCompile 'junit:junit'
 	}
 }
 
