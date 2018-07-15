@@ -51,6 +51,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ObjectUtils;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -116,6 +117,7 @@ public class LspDomainArgumentResolver implements JsonRpcHandlerMethodArgumentRe
 		Mono<String> bodyAsString = exchange.getRequest().getParams();
 
 		ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 //		ObjectWriter writer = objectMapper.writer();
 //		ObjectReader reader = objectMapper.reader();
 		TypeFactory typeFactory = objectMapper.getTypeFactory();
