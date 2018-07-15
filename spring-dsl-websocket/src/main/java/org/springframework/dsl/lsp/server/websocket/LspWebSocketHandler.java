@@ -16,7 +16,11 @@
 package org.springframework.dsl.lsp.server.websocket;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.time.Duration;
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.Function;
 
 import org.reactivestreams.Publisher;
@@ -117,16 +121,6 @@ public class LspWebSocketHandler implements WebSocketHandler {
 			})
 			.then();
 
-
-
-//		return session
-//				.send(intervalFlux.map(session::textMessage))
-//				.and(session
-//						.receive()
-//						.map(WebSocketMessage::getPayloadAsText)
-//						.log());
-
-
 	}
 
 	private static class WebSocketJsonRpcOutputMessage extends AbstractJsonRpcOutputMessage {
@@ -141,14 +135,36 @@ public class LspWebSocketHandler implements WebSocketHandler {
 		@Override
 		protected Mono<Void> writeWithInternal(Publisher<? extends DataBuffer> body) {
 
-			Flux<WebSocketMessage> xxx = Flux.from(body).map(buffer -> {
-				return new WebSocketMessage(WebSocketMessage.Type.BINARY, buffer);
-			});
+			Flux<WebSocketMessage> xx = Flux.from(body)
+//				.map(buffer -> {
+//					return buffer;
+//				})
+				.map(buffer -> {
+					
+//					ByteBuffer bufxxx = bufferFactory().allocateBuffer().asByteBuffer();
+					String xxx = "Content-Length: " + buffer.readableByteCount() + "\r\n\r\n";
+					
+					log.info("XXX1 {}", xxx);
 
-//			from.map(buffer -> session.binaryMessage(bufferFactory()));
+//					bufferFactory().wrap(ByteBuffer.wrap(xxx.getBytes()));
+//					
+//					ByteBuffer xxx2 = ByteBuffer.wrap(xxx.getBytes());
+					DataBuffer xxx3 = bufferFactory().wrap(ByteBuffer.wrap(xxx.getBytes()));
+					log.info("XXX2 {}", xxx3);
+					DataBuffer xxx4 = bufferFactory().join(Arrays.asList(xxx3, buffer));
+					log.info("XXX3 {}", xxx4);
+					
+					
+					return new WebSocketMessage(WebSocketMessage.Type.TEXT, xxx4);
+//					return new WebSocketMessage(WebSocketMessage.Type.TEXT, buffer);
+				});
+			
+			
+//			Flux<WebSocketMessage> xxx = Flux.from(body).map(buffer -> {
+//				return new WebSocketMessage(WebSocketMessage.Type.TEXT, buffer);
+//			});
 
-			return session.send(xxx);
-//			return null;
+			return session.send(xx);
 		}
 
 		@Override
