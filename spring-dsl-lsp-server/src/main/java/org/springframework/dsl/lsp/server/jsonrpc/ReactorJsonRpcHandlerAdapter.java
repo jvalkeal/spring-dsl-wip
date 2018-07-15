@@ -92,11 +92,6 @@ public class ReactorJsonRpcHandlerAdapter implements BiFunction<NettyInbound, Ne
 						return Mono.justOrEmpty(bb.getId());
 					}
 
-//					@Override
-//					public Flux<DataBuffer> getBody() {
-//						return null;
-//					}
-
 					@Override
 					public Mono<String> getMethod() {
 						return Mono.justOrEmpty(bb.getMethod());
@@ -112,7 +107,6 @@ public class ReactorJsonRpcHandlerAdapter implements BiFunction<NettyInbound, Ne
 				JsonRpcOutputMessage adaptedResponse = new ReactorJsonRpcOutputMessage(out, bufferFactory);
 
 				rpcHandler.handle(i, adaptedResponse)
-//						.doOnError(ex -> log.error("Handling completed with error", ex))
 						.doOnError(ex -> {
 							log.error("Handling completed with error", ex);
 
