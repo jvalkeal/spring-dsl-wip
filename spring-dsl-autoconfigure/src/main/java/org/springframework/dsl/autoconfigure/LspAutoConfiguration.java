@@ -27,6 +27,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.support.ConversionServiceFactoryBean;
+import org.springframework.core.ReactiveAdapterRegistry;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.dsl.DslSystemConstants;
 import org.springframework.dsl.lsp.server.config.DslConfigurationProperties;
@@ -42,7 +43,7 @@ import org.springframework.dsl.lsp.service.DocumentStateTracker;
 import org.springframework.dsl.lsp.service.Reconciler;
 import org.springframework.dsl.reconcile.DefaultReconciler;
 import org.springframework.dsl.reconcile.Linter;
-import org.springframework.web.socket.WebSocketHandler;
+import org.springframework.web.reactive.socket.WebSocketHandler;
 
 /**
  * {@link EnableAutoConfiguration Auto-configuration} integrating into {@code LSP} features.
@@ -95,10 +96,20 @@ public class LspAutoConfiguration {
 	@ConditionalOnProperty(prefix = "spring.dsl.lsp.server", name = "mode", havingValue = "PROCESS")
 	@Import({ LspServerStdioConfiguration.class })
 	public static class LspServerProcessConfig {
+
+		@Bean
+		public ReactiveAdapterRegistry jsonRpcAdapterRegistry() {
+			return new ReactiveAdapterRegistry();
+		}
 	}
 
 	@ConditionalOnProperty(prefix = "spring.dsl.lsp.server", name = "mode", havingValue = "SOCKET")
 	@Import({ LspServerSocketConfiguration.class })
 	public static class LspServerSocketConfig {
+
+		@Bean
+		public ReactiveAdapterRegistry jsonRpcAdapterRegistry() {
+			return new ReactiveAdapterRegistry();
+		}
 	}
 }

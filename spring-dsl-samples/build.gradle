@@ -21,7 +21,7 @@ project('spring-dsl-samples-simpledsleditor') {
 		compile project(':spring-dsl-websocket')
 		compile project(':spring-dsl-autoconfigure')
 		compile project(':spring-dsl-samples-common:spring-dsl-samples-simpledsl')
-		compile 'org.springframework.boot:spring-boot-starter-websocket'
+		//compile 'org.springframework.boot:spring-boot-starter-websocket'
 		testCompile 'junit:junit'
 	}
 	

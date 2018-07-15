@@ -17,8 +17,13 @@ package demo.simpledsleditor;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.stereotype.Component;
+import org.springframework.web.server.ServerWebExchange;
+import org.springframework.web.server.WebFilter;
+import org.springframework.web.server.WebFilterChain;
 
 import demo.simpledsl.EnableSimpleLanguage;
+import reactor.core.publisher.Mono;
 
 /**
  * {@code LSP} server implementing support for a {@code simple} sample language.
@@ -29,6 +34,19 @@ import demo.simpledsl.EnableSimpleLanguage;
 @EnableSimpleLanguage
 @SpringBootApplication
 public class Application {
+
+	@Component
+	public class CustomWebFilter implements WebFilter {
+		@Override
+		public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
+			if (exchange.getRequest().getURI().getPath().equals("/")) {
+				return chain.filter(
+						exchange.mutate().request(exchange.getRequest().mutate().path("/index.html").build()).build());
+			}
+
+			return chain.filter(exchange);
+		}
+	}
 
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);

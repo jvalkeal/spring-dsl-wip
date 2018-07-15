@@ -29,6 +29,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.ReactiveAdapterRegistry;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcController;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcNotification;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcRequestMapping;
@@ -391,6 +392,11 @@ public class NettyTcpServerIntegrationTests {
 		@Bean
 		public LspDomainArgumentResolver lspDomainArgumentResolver() {
 			return new LspDomainArgumentResolver();
+		}
+
+		@Bean
+		public ReactiveAdapterRegistry jsonRpcAdapterRegistry() {
+			return new ReactiveAdapterRegistry();
 		}
 
 		@Bean

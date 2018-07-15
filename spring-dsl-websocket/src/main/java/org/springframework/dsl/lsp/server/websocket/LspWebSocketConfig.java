@@ -15,11 +15,22 @@
  */
 package org.springframework.dsl.lsp.server.websocket;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.socket.WebSocketHandler;
-import org.springframework.web.socket.config.annotation.EnableWebSocket;
-import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
-import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
+import org.springframework.context.annotation.Import;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
+import org.springframework.dsl.lsp.server.config.GenericLspConfiguration;
+import org.springframework.dsl.lsp.server.jsonrpc.RpcHandler;
+import org.springframework.web.reactive.HandlerMapping;
+import org.springframework.web.reactive.handler.SimpleUrlHandlerMapping;
+import org.springframework.web.reactive.socket.WebSocketHandler;
+import org.springframework.web.reactive.socket.server.support.WebSocketHandlerAdapter;
 
 /**
  * Generic {@code LSP} configuration for a websocket integration.
@@ -28,17 +39,37 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
  *
  */
 @Configuration
-@EnableWebSocket
-public class LspWebSocketConfig implements WebSocketConfigurer {
+//@EnableWebSocket
+@Import(GenericLspConfiguration.class)
+public class LspWebSocketConfig/* implements WebSocketConfigurer*/ {
 
-	private final WebSocketHandler webSocketHandler;
+	private static final Logger log = LoggerFactory.getLogger(LspWebSocketConfig.class);
 
-	public LspWebSocketConfig(WebSocketHandler webSocketHandler) {
-		this.webSocketHandler = webSocketHandler;
+	@Bean
+	public HandlerMapping handlerMapping(RpcHandler rpcHandler) {
+		log.info("XXX init vs handler");
+		Map<String, WebSocketHandler> map = new HashMap<>();
+		map.put("/ws", new LspWebSocketHandler(rpcHandler));
+
+		SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
+		mapping.setUrlMap(map);
+		mapping.setOrder(Ordered.HIGHEST_PRECEDENCE); // before annotated controllers
+		return mapping;
 	}
 
-	@Override
-	public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-		registry.addHandler(webSocketHandler, "/ws");
+	@Bean
+	public WebSocketHandlerAdapter handlerAdapter() {
+		return new WebSocketHandlerAdapter();
 	}
+
+//	private final WebSocketHandler webSocketHandler;
+//
+//	public LspWebSocketConfig(WebSocketHandler webSocketHandler) {
+//		this.webSocketHandler = webSocketHandler;
+//	}
+//
+//	@Override
+//	public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+//		registry.addHandler(webSocketHandler, "/ws");
+//	}
 }

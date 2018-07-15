@@ -136,7 +136,7 @@ project('spring-dsl-core') {
 
 	dependencies {
 		compile 'org.springframework:spring-context'
-		compile 'org.springframework:spring-web'
+		//compile 'org.springframework:spring-web'
 		compile 'org.slf4j:slf4j-api'
 		compile 'io.projectreactor:reactor-core'
 		compile 'org.javolution:javolution-core-java'
@@ -186,7 +186,7 @@ project('spring-dsl-websocket') {
 
 	dependencies {
 		compile project(':spring-dsl-lsp-server')
-		compile 'org.springframework.boot:spring-boot-starter-websocket'
+		//compile 'org.springframework.boot:spring-boot-starter-websocket'
 		compile 'org.springframework.boot:spring-boot-starter-webflux'
 	}
 }

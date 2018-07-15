@@ -39,10 +39,10 @@ public class DelegatingJsonRpcConfiguration {
 		return new DispatcherJsonRpcHandler();
 	}
 
-	@Bean
-	public ReactiveAdapterRegistry jsonRpcAdapterRegistry() {
-		return new ReactiveAdapterRegistry();
-	}
+//	@Bean
+//	public ReactiveAdapterRegistry jsonRpcAdapterRegistry() {
+//		return new ReactiveAdapterRegistry();
+//	}
 
 	@Bean
 	public Jackson2JsonRpcMessageWriter jackson2JsonRpcMessageWriter() {
