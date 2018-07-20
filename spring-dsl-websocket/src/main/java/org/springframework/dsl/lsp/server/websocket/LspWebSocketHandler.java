@@ -17,10 +17,7 @@ package org.springframework.dsl.lsp.server.websocket;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
-import java.time.Duration;
 import java.util.Arrays;
-import java.util.List;
 import java.util.function.Function;
 
 import org.reactivestreams.Publisher;
@@ -52,9 +49,7 @@ import reactor.core.publisher.Mono;
 public class LspWebSocketHandler implements WebSocketHandler {
 
 	private static final Logger log = LoggerFactory.getLogger(LspWebSocketHandler.class);
-	private Flux<String> intervalFlux = Flux.interval(Duration.ofSeconds(1)).map(duration -> duration.toString());
-
-	private RpcHandler rpcHandler;
+	private final RpcHandler rpcHandler;
 
 	public LspWebSocketHandler(RpcHandler rpcHandler) {
 		this.rpcHandler = rpcHandler;
@@ -62,9 +57,6 @@ public class LspWebSocketHandler implements WebSocketHandler {
 
 	@Override
 	public Mono<Void> handle(WebSocketSession session) {
-
-		log.info("XXX Init handler");
-
 		SimpleModule module = new SimpleModule();
 		module.addDeserializer(DefaultJsonRpcRequest.class, new DefaultJsonRpcRequestDeserializer());
 		ObjectMapper mapper = new ObjectMapper();
@@ -135,36 +127,14 @@ public class LspWebSocketHandler implements WebSocketHandler {
 		@Override
 		protected Mono<Void> writeWithInternal(Publisher<? extends DataBuffer> body) {
 
-			Flux<WebSocketMessage> xx = Flux.from(body)
-//				.map(buffer -> {
-//					return buffer;
-//				})
-				.map(buffer -> {
-					
-//					ByteBuffer bufxxx = bufferFactory().allocateBuffer().asByteBuffer();
-					String xxx = "Content-Length: " + buffer.readableByteCount() + "\r\n\r\n";
-					
-					log.info("XXX1 {}", xxx);
-
-//					bufferFactory().wrap(ByteBuffer.wrap(xxx.getBytes()));
-//					
-//					ByteBuffer xxx2 = ByteBuffer.wrap(xxx.getBytes());
-					DataBuffer xxx3 = bufferFactory().wrap(ByteBuffer.wrap(xxx.getBytes()));
-					log.info("XXX2 {}", xxx3);
-					DataBuffer xxx4 = bufferFactory().join(Arrays.asList(xxx3, buffer));
-					log.info("XXX3 {}", xxx4);
-					
-					
-					return new WebSocketMessage(WebSocketMessage.Type.TEXT, xxx4);
-//					return new WebSocketMessage(WebSocketMessage.Type.TEXT, buffer);
+			Flux<WebSocketMessage> messages = Flux.from(body)
+				.map(bodyBuffer -> {					
+					String headers = "Content-Length: " + bodyBuffer.readableByteCount() + "\r\n\r\n";
+					DataBuffer headersBuffer = bufferFactory().wrap(ByteBuffer.wrap(headers.getBytes()));
+					DataBuffer buffer = bufferFactory().join(Arrays.asList(headersBuffer, bodyBuffer));
+					return new WebSocketMessage(WebSocketMessage.Type.TEXT, buffer);
 				});
-			
-			
-//			Flux<WebSocketMessage> xxx = Flux.from(body).map(buffer -> {
-//				return new WebSocketMessage(WebSocketMessage.Type.TEXT, buffer);
-//			});
-
-			return session.send(xx);
+			return session.send(messages);
 		}
 
 		@Override

@@ -18,13 +18,10 @@ package org.springframework.dsl.lsp.server.websocket;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.dsl.lsp.server.config.GenericLspConfiguration;
 import org.springframework.dsl.lsp.server.jsonrpc.RpcHandler;
 import org.springframework.web.reactive.HandlerMapping;
@@ -39,15 +36,11 @@ import org.springframework.web.reactive.socket.server.support.WebSocketHandlerAd
  *
  */
 @Configuration
-//@EnableWebSocket
 @Import(GenericLspConfiguration.class)
-public class LspWebSocketConfig/* implements WebSocketConfigurer*/ {
-
-	private static final Logger log = LoggerFactory.getLogger(LspWebSocketConfig.class);
+public class LspWebSocketConfig {
 
 	@Bean
 	public HandlerMapping handlerMapping(RpcHandler rpcHandler) {
-		log.info("XXX init vs handler");
 		Map<String, WebSocketHandler> map = new HashMap<>();
 		map.put("/ws", new LspWebSocketHandler(rpcHandler));
 
@@ -61,15 +54,4 @@ public class LspWebSocketConfig/* implements WebSocketConfigurer*/ {
 	public WebSocketHandlerAdapter handlerAdapter() {
 		return new WebSocketHandlerAdapter();
 	}
-
-//	private final WebSocketHandler webSocketHandler;
-//
-//	public LspWebSocketConfig(WebSocketHandler webSocketHandler) {
-//		this.webSocketHandler = webSocketHandler;
-//	}
-//
-//	@Override
-//	public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-//		registry.addHandler(webSocketHandler, "/ws");
-//	}
 }
