@@ -28,6 +28,13 @@ import org.springframework.dsl.jsonrpc.codec.JsonRpcMessageWriter;
 
 import reactor.core.publisher.Mono;
 
+/**
+ * {@link JsonRpcHandlerResultHandler} which handles result from a methods
+ * annotated with {@link JsonRpcNotification @JsonRpcNotification}.
+ *
+ * @author Janne Valkealahti
+ *
+ */
 public class JsonRpcNotificationResultHandler extends AbstractMessageWriterResultHandler
 		implements JsonRpcHandlerResultHandler {
 

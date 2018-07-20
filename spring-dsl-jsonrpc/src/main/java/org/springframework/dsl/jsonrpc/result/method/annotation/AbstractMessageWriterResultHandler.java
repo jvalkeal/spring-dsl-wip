@@ -79,9 +79,9 @@ public abstract class AbstractMessageWriterResultHandler extends HandlerResultHa
 					ResolvableType.forInstance(body) : bodyType);
 		}
 
-//		if (void.class == elementType.getRawClass() || Void.class == elementType.getRawClass()) {
-//			return Mono.from((Publisher<Void>) publisher);
-//		}
+		if (void.class == elementType.getRawClass() || Void.class == elementType.getRawClass()) {
+			return Mono.from((Publisher<Void>) publisher);
+		}
 
 		JsonRpcInputMessage request = exchange.getRequest();
 		JsonRpcOutputMessage response = exchange.getResponse();

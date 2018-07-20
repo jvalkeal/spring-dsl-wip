@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcController;
+import org.springframework.dsl.jsonrpc.annotation.JsonRpcNotification;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcRequestMapping;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcResponseBody;
 import org.springframework.dsl.lsp.domain.CompletionOptions;
@@ -91,7 +92,7 @@ public class RootLanguageServerController implements InitializingBean {
 	}
 
 	@JsonRpcRequestMapping(method = "initialized")
-	@JsonRpcResponseBody
+	@JsonRpcNotification
 	public void initialized(InitializedParams params) {
 		log.debug("initialized {}", params);
 	}
