@@ -163,6 +163,7 @@ project('spring-dsl-lsp-server') {
 		optional 'com.google.code.gson:gson'
 		optional 'com.google.code.findbugs:jsr305'
 		testCompile 'org.springframework.boot:spring-boot-starter-test'
+		testCompile 'com.jayway.jsonpath:json-path'
 		testRuntime 'org.springframework.boot:spring-boot-starter'
 	}
 }

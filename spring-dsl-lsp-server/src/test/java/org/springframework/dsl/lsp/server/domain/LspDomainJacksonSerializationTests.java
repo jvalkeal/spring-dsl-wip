@@ -29,12 +29,14 @@ import org.springframework.core.io.Resource;
 import org.springframework.dsl.lsp.domain.CompletionOptions;
 import org.springframework.dsl.lsp.domain.InitializeResult;
 import org.springframework.dsl.lsp.domain.ServerCapabilities;
+import org.springframework.dsl.lsp.domain.TextDocumentSyncKind;
 import org.springframework.dsl.lsp.domain.TextDocumentSyncOptions;
 import org.springframework.util.StreamUtils;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.jayway.jsonpath.JsonPath;
 
 public class LspDomainJacksonSerializationTests {
 	
@@ -46,7 +48,8 @@ public class LspDomainJacksonSerializationTests {
 		module.addSerializer(ServerCapabilities.class, new ServerCapabilitiesJsonSerializer());
 		module.addDeserializer(ServerCapabilities.class, new ServerCapabilitiesJsonDeserializer());
 		ObjectMapper mapper = new ObjectMapper();
-		mapper.registerModule(module);	
+		mapper.registerModule(module);
+		mapper.enable(SerializationFeature.WRITE_ENUMS_USING_INDEX);
 		this.mapper = mapper;
 	}
 	
@@ -84,11 +87,15 @@ public class LspDomainJacksonSerializationTests {
 		
 		from = TextDocumentSyncOptions.textDocumentSyncOptions()
 				.openClose(true)
+				.change(TextDocumentSyncKind.Incremental)
 				.willSave(true)
 				.willSaveWaitUntil(true)
 				.build();
 		
 		json = mapper.writeValueAsString(from);
+		Integer change = JsonPath.read(json, "change");
+		assertThat(change).isEqualTo(2);
+		
 		to = mapper.readValue(json, TextDocumentSyncOptions.class);
 		assertObjects(from, to);
 
@@ -124,6 +131,18 @@ public class LspDomainJacksonSerializationTests {
 		String expect = loadResourceAsString("ServerCapabilities1.json");
 		to = mapper.readValue(expect, ServerCapabilities.class);
 		assertObjects(from, to);
+		
+		from = ServerCapabilities.serverCapabilities()
+				.textDocumentSyncKind(TextDocumentSyncKind.Incremental)
+				.hoverProvider(true)
+				.completionProvider()
+					.resolveProvider(true)
+					.triggerCharacters(Arrays.asList("a", "b"))
+					.and()
+				.build();
+		expect = loadResourceAsString("ServerCapabilities2.json");
+		to = mapper.readValue(expect, ServerCapabilities.class);
+		assertObjects(from, to);
 	}
 
 	@Test
@@ -156,7 +175,7 @@ public class LspDomainJacksonSerializationTests {
 		to = mapper.readValue(expect, InitializeResult.class);
 		assertObjects(from, to);
 	}
-	
+
 	private static String loadResourceAsString(String resource) throws IOException {
 		return loadResourceAsString(new ClassPathResource("org/springframework/dsl/lsp/server/domain/" + resource));
 	}

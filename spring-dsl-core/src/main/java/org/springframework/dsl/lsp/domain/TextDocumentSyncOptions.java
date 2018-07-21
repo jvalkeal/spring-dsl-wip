@@ -27,10 +27,10 @@ import org.springframework.dsl.support.DomainBuilder;
 public class TextDocumentSyncOptions {
 
 	private Boolean openClose;
-	// change?: number;
+	private TextDocumentSyncKind change;
 	private Boolean willSave;
 	private Boolean willSaveWaitUntil;
-	// save?: SaveOptions;
+	// TODO: save?: SaveOptions;
 
 	public Boolean getOpenClose() {
 		return openClose;
@@ -38,6 +38,14 @@ public class TextDocumentSyncOptions {
 
 	public void setOpenClose(Boolean openClose) {
 		this.openClose = openClose;
+	}
+	
+	public TextDocumentSyncKind getChange() {
+		return change;
+	}
+	
+	public void setChange(TextDocumentSyncKind change) {
+		this.change = change;
 	}
 
 	public Boolean getWillSave() {
@@ -109,6 +117,14 @@ public class TextDocumentSyncOptions {
 		TextDocumentSyncOptionsBuilder<P> openClose(Boolean openClose);
 
 		/**
+		 * Sets if change is enabled.
+		 *
+		 * @param change value
+		 * @return the builder for chaining
+		 */		
+		TextDocumentSyncOptionsBuilder<P> change(TextDocumentSyncKind change);
+
+		/**
 		 * Sets if willSave is enabled.
 		 *
 		 * @param openClose {@code true} if willSave is supported
@@ -142,6 +158,7 @@ public class TextDocumentSyncOptions {
 			implements TextDocumentSyncOptionsBuilder<P> {
 
 		private Boolean openClose;
+		private TextDocumentSyncKind change;
 		private Boolean willSave;
 		private Boolean willSaveWaitUntil;
 		
@@ -152,6 +169,12 @@ public class TextDocumentSyncOptions {
 		@Override
 		public TextDocumentSyncOptionsBuilder<P> openClose(Boolean openClose) {
 			this.openClose = openClose;
+			return this;
+		}
+		
+		@Override
+		public TextDocumentSyncOptionsBuilder<P> change(TextDocumentSyncKind change) {
+			this.change = change;
 			return this;
 		}
 		
@@ -171,6 +194,7 @@ public class TextDocumentSyncOptions {
 		public TextDocumentSyncOptions build() {
 			TextDocumentSyncOptions textDocumentSyncOptions = new TextDocumentSyncOptions();
 			textDocumentSyncOptions.setOpenClose(openClose);
+			textDocumentSyncOptions.setChange(change);
 			textDocumentSyncOptions.setWillSave(willSave);
 			textDocumentSyncOptions.setWillSaveWaitUntil(willSaveWaitUntil);
 			return textDocumentSyncOptions;

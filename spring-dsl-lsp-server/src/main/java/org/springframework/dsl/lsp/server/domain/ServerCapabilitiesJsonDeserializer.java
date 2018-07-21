@@ -21,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dsl.lsp.domain.CompletionOptions;
 import org.springframework.dsl.lsp.domain.ServerCapabilities;
+import org.springframework.dsl.lsp.domain.TextDocumentSyncKind;
 import org.springframework.dsl.lsp.domain.TextDocumentSyncOptions;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -41,9 +42,13 @@ public class ServerCapabilitiesJsonDeserializer extends JsonDeserializer<ServerC
 		JsonNode node = p.getCodec().readTree(p);
 
 		JsonNode textDocumentSyncNode = node.get("textDocumentSync");
-		if (textDocumentSyncNode != null && textDocumentSyncNode.isObject()) {
-			object.setTextDocumentSyncOptions(
-					textDocumentSyncNode.traverse(p.getCodec()).readValueAs(TextDocumentSyncOptions.class));
+		if (textDocumentSyncNode != null) {
+			if (textDocumentSyncNode.isObject()) {
+				object.setTextDocumentSyncOptions(
+						textDocumentSyncNode.traverse(p.getCodec()).readValueAs(TextDocumentSyncOptions.class));
+			} else if (textDocumentSyncNode.isInt()) {
+				object.setTextDocumentSyncKind(TextDocumentSyncKind.values()[textDocumentSyncNode.asInt()]);
+			}
 		}
 
 		JsonNode hoverProviderNode = node.get("hoverProvider");

@@ -15,6 +15,9 @@
  */
 package org.springframework.dsl.lsp.server.controller;
 
+import java.util.Arrays;
+import java.util.Collections;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -78,17 +81,25 @@ public class RootLanguageServerController implements InitializingBean {
 	@JsonRpcRequestMapping(method = "initialize")
 	@JsonRpcResponseBody
 	Mono<InitializeResult> initialize(InitializeParams params) {
-		log.debug("initialize {}", params);
-		ServerCapabilities serverCapabilities = new ServerCapabilities();
-		serverCapabilities.setHoverProvider(hovererProvider.getIfAvailable() != null);
-		// TODO: think how to use sync kind None
-		serverCapabilities.setTextDocumentSyncKind(
-				documentStateTracker.isIncrementalChangesSupported() ? TextDocumentSyncKind.Incremental
-						: TextDocumentSyncKind.Full);
-		if (completioner != null) {
-			serverCapabilities.setCompletionProvider(new CompletionOptions());
-		}
-		return Mono.just(new InitializeResult(serverCapabilities));
+		log.debug("initialize {}", params);		
+		return Mono.fromSupplier(() -> InitializeResult.initializeResult()
+			.capabilities()
+				.hoverProvider(hovererProvider.getIfAvailable() != null)
+				// TODO: think if completioner in null, what to respond?
+				.completionProvider()
+					.resolveProvider(true)
+					.triggerCharacters(Collections.emptyList())
+					.and()
+//				NOTE: https://github.com/Microsoft/language-server-protocol/issues/530
+//				.textDocumentSyncKind(TextDocumentSyncKind.Incremental)
+				.textDocumentSyncOptions()
+					.openClose(true)
+					// TODO: think how to use sync kind None
+					.change(documentStateTracker.isIncrementalChangesSupported() ? TextDocumentSyncKind.Incremental
+						: TextDocumentSyncKind.Full)
+					.and()
+				.and()
+			.build());
 	}
 
 	@JsonRpcRequestMapping(method = "initialized")

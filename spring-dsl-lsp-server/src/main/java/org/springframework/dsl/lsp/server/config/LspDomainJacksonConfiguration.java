@@ -22,6 +22,7 @@ import org.springframework.dsl.lsp.server.domain.ServerCapabilitiesJsonDeseriali
 import org.springframework.dsl.lsp.server.domain.ServerCapabilitiesJsonSerializer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
 @Configuration
@@ -34,6 +35,7 @@ public class LspDomainJacksonConfiguration {
 		module.addDeserializer(ServerCapabilities.class, new ServerCapabilitiesJsonDeserializer());
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.registerModule(module);
+		mapper.enable(SerializationFeature.WRITE_ENUMS_USING_INDEX);
 		return mapper;
 	}
 	

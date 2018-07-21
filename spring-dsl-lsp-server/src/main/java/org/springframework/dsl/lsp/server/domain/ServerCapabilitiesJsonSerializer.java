@@ -37,6 +37,8 @@ public class ServerCapabilitiesJsonSerializer extends JsonSerializer<ServerCapab
 
 		if (value.getTextDocumentSyncOptions() != null) {
 			gen.writeObjectField("textDocumentSync", value.getTextDocumentSyncOptions());
+		} else if (value.getTextDocumentSyncKind() != null) {
+			gen.writeNumberField("textDocumentSync", value.getTextDocumentSyncKind().ordinal());
 		}
 		
 		if (value.getHoverProvider() != null) {
