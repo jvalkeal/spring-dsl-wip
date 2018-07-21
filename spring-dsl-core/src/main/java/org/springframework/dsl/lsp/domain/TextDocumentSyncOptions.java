@@ -15,6 +15,9 @@
  */
 package org.springframework.dsl.lsp.domain;
 
+import org.springframework.dsl.support.AbstractDomainBuilder;
+import org.springframework.dsl.support.DomainBuilder;
+
 /**
  * {@code LSP} domain object for a specification {@code TextDocumentSyncOptions}.
  *
@@ -24,13 +27,9 @@ package org.springframework.dsl.lsp.domain;
 public class TextDocumentSyncOptions {
 
 	private Boolean openClose;
-
 	// change?: number;
-
 	private Boolean willSave;
-
 	private Boolean willSaveWaitUntil;
-
 	// save?: SaveOptions;
 
 	public Boolean getOpenClose() {
@@ -92,5 +91,89 @@ public class TextDocumentSyncOptions {
 		} else if (!willSaveWaitUntil.equals(other.willSaveWaitUntil))
 			return false;
 		return true;
+	}
+	
+	/**
+	 * Builder interface for {@link TextDocumentSyncOptions}.
+	 *
+	 * @param <P> the parent builder type
+	 */
+	public interface TextDocumentSyncOptionsBuilder<P> extends DomainBuilder<TextDocumentSyncOptions, P> {
+
+		/**
+		 * Sets if OpenClose is enabled.
+		 *
+		 * @param openClose {@code true} if OpenClose is supported
+		 * @return the builder for chaining
+		 */		
+		TextDocumentSyncOptionsBuilder<P> openClose(Boolean openClose);
+
+		/**
+		 * Sets if willSave is enabled.
+		 *
+		 * @param openClose {@code true} if willSave is supported
+		 * @return the builder for chaining
+		 */		
+		TextDocumentSyncOptionsBuilder<P> willSave(Boolean willSave);
+
+		/**
+		 * Sets if willSaveWaitUntil is enabled.
+		 *
+		 * @param openClose {@code true} if willSaveWaitUntil is supported
+		 * @return the builder for chaining
+		 */		
+		TextDocumentSyncOptionsBuilder<P> willSaveWaitUntil(Boolean willSaveWaitUntil);
+	}
+
+	/**
+	 * Gets a builder for {@link TextDocumentSyncOptions}.
+	 *
+	 * @return the text document sync options builder
+	 */
+	public static <P> TextDocumentSyncOptionsBuilder<P> textDocumentSyncOptions() {
+		return new InternalTextDocumentSyncOptionsBuilder<>(null);
+	}
+
+	protected static <P> TextDocumentSyncOptionsBuilder<P> textDocumentSyncOptions(P parent) {
+		return new InternalTextDocumentSyncOptionsBuilder<>(parent);
+	}
+	
+	private static class InternalTextDocumentSyncOptionsBuilder<P> extends AbstractDomainBuilder<TextDocumentSyncOptions, P>
+			implements TextDocumentSyncOptionsBuilder<P> {
+
+		private Boolean openClose;
+		private Boolean willSave;
+		private Boolean willSaveWaitUntil;
+		
+		InternalTextDocumentSyncOptionsBuilder(P parent) {
+			super(parent);
+		}
+
+		@Override
+		public TextDocumentSyncOptionsBuilder<P> openClose(Boolean openClose) {
+			this.openClose = openClose;
+			return this;
+		}
+		
+		@Override
+		public TextDocumentSyncOptionsBuilder<P> willSave(Boolean willSave) {
+			this.willSave = willSave;
+			return this;
+		}
+		
+		@Override
+		public TextDocumentSyncOptionsBuilder<P> willSaveWaitUntil(Boolean willSaveWaitUntil) {
+			this.willSaveWaitUntil = willSaveWaitUntil;
+			return this;
+		}
+
+		@Override
+		public TextDocumentSyncOptions build() {
+			TextDocumentSyncOptions textDocumentSyncOptions = new TextDocumentSyncOptions();
+			textDocumentSyncOptions.setOpenClose(openClose);
+			textDocumentSyncOptions.setWillSave(willSave);
+			textDocumentSyncOptions.setWillSaveWaitUntil(willSaveWaitUntil);
+			return textDocumentSyncOptions;
+		}
 	}
 }

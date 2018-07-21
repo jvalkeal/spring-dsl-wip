@@ -52,8 +52,9 @@ public class Jackson2JsonRpcMessageWriter implements JsonRpcMessageWriter<Object
 	private final ObjectMapper objectMapper;
 	public static final String JSON_VIEW_HINT = Jackson2JsonRpcMessageWriter.class.getName() + ".jsonView";
 
-	public Jackson2JsonRpcMessageWriter() {
-		this.objectMapper = new ObjectMapper();
+	public Jackson2JsonRpcMessageWriter(ObjectMapper objectMapper) {
+//		this.objectMapper = new ObjectMapper();
+		this.objectMapper = objectMapper;
 	}
 
 	@Override
@@ -107,6 +108,7 @@ public class Jackson2JsonRpcMessageWriter implements JsonRpcMessageWriter<Object
 		OutputStream outputStream = buffer.asOutputStream();
 
 		try {
+			log.trace("UUU3");
 			JsonGenerator generator = getObjectMapper().getFactory().createGenerator(outputStream, encoding);
 			generator.writeStartObject();
 			generator.writeStringField("jsonrpc", request.getJsonrpc().block());
@@ -137,45 +139,45 @@ public class Jackson2JsonRpcMessageWriter implements JsonRpcMessageWriter<Object
 	}
 
 
-	public DataBuffer encodeValuex(Object value, DataBufferFactory bufferFactory,
-			ResolvableType elementType, @Nullable Map<String, Object> hints, JsonEncoding encoding, JsonRpcInputMessage request) {
-
-		JavaType javaType = getJavaType(elementType.getType(), null);
-		Class<?> jsonView = (hints != null ? (Class<?>) hints.get(JSON_VIEW_HINT) : null);
-		ObjectWriter writer = (jsonView != null ?
-				getObjectMapper().writerWithView(jsonView) : getObjectMapper().writer());
-
-//		if (javaType.isContainerType()) {
-//			writer = writer.forType(javaType);
+//	public DataBuffer encodeValuex(Object value, DataBufferFactory bufferFactory,
+//			ResolvableType elementType, @Nullable Map<String, Object> hints, JsonEncoding encoding, JsonRpcInputMessage request) {
+//
+//		JavaType javaType = getJavaType(elementType.getType(), null);
+//		Class<?> jsonView = (hints != null ? (Class<?>) hints.get(JSON_VIEW_HINT) : null);
+//		ObjectWriter writer = (jsonView != null ?
+//				getObjectMapper().writerWithView(jsonView) : getObjectMapper().writer());
+//
+////		if (javaType.isContainerType()) {
+////			writer = writer.forType(javaType);
+////		}
+//
+//		DataBuffer buffer = bufferFactory.allocateBuffer();
+//		OutputStream outputStream = buffer.asOutputStream();
+//
+//		try {
+//			JsonGenerator generator = getObjectMapper().getFactory().createGenerator(outputStream, encoding);
+//			generator.writeStartObject();
+//			generator.writeStringField("jsonrpc", request.getJsonrpc().block());
+//			generator.writeNumberField("id", request.getId().block());
+//			generator.writeObjectField("result", value);
+//			generator.writeEndObject();
+//			generator.flush();
 //		}
-
-		DataBuffer buffer = bufferFactory.allocateBuffer();
-		OutputStream outputStream = buffer.asOutputStream();
-
-		try {
-			JsonGenerator generator = getObjectMapper().getFactory().createGenerator(outputStream, encoding);
-			generator.writeStartObject();
-			generator.writeStringField("jsonrpc", request.getJsonrpc().block());
-			generator.writeNumberField("id", request.getId().block());
-			generator.writeObjectField("result", value);
-			generator.writeEndObject();
-			generator.flush();
-		}
-		catch (InvalidDefinitionException ex) {
-			log.error("{}", ex);
-			throw new CodecException("Type definition error: " + ex.getType(), ex);
-		}
-		catch (JsonProcessingException ex) {
-			log.error("{}", ex);
-			throw new EncodingException("JSON encoding error: " + ex.getOriginalMessage(), ex);
-		}
-		catch (IOException ex) {
-			log.error("{}", ex);
-			throw new IllegalStateException("Unexpected I/O error while writing to data buffer", ex);
-		}
-
-		return buffer;
-	}
+//		catch (InvalidDefinitionException ex) {
+//			log.error("{}", ex);
+//			throw new CodecException("Type definition error: " + ex.getType(), ex);
+//		}
+//		catch (JsonProcessingException ex) {
+//			log.error("{}", ex);
+//			throw new EncodingException("JSON encoding error: " + ex.getOriginalMessage(), ex);
+//		}
+//		catch (IOException ex) {
+//			log.error("{}", ex);
+//			throw new IllegalStateException("Unexpected I/O error while writing to data buffer", ex);
+//		}
+//
+//		return buffer;
+//	}
 
 	protected JavaType getJavaType(Type type, @Nullable Class<?> contextClass) {
 		TypeFactory typeFactory = this.objectMapper.getTypeFactory();

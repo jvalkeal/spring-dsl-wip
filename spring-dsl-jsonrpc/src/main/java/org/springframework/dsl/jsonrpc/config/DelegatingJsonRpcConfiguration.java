@@ -17,6 +17,7 @@ package org.springframework.dsl.jsonrpc.config;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.ReactiveAdapterRegistry;
@@ -30,6 +31,8 @@ import org.springframework.dsl.jsonrpc.result.method.annotation.JsonRpcRequestMa
 import org.springframework.dsl.jsonrpc.result.method.annotation.JsonRpcResponseBodyResultHandler;
 import org.springframework.dsl.jsonrpc.result.method.annotation.ServerJsonRpcExchangeArgumentResolver;
 import org.springframework.dsl.jsonrpc.support.DispatcherJsonRpcHandler;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Configuration
 public class DelegatingJsonRpcConfiguration {
@@ -45,8 +48,9 @@ public class DelegatingJsonRpcConfiguration {
 //	}
 
 	@Bean
-	public Jackson2JsonRpcMessageWriter jackson2JsonRpcMessageWriter() {
-		return new Jackson2JsonRpcMessageWriter();
+	public Jackson2JsonRpcMessageWriter jackson2JsonRpcMessageWriter(
+			@Qualifier("lspJacksonObjectMapper") ObjectMapper objectMapper) {
+		return new Jackson2JsonRpcMessageWriter(objectMapper);
 	}
 
 	@Bean

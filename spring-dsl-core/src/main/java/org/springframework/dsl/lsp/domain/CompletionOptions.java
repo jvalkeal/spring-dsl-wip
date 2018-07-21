@@ -17,6 +17,15 @@ package org.springframework.dsl.lsp.domain;
 
 import java.util.List;
 
+import org.springframework.dsl.support.AbstractDomainBuilder;
+import org.springframework.dsl.support.DomainBuilder;
+
+/**
+ * {@code LSP} domain object for a specification {@code CompletionOptions}.
+ *
+ * @author Janne Valkealahti
+ *
+ */
 public class CompletionOptions {
 
 	private Boolean resolveProvider;
@@ -67,5 +76,73 @@ public class CompletionOptions {
 		} else if (!triggerCharacters.equals(other.triggerCharacters))
 			return false;
 		return true;
+	}
+	
+	/**
+	 * Builder interface for {@link CompletionOptions}.
+	 *
+	 * @param <P> the parent builder type
+	 */
+	public interface CompletionOptionsBuilder<P> extends DomainBuilder<CompletionOptions, P> {
+
+		/**
+		 * Sets if resolve provider is enabled.
+		 *
+		 * @param resolveProvider {@code true} if resolve provider is supported
+		 * @return the builder for chaining
+		 */		
+		CompletionOptionsBuilder<P> resolveProvider(Boolean resolveProvider);
+
+		/**
+		 * Sets a trigger characters.
+		 *
+		 * @param triggerCharacters the trigger characters
+		 * @return the builder for chaining
+		 */		
+		CompletionOptionsBuilder<P> triggerCharacters(List<String> triggerCharacters);		
+	}
+
+	/**
+	 * Gets a builder for {@link CompletionOptions}.
+	 *
+	 * @return the completion options builder
+	 */
+	public static <P> CompletionOptionsBuilder<P> completionOptions() {
+		return new InternalCompletionOptionsBuilder<>(null);
+	}
+
+	protected static <P> CompletionOptionsBuilder<P> completionOptions(P parent) {
+		return new InternalCompletionOptionsBuilder<>(parent);
+	}
+	
+	private static class InternalCompletionOptionsBuilder<P> extends AbstractDomainBuilder<CompletionOptions, P>
+			implements CompletionOptionsBuilder<P> {
+
+		private Boolean resolveProvider;
+		private List<String> triggerCharacters;
+		
+		InternalCompletionOptionsBuilder(P parent) {
+			super(parent);
+		}
+
+		@Override
+		public CompletionOptionsBuilder<P> resolveProvider(Boolean resolveProvider) {
+			this.resolveProvider = resolveProvider;
+			return this;
+		}
+
+		@Override
+		public CompletionOptionsBuilder<P> triggerCharacters(List<String> triggerCharacters) {
+			this.triggerCharacters = triggerCharacters;
+			return this;
+		}
+
+		@Override
+		public CompletionOptions build() {
+			CompletionOptions completionOptions = new CompletionOptions();
+			completionOptions.setResolveProvider(resolveProvider);
+			completionOptions.setTriggerCharacters(triggerCharacters);
+			return completionOptions;
+		}
 	}
 }

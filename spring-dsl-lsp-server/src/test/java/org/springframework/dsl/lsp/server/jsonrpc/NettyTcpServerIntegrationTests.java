@@ -29,6 +29,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.ReactiveAdapterRegistry;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcController;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcNotification;
@@ -37,6 +38,7 @@ import org.springframework.dsl.jsonrpc.annotation.JsonRpcResponseBody;
 import org.springframework.dsl.jsonrpc.config.EnableJsonRcp;
 import org.springframework.dsl.jsonrpc.support.DispatcherJsonRpcHandler;
 import org.springframework.dsl.lsp.domain.InitializeParams;
+import org.springframework.dsl.lsp.server.config.LspDomainJacksonConfiguration;
 
 import io.netty.buffer.Unpooled;
 import reactor.core.publisher.Flux;
@@ -91,7 +93,7 @@ public class NettyTcpServerIntegrationTests {
 		}
 		context = null;
 	}
-
+	
 	@Test
 	public void testOk1() throws InterruptedException {
 		context = new AnnotationConfigApplicationContext();
@@ -389,8 +391,9 @@ public class NettyTcpServerIntegrationTests {
 	}
 
 	@EnableJsonRcp
+	@Import(LspDomainJacksonConfiguration.class)
 	static class JsonRcpConfig {
-
+		
 		@Bean
 		public LspDomainArgumentResolver lspDomainArgumentResolver() {
 			return new LspDomainArgumentResolver();

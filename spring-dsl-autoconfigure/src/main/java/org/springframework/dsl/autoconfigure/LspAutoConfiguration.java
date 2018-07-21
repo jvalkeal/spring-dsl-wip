@@ -32,6 +32,7 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.dsl.DslSystemConstants;
 import org.springframework.dsl.lsp.server.config.DslConfigurationProperties;
 import org.springframework.dsl.lsp.server.config.EnableLanguageServer;
+import org.springframework.dsl.lsp.server.config.LspDomainJacksonConfiguration;
 import org.springframework.dsl.lsp.server.config.LspServerSocketConfiguration;
 import org.springframework.dsl.lsp.server.config.LspServerStdioConfiguration;
 import org.springframework.dsl.lsp.server.controller.RootLanguageServerController;
@@ -55,7 +56,8 @@ import org.springframework.web.reactive.socket.WebSocketHandler;
 @ConditionalOnProperty(prefix = "spring.dsl.lsp.server", name = "mode")
 @EnableConfigurationProperties(DslConfigurationProperties.class)
 @EnableLanguageServer
-@Import({ RootLanguageServerController.class, TextDocumentLanguageServerController.class })
+@Import({ RootLanguageServerController.class, TextDocumentLanguageServerController.class,
+		LspDomainJacksonConfiguration.class })
 public class LspAutoConfiguration {
 
 	@Bean

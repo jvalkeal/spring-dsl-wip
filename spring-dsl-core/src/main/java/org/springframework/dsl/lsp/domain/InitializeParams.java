@@ -19,6 +19,12 @@ import org.springframework.dsl.lsp.domain.ClientCapabilities.ClientCapabilitiesB
 import org.springframework.dsl.support.AbstractDomainBuilder;
 import org.springframework.dsl.support.DomainBuilder;
 
+/**
+ * {@code LSP} domain object for a specification {@code InitializeParams}.
+ *
+ * @author Janne Valkealahti
+ *
+ */
 public class InitializeParams {
 
 	private Integer processId;

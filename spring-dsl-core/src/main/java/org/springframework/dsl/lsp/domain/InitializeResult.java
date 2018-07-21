@@ -15,6 +15,10 @@
  */
 package org.springframework.dsl.lsp.domain;
 
+import org.springframework.dsl.lsp.domain.ServerCapabilities.ServerCapabilitiesBuilder;
+import org.springframework.dsl.support.AbstractDomainBuilder;
+import org.springframework.dsl.support.DomainBuilder;
+
 /**
  * {@code LSP} domain object for a specification {@code InitializeResult}.
  *
@@ -63,5 +67,43 @@ public class InitializeResult {
 		} else if (!capabilities.equals(other.capabilities))
 			return false;
 		return true;
+	}
+
+	public interface InitializeResultBuilder<P> extends DomainBuilder<InitializeResult, P> {
+		
+		ServerCapabilitiesBuilder<InitializeResultBuilder<P>> capabilities();
+	}
+
+	public static <P> InitializeResultBuilder<P> initializeResult() {
+		return new InternalInitializeResultBuilder<>(null);
+	}
+
+	protected static <P> InitializeResultBuilder<P> initializeResult(P parent) {
+		return new InternalInitializeResultBuilder<>(parent);
+	}
+
+	private static class InternalInitializeResultBuilder<P>
+			extends AbstractDomainBuilder<InitializeResult, P> implements InitializeResultBuilder<P> {
+
+		private ServerCapabilitiesBuilder<InitializeResultBuilder<P>> capabilities;
+		
+		InternalInitializeResultBuilder(P parent) {
+			super(parent);
+		}
+		
+		@Override
+		public ServerCapabilitiesBuilder<InitializeResultBuilder<P>> capabilities() {
+			this.capabilities = ServerCapabilities.serverCapabilities(this);
+			return capabilities;
+		}
+
+		@Override
+		public InitializeResult build() {
+			InitializeResult initializeResult = new InitializeResult();
+			if (capabilities != null) {
+				initializeResult.setCapabilities(capabilities.build());
+			}
+			return initializeResult;
+		}
 	}
 }

@@ -15,6 +15,11 @@
  */
 package org.springframework.dsl.lsp.domain;
 
+import org.springframework.dsl.lsp.domain.CompletionOptions.CompletionOptionsBuilder;
+import org.springframework.dsl.lsp.domain.TextDocumentSyncOptions.TextDocumentSyncOptionsBuilder;
+import org.springframework.dsl.support.AbstractDomainBuilder;
+import org.springframework.dsl.support.DomainBuilder;
+
 /**
  * {@code LSP} domain object for a specification {@code ServerCapabilities}.
  * <p>
@@ -30,11 +35,8 @@ package org.springframework.dsl.lsp.domain;
 public class ServerCapabilities {
 
 	private TextDocumentSyncOptions textDocumentSyncOptions;
-
 	private TextDocumentSyncKind textDocumentSyncKind;
-
 	private Boolean hoverProvider;
-
 	private CompletionOptions completionProvider;
 
 	public ServerCapabilities() {
@@ -118,5 +120,73 @@ public class ServerCapabilities {
 		} else if (!textDocumentSyncOptions.equals(other.textDocumentSyncOptions))
 			return false;
 		return true;
+	}
+	
+	public interface ServerCapabilitiesBuilder<P> extends DomainBuilder<ServerCapabilities, P> {
+		
+		TextDocumentSyncOptionsBuilder<ServerCapabilitiesBuilder<P>> textDocumentSyncOptions();
+		ServerCapabilitiesBuilder<P> textDocumentSyncKind(TextDocumentSyncKind textDocumentSyncKind);
+		ServerCapabilitiesBuilder<P> hoverProvider(Boolean hoverProvider);
+		CompletionOptionsBuilder<ServerCapabilitiesBuilder<P>> completionProvider();
+	}
+	
+	public static <P> ServerCapabilitiesBuilder<P> serverCapabilities() {
+		return new InternalServerCapabilitiesBuilder<>(null);
+	}
+
+	protected static <P> ServerCapabilitiesBuilder<P> serverCapabilities(P parent) {
+		return new InternalServerCapabilitiesBuilder<>(parent);
+	}
+	
+	private static class InternalServerCapabilitiesBuilder<P>
+			extends AbstractDomainBuilder<ServerCapabilities, P> implements ServerCapabilitiesBuilder<P> {
+
+		private TextDocumentSyncOptionsBuilder<ServerCapabilitiesBuilder<P>> textDocumentSyncOptions;
+		private TextDocumentSyncKind textDocumentSyncKind;
+		private Boolean hoverProvider;
+		private CompletionOptionsBuilder<ServerCapabilitiesBuilder<P>> completionProvider;
+		
+		InternalServerCapabilitiesBuilder(P parent) {
+			super(parent);
+		}
+
+		@Override
+		public TextDocumentSyncOptionsBuilder<ServerCapabilitiesBuilder<P>> textDocumentSyncOptions() {
+			this.textDocumentSyncOptions = TextDocumentSyncOptions.textDocumentSyncOptions(this);
+			return textDocumentSyncOptions;
+		}
+
+		@Override
+		public ServerCapabilitiesBuilder<P> textDocumentSyncKind(TextDocumentSyncKind textDocumentSyncKind) {
+			this.textDocumentSyncKind = textDocumentSyncKind;
+			return this;
+		}
+
+		@Override
+		public ServerCapabilitiesBuilder<P> hoverProvider(Boolean hoverProvider) {
+			this.hoverProvider = hoverProvider;
+			return this;
+		}
+
+		@Override
+		public CompletionOptionsBuilder<ServerCapabilitiesBuilder<P>> completionProvider() {
+			this.completionProvider = CompletionOptions.completionOptions(this);
+			return completionProvider;
+		}
+
+		@Override
+		public ServerCapabilities build() {
+			ServerCapabilities serverCapabilities = new ServerCapabilities();
+			if (textDocumentSyncOptions != null) {
+				serverCapabilities.setTextDocumentSyncOptions(textDocumentSyncOptions.build());
+			} else {
+				serverCapabilities.setTextDocumentSyncKind(textDocumentSyncKind);
+			}
+			serverCapabilities.setHoverProvider(hoverProvider);
+			if (completionProvider != null) {
+				serverCapabilities.setCompletionProvider(completionProvider.build());
+			}
+			return serverCapabilities;
+		}
 	}
 }
