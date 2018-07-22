@@ -24,6 +24,12 @@ project('spring-dsl-samples-simpledsleditor') {
 		//compile 'org.springframework.boot:spring-boot-starter-websocket'
 		testCompile 'junit:junit'
 	}
+
+	bootJar {
+		into('BOOT-INF/classes/static') {
+			from "ui/dist/ui"
+		}
+	}
 	
 	node {
 		version = "8.11.3"
