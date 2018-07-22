@@ -56,7 +56,7 @@ project('spring-dsl-samples-simpledsleditor') {
 	}
 
 	bootRun.dependsOn(buildClientDev)
-	jar.dependsOn(buildClient)
+	bootJar.dependsOn(buildClient)
 	build.dependsOn bootJar
 	install.dependsOn bootJar
 }
