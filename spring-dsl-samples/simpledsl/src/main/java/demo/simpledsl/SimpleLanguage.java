@@ -18,6 +18,7 @@ package demo.simpledsl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -27,6 +28,7 @@ import org.springframework.dsl.document.Document;
 import org.springframework.dsl.lsp.domain.Position;
 import org.springframework.dsl.lsp.domain.Range;
 import org.springframework.dsl.support.DslUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 /**
@@ -119,7 +121,11 @@ public class SimpleLanguage {
 				if (line == null) {
 					return true;
 				} else {
-					return DslUtils.isPositionInRange(position, line.getKeyToken().getRange());
+					if (!tokenType.toString().toLowerCase().startsWith(line.getKeyToken().value)) {
+						return false;
+					} else {
+						return DslUtils.isPositionInRange(position, line.getKeyToken().getRange());
+					}
 				}
 			})
 			.collect(Collectors.toList());
@@ -173,12 +179,39 @@ public class SimpleLanguage {
 		// content before '=' with surrounding white spaces stripped is a key,
 		// same for value after '='.
 		if (split.length == 1) {
-			Range range = Range.range().start().line(lineIndex).character(0).and().end().line(lineIndex).character(split[0].length()).and().build();
+			Range range = Range.range()
+					.start()
+						.line(lineIndex)
+						.character(0)
+						.and()
+					.end()
+						.line(lineIndex)
+						.character(split[0].length())
+						.and()
+					.build();
 			KeyToken keyToken = new KeyToken(split[0], range, resolveType(split[0]));
 			lines.add(new Line(lineIndex, keyToken, null));
 		} else {
-			Range range1 = Range.range().start().line(lineIndex).character(0).and().end().line(lineIndex).character(split[0].length()).and().build();
-			Range range2 = Range.range().start().line(lineIndex).character(split[0].length() + 1).and().end().line(lineIndex).character(line.length()).and().build();
+			Range range1 = Range.range()
+					.start()
+						.line(lineIndex)
+						.character(0)
+						.and()
+					.end()
+						.line(lineIndex)
+						.character(split[0].length())
+						.and()
+					.build();
+			Range range2 = Range.range()
+					.start()
+						.line(lineIndex)
+						.character(split[0].length() + 1)
+						.and()
+					.end()
+						.line(lineIndex)
+						.character(line.length())
+						.and()
+					.build();
 			KeyToken keyToken = new KeyToken(split[0], range1, resolveType(split[0]));
 			ValueToken valueToken = new ValueToken(split[1], range2);
 			lines.add(new Line(lineIndex, keyToken, valueToken));
@@ -186,8 +219,13 @@ public class SimpleLanguage {
 	}
 
 	private static TokenType resolveType(String content) {
+		TokenType tokenType = null;
 		content = content.trim();
-		TokenType tokenType = TokenType.valueOf(content.toUpperCase());
+		TokenType[] keys = EnumSet.range(TokenType.INT, TokenType.STRING).toArray(new TokenType[0]);
+		if (ObjectUtils.containsConstant(keys, content)) {
+			tokenType = ObjectUtils.caseInsensitiveValueOf(keys, content);
+		}
+//		TokenType tokenType = TokenType.valueOf(content.toUpperCase());
 		return tokenType;
 	}
 

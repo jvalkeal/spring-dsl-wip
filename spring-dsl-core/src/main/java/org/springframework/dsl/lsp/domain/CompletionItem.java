@@ -17,8 +17,17 @@ package org.springframework.dsl.lsp.domain;
 
 import java.util.List;
 
+import org.springframework.dsl.lsp.domain.MarkupContent.MarkupContentBuilder;
 import org.springframework.dsl.lsp.domain.TextEdit.TextEditBuilder;
+import org.springframework.dsl.support.AbstractDomainBuilder;
+import org.springframework.dsl.support.DomainBuilder;
 
+/**
+ * {@code LSP} domain object for a specification {@code CompletionItem}.
+ *
+ * @author Janne Valkealahti
+ *
+ */
 public class CompletionItem {
 
 	private String label;
@@ -238,11 +247,18 @@ public class CompletionItem {
 		return true;
 	}
 
-	public interface CompletionItemBuilder<P> {
+	public interface CompletionItemBuilder<P> extends DomainBuilder<CompletionItem, P>{
+
 		CompletionItemBuilder<P> label(String label);
+		CompletionItemBuilder<P> kind(CompletionItemKind kind);
+		CompletionItemBuilder<P> detail(String detail);
+		MarkupContentBuilder<CompletionItemBuilder<P>> documentation();
+		CompletionItemBuilder<P> sortText(String sortText);
+		CompletionItemBuilder<P> filterText(String filterText);
+		CompletionItemBuilder<P> insertText(String insertText);
+		CompletionItemBuilder<P> insertTextFormat(InsertTextFormat insertTextFormat);
+
 		TextEditBuilder<CompletionItemBuilder<P>> textEdit();
-		P and();
-		CompletionItem build();
 	}
 
 	public static <P> CompletionItemBuilder<P> completionItem() {
@@ -253,14 +269,26 @@ public class CompletionItem {
 		return new InternalCompletionItemBuilder<>(parent);
 	}
 
-	private static class InternalCompletionItemBuilder<P> implements CompletionItemBuilder<P> {
+	private static class InternalCompletionItemBuilder<P>
+			extends AbstractDomainBuilder<CompletionItem, P> implements CompletionItemBuilder<P> {
 
-		private final P parent;
-		String label;
-		TextEditBuilder<CompletionItemBuilder<P>> textEdit;
+		private String label;
+		private CompletionItemKind kind;
+		private String detail;
+		private MarkupContentBuilder<CompletionItemBuilder<P>> documentation;
+		private String sortText;
+		private String filterText;
+		private String insertText;
+		private InsertTextFormat insertTextFormat;
+		private TextEditBuilder<CompletionItemBuilder<P>> textEdit;
+		// TODO: support vvv
+//		private List<TextEdit> additionalTextEdits;
+//		private List<String> commitCharacters;
+//		private Command command;
+//		private Object data;
 
 		InternalCompletionItemBuilder(P parent) {
-			this.parent = parent;
+			super(parent);
 		}
 
 		@Override
@@ -270,8 +298,45 @@ public class CompletionItem {
 		}
 
 		@Override
-		public P and() {
-			return parent;
+		public CompletionItemBuilder<P> kind(CompletionItemKind kind) {
+			this.kind = kind;
+			return this;
+		}
+
+		@Override
+		public CompletionItemBuilder<P> detail(String detail) {
+			this.detail = detail;
+			return this;
+		}
+
+		@Override
+		public MarkupContentBuilder<CompletionItemBuilder<P>> documentation() {
+			this.documentation = MarkupContent.markupContent(this);
+			return documentation;
+		}
+
+		@Override
+		public CompletionItemBuilder<P> sortText(String sortText) {
+			this.sortText = sortText;
+			return this;
+		}
+
+		@Override
+		public CompletionItemBuilder<P> filterText(String filterText) {
+			this.filterText = filterText;
+			return this;
+		}
+
+		@Override
+		public CompletionItemBuilder<P> insertText(String insertText) {
+			this.insertText = insertText;
+			return this;
+		}
+
+		@Override
+		public CompletionItemBuilder<P> insertTextFormat(InsertTextFormat insertTextFormat) {
+			this.insertTextFormat = insertTextFormat;
+			return this;
 		}
 
 		@Override
@@ -284,9 +349,18 @@ public class CompletionItem {
 		public CompletionItem build() {
 			CompletionItem completionItem = new CompletionItem();
 			completionItem.setLabel(label);
+			completionItem.setKind(kind);
+			completionItem.setDetail(detail);
+			if (documentation != null) {
+				completionItem.setDocumentation(documentation.build());
+			}
 			if (textEdit != null) {
 				completionItem.setTextEdit(textEdit.build());
 			}
+			completionItem.setSortText(sortText);
+			completionItem.setFilterText(filterText);
+			completionItem.setInsertText(insertText);
+			completionItem.setInsertTextFormat(insertTextFormat);
 			return completionItem;
 		}
 	}

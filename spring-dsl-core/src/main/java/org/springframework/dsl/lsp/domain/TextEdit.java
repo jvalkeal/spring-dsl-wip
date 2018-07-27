@@ -16,6 +16,8 @@
 package org.springframework.dsl.lsp.domain;
 
 import org.springframework.dsl.lsp.domain.Range.RangeBuilder;
+import org.springframework.dsl.support.AbstractDomainBuilder;
+import org.springframework.dsl.support.DomainBuilder;
 
 public class TextEdit {
 
@@ -77,11 +79,10 @@ public class TextEdit {
 		return true;
 	}
 
-	public interface TextEditBuilder<P> {
+	public interface TextEditBuilder<P> extends DomainBuilder<TextEdit, P> {
+
 		RangeBuilder<TextEditBuilder<P>> range();
 		TextEditBuilder<P> newText(String newText);
-		P and();
-		TextEdit build();
 	}
 
 	public static <P> TextEditBuilder<P> textEdit() {
@@ -92,14 +93,14 @@ public class TextEdit {
 		return new InternalTextEditBuilder<>(parent);
 	}
 
-	private static class InternalTextEditBuilder<P> implements TextEditBuilder<P> {
+	private static class InternalTextEditBuilder<P>
+			extends AbstractDomainBuilder<TextEdit, P> implements TextEditBuilder<P> {
 
-		private final P parent;
-		RangeBuilder<TextEditBuilder<P>> range;
 		String newText;
+		RangeBuilder<TextEditBuilder<P>> range;
 
 		InternalTextEditBuilder(P parent) {
-			this.parent = parent;
+			super(parent);
 		}
 
 		@Override
@@ -115,13 +116,13 @@ public class TextEdit {
 		}
 
 		@Override
-		public P and() {
-			return parent;
-		}
-
-		@Override
 		public TextEdit build() {
-			return new TextEdit(range.build(), newText);
+			TextEdit textEdit = new TextEdit();
+			textEdit.setNewText(newText);
+			if (range != null) {
+				textEdit.setRange(range.build());
+			}
+			return textEdit;
 		}
 	}
 }

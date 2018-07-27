@@ -15,6 +15,15 @@
  */
 package org.springframework.dsl.lsp.domain;
 
+import org.springframework.dsl.support.AbstractDomainBuilder;
+import org.springframework.dsl.support.DomainBuilder;
+
+/**
+ * {@code LSP} domain object for a specification {@code MarkupContent}.
+ *
+ * @author Janne Valkealahti
+ *
+ */
 public class MarkupContent {
 
 	private MarkupKind kind;
@@ -72,11 +81,10 @@ public class MarkupContent {
 		return true;
 	}
 
-	public interface MarkupContentBuilder<P> {
+	public interface MarkupContentBuilder<P> extends DomainBuilder<MarkupContent, P> {
+
 		MarkupContentBuilder<P> kind(MarkupKind kind);
 		MarkupContentBuilder<P> value(String value);
-		P and();
-		MarkupContent build();
 	}
 
 	public static <P> MarkupContentBuilder<P> markupContent() {
@@ -87,14 +95,14 @@ public class MarkupContent {
 		return new InternalMarkupContentBuilder<>(parent);
 	}
 
-	private static class InternalMarkupContentBuilder<P> implements MarkupContentBuilder<P> {
+	private static class InternalMarkupContentBuilder<P>
+			extends AbstractDomainBuilder<MarkupContent, P> implements MarkupContentBuilder<P> {
 
-		final P parent;
-		MarkupKind kind;
-		String value;
+		private MarkupKind kind;
+		private String value;
 
 		InternalMarkupContentBuilder(P parent) {
-			this.parent = parent;
+			super(parent);
 		}
 
 		@Override
@@ -107,11 +115,6 @@ public class MarkupContent {
 		public MarkupContentBuilder<P> value(String value) {
 			this.value = value;
 			return this;
-		}
-
-		@Override
-		public P and() {
-			return parent;
 		}
 
 		@Override

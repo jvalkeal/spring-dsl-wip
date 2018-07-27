@@ -15,11 +15,12 @@
  */
 package org.springframework.dsl.lsp.server.controller;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.dsl.document.Document;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcController;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcNotification;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcRequestMapping;
@@ -58,19 +59,22 @@ public class TextDocumentLanguageServerController implements InitializingBean {
 	private static final Logger log = LoggerFactory.getLogger(TextDocumentLanguageServerController.class);
 	private final DocumentStateTracker documentStateTracker;
 	private final ObjectProvider<Reconciler> reconcilerProvider;
+	private final ObjectProvider<Completioner> completionerProvider;
 	private Reconciler reconciler;
 	private Completioner completioner;
 	private Hoverer hoverer;
 
 	public TextDocumentLanguageServerController(DocumentStateTracker documentStateTracker,
-			ObjectProvider<Reconciler> reconcilerProvider) {
+			ObjectProvider<Reconciler> reconcilerProvider, ObjectProvider<Completioner> completionerProvider) {
 		this.documentStateTracker = documentStateTracker;
 		this.reconcilerProvider = reconcilerProvider;
+		this.completionerProvider = completionerProvider;
 	}
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		this.reconciler = reconcilerProvider.getIfAvailable();
+		this.completioner = completionerProvider.getIfAvailable();
 	}
 
 	/**
@@ -86,21 +90,9 @@ public class TextDocumentLanguageServerController implements InitializingBean {
 	@JsonRpcNotification
 	public Flux<PublishDiagnosticsParams> clientDocumentOpened(DidOpenTextDocumentParams params) {
 		log.debug("clientDocumentOpened {}", params);
-
-		
 		return Flux.from(this.documentStateTracker.didOpen(params))
 				.flatMap(document -> reconciler.reconcile(document)
 				.switchIfEmpty(Mono.just(new PublishDiagnosticsParams(params.getTextDocument().getUri()))));
-		
-		
-//		return Flux.from(this.documentStateTracker.didOpen(params))
-//				.flatMap(document -> reconciler.reconcile(document));
-		
-//		.switchIfEmpty(Mono.just(new PublishDiagnosticsParams(uri)))
-		
-		
-//		handle(this.documentStateTracker.didOpen(params), reconciler, params.getTextDocument().getUri());
-//		return Flux.empty();
 	}
 
 	/**
@@ -112,10 +104,9 @@ public class TextDocumentLanguageServerController implements InitializingBean {
 	@JsonRpcRequestMapping(method = "didChange")
 	@JsonRpcNotification
 	public Flux<PublishDiagnosticsParams> clientDocumentChanged(DidChangeTextDocumentParams params) {
-		log.debug("clientDocumentChanged {}", params);		
+		log.debug("clientDocumentChanged {}", params);
 		return Flux.from(this.documentStateTracker.didChange(params))
 				.flatMap(document -> reconciler.reconcile(document));
-//		handle(this.documentStateTracker.didChange(params), reconciler, params.getTextDocument().getUri());
 	}
 
 	/**
@@ -127,10 +118,9 @@ public class TextDocumentLanguageServerController implements InitializingBean {
 	@JsonRpcRequestMapping(method = "didClose")
 	@JsonRpcNotification
 	public Mono<Void> clientDocumentClosed(DidCloseTextDocumentParams params) {
-		log.debug("clientDocumentClosed {}", params);		
+		log.debug("clientDocumentClosed {}", params);
 		return Flux.from(this.documentStateTracker.didClose(params))
 				.then();
-//		handle(this.documentStateTracker.didClose(params), reconciler, params.getTextDocument().getUri());
 	}
 
 	/**
@@ -143,8 +133,6 @@ public class TextDocumentLanguageServerController implements InitializingBean {
 	@JsonRpcNotification
 	public Mono<Void> clientDocumentSaved(DidSaveTextDocumentParams params) {
 		log.debug("clientDocumentSaved {}", params);
-//		handle(this.documentStateTracker.didSave(params), reconciler, params.getTextDocument().getUri());
-		
 		return Flux.from(this.documentStateTracker.didSave(params))
 				.then();
 	}
@@ -161,7 +149,6 @@ public class TextDocumentLanguageServerController implements InitializingBean {
 		log.debug("clientDocumentWillSave {}", params);
 		return Flux.from(this.documentStateTracker.willSave(params))
 				.then();
-//		handle(this.documentStateTracker.willSave(params), reconciler, params.getTextDocument().getUri());
 	}
 
 	/**
@@ -199,29 +186,22 @@ public class TextDocumentLanguageServerController implements InitializingBean {
 	 * Method handling {@code LSP client completion} request and dispatching into
 	 * {@link Completioner}.
 	 *
-	 * @param params the {@link TextDocumentPositionParams}
+	 * @param params the {@link CompletionParams}
 	 * @return a flux of completion items
 	 */
 	@JsonRpcRequestMapping(method = "completion")
 	@JsonRpcResponseBody
-	public Flux<CompletionItem> completion(CompletionParams params) {
+	public Mono<List<CompletionItem>> completion(CompletionParams params) {
+		// TODO: support Flux<CompletionItem> with lsp protocol
+		//       this would need a conversion to CompletionList where last list send
+		//       would have isIncomplete set to true. Also list could have batching
+		//       if calculation is expensive.
+		log.debug("completion params=[{}] completioner=[{}]", params, completioner);
 		if (completioner != null && params != null) {
-			return completioner.complete(documentStateTracker.getDocument(params.getTextDocument().getUri()),
-					params.getPosition());
+			return completioner
+					.complete(documentStateTracker.getDocument(params.getTextDocument().getUri()), params.getPosition())
+					.collectList();
 		}
-		return Flux.empty();
+		return Mono.empty();
 	}
-
-//	private static void handle(Mono<Document> document, Reconciler reconciler, String uri) {
-//		log.trace("Handling document {}, reconciler {}, uri {}", document, reconciler, uri);
-//		document.doOnNext(doc -> {
-//			reconciler.reconcile(doc)
-//				.switchIfEmpty(Mono.just(new PublishDiagnosticsParams(uri)))
-//				.doOnNext(diag -> {
-//				})
-//				.subscribe();
-//		})
-//		.subscribe();
-//	}
-
 }

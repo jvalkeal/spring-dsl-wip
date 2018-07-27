@@ -55,4 +55,14 @@ public class SimpleLanguageCompletionerTests {
 		assertThat(labels).containsExactlyInAnyOrder("string", "int", "long", "double");
 	}
 
+	@Test
+	public void testPartialKey() {
+		Document document = new TextDocument("", LanguageId.PLAINTEXT, 0, "s");
+		Flux<CompletionItem> complete = completioner.complete(document, Position.from(0, 1));
+		assertThat(complete).isNotNull();
+		List<CompletionItem> items = complete.toStream().collect(Collectors.toList());
+		assertThat(items).hasSize(1);
+		List<String> labels = items.stream().flatMap(item -> Stream.of(item.getLabel())).collect(Collectors.toList());
+		assertThat(labels).containsExactlyInAnyOrder("string");
+	}
 }

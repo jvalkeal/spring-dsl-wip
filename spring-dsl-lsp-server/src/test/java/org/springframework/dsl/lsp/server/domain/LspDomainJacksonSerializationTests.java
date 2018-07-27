@@ -27,12 +27,18 @@ import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.dsl.lsp.domain.ClientCapabilities;
+import org.springframework.dsl.lsp.domain.CompletionItem;
+import org.springframework.dsl.lsp.domain.CompletionItemKind;
+import org.springframework.dsl.lsp.domain.CompletionList;
 import org.springframework.dsl.lsp.domain.CompletionOptions;
 import org.springframework.dsl.lsp.domain.Diagnostic;
 import org.springframework.dsl.lsp.domain.DiagnosticSeverity;
 import org.springframework.dsl.lsp.domain.DynamicRegistration;
 import org.springframework.dsl.lsp.domain.DynamicRegistration.DynamicRegistrationBuilder;
 import org.springframework.dsl.lsp.domain.InitializeResult;
+import org.springframework.dsl.lsp.domain.InsertTextFormat;
+import org.springframework.dsl.lsp.domain.MarkupContent;
+import org.springframework.dsl.lsp.domain.MarkupKind;
 import org.springframework.dsl.lsp.domain.PublishDiagnosticsParams;
 import org.springframework.dsl.lsp.domain.ServerCapabilities;
 import org.springframework.dsl.lsp.domain.Synchronization;
@@ -40,6 +46,7 @@ import org.springframework.dsl.lsp.domain.Synchronization.SynchronizationBuilder
 import org.springframework.dsl.lsp.domain.TextDocumentClientCapabilities;
 import org.springframework.dsl.lsp.domain.TextDocumentSyncKind;
 import org.springframework.dsl.lsp.domain.TextDocumentSyncOptions;
+import org.springframework.dsl.lsp.domain.TextEdit;
 import org.springframework.util.StreamUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -386,6 +393,126 @@ public class LspDomainJacksonSerializationTests {
 
 		String expect = loadResourceAsString("ClientCapabilities1.json");
 		to = mapper.readValue(expect, ClientCapabilities.class);
+		assertObjects(from, to);
+	}
+
+	@Test
+	public void testMarkupContent() throws Exception {
+		MarkupContent from = new MarkupContent();
+		String json = mapper.writeValueAsString(from);
+		MarkupContent to = mapper.readValue(json, MarkupContent.class);
+		assertObjects(from, to);
+
+		from = MarkupContent.markupContent()
+				.kind(MarkupKind.markdown)
+				.value("value")
+				.build();
+
+		json = mapper.writeValueAsString(from);
+		to = mapper.readValue(json, MarkupContent.class);
+		assertObjects(from, to);
+
+		String expect = loadResourceAsString("MarkupContent1.json");
+		to = mapper.readValue(expect, MarkupContent.class);
+		assertObjects(from, to);
+	}
+
+	@Test
+	public void testTextEdit() throws Exception {
+		TextEdit from = new TextEdit();
+		String json = mapper.writeValueAsString(from);
+		TextEdit to = mapper.readValue(json, TextEdit.class);
+		assertObjects(from, to);
+
+		from = TextEdit.textEdit()
+				.range()
+					.start()
+						.line(0)
+						.character(0)
+						.and()
+					.end()
+						.line(1)
+						.character(1)
+						.and()
+					.and()
+				.newText("newText")
+				.build();
+
+		json = mapper.writeValueAsString(from);
+		to = mapper.readValue(json, TextEdit.class);
+		assertObjects(from, to);
+
+		String expect = loadResourceAsString("TextEdit1.json");
+		to = mapper.readValue(expect, TextEdit.class);
+		assertObjects(from, to);
+	}
+
+	@Test
+	public void testCompletionItem() throws Exception {
+		CompletionItem from = new CompletionItem();
+		String json = mapper.writeValueAsString(from);
+		CompletionItem to = mapper.readValue(json, CompletionItem.class);
+		assertObjects(from, to);
+
+		from = CompletionItem.completionItem()
+				.label("label")
+				.kind(CompletionItemKind.Class)
+				.detail("detail")
+				.documentation()
+					.kind(MarkupKind.markdown)
+					.value("value")
+					.and()
+				.sortText("sortText")
+				.filterText("filterText")
+				.insertText("insertText")
+				.insertTextFormat(InsertTextFormat.PlainText)
+				.textEdit()
+					.range()
+						.start()
+							.line(0)
+							.character(0)
+							.and()
+						.end()
+							.line(1)
+							.character(1)
+							.and()
+						.and()
+					.newText("newText")
+					.and()
+				.build();
+
+		json = mapper.writeValueAsString(from);
+		to = mapper.readValue(json, CompletionItem.class);
+		assertObjects(from, to);
+
+		String expect = loadResourceAsString("CompletionItem1.json");
+		to = mapper.readValue(expect, CompletionItem.class);
+		assertObjects(from, to);
+	}
+
+	@Test
+	public void testCompletionList() throws Exception {
+		CompletionList from = new CompletionList();
+		String json = mapper.writeValueAsString(from);
+		CompletionList to = mapper.readValue(json, CompletionList.class);
+		assertObjects(from, to);
+
+		from = CompletionList.completionList()
+				.isIncomplete(true)
+				.item()
+					.label("label1")
+					.and()
+				.item()
+					.label("label2")
+					.and()
+				.build();
+
+		json = mapper.writeValueAsString(from);
+		to = mapper.readValue(json, CompletionList.class);
+		assertObjects(from, to);
+
+		String expect = loadResourceAsString("CompletionList1.json");
+		to = mapper.readValue(expect, CompletionList.class);
 		assertObjects(from, to);
 	}
 
