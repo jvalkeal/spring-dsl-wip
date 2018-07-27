@@ -61,10 +61,10 @@ public class StdioSocketBridge {
 
 		@Override
 		public void accept(SynchronousSink<byte[]> sink) {
-			log.info("accept");
+			log.trace("accept");
 			try {
 				int read = reader.read();
-				log.info("read {}", read);
+				log.trace("read {}", read);
 
 				if (read == -1) {
 					sink.complete();
@@ -83,12 +83,13 @@ public class StdioSocketBridge {
 	}
 
 	public void start() {
-		log.info("start 1 {}", server.getPort());
+		log.trace("start 1 {}", server.getPort());
 
 //		Flux.generate(generator)
 
 		StdioGenerator generator = new StdioGenerator(reader);
-		Flux<byte[]> flux = Flux.generate(generator).log("ddd1");
+		Flux<byte[]> flux = Flux.generate(generator);
+//		Flux<byte[]> flux = Flux.generate(generator).log("ddd1");
 //		Flux<byte[]> flux = Flux.fromStream(reader.lines())
 //				.log()
 //				.map(l -> l.getBytes())
@@ -103,11 +104,10 @@ public class StdioSocketBridge {
 		nettyContext = TcpClient.create(server.getPort())
 				.newHandler((in, out) -> {
 					in.receive()
-						.log()
 						.subscribe(c -> {
 							String data = c.retain().duplicate().toString(Charset.defaultCharset());
 							try {
-								log.info("Writing to client {}", data);
+								log.trace("Writing to client {}", data);
 								writer.write(data);
 								writer.flush();
 							} catch (IOException e) {
@@ -116,14 +116,13 @@ public class StdioSocketBridge {
 						});
 
 //					out.options(NettyPipeline.SendOptions::flushOnEach);
-					flux.log().doOnNext(b -> {
-						log.info("sending {}", b);
+					flux.doOnNext(b -> {
+						log.trace("sending {}", b);
 //						out.options(opt -> opt.flushOnEach()).sendByteArray(Mono.just(b));
 //						out.sendByteArray(Mono.just("test".getBytes(Charset.defaultCharset())));
 						out.sendByteArray(Mono.just(b)).then().subscribe();
 //						out.send(Flux.just(Unpooled.copiedBuffer("hi".getBytes())));
 					})
-					.log()
 					.subscribeOn(Schedulers.parallel())
 					.subscribe();
 
@@ -136,28 +135,28 @@ public class StdioSocketBridge {
 				})
 				.block();
 
-		log.info("start 2");
+		log.trace("start 2");
 	}
 
 	public void stop() {
-		log.info("stop 1");
+		log.trace("stop 1");
 //		try {
 //			reader.close();
 //		} catch (IOException e) {
 //			e.printStackTrace();
 //		}
-		log.info("stop 2");
+		log.trace("stop 2");
 
 //		try {
 //			writer.close();
 //		} catch (IOException e) {
 //			e.printStackTrace();
 //		}
-		log.info("stop 3");
+		log.trace("stop 3");
 		if (nettyContext != null) {
 			nettyContext.dispose();
 		}
-		log.info("stop 4");
+		log.trace("stop 4");
 	}
 
 }

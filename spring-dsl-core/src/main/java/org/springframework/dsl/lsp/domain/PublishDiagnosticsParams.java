@@ -18,10 +18,13 @@ package org.springframework.dsl.lsp.domain;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.dsl.lsp.domain.Diagnostic.DiagnosticBuilder;
+import org.springframework.dsl.support.AbstractDomainBuilder;
+import org.springframework.dsl.support.DomainBuilder;
+
 public class PublishDiagnosticsParams {
 
 	private String uri;
-
 	private List<Diagnostic> diagnostics;
 
 	public PublishDiagnosticsParams() {
@@ -83,5 +86,57 @@ public class PublishDiagnosticsParams {
 		} else if (!uri.equals(other.uri))
 			return false;
 		return true;
+	}
+
+	public interface PublishDiagnosticsParamsBuilder<P> extends DomainBuilder<PublishDiagnosticsParams, P> {
+		
+		DiagnosticBuilder<PublishDiagnosticsParamsBuilder<P>> diagnostic();
+		PublishDiagnosticsParamsBuilder<P> uri(String uri);
+	}
+
+	public static <P> PublishDiagnosticsParamsBuilder<P> publishDiagnosticsParams() {
+		return new InternalPublishDiagnosticsParamsBuilder<>(null);
+	}
+
+	protected static <P> PublishDiagnosticsParamsBuilder<P> publishDiagnosticsParams(P parent) {
+		return new InternalPublishDiagnosticsParamsBuilder<>(parent);
+	}
+	
+	private static class InternalPublishDiagnosticsParamsBuilder<P>
+			extends AbstractDomainBuilder<PublishDiagnosticsParams, P> implements PublishDiagnosticsParamsBuilder<P> {
+
+		private String uri;
+		private List<DiagnosticBuilder<PublishDiagnosticsParamsBuilder<P>>> diagnostics = new ArrayList<>();
+
+		InternalPublishDiagnosticsParamsBuilder(P parent) {
+			super(parent);
+		}
+		
+		@Override
+		public DiagnosticBuilder<PublishDiagnosticsParamsBuilder<P>> diagnostic() {
+			DiagnosticBuilder<PublishDiagnosticsParamsBuilder<P>> diagnosticBuilder = Diagnostic.diagnostic(this);
+			this.diagnostics.add(diagnosticBuilder);
+			return diagnosticBuilder;
+		}
+
+		@Override
+		public PublishDiagnosticsParamsBuilder<P> uri(String uri) {
+			this.uri = uri;
+			return this;
+		}
+
+		@Override
+		public PublishDiagnosticsParams build() {
+			PublishDiagnosticsParams publishDiagnosticsParams = new PublishDiagnosticsParams();
+			if (!diagnostics.isEmpty()) {
+				List<Diagnostic> diagnostic = new ArrayList<>();
+				for (DiagnosticBuilder<PublishDiagnosticsParamsBuilder<P>> d : diagnostics) {
+					diagnostic.add(d.build());
+				}
+				publishDiagnosticsParams.setDiagnostics(diagnostic);
+			}
+			publishDiagnosticsParams.setUri(uri);
+			return publishDiagnosticsParams;
+		}
 	}
 }

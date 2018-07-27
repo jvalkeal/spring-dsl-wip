@@ -87,10 +87,18 @@ public class TextDocumentLanguageServerController implements InitializingBean {
 	public Flux<PublishDiagnosticsParams> clientDocumentOpened(DidOpenTextDocumentParams params) {
 		log.debug("clientDocumentOpened {}", params);
 
+		
 		return Flux.from(this.documentStateTracker.didOpen(params))
-				.flatMap(document -> reconciler.reconcile(document));
-
-
+				.flatMap(document -> reconciler.reconcile(document)
+				.switchIfEmpty(Mono.just(new PublishDiagnosticsParams(params.getTextDocument().getUri()))));
+		
+		
+//		return Flux.from(this.documentStateTracker.didOpen(params))
+//				.flatMap(document -> reconciler.reconcile(document));
+		
+//		.switchIfEmpty(Mono.just(new PublishDiagnosticsParams(uri)))
+		
+		
 //		handle(this.documentStateTracker.didOpen(params), reconciler, params.getTextDocument().getUri());
 //		return Flux.empty();
 	}
@@ -102,8 +110,12 @@ public class TextDocumentLanguageServerController implements InitializingBean {
 	 * @param params the {@link DidChangeTextDocumentParams}
 	 */
 	@JsonRpcRequestMapping(method = "didChange")
-	public void clientDocumentChanged(DidChangeTextDocumentParams params) {
-		handle(this.documentStateTracker.didChange(params), reconciler, params.getTextDocument().getUri());
+	@JsonRpcNotification
+	public Flux<PublishDiagnosticsParams> clientDocumentChanged(DidChangeTextDocumentParams params) {
+		log.debug("clientDocumentChanged {}", params);		
+		return Flux.from(this.documentStateTracker.didChange(params))
+				.flatMap(document -> reconciler.reconcile(document));
+//		handle(this.documentStateTracker.didChange(params), reconciler, params.getTextDocument().getUri());
 	}
 
 	/**
@@ -113,9 +125,12 @@ public class TextDocumentLanguageServerController implements InitializingBean {
 	 * @param params the {@link DidCloseTextDocumentParams}
 	 */
 	@JsonRpcRequestMapping(method = "didClose")
-	public void clientDocumentClosed(DidCloseTextDocumentParams params) {
-		log.debug("clientDocumentClosed {}", params);
-		handle(this.documentStateTracker.didClose(params), reconciler, params.getTextDocument().getUri());
+	@JsonRpcNotification
+	public Mono<Void> clientDocumentClosed(DidCloseTextDocumentParams params) {
+		log.debug("clientDocumentClosed {}", params);		
+		return Flux.from(this.documentStateTracker.didClose(params))
+				.then();
+//		handle(this.documentStateTracker.didClose(params), reconciler, params.getTextDocument().getUri());
 	}
 
 	/**
@@ -125,8 +140,13 @@ public class TextDocumentLanguageServerController implements InitializingBean {
 	 * @param params the {@link DidSaveTextDocumentParams}
 	 */
 	@JsonRpcRequestMapping(method = "didSave")
-	public void clientDocumentSaved(DidSaveTextDocumentParams params) {
-		handle(this.documentStateTracker.didSave(params), reconciler, params.getTextDocument().getUri());
+	@JsonRpcNotification
+	public Mono<Void> clientDocumentSaved(DidSaveTextDocumentParams params) {
+		log.debug("clientDocumentSaved {}", params);
+//		handle(this.documentStateTracker.didSave(params), reconciler, params.getTextDocument().getUri());
+		
+		return Flux.from(this.documentStateTracker.didSave(params))
+				.then();
 	}
 
 	/**
@@ -136,8 +156,12 @@ public class TextDocumentLanguageServerController implements InitializingBean {
 	 * @param params the {@link WillSaveTextDocumentParams}
 	 */
 	@JsonRpcRequestMapping(method = "willSave")
-	public void clientDocumentWillSave(WillSaveTextDocumentParams params) {
-		handle(this.documentStateTracker.willSave(params), reconciler, params.getTextDocument().getUri());
+	@JsonRpcNotification
+	public Mono<Void> clientDocumentWillSave(WillSaveTextDocumentParams params) {
+		log.debug("clientDocumentWillSave {}", params);
+		return Flux.from(this.documentStateTracker.willSave(params))
+				.then();
+//		handle(this.documentStateTracker.willSave(params), reconciler, params.getTextDocument().getUri());
 	}
 
 	/**
@@ -188,16 +212,16 @@ public class TextDocumentLanguageServerController implements InitializingBean {
 		return Flux.empty();
 	}
 
-	private static void handle(Mono<Document> document, Reconciler reconciler, String uri) {
-		log.trace("Handling document {}, reconciler {}, uri {}", document, reconciler, uri);
-		document.doOnNext(doc -> {
-			reconciler.reconcile(doc)
-				.switchIfEmpty(Mono.just(new PublishDiagnosticsParams(uri)))
-				.doOnNext(diag -> {
-				})
-				.subscribe();
-		})
-		.subscribe();
-	}
+//	private static void handle(Mono<Document> document, Reconciler reconciler, String uri) {
+//		log.trace("Handling document {}, reconciler {}, uri {}", document, reconciler, uri);
+//		document.doOnNext(doc -> {
+//			reconciler.reconcile(doc)
+//				.switchIfEmpty(Mono.just(new PublishDiagnosticsParams(uri)))
+//				.doOnNext(diag -> {
+//				})
+//				.subscribe();
+//		})
+//		.subscribe();
+//	}
 
 }

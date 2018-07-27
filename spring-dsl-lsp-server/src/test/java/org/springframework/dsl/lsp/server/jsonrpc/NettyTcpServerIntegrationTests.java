@@ -93,7 +93,7 @@ public class NettyTcpServerIntegrationTests {
 		}
 		context = null;
 	}
-	
+
 	@Test
 	public void testOk1() throws InterruptedException {
 		context = new AnnotationConfigApplicationContext();
@@ -286,7 +286,7 @@ public class NettyTcpServerIntegrationTests {
 
 		assertThat(dataLatch.await(1, TimeUnit.SECONDS)).isTrue();
 
-		String response = "Content-Length: 196\r\n\r\n{\"jsonrpc\":\"2.0\",\"id\":4,\"result\":{\"processId\":1,\"rootPath\":null,\"rootUri\":\"rootUri\",\"initializationOptions\":\"initializationOptions\",\"capabilities\":{\"experimental\":\"experimental\"},\"trace\":\"trace\"}}";
+		String response = "Content-Length: 216\r\n\r\n{\"jsonrpc\":\"2.0\",\"id\":4,\"result\":{\"processId\":1,\"rootPath\":null,\"rootUri\":\"rootUri\",\"initializationOptions\":\"initializationOptions\",\"capabilities\":{\"textDocument\":null,\"experimental\":\"experimental\"},\"trace\":\"trace\"}}";
 
 		assertThat(responses).containsExactlyInAnyOrder(response);
 	}
@@ -393,7 +393,7 @@ public class NettyTcpServerIntegrationTests {
 	@EnableJsonRcp
 	@Import(LspDomainJacksonConfiguration.class)
 	static class JsonRcpConfig {
-		
+
 		@Bean
 		public LspDomainArgumentResolver lspDomainArgumentResolver() {
 			return new LspDomainArgumentResolver();

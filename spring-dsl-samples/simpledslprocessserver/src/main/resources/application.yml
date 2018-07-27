@@ -1,9 +1,7 @@
 logging:
   file: simpledslprocessserver.log
   level:
-    root: debug
-    org.springframework.dsl: trace
-    org.eclipse.lsp4j: trace
+    org.springframework.dsl: debug
 spring:
   main:
     banner-mode: "off"

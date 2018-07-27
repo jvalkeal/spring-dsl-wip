@@ -15,11 +15,13 @@
  */
 package org.springframework.dsl.lsp.domain;
 
+import org.springframework.dsl.lsp.domain.TextDocumentClientCapabilities.TextDocumentClientCapabilitiesBuilder;
 import org.springframework.dsl.support.AbstractDomainBuilder;
 import org.springframework.dsl.support.DomainBuilder;
 
 public class ClientCapabilities {
 
+	private TextDocumentClientCapabilities textDocument;
 	private Object experimental;
 
 	/**
@@ -37,6 +39,13 @@ public class ClientCapabilities {
 		this.experimental = experimental;
 	}
 
+	public TextDocumentClientCapabilities getTextDocument() {
+		return textDocument;
+	}
+
+	public void setTextDocument(TextDocumentClientCapabilities textDocument) {
+		this.textDocument = textDocument;
+	}
 
 	public Object getExperimental() {
 		return experimental;
@@ -51,6 +60,7 @@ public class ClientCapabilities {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((experimental == null) ? 0 : experimental.hashCode());
+		result = prime * result + ((textDocument == null) ? 0 : textDocument.hashCode());
 		return result;
 	}
 
@@ -67,6 +77,11 @@ public class ClientCapabilities {
 			if (other.experimental != null)
 				return false;
 		} else if (!experimental.equals(other.experimental))
+			return false;
+		if (textDocument == null) {
+			if (other.textDocument != null)
+				return false;
+		} else if (!textDocument.equals(other.textDocument))
 			return false;
 		return true;
 	}
@@ -85,6 +100,8 @@ public class ClientCapabilities {
 		 * @return the builder for chaining
 		 */
 		ClientCapabilitiesBuilder<P> experimental(Object experimental);
+
+		TextDocumentClientCapabilitiesBuilder<ClientCapabilitiesBuilder<P>> textDocument();
 	}
 
 	/**
@@ -103,10 +120,17 @@ public class ClientCapabilities {
 	private static class InternalClientCapabilitiesBuilder<P> extends AbstractDomainBuilder<ClientCapabilities, P>
 			implements ClientCapabilitiesBuilder<P> {
 
-		Object experimental;
+		private TextDocumentClientCapabilitiesBuilder<ClientCapabilitiesBuilder<P>> textDocument;
+		private Object experimental;
 
 		InternalClientCapabilitiesBuilder(P parent) {
 			super(parent);
+		}
+
+		@Override
+		public TextDocumentClientCapabilitiesBuilder<ClientCapabilitiesBuilder<P>> textDocument() {
+			this.textDocument = TextDocumentClientCapabilities.textDocumentClientCapabilities(this);
+			return textDocument;
 		}
 
 		@Override
@@ -117,7 +141,11 @@ public class ClientCapabilities {
 
 		@Override
 		public ClientCapabilities build() {
-			return new ClientCapabilities(experimental);
+			ClientCapabilities clientCapabilities = new ClientCapabilities(experimental);
+			if (textDocument != null) {
+				clientCapabilities.setTextDocument(textDocument.build());
+			}
+			return clientCapabilities;
 		}
 	}
 }

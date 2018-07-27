@@ -107,7 +107,6 @@ public class LspDomainArgumentResolver implements JsonRpcHandlerMethodArgumentRe
 
 	@Override
 	public Mono<Object> resolveArgument(MethodParameter parameter, ServerJsonRpcExchange exchange) {
-		log.info("XXX1");
 		Class<?> type = parameter.getParameterType();
 		Class<?> contextClass = (parameter != null ? parameter.getContainingClass() : null);
 
@@ -125,7 +124,6 @@ public class LspDomainArgumentResolver implements JsonRpcHandlerMethodArgumentRe
 		ObjectReader forType = objectMapper.readerFor(javaType);
 		try {
 			Object xxx = forType.readValue(bodyAsString.block().toString());
-			log.info("XXX2 {}", xxx);
 			return Mono.just(forType.readValue(bodyAsString.block().toString()));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

@@ -98,6 +98,7 @@ public class DefaultDocumentStateTracker implements DocumentStateTracker {
 
 	@Override
 	public Mono<Document> didClose(DidCloseTextDocumentParams params) {
+		log.debug("didClose {}", params);
 		TextDocumentIdentifier identifier = params.getTextDocument();
 		String url = identifier.getUri();
 		if (url != null) {
@@ -109,6 +110,7 @@ public class DefaultDocumentStateTracker implements DocumentStateTracker {
 
 	@Override
 	public Mono<Document> willSave(WillSaveTextDocumentParams params) {
+		log.debug("willSave {}", params);
 		return Mono.empty();
 	}
 

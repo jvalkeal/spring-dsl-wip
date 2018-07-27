@@ -121,15 +121,16 @@ public class ServerCapabilities {
 			return false;
 		return true;
 	}
-	
+
 	public interface ServerCapabilitiesBuilder<P> extends DomainBuilder<ServerCapabilities, P> {
-		
+
 		TextDocumentSyncOptionsBuilder<ServerCapabilitiesBuilder<P>> textDocumentSyncOptions();
+		TextDocumentSyncOptionsBuilder<ServerCapabilitiesBuilder<P>> textDocumentSyncOptions(boolean enabled);
 		ServerCapabilitiesBuilder<P> textDocumentSyncKind(TextDocumentSyncKind textDocumentSyncKind);
 		ServerCapabilitiesBuilder<P> hoverProvider(Boolean hoverProvider);
 		CompletionOptionsBuilder<ServerCapabilitiesBuilder<P>> completionProvider();
 	}
-	
+
 	public static <P> ServerCapabilitiesBuilder<P> serverCapabilities() {
 		return new InternalServerCapabilitiesBuilder<>(null);
 	}
@@ -137,7 +138,7 @@ public class ServerCapabilities {
 	protected static <P> ServerCapabilitiesBuilder<P> serverCapabilities(P parent) {
 		return new InternalServerCapabilitiesBuilder<>(parent);
 	}
-	
+
 	private static class InternalServerCapabilitiesBuilder<P>
 			extends AbstractDomainBuilder<ServerCapabilities, P> implements ServerCapabilitiesBuilder<P> {
 
@@ -145,15 +146,24 @@ public class ServerCapabilities {
 		private TextDocumentSyncKind textDocumentSyncKind;
 		private Boolean hoverProvider;
 		private CompletionOptionsBuilder<ServerCapabilitiesBuilder<P>> completionProvider;
-		
+
 		InternalServerCapabilitiesBuilder(P parent) {
 			super(parent);
 		}
 
 		@Override
 		public TextDocumentSyncOptionsBuilder<ServerCapabilitiesBuilder<P>> textDocumentSyncOptions() {
-			this.textDocumentSyncOptions = TextDocumentSyncOptions.textDocumentSyncOptions(this);
-			return textDocumentSyncOptions;
+			return textDocumentSyncOptions(true);
+		}
+
+		@Override
+		public TextDocumentSyncOptionsBuilder<ServerCapabilitiesBuilder<P>> textDocumentSyncOptions(boolean enabled) {
+			if (enabled) {
+				this.textDocumentSyncOptions = TextDocumentSyncOptions.textDocumentSyncOptions(this);
+				return textDocumentSyncOptions;
+			} else {
+				return TextDocumentSyncOptions.textDocumentSyncOptions(this);
+			}
 		}
 
 		@Override

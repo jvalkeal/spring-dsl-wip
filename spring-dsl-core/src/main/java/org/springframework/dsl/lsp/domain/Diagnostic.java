@@ -15,6 +15,10 @@
  */
 package org.springframework.dsl.lsp.domain;
 
+import org.springframework.dsl.lsp.domain.Range.RangeBuilder;
+import org.springframework.dsl.support.AbstractDomainBuilder;
+import org.springframework.dsl.support.DomainBuilder;
+
 /**
  * Represents a diagnostic, such as a compiler error or warning. Diagnostic
  * objects are only valid in the scope of a resource.
@@ -125,5 +129,80 @@ public class Diagnostic {
 		} else if (!source.equals(other.source))
 			return false;
 		return true;
+	}
+	
+	public interface DiagnosticBuilder<P> extends DomainBuilder<Diagnostic, P> {
+
+		RangeBuilder<DiagnosticBuilder<P>> range();
+		DiagnosticBuilder<P> severity(DiagnosticSeverity severity);
+		DiagnosticBuilder<P> code(String code);
+		DiagnosticBuilder<P> source(String source);
+		DiagnosticBuilder<P> message(String message);
+		
+	}
+
+	public static <P> DiagnosticBuilder<P> diagnostic() {
+		return new InternalDiagnosticBuilder<>(null);
+	}
+
+	protected static <P> DiagnosticBuilder<P> diagnostic(P parent) {
+		return new InternalDiagnosticBuilder<>(parent);
+	}
+	
+	private static class InternalDiagnosticBuilder<P>
+			extends AbstractDomainBuilder<Diagnostic, P> implements DiagnosticBuilder<P> {
+
+		private RangeBuilder<DiagnosticBuilder<P>> range;
+		private DiagnosticSeverity severity;
+		private String code;
+		private String source;
+		private String message;
+		
+		InternalDiagnosticBuilder(P parent) {
+			super(parent);
+		}
+
+		@Override
+		public RangeBuilder<DiagnosticBuilder<P>> range() {
+			this.range = Range.range(this);
+			return range;
+		}
+
+		@Override
+		public DiagnosticBuilder<P> severity(DiagnosticSeverity severity) {
+			this.severity = severity;
+			return this;
+		}
+
+		@Override
+		public DiagnosticBuilder<P> code(String code) {
+			this.code = code;
+			return this;
+		}
+
+		@Override
+		public DiagnosticBuilder<P> source(String source) {
+			this.source = source;
+			return this;
+		}
+
+		@Override
+		public DiagnosticBuilder<P> message(String message) {
+			this.message = message;
+			return this;
+		}
+
+		@Override
+		public Diagnostic build() {
+			Diagnostic diagnostic = new Diagnostic();
+			if (range != null) {
+				diagnostic.setRange(range.build());
+			}
+			diagnostic.setSeverity(severity);
+			diagnostic.setCode(code);
+			diagnostic.setSource(source);
+			diagnostic.setMessage(message);
+			return diagnostic;
+		}
 	}
 }

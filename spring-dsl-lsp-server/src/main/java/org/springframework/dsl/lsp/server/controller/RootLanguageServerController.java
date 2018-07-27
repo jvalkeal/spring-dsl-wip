@@ -81,25 +81,28 @@ public class RootLanguageServerController implements InitializingBean {
 	@JsonRpcRequestMapping(method = "initialize")
 	@JsonRpcResponseBody
 	Mono<InitializeResult> initialize(InitializeParams params) {
-		log.debug("initialize {}", params);		
-		return Mono.fromSupplier(() -> InitializeResult.initializeResult()
-			.capabilities()
-				.hoverProvider(hovererProvider.getIfAvailable() != null)
-				// TODO: think if completioner in null, what to respond?
-				.completionProvider()
-					.resolveProvider(true)
-					.triggerCharacters(Collections.emptyList())
+		log.debug("initialize {}", params);
+		return Mono.fromSupplier(() -> {
+			boolean oldFormat = params.getCapabilities().getTextDocument().getSynchronization()
+					.getDidSave() == null;
+			return InitializeResult.initializeResult()
+				.capabilities()
+					.hoverProvider(hovererProvider.getIfAvailable() != null)
+					// TODO: think if completioner in null, what to respond?
+					.completionProvider()
+						.resolveProvider(true)
+						.triggerCharacters(Collections.emptyList())
+						.and()
+					.textDocumentSyncKind(oldFormat ? TextDocumentSyncKind.Incremental : null)
+					.textDocumentSyncOptions(!oldFormat)
+						.openClose(true)
+						// TODO: think how to use sync kind None
+						.change(documentStateTracker.isIncrementalChangesSupported() ? TextDocumentSyncKind.Incremental
+							: TextDocumentSyncKind.Full)
+						.and()
 					.and()
-//				NOTE: https://github.com/Microsoft/language-server-protocol/issues/530
-//				.textDocumentSyncKind(TextDocumentSyncKind.Incremental)
-				.textDocumentSyncOptions()
-					.openClose(true)
-					// TODO: think how to use sync kind None
-					.change(documentStateTracker.isIncrementalChangesSupported() ? TextDocumentSyncKind.Incremental
-						: TextDocumentSyncKind.Full)
-					.and()
-				.and()
-			.build());
+				.build();
+		});
 	}
 
 	@JsonRpcRequestMapping(method = "initialized")
