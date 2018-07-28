@@ -35,6 +35,12 @@ import org.springframework.core.annotation.AliasFor;
 @Documented
 public @interface JsonRpcNotification {
 
+	/**
+	 * Defines {@code JsonRpcNotification} {@code method} response field. If omitted
+	 * or empty, falls back to equivalent methods from a request.
+	 *
+	 * @return the method
+	 */
 	@AliasFor("method")
 	String value() default "";
 
