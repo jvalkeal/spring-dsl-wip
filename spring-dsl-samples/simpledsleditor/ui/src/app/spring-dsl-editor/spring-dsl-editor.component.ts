@@ -1,16 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 // import { listen, MessageConnection } from 'vscode-ws-jsonrpc';
-// import {
-//   BaseLanguageClient, CloseAction, ErrorAction,
-//   createMonacoServices, createConnection
-// } from 'monaco-languageclient';
-import { EditorComponent } from 'ngx-monaco-editor/editor.component';
+import {
+  BaseLanguageClient, CloseAction, ErrorAction,
+  createMonacoServices, createConnection
+} from 'monaco-languageclient';
+// import { EditorComponent } from 'ngx-monaco-editor/editor.component';
 
-// require('set-immediate');
-//
-// const normalizeUrl = require('normalize-url');
-// const ReconnectingWebSocket = require('reconnecting-websocket');
-
+require('set-immediate');
+const normalizeUrl = require('normalize-url');
+const ReconnectingWebSocket = require('reconnecting-websocket');
 
 @Component({
   selector: 'app-spring-dsl-editor',
@@ -21,12 +19,17 @@ export class SpringDslEditorComponent implements OnInit {
 
   editorOptions = {theme: 'vs', language: 'simple'};
   code = '';
+  private xxx: any;
 
   constructor() { }
 
+  onInit(xxx: any) {
+    this.xxx = xxx;
+  }
+
   ngOnInit() {
 
-    // const url = this.createUrl('/ws');
+    const url = this.createUrl('/ws');
     // const webSocket = this.createWebSocket(url);
     //
     // listen({
@@ -65,12 +68,12 @@ export class SpringDslEditorComponent implements OnInit {
   //     }
   //   });
   // }
-  //
-  // private createUrl(path: string): string {
-  //   const protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  //   return normalizeUrl(`${protocol}://${location.host}${location.pathname}${path}`);
-  // }
-  //
+
+  private createUrl(path: string): string {
+    const protocol = location.protocol === 'https:' ? 'wss' : 'ws';
+    return normalizeUrl(`${protocol}://${location.host}${location.pathname}${path}`);
+  }
+
   // private createWebSocket(url: string): WebSocket {
   //   const socketOptions = {
   //     maxReconnectionDelay: 10000,

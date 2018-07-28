@@ -24,8 +24,10 @@
     "@angular/router": "^6.0.3",
     "core-js": "^2.5.4",
     "monaco-languageclient": "^0.6.3",
-    "ngx-monaco-editor": "^6.0.0",
+    "normalize-url": "^3.2.0",
+    "reconnecting-websocket": "^4.0.0-rc5",
     "rxjs": "^6.0.0",
+    "set-immediate": "^0.1.1",
     "zone.js": "^0.8.26"
   },
   "devDependencies": {

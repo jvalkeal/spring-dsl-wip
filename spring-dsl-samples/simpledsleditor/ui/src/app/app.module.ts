@@ -3,8 +3,8 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { AppComponent } from './app.component';
-import { SpringDslEditorComponent } from './spring-dsl-editor/spring-dsl-editor.component';
-import { MonacoEditorModule, NgxMonacoEditorConfig } from 'ngx-monaco-editor';
+import { NgxMonacoEditorConfig } from './spring-monaco-editor/config';
+import { SpringDslEditorModuleModule } from './spring-dsl-editor-module/spring-dsl-editor-module.module';
 
 const monacoConfig: NgxMonacoEditorConfig = {
   onMonacoLoad: () => {
@@ -15,15 +15,14 @@ const monacoConfig: NgxMonacoEditorConfig = {
 
 @NgModule({
   declarations: [
-    AppComponent,
-    SpringDslEditorComponent
+    AppComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
-    MonacoEditorModule.forRoot(monacoConfig)
+    SpringDslEditorModuleModule.forRoot(monacoConfig)
   ],
   providers: [],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}
