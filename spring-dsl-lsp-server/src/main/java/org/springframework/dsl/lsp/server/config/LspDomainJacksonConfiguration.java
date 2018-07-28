@@ -17,7 +17,10 @@ package org.springframework.dsl.lsp.server.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.dsl.lsp.domain.DiagnosticSeverity;
 import org.springframework.dsl.lsp.domain.ServerCapabilities;
+import org.springframework.dsl.lsp.server.domain.DiagnosticSeverityDeserializer;
+import org.springframework.dsl.lsp.server.domain.DiagnosticSeveritySerializer;
 import org.springframework.dsl.lsp.server.domain.ServerCapabilitiesJsonDeserializer;
 import org.springframework.dsl.lsp.server.domain.ServerCapabilitiesJsonSerializer;
 
@@ -33,10 +36,12 @@ public class LspDomainJacksonConfiguration {
 		SimpleModule module = new SimpleModule();
 		module.addSerializer(ServerCapabilities.class, new ServerCapabilitiesJsonSerializer());
 		module.addDeserializer(ServerCapabilities.class, new ServerCapabilitiesJsonDeserializer());
+		module.addSerializer(DiagnosticSeverity.class, new DiagnosticSeveritySerializer());
+		module.addDeserializer(DiagnosticSeverity.class, new DiagnosticSeverityDeserializer());
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.registerModule(module);
 		mapper.enable(SerializationFeature.WRITE_ENUMS_USING_INDEX);
 		return mapper;
 	}
-	
+
 }

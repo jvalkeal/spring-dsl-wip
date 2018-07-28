@@ -40,7 +40,7 @@ public class SimpleLanguageLinter implements Linter {
 
 		@Override
 		public ProblemSeverity getDefaultSeverity() {
-			return ProblemSeverity.WARNING;
+			return ProblemSeverity.ERROR;
 		}
 
 		@Override

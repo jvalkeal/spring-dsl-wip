@@ -34,7 +34,6 @@ import org.springframework.dsl.lsp.domain.CompletionOptions;
 import org.springframework.dsl.lsp.domain.Diagnostic;
 import org.springframework.dsl.lsp.domain.DiagnosticSeverity;
 import org.springframework.dsl.lsp.domain.DynamicRegistration;
-import org.springframework.dsl.lsp.domain.DynamicRegistration.DynamicRegistrationBuilder;
 import org.springframework.dsl.lsp.domain.InitializeResult;
 import org.springframework.dsl.lsp.domain.InsertTextFormat;
 import org.springframework.dsl.lsp.domain.MarkupContent;
@@ -42,7 +41,6 @@ import org.springframework.dsl.lsp.domain.MarkupKind;
 import org.springframework.dsl.lsp.domain.PublishDiagnosticsParams;
 import org.springframework.dsl.lsp.domain.ServerCapabilities;
 import org.springframework.dsl.lsp.domain.Synchronization;
-import org.springframework.dsl.lsp.domain.Synchronization.SynchronizationBuilder;
 import org.springframework.dsl.lsp.domain.TextDocumentClientCapabilities;
 import org.springframework.dsl.lsp.domain.TextDocumentSyncKind;
 import org.springframework.dsl.lsp.domain.TextDocumentSyncOptions;
@@ -63,6 +61,8 @@ public class LspDomainJacksonSerializationTests {
 		SimpleModule module = new SimpleModule();
 		module.addSerializer(ServerCapabilities.class, new ServerCapabilitiesJsonSerializer());
 		module.addDeserializer(ServerCapabilities.class, new ServerCapabilitiesJsonDeserializer());
+		module.addSerializer(DiagnosticSeverity.class, new DiagnosticSeveritySerializer());
+		module.addDeserializer(DiagnosticSeverity.class, new DiagnosticSeverityDeserializer());
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.registerModule(module);
 		mapper.enable(SerializationFeature.WRITE_ENUMS_USING_INDEX);
@@ -210,7 +210,7 @@ public class LspDomainJacksonSerializationTests {
 						.character(2)
 						.and()
 					.and()
-				.severity(DiagnosticSeverity.Warning)
+				.severity(DiagnosticSeverity.Error)
 				.code("code")
 				.source("source")
 				.message("message")
