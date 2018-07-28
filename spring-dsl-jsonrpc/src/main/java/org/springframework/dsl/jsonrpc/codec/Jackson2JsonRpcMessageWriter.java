@@ -42,18 +42,30 @@ import org.springframework.core.io.buffer.DataBufferFactory;
 import org.springframework.dsl.jsonrpc.JsonRpcInputMessage;
 import org.springframework.dsl.jsonrpc.JsonRpcOutputMessage;
 import org.springframework.lang.Nullable;
+import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+/**
+ *
+ * @author Janne Valkealahti
+ *
+ */
 public class Jackson2JsonRpcMessageWriter implements JsonRpcMessageWriter<Object> {
 
 	private static final Logger log = LoggerFactory.getLogger(Jackson2JsonRpcMessageWriter.class);
 	private final ObjectMapper objectMapper;
 	public static final String JSON_VIEW_HINT = Jackson2JsonRpcMessageWriter.class.getName() + ".jsonView";
 
+	/**
+	 * Instantiates a new {@code Jackson2JsonRpcMessageWriter}.
+	 *
+	 * @param objectMapper the object mapper
+	 */
 	public Jackson2JsonRpcMessageWriter(ObjectMapper objectMapper) {
-//		this.objectMapper = new ObjectMapper();
+		Assert.notNull(objectMapper, "objectMapper must be set");
 		this.objectMapper = objectMapper;
 	}
 
@@ -108,17 +120,30 @@ public class Jackson2JsonRpcMessageWriter implements JsonRpcMessageWriter<Object
 		OutputStream outputStream = buffer.asOutputStream();
 
 		try {
-			log.trace("UUU3");
 			JsonGenerator generator = getObjectMapper().getFactory().createGenerator(outputStream, encoding);
 			generator.writeStartObject();
 			generator.writeStringField("jsonrpc", request.getJsonrpc().block());
+			// if request id is missing, it's a notification
 			if (request.getId() != null) {
 				Integer block = request.getId().block();
 				if (block != null) {
+					log.trace("id {}", block);
+					log.trace("result {}", value);
 					generator.writeNumberField("id", block);
+					generator.writeObjectField("result", value);
+				} else {
+					String method = (String) hints.get("method");
+					if (!StringUtils.hasText(method)) {
+						method = request.getMethod().block();
+					}
+					log.trace("method {}", method);
+//					log.trace("method {}", request.getMethod().block());
+					log.trace("params {}", value);
+//					generator.writeObjectField("method", request.getMethod().block());
+					generator.writeObjectField("method", method);
+					generator.writeObjectField("params", value);
 				}
 			}
-			generator.writeObjectField("result", value);
 			generator.writeEndObject();
 			generator.flush();
 		}

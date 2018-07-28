@@ -318,7 +318,8 @@ public class NettyTcpServerIntegrationTests {
 
 		assertThat(dataLatch.await(1, TimeUnit.SECONDS)).isTrue();
 
-		String response = "Content-Length: 31\r\n\r\n{\"jsonrpc\":\"2.0\",\"result\":\"hi\"}";
+//		String response = "Content-Length: 31\r\n\r\n{\"jsonrpc\":\"2.0\",\"result\":\"hi\"}";
+		String response = "Content-Length: 57\r\n\r\n{\"jsonrpc\":\"2.0\",\"method\":\"singleresponse\",\"params\":\"hi\"}";
 
 		assertThat(responses).containsExactlyInAnyOrder(response);
 	}
@@ -351,8 +352,8 @@ public class NettyTcpServerIntegrationTests {
 
 		assertThat(dataLatch.await(1, TimeUnit.SECONDS)).isTrue();
 
-		String response1 = "{\"jsonrpc\":\"2.0\",\"result\":\"hi\"}";
-		String response2 = "{\"jsonrpc\":\"2.0\",\"result\":\"bye\"}";
+		String response1 = "{\"jsonrpc\":\"2.0\",\"method\":\"notificationmultiresponse\",\"params\":\"hi\"}";
+		String response2 = "{\"jsonrpc\":\"2.0\",\"method\":\"notificationmultiresponse\",\"params\":\"bye\"}";
 
 		assertThat(responses).containsExactlyInAnyOrder(response1, response2);
 	}
@@ -461,7 +462,7 @@ public class NettyTcpServerIntegrationTests {
 		}
 
 		@JsonRpcRequestMapping(method = "notificationsingleresponse")
-		@JsonRpcNotification
+		@JsonRpcNotification("singleresponse")
 		public String notificationsingleresponse() {
 			return "hi";
 		}

@@ -16,7 +16,9 @@
 package org.springframework.dsl.jsonrpc.result.method.annotation;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
@@ -25,9 +27,11 @@ import org.springframework.core.MethodParameter;
 import org.springframework.core.ReactiveAdapter;
 import org.springframework.core.ReactiveAdapterRegistry;
 import org.springframework.core.ResolvableType;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.dsl.jsonrpc.JsonRpcInputMessage;
 import org.springframework.dsl.jsonrpc.JsonRpcOutputMessage;
 import org.springframework.dsl.jsonrpc.ServerJsonRpcExchange;
+import org.springframework.dsl.jsonrpc.annotation.JsonRpcNotification;
 import org.springframework.dsl.jsonrpc.codec.JsonRpcMessageWriter;
 import org.springframework.dsl.jsonrpc.result.HandlerResultHandlerSupport;
 import org.springframework.lang.Nullable;
@@ -88,9 +92,16 @@ public abstract class AbstractMessageWriterResultHandler extends HandlerResultHa
 
 		log.debug("request id {} method {}", request.getId(), request.getMethod());
 
+		Map<String, Object> hints = new HashMap<>();
+		JsonRpcNotification notification = bodyParameter.getMethodAnnotation(JsonRpcNotification.class);
+		if (notification != null) {
+			hints.put("method", AnnotationUtils.getValue(notification, "method"));
+		}
+
 		for (JsonRpcMessageWriter<?> writer : messageWriters) {
 			if (writer.canWrite(elementType)) {
-				return writer.write((Publisher) publisher, elementType, request, response, Collections.emptyMap());
+//				return writer.write((Publisher) publisher, elementType, request, response, Collections.emptyMap());
+				return writer.write((Publisher) publisher, elementType, request, response, hints);
 			}
 		}
 		return Mono.error(new IllegalStateException("No writer for : " + elementType));

@@ -21,6 +21,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.springframework.core.annotation.AliasFor;
+
 /**
  * Annotation that indicates a method return value should be bound to the
  * {@code JSONRPC} responses as notifications.
@@ -32,4 +34,17 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface JsonRpcNotification {
+
+	@AliasFor("method")
+	String value() default "";
+
+	/**
+	 * Alias for {@link #value()}.
+	 *
+	 * @return the paths
+	 * @see #value()
+	 */
+	@AliasFor("value")
+	String method() default "";
+
 }

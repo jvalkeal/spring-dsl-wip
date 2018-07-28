@@ -87,7 +87,7 @@ public class TextDocumentLanguageServerController implements InitializingBean {
 	 * @param params the {@link DidOpenTextDocumentParams}
 	 */
 	@JsonRpcRequestMapping(method = "didOpen")
-	@JsonRpcNotification
+	@JsonRpcNotification(method = "textDocument/publishDiagnostics")
 	public Flux<PublishDiagnosticsParams> clientDocumentOpened(DidOpenTextDocumentParams params) {
 		log.debug("clientDocumentOpened {}", params);
 		return Flux.from(this.documentStateTracker.didOpen(params))
@@ -102,11 +102,12 @@ public class TextDocumentLanguageServerController implements InitializingBean {
 	 * @param params the {@link DidChangeTextDocumentParams}
 	 */
 	@JsonRpcRequestMapping(method = "didChange")
-	@JsonRpcNotification
+	@JsonRpcNotification(method = "textDocument/publishDiagnostics")
 	public Flux<PublishDiagnosticsParams> clientDocumentChanged(DidChangeTextDocumentParams params) {
 		log.debug("clientDocumentChanged {}", params);
 		return Flux.from(this.documentStateTracker.didChange(params))
-				.flatMap(document -> reconciler.reconcile(document));
+				.flatMap(document -> reconciler.reconcile(document)
+				.switchIfEmpty(Mono.just(new PublishDiagnosticsParams(params.getTextDocument().getUri()))));
 	}
 
 	/**
