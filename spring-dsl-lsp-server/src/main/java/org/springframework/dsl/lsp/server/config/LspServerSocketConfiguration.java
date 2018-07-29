@@ -15,6 +15,7 @@
  */
 package org.springframework.dsl.lsp.server.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -33,9 +34,12 @@ import reactor.ipc.netty.tcp.TcpServer;
 @Import(GenericLspConfiguration.class)
 public class LspServerSocketConfiguration {
 
+	@Value("${server.port:0}")
+	private Integer serverPort;
+
 	@Bean(initMethod = "start", destroyMethod = "stop")
 	public NettyTcpServer nettyTcpServer(ReactorJsonRpcHandlerAdapter handlerAdapter) {
-		TcpServer tcpServer = TcpServer.create();
+		TcpServer tcpServer = TcpServer.create(serverPort);
 		NettyTcpServer nettyTcpServer = new NettyTcpServer(tcpServer, handlerAdapter, null);
 		return nettyTcpServer;
 	}

@@ -9,7 +9,7 @@ const SIMPLE_LANGUAGE_ID = "simple";
 export function activate(context: VSCode.ExtensionContext) {
     let options : commons.ActivatorOptions = {
         DEBUG : false,
-        CONNECT_TO_LS: false,
+        CONNECT_TO_LS: true,
         extensionId: 'vscode-simple',
         jvmHeap: "48m",
         clientOptions: {
