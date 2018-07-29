@@ -24,6 +24,7 @@ import org.springframework.dsl.lsp.server.domain.DiagnosticSeveritySerializer;
 import org.springframework.dsl.lsp.server.domain.ServerCapabilitiesJsonDeserializer;
 import org.springframework.dsl.lsp.server.domain.ServerCapabilitiesJsonSerializer;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -41,6 +42,7 @@ public class LspDomainJacksonConfiguration {
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.registerModule(module);
 		mapper.enable(SerializationFeature.WRITE_ENUMS_USING_INDEX);
+		mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 		return mapper;
 	}
 

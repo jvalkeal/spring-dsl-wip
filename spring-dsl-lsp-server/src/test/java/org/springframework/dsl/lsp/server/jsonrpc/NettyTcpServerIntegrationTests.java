@@ -287,7 +287,8 @@ public class NettyTcpServerIntegrationTests {
 
 		assertThat(dataLatch.await(1, TimeUnit.SECONDS)).isTrue();
 
-		String response = "Content-Length: 216\r\n\r\n{\"jsonrpc\":\"2.0\",\"id\":4,\"result\":{\"processId\":1,\"rootPath\":null,\"rootUri\":\"rootUri\",\"initializationOptions\":\"initializationOptions\",\"capabilities\":{\"textDocument\":null,\"experimental\":\"experimental\"},\"trace\":\"trace\"}}";
+//		String response = "Content-Length: 216\r\n\r\n{\"jsonrpc\":\"2.0\",\"id\":4,\"result\":{\"processId\":1,\"rootPath\":null,\"rootUri\":\"rootUri\",\"initializationOptions\":\"initializationOptions\",\"capabilities\":{\"textDocument\":null,\"experimental\":\"experimental\"},\"trace\":\"trace\"}}";
+		String response = "Content-Length: 180\r\n\r\n{\"jsonrpc\":\"2.0\",\"id\":4,\"result\":{\"processId\":1,\"rootUri\":\"rootUri\",\"initializationOptions\":\"initializationOptions\",\"capabilities\":{\"experimental\":\"experimental\"},\"trace\":\"trace\"}}";
 
 		assertThat(responses).containsExactlyInAnyOrder(response);
 	}

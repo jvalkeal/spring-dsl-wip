@@ -128,7 +128,25 @@ public class ServerCapabilities {
 		TextDocumentSyncOptionsBuilder<ServerCapabilitiesBuilder<P>> textDocumentSyncOptions(boolean enabled);
 		ServerCapabilitiesBuilder<P> textDocumentSyncKind(TextDocumentSyncKind textDocumentSyncKind);
 		ServerCapabilitiesBuilder<P> hoverProvider(Boolean hoverProvider);
+
+		/**
+		 * Gets a builder for a {@link CompletionOptions}. Same as calling
+		 * {@link #completionProvider(boolean)} with {@code true}.
+		 *
+		 * @param enabled the flag to disable whole builder
+		 * @return the builder for chaining
+		 * @see #completionProvider(boolean)
+		 */
 		CompletionOptionsBuilder<ServerCapabilitiesBuilder<P>> completionProvider();
+
+		/**
+		 * Gets a builder for a {@link CompletionOptions}. Setting {@code enabled} to
+		 * {@code true} effectively disables builder.
+		 *
+		 * @param enabled the flag to disable whole builder
+		 * @return the builder for chaining
+		 */
+		CompletionOptionsBuilder<ServerCapabilitiesBuilder<P>> completionProvider(boolean enabled);
 	}
 
 	public static <P> ServerCapabilitiesBuilder<P> serverCapabilities() {
@@ -180,8 +198,17 @@ public class ServerCapabilities {
 
 		@Override
 		public CompletionOptionsBuilder<ServerCapabilitiesBuilder<P>> completionProvider() {
-			this.completionProvider = CompletionOptions.completionOptions(this);
-			return completionProvider;
+			return completionProvider(true);
+		}
+
+		@Override
+		public CompletionOptionsBuilder<ServerCapabilitiesBuilder<P>> completionProvider(boolean enabled) {
+			if (enabled) {
+				this.completionProvider = CompletionOptions.completionOptions(this);
+				return completionProvider;
+			} else {
+				return CompletionOptions.completionOptions(this);
+			}
 		}
 
 		@Override

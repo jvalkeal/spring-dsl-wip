@@ -15,9 +15,6 @@
  */
 package org.springframework.dsl.lsp.server.controller;
 
-import java.util.Arrays;
-import java.util.Collections;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -26,11 +23,9 @@ import org.springframework.dsl.jsonrpc.annotation.JsonRpcController;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcNotification;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcRequestMapping;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcResponseBody;
-import org.springframework.dsl.lsp.domain.CompletionOptions;
 import org.springframework.dsl.lsp.domain.InitializeParams;
 import org.springframework.dsl.lsp.domain.InitializeResult;
 import org.springframework.dsl.lsp.domain.InitializedParams;
-import org.springframework.dsl.lsp.domain.ServerCapabilities;
 import org.springframework.dsl.lsp.domain.TextDocumentSyncKind;
 import org.springframework.dsl.lsp.service.Completioner;
 import org.springframework.dsl.lsp.service.DocumentStateTracker;
@@ -54,7 +49,6 @@ public class RootLanguageServerController implements InitializingBean {
 	private final DocumentStateTracker documentStateTracker;
 	private final ObjectProvider<Completioner> completionerProvider;
 	private final ObjectProvider<Hoverer> hovererProvider;
-	private Completioner completioner;
 
 	/**
 	 * Instantiate a base language server controller.
@@ -75,7 +69,6 @@ public class RootLanguageServerController implements InitializingBean {
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		this.completioner = completionerProvider.getIfAvailable();
 	}
 
 	@JsonRpcRequestMapping(method = "initialize")
@@ -88,10 +81,8 @@ public class RootLanguageServerController implements InitializingBean {
 			return InitializeResult.initializeResult()
 				.capabilities()
 					.hoverProvider(hovererProvider.getIfAvailable() != null)
-					// TODO: think if completioner in null, what to respond?
-					.completionProvider()
-						.resolveProvider(true)
-						.triggerCharacters(Collections.emptyList())
+					.completionProvider(completionerProvider.getIfAvailable() != null)
+						.resolveProvider(false)
 						.and()
 					.textDocumentSyncKind(oldFormat ? TextDocumentSyncKind.Incremental : null)
 					.textDocumentSyncOptions(!oldFormat)
