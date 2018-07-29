@@ -113,7 +113,7 @@ public class RootLanguageServerController implements InitializingBean {
 
 	@JsonRpcRequestMapping(method = "shutdown")
 	@JsonRpcResponseBody
-	public Mono<Void> shutdown() {
+	public Mono<Object> shutdown() {
 		log.debug("shutdown");
 		return Mono.empty();
 	}

@@ -68,6 +68,7 @@ public class NettyTcpServerIntegrationTests {
 			"}";
 
 	private static final byte[] CONTENT11 = createContent("{\"jsonrpc\": \"2.0\",\"id\": 4, \"method\": \"initializeparams\", \"params\":" + initializeParams + "}");
+	private static final byte[] CONTENT12 = createContent("{\"jsonrpc\": \"2.0\",\"id\": 4, \"method\": \"monoobjectempty\", \"params\":null}");
 
 	private static byte[] createContent(String... lines) {
 		StringBuilder buf = new StringBuilder();
@@ -391,6 +392,39 @@ public class NettyTcpServerIntegrationTests {
 		assertThat(responses).contains(response);
 	}
 
+
+	@Test
+	public void testEmptyWithObjectReturnsNull() throws InterruptedException {
+		context = new AnnotationConfigApplicationContext();
+		context.register(JsonRcpConfig.class, TestJsonRcpController.class);
+		context.refresh();
+		NettyTcpServer server = context.getBean(NettyTcpServer.class);
+
+		CountDownLatch dataLatch = new CountDownLatch(1);
+		final List<String> responses = new ArrayList<>();
+
+		TcpClient.create(server.getPort())
+				.newHandler((in, out) -> {
+					in
+					.receive()
+					.subscribe(c -> {
+						responses.add(c.retain().duplicate().toString(Charset.defaultCharset()));
+						dataLatch.countDown();
+					});
+
+					return out
+							.send(Flux.just(Unpooled.copiedBuffer(CONTENT12)))
+							.neverComplete();
+				})
+				.block(Duration.ofSeconds(30));
+
+		assertThat(dataLatch.await(1, TimeUnit.SECONDS)).isTrue();
+
+		String response = "Content-Length: 38\r\n\r\n{\"jsonrpc\":\"2.0\",\"id\":4,\"result\":null}";
+
+		assertThat(responses).containsExactlyInAnyOrder(response);
+	}
+
 	@EnableJsonRcp
 	@Import(LspDomainJacksonConfiguration.class)
 	static class JsonRcpConfig {
@@ -453,6 +487,12 @@ public class NettyTcpServerIntegrationTests {
 		@JsonRpcRequestMapping(method = "monovoid")
 		@JsonRpcResponseBody
 		public Mono<Void> monovoid() {
+			return Mono.empty();
+		}
+
+		@JsonRpcRequestMapping(method = "monoobjectempty")
+		@JsonRpcResponseBody
+		public Mono<Object> monoobjectempty() {
 			return Mono.empty();
 		}
 
