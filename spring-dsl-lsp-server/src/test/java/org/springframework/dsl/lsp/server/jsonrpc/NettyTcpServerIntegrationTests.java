@@ -31,11 +31,13 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.ReactiveAdapterRegistry;
+import org.springframework.dsl.jsonrpc.ServerJsonRpcExchange;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcController;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcNotification;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcRequestMapping;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcResponseBody;
 import org.springframework.dsl.jsonrpc.config.EnableJsonRcp;
+import org.springframework.dsl.jsonrpc.session.JsonRpcSession;
 import org.springframework.dsl.jsonrpc.support.DispatcherJsonRpcHandler;
 import org.springframework.dsl.lsp.domain.InitializeParams;
 import org.springframework.dsl.lsp.server.config.LspDomainJacksonConfiguration;
@@ -69,6 +71,7 @@ public class NettyTcpServerIntegrationTests {
 
 	private static final byte[] CONTENT11 = createContent("{\"jsonrpc\": \"2.0\",\"id\": 4, \"method\": \"initializeparams\", \"params\":" + initializeParams + "}");
 	private static final byte[] CONTENT12 = createContent("{\"jsonrpc\": \"2.0\",\"id\": 4, \"method\": \"monoobjectempty\", \"params\":null}");
+	private static final byte[] CONTENT13 = createContent("{\"jsonrpc\": \"2.0\",\"id\": 2, \"method\": \"session\"}");
 
 	private static byte[] createContent(String... lines) {
 		StringBuilder buf = new StringBuilder();
@@ -426,6 +429,39 @@ public class NettyTcpServerIntegrationTests {
 		assertThat(responses).containsExactlyInAnyOrder(response);
 	}
 
+	@Test
+	public void testSession() throws InterruptedException {
+		context = new AnnotationConfigApplicationContext();
+		context.register(JsonRcpConfig.class, TestJsonRcpController.class);
+		context.refresh();
+		NettyTcpServer server = context.getBean(NettyTcpServer.class);
+
+		CountDownLatch dataLatch = new CountDownLatch(2);
+		final List<String> responses = new ArrayList<>();
+
+		TcpClient.create(server.getPort())
+				.newHandler((in, out) -> {
+					in
+					.receive()
+					.subscribe(c -> {
+						responses.add(c.retain().duplicate().toString(Charset.defaultCharset()));
+						dataLatch.countDown();
+					});
+
+					return out
+							.send(Flux.just(Unpooled.copiedBuffer(CONTENT13), Unpooled.copiedBuffer(CONTENT13)))
+							.neverComplete();
+				})
+				.block(Duration.ofSeconds(30));
+
+		assertThat(dataLatch.await(1, TimeUnit.SECONDS)).isTrue();
+
+		assertThat(responses).hasSize(2);
+		assertThat(responses.get(0)).doesNotContain("error");
+		assertThat(responses.get(1)).doesNotContain("error");
+		assertThat(responses.get(0)).isEqualTo(responses.get(1));
+	}
+
 	@EnableJsonRcp
 	@Import(LspDomainJacksonConfiguration.class)
 	static class JsonRcpConfig {
@@ -519,6 +555,13 @@ public class NettyTcpServerIntegrationTests {
 		public InitializeParams initializeparams(InitializeParams params) {
 			return params;
 		}
+
+		@JsonRpcRequestMapping(method = "session")
+		@JsonRpcResponseBody
+		public Mono<String> session(ServerJsonRpcExchange exchange) {
+			return exchange.getSession().map(session -> session.getId());
+		}
+
 	}
 
 	private static class Pojo1 {

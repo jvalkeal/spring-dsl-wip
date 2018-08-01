@@ -18,15 +18,32 @@ package org.springframework.dsl.jsonrpc.support;
 import org.springframework.dsl.jsonrpc.JsonRpcInputMessage;
 import org.springframework.dsl.jsonrpc.JsonRpcOutputMessage;
 import org.springframework.dsl.jsonrpc.ServerJsonRpcExchange;
+import org.springframework.dsl.jsonrpc.session.JsonRpcSession;
+import org.springframework.dsl.jsonrpc.session.JsonRpcSessionManager;
+import org.springframework.util.Assert;
 
+import reactor.core.publisher.Mono;
+
+/**
+ * Default implementation of a {@link ServerJsonRpcExchange}.
+ *
+ * @author Janne Valkealahti
+ *
+ */
 public class DefaultServerJsonRpcExchange implements ServerJsonRpcExchange {
 
 	private final JsonRpcInputMessage request;
 	private final JsonRpcOutputMessage response;
+	private final Mono<JsonRpcSession> sessionMono;
 
-	public DefaultServerJsonRpcExchange(JsonRpcInputMessage request, JsonRpcOutputMessage response) {
+	public DefaultServerJsonRpcExchange(JsonRpcInputMessage request, JsonRpcOutputMessage response,
+			JsonRpcSessionManager sessionManager) {
+		Assert.notNull(request, "'request' is required");
+		Assert.notNull(response, "'response' is required");
+		Assert.notNull(sessionManager, "'sessionManager' is required");
 		this.request = request;
 		this.response = response;
+		this.sessionMono = sessionManager.getSession(this).cache();
 	}
 
 	@Override
@@ -39,4 +56,8 @@ public class DefaultServerJsonRpcExchange implements ServerJsonRpcExchange {
 		return response;
 	}
 
+	@Override
+	public Mono<JsonRpcSession> getSession() {
+		return sessionMono;
+	}
 }

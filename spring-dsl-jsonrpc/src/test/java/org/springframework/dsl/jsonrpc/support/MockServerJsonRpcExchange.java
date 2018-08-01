@@ -15,10 +15,12 @@
  */
 package org.springframework.dsl.jsonrpc.support;
 
+import org.springframework.dsl.jsonrpc.session.DefaultJsonRpcSessionManager;
+
 public class MockServerJsonRpcExchange extends DefaultServerJsonRpcExchange {
 
 	private MockServerJsonRpcExchange(MockJsonRpcInputMessage request) {
-		super(request, new MockJsonRpcOutputMessage());
+		super(request, new MockJsonRpcOutputMessage(), new DefaultJsonRpcSessionManager());
 	}
 
 	public static MockServerJsonRpcExchange from(MockJsonRpcInputMessage.Builder request) {

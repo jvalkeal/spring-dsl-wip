@@ -101,7 +101,14 @@ public class ReactorJsonRpcHandlerAdapter implements BiFunction<NettyInbound, Ne
 					public Mono<String> getParams() {
 						return Mono.justOrEmpty(bb.getParams());
 					}
+
+					@Override
+					public Mono<String> getSessionId() {
+						return Mono.fromSupplier(() -> in.context().channel().id().asLongText());
+					}
 				};
+
+
 
 				JsonRpcInputMessage adaptedRequest = new ReactorJsonRpcInputMessage(in, bufferFactory);
 				JsonRpcOutputMessage adaptedResponse = new ReactorJsonRpcOutputMessage(out, bufferFactory);

@@ -15,6 +15,10 @@
  */
 package org.springframework.dsl.jsonrpc;
 
+import org.springframework.dsl.jsonrpc.session.JsonRpcSession;
+
+import reactor.core.publisher.Mono;
+
 /**
  * Contract for an JSONRPC request-response interaction. Provides access to the
  * JSONRPC request and response.
@@ -37,4 +41,15 @@ public interface ServerJsonRpcExchange {
 	 * @return the JSONRPC response
 	 */
 	JsonRpcOutputMessage getResponse();
+
+	/**
+	 * Return the {@link JsonRpcSession} for the current request. Always guaranteed
+	 * to return an instance either matching to the session id requested by the
+	 * client, or with a new session id either because the client did not specify
+	 * one or because the underlying session had expired. Use of this method does
+	 * not automatically create a session.
+	 *
+	 * @return the {@link Mono} for a {@link JsonRpcSession}}
+	 */
+	Mono<JsonRpcSession> getSession();
 }

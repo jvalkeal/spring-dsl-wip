@@ -57,6 +57,12 @@ public class ReactorJsonRpcInputMessage extends AbstractJsonRpcInputMessage {
 		return null;
 	}
 
+	@Override
+	public Mono<String> getSessionId() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 //	@Override
 //	public Flux<DataBuffer> getBody() {
 //		return in.receive().retain().map(bufferFactory::wrap);

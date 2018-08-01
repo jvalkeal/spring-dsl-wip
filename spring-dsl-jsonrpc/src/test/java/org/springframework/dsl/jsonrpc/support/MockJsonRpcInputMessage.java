@@ -92,4 +92,10 @@ public class MockJsonRpcInputMessage implements JsonRpcInputMessage {
 		return null;
 	}
 
+	@Override
+	public Mono<String> getSessionId() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

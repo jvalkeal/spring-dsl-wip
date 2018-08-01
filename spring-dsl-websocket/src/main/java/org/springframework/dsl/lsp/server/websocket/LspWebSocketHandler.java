@@ -101,6 +101,12 @@ public class LspWebSocketHandler implements WebSocketHandler {
 					public Mono<String> getParams() {
 						return Mono.justOrEmpty(bb.getParams());
 					}
+
+					@Override
+					public Mono<String> getSessionId() {
+						return Mono.fromSupplier(() -> session.getId());
+
+					}
 				};
 
 //				JsonRpcInputMessage adaptedRequest = null;
@@ -128,7 +134,7 @@ public class LspWebSocketHandler implements WebSocketHandler {
 		protected Mono<Void> writeWithInternal(Publisher<? extends DataBuffer> body) {
 
 			Flux<WebSocketMessage> messages = Flux.from(body)
-				.map(bodyBuffer -> {					
+				.map(bodyBuffer -> {
 					String headers = "Content-Length: " + bodyBuffer.readableByteCount() + "\r\n\r\n";
 					DataBuffer headersBuffer = bufferFactory().wrap(ByteBuffer.wrap(headers.getBytes()));
 					DataBuffer buffer = bufferFactory().join(Arrays.asList(headersBuffer, bodyBuffer));

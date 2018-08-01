@@ -13,15 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.jsonrpc;
+package org.springframework.dsl.jsonrpc.session;
+
+import java.util.Arrays;
+import java.util.List;
+
+import org.springframework.dsl.jsonrpc.ServerJsonRpcExchange;
 
 import reactor.core.publisher.Mono;
 
-public interface JsonRpcInputMessage/* extends JsonRpcMessage*/ {
+public class RequestSessionIdJsonRpcSessionIdResolver implements JsonRpcSessionIdResolver {
 
-	Mono<String> getJsonrpc();
-	Mono<Integer> getId();
-	Mono<String> getMethod();
-	Mono<String> getParams();
-	Mono<String> getSessionId();
+	@Override
+	public List<String> resolveSessionIds(ServerJsonRpcExchange exchange) {
+		Mono<String> sessionId = exchange.getRequest().getSessionId();
+		return Arrays.asList(sessionId.block());
+	}
 }

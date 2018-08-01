@@ -15,21 +15,14 @@
  */
 package org.springframework.dsl.lsp.server.jsonrpc;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
-import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.NestedExceptionUtils;
-import org.springframework.core.ResolvableType;
-import org.springframework.core.codec.CharSequenceEncoder;
 import org.springframework.dsl.jsonrpc.JsonRpcHandler;
 import org.springframework.dsl.jsonrpc.JsonRpcInputMessage;
 import org.springframework.dsl.jsonrpc.JsonRpcOutputMessage;
 import org.springframework.dsl.jsonrpc.ServerJsonRpcExchange;
+import org.springframework.dsl.jsonrpc.session.DefaultJsonRpcSessionManager;
+import org.springframework.dsl.jsonrpc.session.JsonRpcSessionManager;
 import org.springframework.dsl.jsonrpc.support.DefaultServerJsonRpcExchange;
 import org.springframework.util.Assert;
 
@@ -45,6 +38,7 @@ public class RpcJsonRpcHandlerAdapter implements RpcHandler {
 
 	private static final Logger log = LoggerFactory.getLogger(RpcJsonRpcHandlerAdapter.class);
 	private final JsonRpcHandler delegate;
+	private final JsonRpcSessionManager sessionManager = new DefaultJsonRpcSessionManager();
 
 	/**
 	 * Instantiates a new rpc json rpc handler adapter.
@@ -65,7 +59,7 @@ public class RpcJsonRpcHandlerAdapter implements RpcHandler {
 	}
 
 	protected ServerJsonRpcExchange createExchange(JsonRpcInputMessage request, JsonRpcOutputMessage response) {
-		return new DefaultServerJsonRpcExchange(request, response);
+		return new DefaultServerJsonRpcExchange(request, response, sessionManager);
 	}
 
 	private Mono<Void> handleFailure(JsonRpcInputMessage request, JsonRpcOutputMessage response, Throwable exception) {
