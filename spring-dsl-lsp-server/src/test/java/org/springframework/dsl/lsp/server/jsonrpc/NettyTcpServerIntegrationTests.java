@@ -71,7 +71,8 @@ public class NettyTcpServerIntegrationTests {
 
 	private static final byte[] CONTENT11 = createContent("{\"jsonrpc\": \"2.0\",\"id\": 4, \"method\": \"initializeparams\", \"params\":" + initializeParams + "}");
 	private static final byte[] CONTENT12 = createContent("{\"jsonrpc\": \"2.0\",\"id\": 4, \"method\": \"monoobjectempty\", \"params\":null}");
-	private static final byte[] CONTENT13 = createContent("{\"jsonrpc\": \"2.0\",\"id\": 2, \"method\": \"session\"}");
+	private static final byte[] CONTENT13 = createContent("{\"jsonrpc\": \"2.0\",\"id\": 2, \"method\": \"session1\"}");
+	private static final byte[] CONTENT14 = createContent("{\"jsonrpc\": \"2.0\",\"id\": 2, \"method\": \"session2\"}");
 
 	private static byte[] createContent(String... lines) {
 		StringBuilder buf = new StringBuilder();
@@ -449,7 +450,7 @@ public class NettyTcpServerIntegrationTests {
 					});
 
 					return out
-							.send(Flux.just(Unpooled.copiedBuffer(CONTENT13), Unpooled.copiedBuffer(CONTENT13)))
+							.send(Flux.just(Unpooled.copiedBuffer(CONTENT13), Unpooled.copiedBuffer(CONTENT14)))
 							.neverComplete();
 				})
 				.block(Duration.ofSeconds(30));
@@ -556,10 +557,17 @@ public class NettyTcpServerIntegrationTests {
 			return params;
 		}
 
-		@JsonRpcRequestMapping(method = "session")
+		@JsonRpcRequestMapping(method = "session1")
 		@JsonRpcResponseBody
-		public Mono<String> session(JsonRpcSession session) {
-			return Mono.just(session.getId());
+		public Mono<String> session1(JsonRpcSession session) {
+			session.getAttributes().put("foo", "bar");
+			return Mono.just(session.getId() + session.getAttributes().get("foo"));
+		}
+
+		@JsonRpcRequestMapping(method = "session2")
+		@JsonRpcResponseBody
+		public Mono<String> session2(JsonRpcSession session) {
+			return Mono.just(session.getId() + session.getAttributes().get("foo"));
 		}
 	}
 

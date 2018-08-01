@@ -157,7 +157,7 @@ public class InMemoryJsonRpcSessionStore implements JsonRpcSessionStore {
 
 		@Override
 		public boolean isStarted() {
-			return this.state.get().equals(State.STARTED);
+			return this.state.get().equals(State.STARTED) || !getAttributes().isEmpty();
 		}
 
 		@Override
@@ -170,7 +170,9 @@ public class InMemoryJsonRpcSessionStore implements JsonRpcSessionStore {
 
 		@Override
 		public Mono<Void> save() {
-			this.state.compareAndSet(State.NEW, State.STARTED);
+			if (!getAttributes().isEmpty()) {
+				this.state.compareAndSet(State.NEW, State.STARTED);
+			}
 			InMemoryJsonRpcSessionStore.this.sessions.put(this.getId(), this);
 			return Mono.empty();
 		}
