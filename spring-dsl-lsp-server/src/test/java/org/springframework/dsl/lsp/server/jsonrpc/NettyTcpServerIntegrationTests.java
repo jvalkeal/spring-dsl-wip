@@ -558,10 +558,9 @@ public class NettyTcpServerIntegrationTests {
 
 		@JsonRpcRequestMapping(method = "session")
 		@JsonRpcResponseBody
-		public Mono<String> session(ServerJsonRpcExchange exchange) {
-			return exchange.getSession().map(session -> session.getId());
+		public Mono<String> session(JsonRpcSession session) {
+			return Mono.just(session.getId());
 		}
-
 	}
 
 	private static class Pojo1 {

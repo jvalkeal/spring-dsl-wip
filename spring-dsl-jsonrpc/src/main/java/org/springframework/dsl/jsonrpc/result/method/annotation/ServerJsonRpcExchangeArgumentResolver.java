@@ -18,6 +18,7 @@ package org.springframework.dsl.jsonrpc.result.method.annotation;
 import org.springframework.core.MethodParameter;
 import org.springframework.dsl.jsonrpc.ServerJsonRpcExchange;
 import org.springframework.dsl.jsonrpc.result.method.JsonRpcHandlerMethodArgumentResolver;
+import org.springframework.dsl.jsonrpc.session.JsonRpcSession;
 
 import reactor.core.publisher.Mono;
 
@@ -26,7 +27,7 @@ public class ServerJsonRpcExchangeArgumentResolver implements JsonRpcHandlerMeth
 	@Override
 	public boolean supportsParameter(MethodParameter parameter) {
 		Class<?> type = parameter.getParameterType();
-		return ServerJsonRpcExchange.class.isAssignableFrom(type);
+		return ServerJsonRpcExchange.class.isAssignableFrom(type) || JsonRpcSession.class.isAssignableFrom(type);
 	}
 
 	@Override
@@ -34,6 +35,8 @@ public class ServerJsonRpcExchangeArgumentResolver implements JsonRpcHandlerMeth
 		Class<?> paramType = parameter.getParameterType();
 		if (ServerJsonRpcExchange.class.isAssignableFrom(paramType)) {
 			return Mono.just(exchange);
+		} else if (JsonRpcSession.class.isAssignableFrom(paramType)) {
+			return Mono.from(exchange.getSession());
 		} else {
 			// should never happen
 			throw new IllegalArgumentException(
