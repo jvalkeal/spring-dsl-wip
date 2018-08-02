@@ -16,6 +16,7 @@
 package org.springframework.dsl.document;
 
 import org.springframework.dsl.domain.Position;
+import org.springframework.dsl.model.LanguageId;
 
 /**
  * Interface for accessing information about a document including its content.

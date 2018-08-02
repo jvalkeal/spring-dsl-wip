@@ -23,10 +23,10 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 import org.springframework.dsl.document.Document;
-import org.springframework.dsl.document.LanguageId;
 import org.springframework.dsl.document.TextDocument;
 import org.springframework.dsl.domain.CompletionItem;
 import org.springframework.dsl.domain.Position;
+import org.springframework.dsl.model.LanguageId;
 
 import reactor.core.publisher.Flux;
 
@@ -36,7 +36,7 @@ public class SimpleLanguageCompletionerTests {
 
 	@Test
 	public void testCompletions() {
-		Document document = new TextDocument("", LanguageId.PLAINTEXT, 0, SimpleLanguageTests.content1);
+		Document document = new TextDocument("", LanguageId.TXT, 0, SimpleLanguageTests.content1);
 
 		Flux<CompletionItem> complete = completioner.complete(document, new Position(0, 1));
 		assertThat(complete).isNotNull();
@@ -46,7 +46,7 @@ public class SimpleLanguageCompletionerTests {
 
 	@Test
 	public void testEmptyShouldReturnAllKeyTokens() {
-		Document document = new TextDocument("", LanguageId.PLAINTEXT, 0, "");
+		Document document = new TextDocument("", LanguageId.TXT, 0, "");
 		Flux<CompletionItem> complete = completioner.complete(document, Position.from(0, 0));
 		assertThat(complete).isNotNull();
 		List<CompletionItem> items = complete.toStream().collect(Collectors.toList());
@@ -57,7 +57,7 @@ public class SimpleLanguageCompletionerTests {
 
 	@Test
 	public void testPartialKey() {
-		Document document = new TextDocument("", LanguageId.PLAINTEXT, 0, "s");
+		Document document = new TextDocument("", LanguageId.TXT, 0, "s");
 		Flux<CompletionItem> complete = completioner.complete(document, Position.from(0, 1));
 		assertThat(complete).isNotNull();
 		List<CompletionItem> items = complete.toStream().collect(Collectors.toList());

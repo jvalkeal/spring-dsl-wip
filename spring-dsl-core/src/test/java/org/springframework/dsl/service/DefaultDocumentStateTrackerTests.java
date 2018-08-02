@@ -20,7 +20,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.Arrays;
 
 import org.junit.Test;
-import org.springframework.dsl.document.LanguageId;
 import org.springframework.dsl.domain.DidChangeTextDocumentParams;
 import org.springframework.dsl.domain.DidOpenTextDocumentParams;
 import org.springframework.dsl.domain.Position;
@@ -28,6 +27,7 @@ import org.springframework.dsl.domain.Range;
 import org.springframework.dsl.domain.TextDocumentContentChangeEvent;
 import org.springframework.dsl.domain.TextDocumentItem;
 import org.springframework.dsl.domain.VersionedTextDocumentIdentifier;
+import org.springframework.dsl.model.LanguageId;
 import org.springframework.dsl.service.DefaultDocumentStateTracker;
 
 public class DefaultDocumentStateTrackerTests {
@@ -36,7 +36,7 @@ public class DefaultDocumentStateTrackerTests {
 	public void testSimpleDocumentChangeFlow() {
 		DefaultDocumentStateTracker tracker = new DefaultDocumentStateTracker();
 
-		TextDocumentItem textDocumentItem = new TextDocumentItem("uri1", LanguageId.PLAINTEXT.toString(), 0, "1");
+		TextDocumentItem textDocumentItem = new TextDocumentItem("uri1", LanguageId.TXT.getIdentifier(), 0, "1");
 		DidOpenTextDocumentParams didOpenparams = new DidOpenTextDocumentParams(textDocumentItem);
 
 		tracker.didOpen(didOpenparams);

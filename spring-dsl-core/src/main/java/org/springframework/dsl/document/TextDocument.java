@@ -28,6 +28,7 @@ import org.springframework.dsl.domain.Position;
 import org.springframework.dsl.domain.Range;
 import org.springframework.dsl.domain.TextDocumentContentChangeEvent;
 import org.springframework.dsl.domain.TextDocumentIdentifier;
+import org.springframework.dsl.model.LanguageId;
 
 import javolution.text.Text;
 

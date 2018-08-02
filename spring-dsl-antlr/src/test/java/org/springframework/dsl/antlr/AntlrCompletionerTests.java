@@ -22,10 +22,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
-import org.springframework.dsl.document.LanguageId;
 import org.springframework.dsl.document.TextDocument;
 import org.springframework.dsl.domain.CompletionItem;
 import org.springframework.dsl.domain.Position;
+import org.springframework.dsl.model.LanguageId;
 
 import reactor.core.publisher.Flux;
 
@@ -42,7 +42,7 @@ public class AntlrCompletionerTests {
 	@Test
 	public void testTest2Empty() {
 		String input = "";
-		TextDocument document = new TextDocument("", LanguageId.PLAINTEXT, 0, input);
+		TextDocument document = new TextDocument("", LanguageId.TXT, 0, input);
 		Test2AntlrCompletioner completioner = new Test2AntlrCompletioner();
 		Flux<CompletionItem> completions = completioner.complete(document, new Position(0, 0));
 		List<CompletionItem> items = completions.toStream().collect(Collectors.toList());
@@ -57,7 +57,7 @@ public class AntlrCompletionerTests {
 	@Test
 	public void testTest2DistincIdResolving() {
 		String input = "state S1 {} state S2 {} transition { source ";
-		TextDocument document = new TextDocument("", LanguageId.PLAINTEXT, 0, input);
+		TextDocument document = new TextDocument("", LanguageId.TXT, 0, input);
 		Test2AntlrCompletioner completioner = new Test2AntlrCompletioner();
 		Flux<CompletionItem> completions = completioner.complete(document, new Position(0, 0));
 		List<CompletionItem> items = completions.toStream().collect(Collectors.toList());

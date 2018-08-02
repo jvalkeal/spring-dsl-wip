@@ -19,10 +19,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
 import org.springframework.dsl.document.Document;
-import org.springframework.dsl.document.LanguageId;
 import org.springframework.dsl.document.TextDocument;
 import org.springframework.dsl.domain.Hover;
 import org.springframework.dsl.domain.Position;
+import org.springframework.dsl.model.LanguageId;
 
 import reactor.core.publisher.Mono;
 
@@ -32,7 +32,7 @@ public class SimpleLanguageHovererTests {
 
 	@Test
 	public void testHovers() {
-		Document document = new TextDocument("", LanguageId.PLAINTEXT, 0, SimpleLanguageTests.content1);
+		Document document = new TextDocument("", LanguageId.TXT, 0, SimpleLanguageTests.content1);
 
 		Mono<Hover> hover = hoverer.hover(document, new Position(0, 1));
 		assertThat(hover).isNotNull();

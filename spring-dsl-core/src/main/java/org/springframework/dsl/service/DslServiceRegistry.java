@@ -13,25 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.autoconfigure;
+package org.springframework.dsl.service;
 
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.dsl.service.DefaultDslServiceRegistry;
-import org.springframework.dsl.service.DslServiceRegistry;
+import java.util.List;
+
+import org.springframework.dsl.model.LanguageId;
 
 /**
- * {@link EnableAutoConfiguration Auto-configuration} integrating into {@code DSL} features.
+ * A generic registry for services which can be requested by a {@link LanguageId}.
  *
  * @author Janne Valkealahti
  *
  */
-@Configuration
-public class DslAutoConfiguration {
+public interface DslServiceRegistry {
 
-	@Bean
-	public DslServiceRegistry dslServiceRegistry() {
-		return new DefaultDslServiceRegistry();
-	}
+	/**
+	 * Gets the completioners.
+	 *
+	 * @param languageId the language id
+	 * @return the {@link Completioner}s
+	 */
+	List<Completioner> getCompletioners(LanguageId languageId);
 }

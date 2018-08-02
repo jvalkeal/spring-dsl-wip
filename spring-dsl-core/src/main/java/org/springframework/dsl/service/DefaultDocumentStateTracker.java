@@ -22,7 +22,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dsl.document.BadLocationException;
 import org.springframework.dsl.document.Document;
-import org.springframework.dsl.document.LanguageId;
 import org.springframework.dsl.document.TextDocument;
 import org.springframework.dsl.domain.DidChangeTextDocumentParams;
 import org.springframework.dsl.domain.DidCloseTextDocumentParams;
@@ -32,6 +31,7 @@ import org.springframework.dsl.domain.TextDocumentIdentifier;
 import org.springframework.dsl.domain.TextDocumentItem;
 import org.springframework.dsl.domain.VersionedTextDocumentIdentifier;
 import org.springframework.dsl.domain.WillSaveTextDocumentParams;
+import org.springframework.dsl.model.LanguageId;
 import org.springframework.dsl.model.TrackedDocument;
 
 import reactor.core.publisher.Mono;
@@ -63,7 +63,7 @@ public class DefaultDocumentStateTracker implements DocumentStateTracker {
 		TextDocumentItem textDocument = params.getTextDocument();
 
 		String uri = textDocument.getUri();
-		LanguageId languageId = LanguageId.of(textDocument.getLanguageId());
+		LanguageId languageId = LanguageId.languageId(textDocument.getLanguageId());
 		int version = textDocument.getVersion();
 		String text = textDocument.getText();
 

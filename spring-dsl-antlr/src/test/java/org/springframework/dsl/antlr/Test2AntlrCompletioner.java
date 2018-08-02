@@ -15,6 +15,9 @@
  */
 package org.springframework.dsl.antlr;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -22,6 +25,7 @@ import org.antlr.v4.runtime.TokenStream;
 import org.springframework.dsl.Test2Grammar;
 import org.springframework.dsl.Test2Lexer;
 import org.springframework.dsl.domain.CompletionItem;
+import org.springframework.dsl.model.LanguageId;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -43,6 +47,11 @@ public class Test2AntlrCompletioner extends AbstractAntlrCompletioner<Test2Lexer
 		public Test2Grammar createParser(TokenStream tokenStream) {
 			return new Test2Grammar(tokenStream);
 		}
+	}
+
+	@Override
+	public List<LanguageId> getSupportedLanguageIds() {
+		return Arrays.asList(LanguageId.languageId("test2", "Antlr test2 Language"));
 	}
 
 	@Override

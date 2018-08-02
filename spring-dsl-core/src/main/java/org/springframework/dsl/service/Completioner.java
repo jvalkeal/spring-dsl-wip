@@ -29,8 +29,7 @@ import reactor.core.publisher.Flux;
  * @author Janne Valkealahti
  *
  */
-@FunctionalInterface
-public interface Completioner {
+public interface Completioner extends DslService {
 
 	/**
 	 * Provide completion items from a document in given position.

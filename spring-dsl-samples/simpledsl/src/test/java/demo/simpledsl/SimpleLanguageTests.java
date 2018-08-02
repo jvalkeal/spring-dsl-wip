@@ -21,9 +21,9 @@ import java.util.List;
 
 import org.junit.Test;
 import org.springframework.dsl.document.Document;
-import org.springframework.dsl.document.LanguageId;
 import org.springframework.dsl.document.TextDocument;
 import org.springframework.dsl.domain.Position;
+import org.springframework.dsl.model.LanguageId;
 
 import demo.simpledsl.SimpleLanguage.Line;
 import demo.simpledsl.SimpleLanguage.Token;
@@ -41,45 +41,45 @@ public class SimpleLanguageTests {
 
 	@Test
 	public void testParse() {
-		Document document = new TextDocument("", LanguageId.PLAINTEXT, 0, content1);
+		Document document = new TextDocument("", LanguageId.TXT, 0, content1);
 		List<Line> lines = SimpleLanguage.build(document).getLines();
 		assertThat(lines.size()).isEqualTo(4);
 
-		document = new TextDocument("", LanguageId.PLAINTEXT, 0, content2);
+		document = new TextDocument("", LanguageId.TXT, 0, content2);
 		lines = SimpleLanguage.build(document).getLines();
 		assertThat(lines.size()).isEqualTo(4);
 
-		document = new TextDocument("", LanguageId.PLAINTEXT, 0, content3);
+		document = new TextDocument("", LanguageId.TXT, 0, content3);
 		lines = SimpleLanguage.build(document).getLines();
 		assertThat(lines.size()).isEqualTo(4);
 
-		document = new TextDocument("", LanguageId.PLAINTEXT, 0, content4);
+		document = new TextDocument("", LanguageId.TXT, 0, content4);
 		lines = SimpleLanguage.build(document).getLines();
 		assertThat(lines.size()).isEqualTo(1);
 
-		document = new TextDocument("", LanguageId.PLAINTEXT, 0, content5);
+		document = new TextDocument("", LanguageId.TXT, 0, content5);
 		lines = SimpleLanguage.build(document).getLines();
 		assertThat(lines.size()).isEqualTo(1);
 
-		document = new TextDocument("", LanguageId.PLAINTEXT, 0, content6);
+		document = new TextDocument("", LanguageId.TXT, 0, content6);
 		lines = SimpleLanguage.build(document).getLines();
 		assertThat(lines.size()).isEqualTo(1);
 
-		document = new TextDocument("", LanguageId.PLAINTEXT, 0, content7);
+		document = new TextDocument("", LanguageId.TXT, 0, content7);
 		lines = SimpleLanguage.build(document).getLines();
 		assertThat(lines.size()).isEqualTo(1);
 	}
 
 	@Test
 	public void testTokenFromPositions() {
-		Document document = new TextDocument("", LanguageId.PLAINTEXT, 0, content4);
+		Document document = new TextDocument("", LanguageId.TXT, 0, content4);
 		List<Line> lines = SimpleLanguage.build(document).getLines();
 		SimpleLanguage language = new SimpleLanguage(document, lines);
 		Token token = language.getToken(Position.position().line(0).character(0).build());
 		assertThat(token).isNotNull();
 		assertThat(token.getType()).isEqualTo(TokenType.INT);
 
-		document = new TextDocument("", LanguageId.PLAINTEXT, 0, content5);
+		document = new TextDocument("", LanguageId.TXT, 0, content5);
 		lines = SimpleLanguage.build(document).getLines();
 		language = new SimpleLanguage(document, lines);
 		token = language.getToken(Position.position().line(0).character(3).build());

@@ -22,8 +22,8 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 import org.springframework.dsl.document.Document;
-import org.springframework.dsl.document.LanguageId;
 import org.springframework.dsl.document.TextDocument;
+import org.springframework.dsl.model.LanguageId;
 import org.springframework.dsl.reconcile.ReconcileProblem;
 
 public class SimpleLanguageLinterTests {
@@ -32,23 +32,23 @@ public class SimpleLanguageLinterTests {
 
 	@Test
 	public void testLints() {
-		Document document = new TextDocument("fakeuri", LanguageId.PLAINTEXT, 0, SimpleLanguageTests.content1);
+		Document document = new TextDocument("fakeuri", LanguageId.TXT, 0, SimpleLanguageTests.content1);
 		List<ReconcileProblem> problems = linter.lint(document).toStream().collect(Collectors.toList());
 		assertThat(problems).isEmpty();
 
-		document = new TextDocument("fakeuri", LanguageId.PLAINTEXT, 0, SimpleLanguageTests.content2);
+		document = new TextDocument("fakeuri", LanguageId.TXT, 0, SimpleLanguageTests.content2);
 		problems = linter.lint(document).toStream().collect(Collectors.toList());
 		assertThat(problems).isEmpty();
 
-		document = new TextDocument("fakeuri", LanguageId.PLAINTEXT, 0, SimpleLanguageTests.content3);
+		document = new TextDocument("fakeuri", LanguageId.TXT, 0, SimpleLanguageTests.content3);
 		problems = linter.lint(document).toStream().collect(Collectors.toList());
 		assertThat(problems).isEmpty();
 
-		document = new TextDocument("fakeuri", LanguageId.PLAINTEXT, 0, SimpleLanguageTests.content4);
+		document = new TextDocument("fakeuri", LanguageId.TXT, 0, SimpleLanguageTests.content4);
 		problems = linter.lint(document).toStream().collect(Collectors.toList());
 		assertThat(problems).isEmpty();
 
-		document = new TextDocument("fakeuri", LanguageId.PLAINTEXT, 0, SimpleLanguageTests.content5);
+		document = new TextDocument("fakeuri", LanguageId.TXT, 0, SimpleLanguageTests.content5);
 		problems = linter.lint(document).toStream().collect(Collectors.toList());
 		assertThat(problems).hasSize(1);
 		ReconcileProblem problem = problems.get(0);
