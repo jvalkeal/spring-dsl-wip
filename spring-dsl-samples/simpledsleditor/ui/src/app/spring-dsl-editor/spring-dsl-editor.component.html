@@ -1,0 +1,6 @@
+<div>
+  Use below monaco editor to play with simple dummy language.
+</div>
+<div>
+  <app-spring-monaco-editor [options]="editorOptions" [(ngModel)]="code" (onInit)="initLanguageClient($event)"></app-spring-monaco-editor>
+</div>

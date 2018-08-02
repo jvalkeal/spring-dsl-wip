@@ -24,9 +24,15 @@ project('spring-dsl-samples-simpledsleditor') {
 		//compile 'org.springframework.boot:spring-boot-starter-websocket'
 		testCompile 'junit:junit'
 	}
+
+	bootJar {
+		into('BOOT-INF/classes/static') {
+			from "ui/dist/ui"
+		}
+	}
 	
 	node {
-		version = "8.9.4"
+		version = "8.11.3"
 		download = true
 		nodeModulesDir = file("ui")
 	}
@@ -50,7 +56,7 @@ project('spring-dsl-samples-simpledsleditor') {
 	}
 
 	bootRun.dependsOn(buildClientDev)
-	jar.dependsOn(buildClient)
+	bootJar.dependsOn(buildClient)
 	build.dependsOn bootJar
 	install.dependsOn bootJar
 }

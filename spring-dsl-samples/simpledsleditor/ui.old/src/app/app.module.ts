@@ -3,10 +3,12 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { AppComponent } from './app.component';
-import { NgxMonacoEditorConfig } from './spring-monaco-editor/config';
-import { SpringDslEditorModuleModule } from './spring-dsl-editor-module/spring-dsl-editor-module.module';
+import { Lsp4jComponent } from './lsp4j/lsp4j.component';
+import { MonacoEditorModule, NgxMonacoEditorConfig } from 'ngx-monaco-editor';
 
 const monacoConfig: NgxMonacoEditorConfig = {
+  // baseUrl: 'app-name/assets',
+  // defaultOptions: { scrollBeyondLastLine: false },
   onMonacoLoad: () => {
     console.log((<any>window).monaco);
     (<any>window).monaco.languages.register({ id: 'simple' });
@@ -15,14 +17,15 @@ const monacoConfig: NgxMonacoEditorConfig = {
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    Lsp4jComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
-    SpringDslEditorModuleModule.forRoot(monacoConfig)
+    MonacoEditorModule.forRoot(monacoConfig)
   ],
   providers: [],
   bootstrap: [AppComponent]
 })
-export class AppModule {}
+export class AppModule { }
