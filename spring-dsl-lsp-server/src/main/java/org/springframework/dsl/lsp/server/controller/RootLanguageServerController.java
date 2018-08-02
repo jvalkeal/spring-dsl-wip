@@ -19,11 +19,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.dsl.jsonrpc.ServerJsonRpcExchange;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcController;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcNotification;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcRequestMapping;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcResponseBody;
+import org.springframework.dsl.jsonrpc.session.JsonRpcSession;
 import org.springframework.dsl.lsp.domain.InitializeParams;
 import org.springframework.dsl.lsp.domain.InitializeResult;
 import org.springframework.dsl.lsp.domain.InitializedParams;
@@ -74,12 +74,10 @@ public class RootLanguageServerController implements InitializingBean {
 
 	@JsonRpcRequestMapping(method = "initialize")
 	@JsonRpcResponseBody
-	Mono<InitializeResult> initialize(InitializeParams params, ServerJsonRpcExchange exchange) {
+	Mono<InitializeResult> initialize(InitializeParams params, JsonRpcSession session) {
+		log.debug("initialize {}", params);
 		// initialize is a first request from a lsp client, thus we return response having
 		// capabilities and also create a session what further communication can use.
-
-//		log.debug("initialize {}", params);
-		log.debug("initializexxx {} {}", params, exchange.getSession());
 		return Mono.fromSupplier(() -> {
 			boolean oldFormat = params.getCapabilities().getTextDocument().getSynchronization()
 					.getDidSave() == null;
@@ -98,6 +96,9 @@ public class RootLanguageServerController implements InitializingBean {
 						.and()
 					.and()
 				.build();
+		}).doOnSuccess(result -> {
+			// TODO: just a conceptual tweak now to see how session is used
+			session.getAttributes().put("initialized", true);
 		});
 	}
 

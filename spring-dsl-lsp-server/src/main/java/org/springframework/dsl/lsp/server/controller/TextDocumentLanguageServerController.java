@@ -25,6 +25,7 @@ import org.springframework.dsl.jsonrpc.annotation.JsonRpcController;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcNotification;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcRequestMapping;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcResponseBody;
+import org.springframework.dsl.jsonrpc.session.JsonRpcSession;
 import org.springframework.dsl.lsp.LspClientContext;
 import org.springframework.dsl.lsp.domain.CompletionItem;
 import org.springframework.dsl.lsp.domain.CompletionParams;
@@ -103,7 +104,7 @@ public class TextDocumentLanguageServerController implements InitializingBean {
 	 */
 	@JsonRpcRequestMapping(method = "didChange")
 	@JsonRpcNotification(method = "textDocument/publishDiagnostics")
-	public Flux<PublishDiagnosticsParams> clientDocumentChanged(DidChangeTextDocumentParams params) {
+	public Flux<PublishDiagnosticsParams> clientDocumentChanged(DidChangeTextDocumentParams params, JsonRpcSession session) {
 		log.debug("clientDocumentChanged {}", params);
 		return Flux.from(this.documentStateTracker.didChange(params))
 				.flatMap(document -> reconciler.reconcile(document)
