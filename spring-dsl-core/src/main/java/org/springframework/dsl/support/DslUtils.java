@@ -15,8 +15,8 @@
  */
 package org.springframework.dsl.support;
 
-import org.springframework.dsl.lsp.domain.Position;
-import org.springframework.dsl.lsp.domain.Range;
+import org.springframework.dsl.domain.Position;
+import org.springframework.dsl.domain.Range;
 
 /**
  * Various utility functions for {@code DSL}.

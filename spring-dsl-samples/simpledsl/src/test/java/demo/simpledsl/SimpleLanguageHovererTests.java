@@ -21,8 +21,8 @@ import org.junit.Test;
 import org.springframework.dsl.document.Document;
 import org.springframework.dsl.document.LanguageId;
 import org.springframework.dsl.document.TextDocument;
-import org.springframework.dsl.lsp.domain.Hover;
-import org.springframework.dsl.lsp.domain.Position;
+import org.springframework.dsl.domain.Hover;
+import org.springframework.dsl.domain.Position;
 
 import reactor.core.publisher.Mono;
 

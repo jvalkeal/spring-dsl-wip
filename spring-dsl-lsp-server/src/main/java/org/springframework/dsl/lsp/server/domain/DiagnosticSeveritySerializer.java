@@ -17,7 +17,7 @@ package org.springframework.dsl.lsp.server.domain;
 
 import java.io.IOException;
 
-import org.springframework.dsl.lsp.domain.DiagnosticSeverity;
+import org.springframework.dsl.domain.DiagnosticSeverity;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;

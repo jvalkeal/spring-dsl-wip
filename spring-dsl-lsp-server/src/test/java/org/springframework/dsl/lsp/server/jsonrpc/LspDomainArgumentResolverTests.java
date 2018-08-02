@@ -22,18 +22,18 @@ import java.time.Duration;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.MethodParameter;
+import org.springframework.dsl.domain.CompletionParams;
+import org.springframework.dsl.domain.DidChangeTextDocumentParams;
+import org.springframework.dsl.domain.DidCloseTextDocumentParams;
+import org.springframework.dsl.domain.DidOpenTextDocumentParams;
+import org.springframework.dsl.domain.DidSaveTextDocumentParams;
+import org.springframework.dsl.domain.InitializeParams;
+import org.springframework.dsl.domain.InitializedParams;
+import org.springframework.dsl.domain.TextDocumentPositionParams;
 import org.springframework.dsl.jsonrpc.ResolvableMethod;
 import org.springframework.dsl.jsonrpc.ServerJsonRpcExchange;
 import org.springframework.dsl.jsonrpc.support.MockJsonRpcInputMessage;
 import org.springframework.dsl.jsonrpc.support.MockServerJsonRpcExchange;
-import org.springframework.dsl.lsp.domain.CompletionParams;
-import org.springframework.dsl.lsp.domain.DidChangeTextDocumentParams;
-import org.springframework.dsl.lsp.domain.DidCloseTextDocumentParams;
-import org.springframework.dsl.lsp.domain.DidOpenTextDocumentParams;
-import org.springframework.dsl.lsp.domain.DidSaveTextDocumentParams;
-import org.springframework.dsl.lsp.domain.InitializeParams;
-import org.springframework.dsl.lsp.domain.InitializedParams;
-import org.springframework.dsl.lsp.domain.TextDocumentPositionParams;
 
 /**
  * Tests for {@link LspDomainArgumentResolver}.

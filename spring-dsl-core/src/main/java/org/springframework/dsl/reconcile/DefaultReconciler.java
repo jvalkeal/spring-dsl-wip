@@ -20,10 +20,10 @@ import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dsl.document.Document;
-import org.springframework.dsl.lsp.domain.Diagnostic;
-import org.springframework.dsl.lsp.domain.DiagnosticSeverity;
-import org.springframework.dsl.lsp.domain.PublishDiagnosticsParams;
-import org.springframework.dsl.lsp.service.Reconciler;
+import org.springframework.dsl.domain.Diagnostic;
+import org.springframework.dsl.domain.DiagnosticSeverity;
+import org.springframework.dsl.domain.PublishDiagnosticsParams;
+import org.springframework.dsl.service.Reconciler;
 import org.springframework.util.Assert;
 
 import reactor.core.publisher.Flux;

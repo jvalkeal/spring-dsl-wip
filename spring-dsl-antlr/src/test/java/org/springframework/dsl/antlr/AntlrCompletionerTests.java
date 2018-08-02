@@ -24,8 +24,8 @@ import java.util.stream.Collectors;
 import org.junit.Test;
 import org.springframework.dsl.document.LanguageId;
 import org.springframework.dsl.document.TextDocument;
-import org.springframework.dsl.lsp.domain.CompletionItem;
-import org.springframework.dsl.lsp.domain.Position;
+import org.springframework.dsl.domain.CompletionItem;
+import org.springframework.dsl.domain.Position;
 
 import reactor.core.publisher.Flux;
 

@@ -43,7 +43,7 @@ import org.springframework.dsl.lsp.server.jsonrpc.LspDomainArgumentResolver;
 import org.springframework.dsl.lsp.server.jsonrpc.NettyTcpServer;
 import org.springframework.dsl.lsp.server.jsonrpc.ReactorJsonRpcHandlerAdapter;
 import org.springframework.dsl.lsp.server.jsonrpc.RpcJsonRpcHandlerAdapter;
-import org.springframework.dsl.lsp.service.DocumentStateTracker;
+import org.springframework.dsl.service.DocumentStateTracker;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;

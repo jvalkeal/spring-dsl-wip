@@ -19,10 +19,10 @@ import java.io.IOException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dsl.lsp.domain.CompletionOptions;
-import org.springframework.dsl.lsp.domain.ServerCapabilities;
-import org.springframework.dsl.lsp.domain.TextDocumentSyncKind;
-import org.springframework.dsl.lsp.domain.TextDocumentSyncOptions;
+import org.springframework.dsl.domain.CompletionOptions;
+import org.springframework.dsl.domain.ServerCapabilities;
+import org.springframework.dsl.domain.TextDocumentSyncKind;
+import org.springframework.dsl.domain.TextDocumentSyncOptions;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;

@@ -23,7 +23,7 @@ import org.junit.Test;
 import org.springframework.dsl.document.Document;
 import org.springframework.dsl.document.LanguageId;
 import org.springframework.dsl.document.TextDocument;
-import org.springframework.dsl.lsp.domain.Position;
+import org.springframework.dsl.domain.Position;
 
 import demo.simpledsl.SimpleLanguage.Line;
 import demo.simpledsl.SimpleLanguage.Token;

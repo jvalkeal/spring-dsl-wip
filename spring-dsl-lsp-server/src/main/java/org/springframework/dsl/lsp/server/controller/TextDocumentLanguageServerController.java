@@ -21,27 +21,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.dsl.domain.CompletionItem;
+import org.springframework.dsl.domain.CompletionParams;
+import org.springframework.dsl.domain.DidChangeTextDocumentParams;
+import org.springframework.dsl.domain.DidCloseTextDocumentParams;
+import org.springframework.dsl.domain.DidOpenTextDocumentParams;
+import org.springframework.dsl.domain.DidSaveTextDocumentParams;
+import org.springframework.dsl.domain.Hover;
+import org.springframework.dsl.domain.PublishDiagnosticsParams;
+import org.springframework.dsl.domain.TextDocumentPositionParams;
+import org.springframework.dsl.domain.TextEdit;
+import org.springframework.dsl.domain.WillSaveTextDocumentParams;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcController;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcNotification;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcRequestMapping;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcResponseBody;
 import org.springframework.dsl.jsonrpc.session.JsonRpcSession;
-import org.springframework.dsl.lsp.LspClientContext;
-import org.springframework.dsl.lsp.domain.CompletionItem;
-import org.springframework.dsl.lsp.domain.CompletionParams;
-import org.springframework.dsl.lsp.domain.DidChangeTextDocumentParams;
-import org.springframework.dsl.lsp.domain.DidCloseTextDocumentParams;
-import org.springframework.dsl.lsp.domain.DidOpenTextDocumentParams;
-import org.springframework.dsl.lsp.domain.DidSaveTextDocumentParams;
-import org.springframework.dsl.lsp.domain.Hover;
-import org.springframework.dsl.lsp.domain.PublishDiagnosticsParams;
-import org.springframework.dsl.lsp.domain.TextDocumentPositionParams;
-import org.springframework.dsl.lsp.domain.TextEdit;
-import org.springframework.dsl.lsp.domain.WillSaveTextDocumentParams;
-import org.springframework.dsl.lsp.service.Completioner;
-import org.springframework.dsl.lsp.service.DocumentStateTracker;
-import org.springframework.dsl.lsp.service.Hoverer;
-import org.springframework.dsl.lsp.service.Reconciler;
+import org.springframework.dsl.service.Completioner;
+import org.springframework.dsl.service.DocumentStateTracker;
+import org.springframework.dsl.service.Hoverer;
+import org.springframework.dsl.service.Reconciler;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -163,7 +162,7 @@ public class TextDocumentLanguageServerController implements InitializingBean {
 	 */
 	@JsonRpcRequestMapping(method = "willSaveWaitUntil")
 	@JsonRpcResponseBody
-	public Flux<TextEdit> clientDocumentWillSaveWaitUntil(WillSaveTextDocumentParams params, LspClientContext context) {
+	public Flux<TextEdit> clientDocumentWillSaveWaitUntil(WillSaveTextDocumentParams params) {
 		return Flux.empty();
 	}
 

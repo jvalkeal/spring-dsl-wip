@@ -15,7 +15,7 @@
  */
 package org.springframework.dsl.reconcile;
 
-import org.springframework.dsl.lsp.domain.Range;
+import org.springframework.dsl.domain.Range;
 
 /**
  * Minimal interface that objects representing a reconciler problem must

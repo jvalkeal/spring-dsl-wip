@@ -31,6 +31,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.ReactiveAdapterRegistry;
+import org.springframework.dsl.domain.InitializeParams;
 import org.springframework.dsl.jsonrpc.ServerJsonRpcExchange;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcController;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcNotification;
@@ -39,7 +40,6 @@ import org.springframework.dsl.jsonrpc.annotation.JsonRpcResponseBody;
 import org.springframework.dsl.jsonrpc.config.EnableJsonRcp;
 import org.springframework.dsl.jsonrpc.session.JsonRpcSession;
 import org.springframework.dsl.jsonrpc.support.DispatcherJsonRpcHandler;
-import org.springframework.dsl.lsp.domain.InitializeParams;
 import org.springframework.dsl.lsp.server.config.LspDomainJacksonConfiguration;
 
 import io.netty.buffer.Unpooled;

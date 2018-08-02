@@ -28,9 +28,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.dsl.antlr.support.AntlrObjectSupport;
 import org.springframework.dsl.antlr.support.DefaultAntlrCompletionEngine;
 import org.springframework.dsl.document.Document;
-import org.springframework.dsl.lsp.domain.CompletionItem;
-import org.springframework.dsl.lsp.domain.Position;
-import org.springframework.dsl.lsp.service.Completioner;
+import org.springframework.dsl.domain.CompletionItem;
+import org.springframework.dsl.domain.Position;
+import org.springframework.dsl.service.Completioner;
 
 import reactor.core.publisher.Flux;
 

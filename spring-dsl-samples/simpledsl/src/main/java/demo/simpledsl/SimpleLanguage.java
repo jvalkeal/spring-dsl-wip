@@ -25,8 +25,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.springframework.dsl.document.Document;
-import org.springframework.dsl.lsp.domain.Position;
-import org.springframework.dsl.lsp.domain.Range;
+import org.springframework.dsl.domain.Position;
+import org.springframework.dsl.domain.Range;
 import org.springframework.dsl.support.DslUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;

@@ -21,7 +21,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.TokenStream;
 import org.springframework.dsl.Test2Grammar;
 import org.springframework.dsl.Test2Lexer;
-import org.springframework.dsl.lsp.domain.CompletionItem;
+import org.springframework.dsl.domain.CompletionItem;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;

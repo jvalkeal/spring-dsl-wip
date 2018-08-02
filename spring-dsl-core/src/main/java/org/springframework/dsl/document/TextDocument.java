@@ -23,11 +23,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.dsl.document.linetracker.DefaultLineTracker;
 import org.springframework.dsl.document.linetracker.LineTracker;
 import org.springframework.dsl.document.linetracker.Region;
-import org.springframework.dsl.lsp.domain.DidChangeTextDocumentParams;
-import org.springframework.dsl.lsp.domain.Position;
-import org.springframework.dsl.lsp.domain.Range;
-import org.springframework.dsl.lsp.domain.TextDocumentContentChangeEvent;
-import org.springframework.dsl.lsp.domain.TextDocumentIdentifier;
+import org.springframework.dsl.domain.DidChangeTextDocumentParams;
+import org.springframework.dsl.domain.Position;
+import org.springframework.dsl.domain.Range;
+import org.springframework.dsl.domain.TextDocumentContentChangeEvent;
+import org.springframework.dsl.domain.TextDocumentIdentifier;
 
 import javolution.text.Text;
 

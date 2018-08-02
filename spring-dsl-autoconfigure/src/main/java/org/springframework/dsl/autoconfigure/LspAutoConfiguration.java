@@ -39,11 +39,11 @@ import org.springframework.dsl.lsp.server.controller.RootLanguageServerControlle
 import org.springframework.dsl.lsp.server.controller.TextDocumentLanguageServerController;
 import org.springframework.dsl.lsp.server.jsonrpc.LspDomainArgumentResolver;
 import org.springframework.dsl.lsp.server.websocket.LspWebSocketConfig;
-import org.springframework.dsl.lsp.service.DefaultDocumentStateTracker;
-import org.springframework.dsl.lsp.service.DocumentStateTracker;
-import org.springframework.dsl.lsp.service.Reconciler;
 import org.springframework.dsl.reconcile.DefaultReconciler;
 import org.springframework.dsl.reconcile.Linter;
+import org.springframework.dsl.service.DefaultDocumentStateTracker;
+import org.springframework.dsl.service.DocumentStateTracker;
+import org.springframework.dsl.service.Reconciler;
 import org.springframework.web.reactive.socket.WebSocketHandler;
 
 /**

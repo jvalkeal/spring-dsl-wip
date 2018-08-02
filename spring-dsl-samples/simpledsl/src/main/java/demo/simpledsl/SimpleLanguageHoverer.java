@@ -16,10 +16,10 @@
 package demo.simpledsl;
 
 import org.springframework.dsl.document.Document;
-import org.springframework.dsl.lsp.domain.Hover;
-import org.springframework.dsl.lsp.domain.MarkupKind;
-import org.springframework.dsl.lsp.domain.Position;
-import org.springframework.dsl.lsp.service.Hoverer;
+import org.springframework.dsl.domain.Hover;
+import org.springframework.dsl.domain.MarkupKind;
+import org.springframework.dsl.domain.Position;
+import org.springframework.dsl.service.Hoverer;
 
 import demo.simpledsl.SimpleLanguage.Token;
 import reactor.core.publisher.Mono;

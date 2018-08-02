@@ -15,7 +15,7 @@
  */
 package org.springframework.dsl.lsp.server.support;
 
-import org.springframework.dsl.lsp.domain.Range;
+import org.springframework.dsl.domain.Range;
 import org.springframework.dsl.reconcile.ProblemType;
 import org.springframework.dsl.reconcile.ReconcileProblem;
 

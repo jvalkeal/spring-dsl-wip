@@ -18,9 +18,9 @@ package demo.simpledsl;
 import java.util.Collection;
 
 import org.springframework.dsl.document.Document;
-import org.springframework.dsl.lsp.domain.CompletionItem;
-import org.springframework.dsl.lsp.domain.Position;
-import org.springframework.dsl.lsp.service.Completioner;
+import org.springframework.dsl.domain.CompletionItem;
+import org.springframework.dsl.domain.Position;
+import org.springframework.dsl.service.Completioner;
 
 import demo.simpledsl.SimpleLanguage.TokenType;
 import reactor.core.publisher.Flux;

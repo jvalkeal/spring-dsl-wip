@@ -19,7 +19,7 @@ import java.io.IOException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dsl.lsp.domain.ServerCapabilities;
+import org.springframework.dsl.domain.ServerCapabilities;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;

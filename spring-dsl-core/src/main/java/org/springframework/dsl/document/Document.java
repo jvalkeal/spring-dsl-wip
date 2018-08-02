@@ -15,7 +15,7 @@
  */
 package org.springframework.dsl.document;
 
-import org.springframework.dsl.lsp.domain.Position;
+import org.springframework.dsl.domain.Position;
 
 /**
  * Interface for accessing information about a document including its content.
