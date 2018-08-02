@@ -20,7 +20,6 @@ import java.util.List;
 import org.springframework.dsl.jsonrpc.result.method.HandlerMethod;
 import org.springframework.dsl.jsonrpc.result.method.InvocableHandlerMethod;
 import org.springframework.dsl.jsonrpc.result.method.JsonRpcHandlerMethodArgumentResolver;
-import org.springframework.lang.Nullable;
 
 /**
  *

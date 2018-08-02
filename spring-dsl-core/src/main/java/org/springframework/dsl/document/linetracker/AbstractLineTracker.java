@@ -15,8 +15,6 @@
  */
 package org.springframework.dsl.document.linetracker;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.dsl.document.BadLocationException;

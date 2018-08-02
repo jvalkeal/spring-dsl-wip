@@ -15,10 +15,6 @@
  */
 package org.springframework.dsl.buildtests;
 
-import org.junit.After;
-import org.junit.Before;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-
 /**
  * Base integration lsp tests using full command structures against various
  * supported implementations.

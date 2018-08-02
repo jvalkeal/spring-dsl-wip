@@ -32,7 +32,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.ReactiveAdapterRegistry;
 import org.springframework.dsl.domain.InitializeParams;
-import org.springframework.dsl.jsonrpc.ServerJsonRpcExchange;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcController;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcNotification;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcRequestMapping;

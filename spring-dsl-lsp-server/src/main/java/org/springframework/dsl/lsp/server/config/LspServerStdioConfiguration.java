@@ -15,13 +15,6 @@
  */
 package org.springframework.dsl.lsp.server.config;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.nio.charset.Charset;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -29,10 +22,6 @@ import org.springframework.dsl.lsp.server.jsonrpc.NettyTcpServer;
 import org.springframework.dsl.lsp.server.jsonrpc.ReactorJsonRpcHandlerAdapter;
 import org.springframework.dsl.lsp.server.support.StdioSocketBridge;
 
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-import reactor.ipc.netty.NettyContext;
-import reactor.ipc.netty.tcp.TcpClient;
 import reactor.ipc.netty.tcp.TcpServer;
 
 /**

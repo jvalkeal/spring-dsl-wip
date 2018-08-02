@@ -24,7 +24,6 @@ import org.springframework.dsl.jsonrpc.JsonRpcHandlerAdapter;
 import org.springframework.dsl.jsonrpc.JsonRpcHandlerResult;
 import org.springframework.dsl.jsonrpc.ServerJsonRpcExchange;
 import org.springframework.dsl.jsonrpc.result.method.HandlerMethod;
-import org.springframework.dsl.jsonrpc.result.method.InvocableHandlerMethod;
 import org.springframework.dsl.jsonrpc.result.method.JsonRpcHandlerMethodArgumentResolver;
 import org.springframework.dsl.jsonrpc.support.ControllerMethodResolver;
 import org.springframework.util.Assert;

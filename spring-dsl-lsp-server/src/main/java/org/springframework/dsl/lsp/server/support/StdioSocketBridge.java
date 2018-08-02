@@ -25,10 +25,8 @@ import java.util.function.Consumer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.dsl.lsp.server.jsonrpc.NettyTcpServer;
 
-import io.netty.buffer.Unpooled;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.SynchronousSink;

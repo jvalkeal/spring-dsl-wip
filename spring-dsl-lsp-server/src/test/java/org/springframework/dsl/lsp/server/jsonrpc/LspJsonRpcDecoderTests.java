@@ -15,16 +15,14 @@
  */
 package org.springframework.dsl.lsp.server.jsonrpc;
 
-import org.junit.Test;
-import org.springframework.dsl.lsp.server.jsonrpc.LspJsonRpcDecoder;
-import org.springframework.messaging.Message;
-
-import io.netty.buffer.Unpooled;
-import io.netty.channel.embedded.EmbeddedChannel;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.ByteArrayOutputStream;
+
+import org.junit.Test;
+
+import io.netty.buffer.Unpooled;
+import io.netty.channel.embedded.EmbeddedChannel;
 
 /**
  * Tests for {@link LspJsonRpcDecoder}.

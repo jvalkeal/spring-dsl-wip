@@ -18,15 +18,11 @@ package org.springframework.dsl.lsp.server.jsonrpc;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.convert.ConversionService;
@@ -44,19 +40,12 @@ import org.springframework.dsl.domain.InitializedParams;
 import org.springframework.dsl.domain.TextDocumentPositionParams;
 import org.springframework.dsl.jsonrpc.ServerJsonRpcExchange;
 import org.springframework.dsl.jsonrpc.result.method.JsonRpcHandlerMethodArgumentResolver;
-//import org.springframework.http.codec.json.Jackson2Tokenizer;
-//import org.springframework.http.codec.json.JsonFactory;
-//import org.springframework.http.codec.json.TokenBuffer;
 import org.springframework.util.Assert;
-import org.springframework.util.ClassUtils;
-import org.springframework.util.ObjectUtils;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 
 import reactor.core.publisher.Flux;

@@ -16,7 +16,6 @@
 package org.springframework.dsl.jsonrpc.support;
 
 import org.springframework.dsl.jsonrpc.JsonRpcInputMessage;
-import org.springframework.dsl.jsonrpc.JsonRpcOutputMessage;
 
 public abstract class AbstractJsonRpcInputMessage implements JsonRpcInputMessage {
 

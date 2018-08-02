@@ -18,7 +18,6 @@ package org.springframework.dsl.autoconfigure;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -28,7 +27,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.core.ReactiveAdapterRegistry;
-import org.springframework.core.convert.ConversionService;
 import org.springframework.dsl.DslSystemConstants;
 import org.springframework.dsl.lsp.server.config.DslConfigurationProperties;
 import org.springframework.dsl.lsp.server.config.EnableLanguageServer;
