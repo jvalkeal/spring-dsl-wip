@@ -4,13 +4,9 @@ import {
   BaseLanguageClient, CloseAction, ErrorAction,
   createMonacoServices, createConnection
 } from 'monaco-languageclient';
-import ReconnectingWebSocket from 'reconnecting-websocket';
-
-// import { MessageConnection } from 'vscode-jsonrpc';
 
 require('set-immediate');
 const normalizeUrl = require('normalize-url');
-// const ReconnectingWebSocket = require('reconnecting-websocket');
 
 
 @Component({
@@ -22,15 +18,16 @@ export class SpringDslEditorComponent implements OnInit {
 
   editorOptions = {theme: 'vs', language: 'simple'};
   code = '';
-  private xxx: any;
+  private editor: any;
 
   constructor() {
   }
 
-  ddd(xxx: any) {
-    console.log('onInit', xxx);
-    this.xxx = xxx;
+  ngOnInit() {
+  }
 
+  initLanguageClient(editor: any) {
+    this.editor = editor;
     const url = this.createUrl('ws');
     const webSocket = new WebSocket(url);
 
@@ -45,26 +42,8 @@ export class SpringDslEditorComponent implements OnInit {
     });
   }
 
-  ngOnInit() {
-    console.log('ngOnInit');
-
-    // const url = this.createUrl('ws');
-    // const webSocket = new WebSocket(url);
-    //
-    // listen({
-    //   webSocket,
-    //   onConnection: connection => {
-    //     // create and start the language client
-    //     const languageClient = this.createLanguageClient(connection);
-    //     const disposable = languageClient.start();
-    //     connection.onClose(() => disposable.dispose());
-    //   }
-    // });
-
-  }
-
   private createLanguageClient(connection: MessageConnection): BaseLanguageClient {
-    const services = createMonacoServices(this.xxx);
+    const services = createMonacoServices(this.editor);
     return new BaseLanguageClient({
       name: 'Sample Language Client',
       clientOptions: {
@@ -92,17 +71,4 @@ export class SpringDslEditorComponent implements OnInit {
     const protocol = location.protocol === 'https:' ? 'wss' : 'ws';
     return normalizeUrl(`${protocol}://${location.host}${location.pathname}${path}`);
   }
-
-  private createWebSocket(url: string): ReconnectingWebSocket {
-    const socketOptions = {
-      maxReconnectionDelay: 10000,
-      minReconnectionDelay: 1000,
-      reconnectionDelayGrowFactor: 1.3,
-      connectionTimeout: 10000,
-      maxRetries: Infinity,
-      debug: false
-    };
-    return new ReconnectingWebSocket(url, [], socketOptions);
-  }
-
 }
