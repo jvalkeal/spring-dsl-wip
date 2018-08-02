@@ -5,7 +5,6 @@ import {
   createMonacoServices, createConnection
 } from 'monaco-languageclient';
 
-require('set-immediate');
 const normalizeUrl = require('normalize-url');
 
 

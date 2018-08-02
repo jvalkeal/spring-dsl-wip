@@ -6,7 +6,7 @@ fs.readFile(f, 'utf8', function (err,data) {
   if (err) {
     return console.log(err);
   }
-  var result = data.replace(/node: false/g, 'node: {crypto: true, stream: true, fs: \'empty\', net: \'empty\'}');
+  var result = data.replace(/node: false/g, 'node: {crypto: true, stream: true, fs: \'empty\', net: \'empty\', clearImmediate: true, setImmediate: true}');
 
   fs.writeFile(f, result, 'utf8', function (err) {
     if (err) return console.log(err);
