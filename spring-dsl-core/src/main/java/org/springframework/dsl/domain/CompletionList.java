@@ -83,12 +83,50 @@ public class CompletionList {
 		return true;
 	}
 
-	public interface CompletionListBuilder<P> extends DomainBuilder<CompletionList, P>{
+	/**
+	 * Builder interface for {@link CompletionList}.
+	 *
+	 * @param <P> the parent builder type
+	 */
+	public interface CompletionListBuilder<P> extends DomainBuilder<CompletionList, P> {
 
+		/**
+		 * Sets a {@code isIncomplete} field.
+		 *
+		 * @param isIncomplete the isIncomplete flag
+		 * @return the builder for chaining
+		 */
 		CompletionListBuilder<P> isIncomplete(Boolean isIncomplete);
+
+		/**
+		 * Adds a {@link CompletionItem}.
+		 *
+		 * @param item the {@link CompletionItem}
+		 * @return the builder for chaining
+		 */
+		CompletionListBuilder<P> item(CompletionItem item);
+
+		/**
+		 * Adds a {@link CompletionItem}s.
+		 *
+		 * @param items the {@link CompletionItem}s
+		 * @return the builder for chaining
+		 */
+		CompletionListBuilder<P> items(List<CompletionItem> items);
+
+		/**
+		 * Gets a builder for {@link CompletionItem}.
+		 *
+		 * @return the builder for chaining
+		 */
 		CompletionItemBuilder<CompletionListBuilder<P>> item();
 	}
 
+	/**
+	 * Gets a builder for {@link CompletionList}
+	 *
+	 * @return the completion list builder
+	 */
 	public static <P> CompletionListBuilder<P> completionList() {
 		return new InternalCompletionListBuilder<>(null);
 	}
@@ -101,7 +139,8 @@ public class CompletionList {
 			extends AbstractDomainBuilder<CompletionList, P> implements CompletionListBuilder<P> {
 
 		private Boolean isIncomplete;
-		private List<CompletionItemBuilder<CompletionListBuilder<P>>> items = new ArrayList<>();
+		private List<CompletionItemBuilder<CompletionListBuilder<P>>> itemBuilders = new ArrayList<>();
+		private List<CompletionItem> items = new ArrayList<>();
 
 		InternalCompletionListBuilder(P parent) {
 			super(parent);
@@ -116,21 +155,34 @@ public class CompletionList {
 		@Override
 		public CompletionItemBuilder<CompletionListBuilder<P>> item() {
 			CompletionItemBuilder<CompletionListBuilder<P>> completionItemBuilder = CompletionItem.completionItem(this);
-			this.items.add(completionItemBuilder);
+			this.itemBuilders.add(completionItemBuilder);
 			return completionItemBuilder;
+		}
+
+		@Override
+		public CompletionListBuilder<P> item(CompletionItem item) {
+			this.items.add(item);
+			return this;
+		}
+
+		@Override
+		public CompletionListBuilder<P> items(List<CompletionItem> items) {
+			this.items.addAll(items);
+			return this;
 		}
 
 		@Override
 		public CompletionList build() {
 			CompletionList completionList = new CompletionList();
 			completionList.setIsIncomplete(isIncomplete);
-			if (!items.isEmpty()) {
-				List<CompletionItem> item = new ArrayList<>();
-				for (CompletionItemBuilder<CompletionListBuilder<P>> i : items) {
+			List<CompletionItem> item = new ArrayList<>();
+			if (!itemBuilders.isEmpty()) {
+				for (CompletionItemBuilder<CompletionListBuilder<P>> i : itemBuilders) {
 					item.add(i.build());
 				}
-				completionList.setItems(item);
 			}
+			item.addAll(items);
+			completionList.setItems(item);
 			return completionList;
 		}
 	}

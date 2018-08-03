@@ -15,14 +15,12 @@
  */
 package org.springframework.dsl.lsp.server.controller;
 
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.dsl.document.Document;
-import org.springframework.dsl.domain.CompletionItem;
+import org.springframework.dsl.domain.CompletionList;
 import org.springframework.dsl.domain.CompletionParams;
 import org.springframework.dsl.domain.DidChangeTextDocumentParams;
 import org.springframework.dsl.domain.DidCloseTextDocumentParams;
@@ -206,23 +204,29 @@ public class TextDocumentLanguageServerController implements InitializingBean {
 	 *
 	 * @param params the {@link CompletionParams}
 	 * @param session the {@link JsonRpcSession}
-	 * @return a flux of completion items
+	 * @return a mono of completion list
 	 */
 	@JsonRpcRequestMapping(method = "completion")
 	@JsonRpcResponseBody
-	public Mono<List<CompletionItem>> completion(CompletionParams params, JsonRpcSession session) {
-		// TODO: support Flux<CompletionItem> with lsp protocol
-		//       this would need a conversion to CompletionList where last list send
-		//       would have isIncomplete set to true. Also list could have batching
-		//       if calculation is expensive.
+	public Mono<CompletionList> completion(CompletionParams params, JsonRpcSession session) {
+		// TODO: spec is CompletionItem[] | CompletionList | null
+		//       not sure if there are clients which only supports CompletionItem[]
 		log.debug("completion {}", params);
-
 		DocumentStateTracker documentStateTracker = getTracker(session);
 		Document document = documentStateTracker.getDocument(params.getTextDocument().getUri());
 		Position position = params.getPosition();
+
+		// TODO: think how to integrate into isIncomplete setting
 		return Flux.fromIterable(registry.getCompletioners(document.getLanguageId()))
-			.concatMap(completioner -> completioner.complete(document, position))
-			.collectList();
+				.concatMap(completioner -> completioner.complete(document, position))
+				.buffer()
+				.map(completionItems -> {
+					return CompletionList.completionList()
+							.isIncomplete(false)
+							.items(completionItems)
+							.build();
+				})
+				.next();
 	}
 
 	private static DocumentStateTracker getTracker(JsonRpcSession session) {
