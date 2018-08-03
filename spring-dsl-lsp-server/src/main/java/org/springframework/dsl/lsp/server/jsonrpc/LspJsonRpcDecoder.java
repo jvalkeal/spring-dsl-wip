@@ -35,7 +35,6 @@ public class LspJsonRpcDecoder extends ReplayingDecoder<State> {
 	private static final byte CR = 13;
 	private static final byte LF = 10;
 	private static final byte COLON = 58;
-	private static final String EMPTY_VALUE = "";
 	private static final String CONTENT_LENGTH = "Content-Length";
 
 	private final int maxLineLength;

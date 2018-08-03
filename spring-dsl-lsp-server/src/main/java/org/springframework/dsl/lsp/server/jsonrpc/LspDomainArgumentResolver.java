@@ -21,8 +21,6 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.convert.ConversionService;
@@ -63,10 +61,6 @@ import reactor.core.publisher.Mono;
 public class LspDomainArgumentResolver implements JsonRpcHandlerMethodArgumentResolver {
 
 
-	private static final Logger log = LoggerFactory.getLogger(LspDomainArgumentResolver.class);
-
-
-//	private final ConversionService conversionService;
 	private Set<Class<?>> supportedClasses = Arrays.asList(
 			InitializeParams.class,
 			InitializedParams.class,
@@ -80,12 +74,8 @@ public class LspDomainArgumentResolver implements JsonRpcHandlerMethodArgumentRe
 
 	/**
 	 * Instantiates a new lsp domain argument resolver.
-	 *
-	 * @param conversionService the conversion service
 	 */
-	public LspDomainArgumentResolver(/*ConversionService conversionService*/) {
-//		Assert.notNull(conversionService, "'conversionService' must be set");
-//		this.conversionService = conversionService;
+	public LspDomainArgumentResolver() {
 	}
 
 	@Override
@@ -112,7 +102,6 @@ public class LspDomainArgumentResolver implements JsonRpcHandlerMethodArgumentRe
 		JavaType javaType = typeFactory.constructType(GenericTypeResolver.resolveType(type, contextClass));
 		ObjectReader forType = objectMapper.readerFor(javaType);
 		try {
-			Object xxx = forType.readValue(bodyAsString.block().toString());
 			return Mono.just(forType.readValue(bodyAsString.block().toString()));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

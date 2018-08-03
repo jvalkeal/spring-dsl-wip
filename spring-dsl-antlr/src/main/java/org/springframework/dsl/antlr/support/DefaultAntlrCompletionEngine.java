@@ -209,7 +209,7 @@ public class DefaultAntlrCompletionEngine implements AntlrCompletionEngine {
 
     private List<Integer> getFollowingTokens(Transition initialTransition) {
         LinkedList<Integer> result = new LinkedList<>();
-        LinkedList<ATNState> seen = new LinkedList<>(); // unused but in orig
+//        LinkedList<ATNState> seen = new LinkedList<>(); // unused but in orig
         LinkedList<ATNState> pipeline = new LinkedList<>();
         pipeline.add(initialTransition.target);
 

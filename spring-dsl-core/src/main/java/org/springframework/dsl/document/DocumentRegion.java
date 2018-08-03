@@ -244,7 +244,7 @@ public class DocumentRegion implements CharSequence, Region {
 	 * is truncated to end of the document.
 	 */
 	public DocumentRegion textAfter(int len) {
-		Assert.isTrue(len >= 0);
+		Assert.isTrue(len >= 0, "length cannot be negative");
 		return new DocumentRegion(document, end, end + len);
 	}
 
@@ -255,7 +255,7 @@ public class DocumentRegion implements CharSequence, Region {
 	 * region is shortened so its start coincides with document start.
 	 */
 	public DocumentRegion textBefore(int len) {
-		Assert.isTrue(len >= 0);
+		Assert.isTrue(len >= 0, "length cannot be negative");
 		return new DocumentRegion(document, start - len, start);
 	}
 

@@ -353,9 +353,9 @@ abstract class TreeLineTracker implements LineTracker {
 	 * @param node the node to rotate around
 	 */
 	private void rotateLeft(Node node) {
-		if (ASSERT) Assert.notNull(node);
+		if (ASSERT) Assert.notNull(node, "");
 		Node child= node.right;
-		if (ASSERT) Assert.notNull(child);
+		if (ASSERT) Assert.notNull(child, "");
 		boolean leftChild= node.parent == null || node == node.parent.left;
 
 		// restructure
@@ -378,9 +378,9 @@ abstract class TreeLineTracker implements LineTracker {
 	 * @param node the node to rotate around
 	 */
 	private void rotateRight(Node node) {
-		if (ASSERT) Assert.notNull(node);
+		if (ASSERT) Assert.notNull(node, "");
 		Node child= node.left;
-		if (ASSERT) Assert.notNull(child);
+		if (ASSERT) Assert.notNull(child, "");
 		boolean leftChild= node.parent == null || node == node.parent.left;
 
 		setChild(node.parent, child, leftChild);
@@ -555,7 +555,7 @@ abstract class TreeLineTracker implements LineTracker {
 					break;
 				default:
 					if (ASSERT)
-						Assert.isTrue(false);
+						Assert.isTrue(false, "unknown balance");
 			}
 			return;
 		}
@@ -573,7 +573,7 @@ abstract class TreeLineTracker implements LineTracker {
 		} else if (node.balance == -1) {
 			rightLeftRotation(node, parent);
 		} else if (ASSERT) {
-			Assert.isTrue(false);
+			Assert.isTrue(false, "");
 		}
 	}
 
@@ -589,7 +589,7 @@ abstract class TreeLineTracker implements LineTracker {
 		} else if (node.balance == 1) {
 			leftRightRotation(node, parent);
 		} else if (ASSERT) {
-			Assert.isTrue(false);
+			Assert.isTrue(false, "");
 		}
 	}
 
@@ -620,14 +620,14 @@ abstract class TreeLineTracker implements LineTracker {
 			}
 		}
 		// Inline nodeByOffset end
-		if (ASSERT) Assert.isTrue(first != null);
+		if (ASSERT) Assert.isTrue(first != null, "");
 
 		Node last;
 		if (offset + length < firstNodeOffset + first.length)
 			last= first;
 		else
 			last= nodeByOffset(offset + length);
-		if (ASSERT) Assert.isTrue(last != null);
+		if (ASSERT) Assert.isTrue(last != null, "");
 
 		int firstLineDelta= firstNodeOffset + first.length - offset;
 		if (first == last)
@@ -760,7 +760,7 @@ abstract class TreeLineTracker implements LineTracker {
 	 * @param delta the character delta to add to the node's length
 	 */
 	private void updateLength(Node node, int delta) {
-		if (ASSERT) Assert.isTrue(node.length  + delta >= 0);
+		if (ASSERT) Assert.isTrue(node.length  + delta >= 0, "");
 
 		// update the node itself
 		node.length += delta;
@@ -824,8 +824,8 @@ abstract class TreeLineTracker implements LineTracker {
 	 * @param node the node to delete.
 	 */
 	private void delete(Node node) {
-		if (ASSERT) Assert.isTrue(node != null);
-		if (ASSERT) Assert.isTrue(node.length == 0);
+		if (ASSERT) Assert.isTrue(node != null, "node cannot be null");
+		if (ASSERT) Assert.isTrue(node.length == 0, "node length must be 0");
 
 		Node parent= node.parent;
 		Node toUpdate; // the parent of the node that lost a child
@@ -864,15 +864,15 @@ abstract class TreeLineTracker implements LineTracker {
 			Node successor= successor(node);
 
 			// successor exists (otherwise node would not have right child, case 1)
-			if (ASSERT) Assert.notNull(successor);
+			if (ASSERT) Assert.notNull(successor, "");
 			// successor has no left child (a left child would be the real successor of node)
-			if (ASSERT) Assert.state(successor.left == null);
-			if (ASSERT) Assert.state(successor.line == 0);
+			if (ASSERT) Assert.state(successor.left == null, "");
+			if (ASSERT) Assert.state(successor.line == 0, "");
 			// successor is the left child of its parent (otherwise parent would be smaller and
 			// hence the real successor)
-			if (ASSERT) Assert.state(successor == successor.parent.left);
+			if (ASSERT) Assert.state(successor == successor.parent.left, "");
 			// successor is not a child of node (would have been covered by 2a)
-			if (ASSERT) Assert.state(successor.parent != node);
+			if (ASSERT) Assert.state(successor.parent != node, "");
 
 			toUpdate= successor.parent;
 			lostLeftChild= true;
@@ -934,7 +934,7 @@ abstract class TreeLineTracker implements LineTracker {
 					break; // propagate up
 				default:
 					if (ASSERT)
-						Assert.isTrue(false);
+						Assert.isTrue(false, "");
 			}
 
 			node= parent;
@@ -962,7 +962,7 @@ abstract class TreeLineTracker implements LineTracker {
 			parent.balance= 1;
 			return true;
 		} else {
-			if (ASSERT) Assert.isTrue(false);
+			if (ASSERT) Assert.isTrue(false, "");
 			return true;
 		}
 	}
@@ -988,7 +988,7 @@ abstract class TreeLineTracker implements LineTracker {
 			parent.balance= -1;
 			return true;
 		} else {
-			if (ASSERT) Assert.isTrue(false);
+			if (ASSERT) Assert.isTrue(false, "");
 			return true;
 		}
 	}
@@ -1022,7 +1022,7 @@ abstract class TreeLineTracker implements LineTracker {
 			child= parent;
 			parent= child.parent;
 		}
-		if (ASSERT) Assert.isTrue(node.delimiter == NO_DELIM);
+		if (ASSERT) Assert.isTrue(node.delimiter == NO_DELIM, "");
 		return null;
 	}
 
@@ -1315,9 +1315,9 @@ abstract class TreeLineTracker implements LineTracker {
 
 		byte leftDepth= checkTreeStructure(node.left);
 		byte rightDepth= checkTreeStructure(node.right);
-		Assert.isTrue(node.balance == rightDepth - leftDepth);
-		Assert.isTrue(node.left == null || node.left.parent == node);
-		Assert.isTrue(node.right == null || node.right.parent == node);
+		Assert.isTrue(node.balance == rightDepth - leftDepth, "");
+		Assert.isTrue(node.left == null || node.left.parent == node, "");
+		Assert.isTrue(node.right == null || node.right.parent == node, "");
 
 		return (byte) (Math.max(rightDepth, leftDepth) + 1);
 	}
@@ -1339,8 +1339,8 @@ abstract class TreeLineTracker implements LineTracker {
 		if (node == last)
 			return offLen;
 
-		Assert.isTrue(node.offset == offLen[0]);
-		Assert.isTrue(node.line == offLen[1]);
+		Assert.isTrue(node.offset == offLen[0], "");
+		Assert.isTrue(node.line == offLen[1], "");
 
 		if (node.right != null) {
 			int[] result= checkTreeOffsets(successorDown(node.right), new int[2], node);

@@ -15,8 +15,6 @@
  */
 package org.springframework.dsl.document.linetracker;
 
-import java.util.List;
-
 import org.springframework.dsl.document.BadLocationException;
 
 /**
@@ -36,13 +34,6 @@ import org.springframework.dsl.document.BadLocationException;
  * </p>
  */
 public abstract class AbstractLineTracker implements LineTracker/*, LineTrackerExtension*/ {
-
-	/**
-	 * Tells whether this class is in debug mode.
-	 *
-	 * @since 3.1
-	 */
-	private static final boolean DEBUG= false;
 
 	/**
 	 * Combines the information of the occurrence of a line delimiter. <code>delimiterIndex</code>
@@ -123,7 +114,7 @@ public abstract class AbstractLineTracker implements LineTracker/*, LineTrackerE
 	 *
 	 * @since 3.1
 	 */
-	private List<Request> fPendingRequests;
+//	private List<Request> fPendingRequests;
 	/**
 	 * The implementation that this tracker delegates to.
 	 *

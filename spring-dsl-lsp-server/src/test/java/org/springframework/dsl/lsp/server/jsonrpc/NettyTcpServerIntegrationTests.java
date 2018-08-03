@@ -49,7 +49,6 @@ import reactor.ipc.netty.tcp.TcpServer;
 
 public class NettyTcpServerIntegrationTests {
 
-	private static final byte[] CONTENT1 = createContent("{\"jsonrpc\": \"2.0\",\"id\": 1}");
 	private static final byte[] CONTENT2 = createContent("{\"jsonrpc\": \"2.0\",\"id\": 2, \"method\": \"hi\"}");
 	private static final byte[] CONTENT3 = createContent("{\"jsonrpc\": \"2.0\",\"id\": 3, \"method\": \"bye\"}");
 	private static final byte[] CONTENT4 = createContent("{\"jsonrpc\": \"2.0\",\"id\": 3, \"method\": \"shouldnotexist\"}");
@@ -125,8 +124,6 @@ public class NettyTcpServerIntegrationTests {
 
 		assertThat(dataLatch.await(1, TimeUnit.SECONDS)).isTrue();
 
-		// {"jsonrpc": "2.0", "result": "bye", "id": 3}
-		// {"jsonrpc": "2.0", "result": "hi", "id": 4}
 		String response1 = "Content-Length: 38\r\n\r\n{\"jsonrpc\":\"2.0\",\"id\":2,\"result\":\"hi\"}";
 		String response2 = "Content-Length: 39\r\n\r\n{\"jsonrpc\":\"2.0\",\"id\":3,\"result\":\"bye\"}";
 
@@ -191,11 +188,6 @@ public class NettyTcpServerIntegrationTests {
 				.block(Duration.ofSeconds(30));
 
 		assertThat(dataLatch.await(1, TimeUnit.SECONDS)).isFalse();
-//		assertThat(dataLatch.await(1, TimeUnit.SECONDS)).isTrue();
-//
-//		String response = "Content-Length: 38\r\n\r\n{\"jsonrpc\":\"2.0\",\"id\":4,\"result\":null}";
-//
-//		assertThat(responses).containsExactlyInAnyOrder(response);
 	}
 
 	@Test
@@ -224,11 +216,6 @@ public class NettyTcpServerIntegrationTests {
 				.block(Duration.ofSeconds(30));
 
 		assertThat(dataLatch.await(1, TimeUnit.SECONDS)).isFalse();
-//		assertThat(dataLatch.await(1, TimeUnit.SECONDS)).isTrue();
-//
-//		String response = "Content-Length: 38\r\n\r\n{\"jsonrpc\":\"2.0\",\"id\":4,\"result\":null}";
-//
-//		assertThat(responses).containsExactlyInAnyOrder(response);
 	}
 
 	@Test
@@ -290,7 +277,6 @@ public class NettyTcpServerIntegrationTests {
 
 		assertThat(dataLatch.await(1, TimeUnit.SECONDS)).isTrue();
 
-//		String response = "Content-Length: 216\r\n\r\n{\"jsonrpc\":\"2.0\",\"id\":4,\"result\":{\"processId\":1,\"rootPath\":null,\"rootUri\":\"rootUri\",\"initializationOptions\":\"initializationOptions\",\"capabilities\":{\"textDocument\":null,\"experimental\":\"experimental\"},\"trace\":\"trace\"}}";
 		String response = "Content-Length: 180\r\n\r\n{\"jsonrpc\":\"2.0\",\"id\":4,\"result\":{\"processId\":1,\"rootUri\":\"rootUri\",\"initializationOptions\":\"initializationOptions\",\"capabilities\":{\"experimental\":\"experimental\"},\"trace\":\"trace\"}}";
 
 		assertThat(responses).containsExactlyInAnyOrder(response);
@@ -323,7 +309,6 @@ public class NettyTcpServerIntegrationTests {
 
 		assertThat(dataLatch.await(1, TimeUnit.SECONDS)).isTrue();
 
-//		String response = "Content-Length: 31\r\n\r\n{\"jsonrpc\":\"2.0\",\"result\":\"hi\"}";
 		String response = "Content-Length: 57\r\n\r\n{\"jsonrpc\":\"2.0\",\"method\":\"singleresponse\",\"params\":\"hi\"}";
 
 		assertThat(responses).containsExactlyInAnyOrder(response);
@@ -573,6 +558,7 @@ public class NettyTcpServerIntegrationTests {
 	private static class Pojo1 {
 		private String message = "hi";
 
+		@SuppressWarnings("unused")
 		public String getMessage() {
 			return message;
 		}

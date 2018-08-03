@@ -27,7 +27,6 @@ import org.springframework.dsl.domain.DidChangeTextDocumentParams;
 import org.springframework.dsl.domain.DidCloseTextDocumentParams;
 import org.springframework.dsl.domain.DidOpenTextDocumentParams;
 import org.springframework.dsl.domain.DidSaveTextDocumentParams;
-import org.springframework.dsl.domain.TextDocumentIdentifier;
 import org.springframework.dsl.domain.TextDocumentItem;
 import org.springframework.dsl.domain.VersionedTextDocumentIdentifier;
 import org.springframework.dsl.domain.WillSaveTextDocumentParams;
@@ -99,11 +98,11 @@ public class DefaultDocumentStateTracker implements DocumentStateTracker {
 	@Override
 	public Mono<Document> didClose(DidCloseTextDocumentParams params) {
 		log.debug("didClose {}", params);
-		TextDocumentIdentifier identifier = params.getTextDocument();
-		String url = identifier.getUri();
-		if (url != null) {
-			TrackedDocument trackedDocument = documents.get(url);
-		}
+//		TextDocumentIdentifier identifier = params.getTextDocument();
+//		String url = identifier.getUri();
+//		if (url != null) {
+//			TrackedDocument trackedDocument = documents.get(url);
+//		}
 
 		return Mono.empty();
 	}

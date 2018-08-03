@@ -23,7 +23,6 @@ package org.springframework.dsl.document.linetracker;
  *
  * @author Kris De Volder
  */
-@Deprecated
 public class DefaultRegion implements Region {
 
 	private int ofs;

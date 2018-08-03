@@ -17,8 +17,6 @@ package org.springframework.dsl.antlr;
 
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Parser;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.dsl.antlr.support.AntlrObjectSupport;
 import org.springframework.dsl.document.Document;
 import org.springframework.dsl.reconcile.Linter;
@@ -38,8 +36,6 @@ import reactor.core.publisher.Flux;
 public abstract class AbstractAntlrLinter<L extends Lexer, P extends Parser> extends AntlrObjectSupport<L, P>
 		implements Linter {
 
-	private static final Log log = LogFactory.getLog(AbstractAntlrCompletioner.class);
-
 	/**
 	 * Instantiates a new abstract antlr linter.
 	 *
@@ -52,13 +48,6 @@ public abstract class AbstractAntlrLinter<L extends Lexer, P extends Parser> ext
 	@Override
 	public final Flux<ReconcileProblem> lint(Document document) {
 		return lintInternal(document);
-	}
-
-	private void xxx(Document document) {
-//		Lexer lexer = getAntlrFactory().createLexer(stringToCharStream(document.get()));
-
-
-
 	}
 
 	public abstract Flux<ReconcileProblem> lintInternal(Document document);
