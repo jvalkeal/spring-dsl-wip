@@ -39,6 +39,7 @@ import org.springframework.dsl.jsonrpc.annotation.JsonRpcNotification;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcRequestMapping;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcResponseBody;
 import org.springframework.dsl.jsonrpc.session.JsonRpcSession;
+import org.springframework.dsl.lsp.server.LspServerSystemConstants;
 import org.springframework.dsl.service.Completioner;
 import org.springframework.dsl.service.DocumentStateTracker;
 import org.springframework.dsl.service.DslServiceRegistry;
@@ -60,15 +61,19 @@ import reactor.core.publisher.Mono;
 public class TextDocumentLanguageServerController implements InitializingBean {
 
 	private static final Logger log = LoggerFactory.getLogger(TextDocumentLanguageServerController.class);
-	private final DocumentStateTracker documentStateTracker;
 	private final ObjectProvider<Reconciler> reconcilerProvider;
 	private Reconciler reconciler;
 	private Hoverer hoverer;
 	private DslServiceRegistry registry;
 
-	public TextDocumentLanguageServerController(DocumentStateTracker documentStateTracker,
-			ObjectProvider<Reconciler> reconcilerProvider, DslServiceRegistry dslServiceRegistry) {
-		this.documentStateTracker = documentStateTracker;
+	/**
+	 * Instantiates a new text document language server controller.
+	 *
+	 * @param reconcilerProvider the reconciler provider
+	 * @param dslServiceRegistry the dsl service registry
+	 */
+	public TextDocumentLanguageServerController(ObjectProvider<Reconciler> reconcilerProvider,
+			DslServiceRegistry dslServiceRegistry) {
 		this.reconcilerProvider = reconcilerProvider;
 		this.registry = dslServiceRegistry;
 	}
@@ -86,12 +91,14 @@ public class TextDocumentLanguageServerController implements InitializingBean {
 	 * information stored and dispatched in this method.
 	 *
 	 * @param params the {@link DidOpenTextDocumentParams}
+	 * @param session the {@link JsonRpcSession}
 	 */
 	@JsonRpcRequestMapping(method = "didOpen")
 	@JsonRpcNotification(method = "textDocument/publishDiagnostics")
-	public Flux<PublishDiagnosticsParams> clientDocumentOpened(DidOpenTextDocumentParams params) {
+	public Flux<PublishDiagnosticsParams> clientDocumentOpened(DidOpenTextDocumentParams params, JsonRpcSession session) {
 		log.debug("clientDocumentOpened {}", params);
-		return Flux.from(this.documentStateTracker.didOpen(params))
+		DocumentStateTracker documentStateTracker = getTracker(session);
+		return Flux.from(documentStateTracker.didOpen(params))
 				.flatMap(document -> reconciler.reconcile(document)
 				.switchIfEmpty(Mono.just(new PublishDiagnosticsParams(params.getTextDocument().getUri()))));
 	}
@@ -101,12 +108,14 @@ public class TextDocumentLanguageServerController implements InitializingBean {
 	 * {@link Reconciler} if available.
 	 *
 	 * @param params the {@link DidChangeTextDocumentParams}
+	 * @param session the {@link JsonRpcSession}
 	 */
 	@JsonRpcRequestMapping(method = "didChange")
 	@JsonRpcNotification(method = "textDocument/publishDiagnostics")
 	public Flux<PublishDiagnosticsParams> clientDocumentChanged(DidChangeTextDocumentParams params, JsonRpcSession session) {
 		log.debug("clientDocumentChanged {}", params);
-		return Flux.from(this.documentStateTracker.didChange(params))
+		DocumentStateTracker documentStateTracker = getTracker(session);
+		return Flux.from(documentStateTracker.didChange(params))
 				.flatMap(document -> reconciler.reconcile(document)
 				.switchIfEmpty(Mono.just(new PublishDiagnosticsParams(params.getTextDocument().getUri()))));
 	}
@@ -116,12 +125,14 @@ public class TextDocumentLanguageServerController implements InitializingBean {
 	 * {@link DocumentStateTracker}.
 	 *
 	 * @param params the {@link DidCloseTextDocumentParams}
+	 * @param session the {@link JsonRpcSession}
 	 */
 	@JsonRpcRequestMapping(method = "didClose")
 	@JsonRpcNotification
-	public Mono<Void> clientDocumentClosed(DidCloseTextDocumentParams params) {
+	public Mono<Void> clientDocumentClosed(DidCloseTextDocumentParams params, JsonRpcSession session) {
 		log.debug("clientDocumentClosed {}", params);
-		return Flux.from(this.documentStateTracker.didClose(params))
+		DocumentStateTracker documentStateTracker = getTracker(session);
+		return Flux.from(documentStateTracker.didClose(params))
 				.then();
 	}
 
@@ -130,12 +141,14 @@ public class TextDocumentLanguageServerController implements InitializingBean {
 	 * {@link DocumentStateTracker}.
 	 *
 	 * @param params the {@link DidSaveTextDocumentParams}
+	 * @param session the {@link JsonRpcSession}
 	 */
 	@JsonRpcRequestMapping(method = "didSave")
 	@JsonRpcNotification
-	public Mono<Void> clientDocumentSaved(DidSaveTextDocumentParams params) {
+	public Mono<Void> clientDocumentSaved(DidSaveTextDocumentParams params, JsonRpcSession session) {
 		log.debug("clientDocumentSaved {}", params);
-		return Flux.from(this.documentStateTracker.didSave(params))
+		DocumentStateTracker documentStateTracker = getTracker(session);
+		return Flux.from(documentStateTracker.didSave(params))
 				.then();
 	}
 
@@ -144,12 +157,14 @@ public class TextDocumentLanguageServerController implements InitializingBean {
 	 * {@link DocumentStateTracker}.
 	 *
 	 * @param params the {@link WillSaveTextDocumentParams}
+	 * @param session the {@link JsonRpcSession}
 	 */
 	@JsonRpcRequestMapping(method = "willSave")
 	@JsonRpcNotification
-	public Mono<Void> clientDocumentWillSave(WillSaveTextDocumentParams params) {
+	public Mono<Void> clientDocumentWillSave(WillSaveTextDocumentParams params, JsonRpcSession session) {
 		log.debug("clientDocumentWillSave {}", params);
-		return Flux.from(this.documentStateTracker.willSave(params))
+		DocumentStateTracker documentStateTracker = getTracker(session);
+		return Flux.from(documentStateTracker.willSave(params))
 				.then();
 	}
 
@@ -172,13 +187,14 @@ public class TextDocumentLanguageServerController implements InitializingBean {
 	 * {@link Hoverer}.
 	 *
 	 * @param params the {@link TextDocumentPositionParams}
+	 * @param session the {@link JsonRpcSession}
 	 * @return a mono of hover
 	 */
 	@JsonRpcRequestMapping(method = "hover")
 	@JsonRpcResponseBody
-	public Mono<Hover> hover(TextDocumentPositionParams params) {
+	public Mono<Hover> hover(TextDocumentPositionParams params, JsonRpcSession session) {
 		if (hoverer != null) {
-			return hoverer.hover(documentStateTracker.getDocument(params.getTextDocument().getUri()),
+			return hoverer.hover(getTracker(session).getDocument(params.getTextDocument().getUri()),
 					params.getPosition());
 		}
 		return Mono.empty();
@@ -189,21 +205,27 @@ public class TextDocumentLanguageServerController implements InitializingBean {
 	 * {@link Completioner}.
 	 *
 	 * @param params the {@link CompletionParams}
+	 * @param session the {@link JsonRpcSession}
 	 * @return a flux of completion items
 	 */
 	@JsonRpcRequestMapping(method = "completion")
 	@JsonRpcResponseBody
-	public Mono<List<CompletionItem>> completion(CompletionParams params) {
+	public Mono<List<CompletionItem>> completion(CompletionParams params, JsonRpcSession session) {
 		// TODO: support Flux<CompletionItem> with lsp protocol
 		//       this would need a conversion to CompletionList where last list send
 		//       would have isIncomplete set to true. Also list could have batching
 		//       if calculation is expensive.
 		log.debug("completion {}", params);
 
+		DocumentStateTracker documentStateTracker = getTracker(session);
 		Document document = documentStateTracker.getDocument(params.getTextDocument().getUri());
 		Position position = params.getPosition();
 		return Flux.fromIterable(registry.getCompletioners(document.getLanguageId()))
 			.concatMap(completioner -> completioner.complete(document, position))
 			.collectList();
+	}
+
+	private static DocumentStateTracker getTracker(JsonRpcSession session) {
+		return session.getRequiredAttribute(LspServerSystemConstants.SESSION_ATTRIBUTE_DOCUMENT_STATE_TRACKER);
 	}
 }

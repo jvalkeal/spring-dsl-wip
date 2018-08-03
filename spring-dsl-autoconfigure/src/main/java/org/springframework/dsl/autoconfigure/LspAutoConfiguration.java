@@ -39,8 +39,6 @@ import org.springframework.dsl.lsp.server.jsonrpc.LspDomainArgumentResolver;
 import org.springframework.dsl.lsp.server.websocket.LspWebSocketConfig;
 import org.springframework.dsl.reconcile.DefaultReconciler;
 import org.springframework.dsl.reconcile.Linter;
-import org.springframework.dsl.service.DefaultDocumentStateTracker;
-import org.springframework.dsl.service.DocumentStateTracker;
 import org.springframework.dsl.service.Reconciler;
 import org.springframework.web.reactive.socket.WebSocketHandler;
 
@@ -58,10 +56,10 @@ import org.springframework.web.reactive.socket.WebSocketHandler;
 		LspDomainJacksonConfiguration.class })
 public class LspAutoConfiguration {
 
-	@Bean
-	public DocumentStateTracker documentStateTracker() {
-		return new DefaultDocumentStateTracker();
-	}
+//	@Bean
+//	public DocumentStateTracker documentStateTracker() {
+//		return new DefaultDocumentStateTracker();
+//	}
 
 	@Bean
 	public Reconciler reconciler(Linter linter) {

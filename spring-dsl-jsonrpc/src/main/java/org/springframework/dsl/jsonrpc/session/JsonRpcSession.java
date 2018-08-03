@@ -19,6 +19,9 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Map;
 
+import org.springframework.lang.Nullable;
+import org.springframework.util.Assert;
+
 import reactor.core.publisher.Mono;
 
 /**
@@ -41,6 +44,33 @@ public interface JsonRpcSession {
 	 * @return the attributes map
 	 */
 	Map<String, Object> getAttributes();
+
+	/**
+	 * Return the session attribute value if present.
+	 *
+	 * @param name the attribute name
+	 * @param <T> the attribute type
+	 * @return the attribute value
+	 */
+	@SuppressWarnings("unchecked")
+	@Nullable
+	default <T> T getAttribute(String name) {
+		return (T) getAttributes().get(name);
+	}
+
+	/**
+	 * Return the session attribute value or if not present raise an
+	 * {@link IllegalArgumentException}.
+	 *
+	 * @param name the attribute name
+	 * @param <T> the attribute type
+	 * @return the attribute value
+	 */
+	default <T> T getRequiredAttribute(String name) {
+		T value = getAttribute(name);
+		Assert.notNull(value, "Required attribute '" + name + "' is missing.");
+		return value;
+	}
 
 	/**
 	 * Force the creation of a session causing the session id to be sent when

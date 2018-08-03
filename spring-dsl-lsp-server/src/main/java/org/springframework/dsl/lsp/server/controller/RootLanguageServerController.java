@@ -28,11 +28,11 @@ import org.springframework.dsl.jsonrpc.annotation.JsonRpcNotification;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcRequestMapping;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcResponseBody;
 import org.springframework.dsl.jsonrpc.session.JsonRpcSession;
+import org.springframework.dsl.lsp.server.LspServerSystemConstants;
 import org.springframework.dsl.service.Completioner;
-import org.springframework.dsl.service.DocumentStateTracker;
+import org.springframework.dsl.service.DefaultDocumentStateTracker;
 import org.springframework.dsl.service.Hoverer;
 import org.springframework.dsl.service.Reconciler;
-import org.springframework.util.Assert;
 
 import reactor.core.publisher.Mono;
 
@@ -47,23 +47,18 @@ import reactor.core.publisher.Mono;
 public class RootLanguageServerController implements InitializingBean {
 
 	private static final Logger log = LoggerFactory.getLogger(RootLanguageServerController.class);
-	private final DocumentStateTracker documentStateTracker;
 	private final ObjectProvider<Completioner> completionerProvider;
 	private final ObjectProvider<Hoverer> hovererProvider;
 
 	/**
 	 * Instantiate a base language server controller.
 	 *
-	 * @param documentStateTracker the document state tracker
 	 * @param reconcilerProvider the provider for reconciler
 	 * @param completionerProvider the provider for completioner
 	 * @param hovererProvider the provider for hoverer
 	 */
-	public RootLanguageServerController(DocumentStateTracker documentStateTracker,
-			ObjectProvider<Reconciler> reconcilerProvider, ObjectProvider<Completioner> completionerProvider,
-			ObjectProvider<Hoverer> hovererProvider) {
-		Assert.notNull(documentStateTracker, "'documentStateTracker' must be set");
-		this.documentStateTracker = documentStateTracker;
+	public RootLanguageServerController(ObjectProvider<Reconciler> reconcilerProvider,
+			ObjectProvider<Completioner> completionerProvider, ObjectProvider<Hoverer> hovererProvider) {
 		this.completionerProvider = completionerProvider;
 		this.hovererProvider = hovererProvider;
 	}
@@ -91,14 +86,17 @@ public class RootLanguageServerController implements InitializingBean {
 					.textDocumentSyncOptions(!oldFormat)
 						.openClose(true)
 						// TODO: think how to use sync kind None
-						.change(documentStateTracker.isIncrementalChangesSupported() ? TextDocumentSyncKind.Incremental
-							: TextDocumentSyncKind.Full)
+						.change(TextDocumentSyncKind.Incremental)
+//						.change(documentStateTracker.isIncrementalChangesSupported() ? TextDocumentSyncKind.Incremental
+//							: TextDocumentSyncKind.Full)
 						.and()
 					.and()
 				.build();
 		}).doOnSuccess(result -> {
 			// TODO: just a conceptual tweak now to see how session is used
 			session.getAttributes().put("initialized", true);
+			session.getAttributes().put(LspServerSystemConstants.SESSION_ATTRIBUTE_DOCUMENT_STATE_TRACKER,
+					new DefaultDocumentStateTracker());
 		});
 	}
 
