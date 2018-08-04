@@ -283,7 +283,9 @@ project('spring-dsl-bom') {
 }
 
 configure(sampleProjects()) {
-	tasks.findByPath("artifactoryPublish")?.enabled = false
+	// for now publish all samples
+	// need to thing how not to publish to bintray and central
+	//tasks.findByPath("artifactoryPublish")?.enabled = false
 }
 
 project('spring-dsl-samples-common') {
