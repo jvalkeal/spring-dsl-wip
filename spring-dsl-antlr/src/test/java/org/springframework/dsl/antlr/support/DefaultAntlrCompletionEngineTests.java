@@ -42,31 +42,41 @@ import org.springframework.dsl.antlr.support.DefaultAntlrCompletionEngine;
  */
 public class DefaultAntlrCompletionEngineTests {
 
+	private AntlrFactory<Test1Lexer, Test1Parser> test1AntlrFactory = new AntlrFactory<Test1Lexer, Test1Parser>() {
+
+		@Override
+		public Test1Parser createParser(TokenStream tokenStream) {
+			return new Test1Parser(tokenStream);
+		}
+
+		@Override
+		public Test1Lexer createLexer(CharStream input) {
+			return new Test1Lexer(input);
+		}
+	};
+
+	private AntlrFactory<Test2Lexer, Test2Grammar> test2AntlrFactory = new AntlrFactory<Test2Lexer, Test2Grammar>() {
+
+		@Override
+		public Test2Grammar createParser(TokenStream tokenStream) {
+			return new Test2Grammar(tokenStream);
+		}
+
+		@Override
+		public Test2Lexer createLexer(CharStream input) {
+			return new Test2Lexer(input);
+		}
+	};
+
 	@Test
-	public void xxx1() {
-
-		AntlrFactory<Test1Lexer, Test1Parser> antlrFactory = new AntlrFactory<Test1Lexer, Test1Parser>() {
-
-			@Override
-			public Test1Parser createParser(TokenStream tokenStream) {
-				return new Test1Parser(tokenStream);
-			}
-
-			@Override
-			public Test1Lexer createLexer(CharStream input) {
-				return new Test1Lexer(input);
-			}
-		};
-
+	public void test1() {
 		String input = "";
 
-		Test1Lexer lexer = antlrFactory.createLexer(CharStreams.fromString(input));
-		Test1Parser parser = antlrFactory.createParser(new CommonTokenStream(lexer));
+		Test1Lexer lexer = test1AntlrFactory.createLexer(CharStreams.fromString(input));
+		Test1Parser parser = test1AntlrFactory.createParser(new CommonTokenStream(lexer));
 
 		parser.r();
 
-//		CodeCompletionCore core = new CodeCompletionCore(parser, null, null);
-//		CodeCompletionCore.CandidatesCollection candidates = core.collectCandidates(0, null);
 		DefaultAntlrCompletionEngine core = new DefaultAntlrCompletionEngine(parser);
 		DefaultAntlrCompletionEngine.CandidatesCollection candidates = core.collectCandidates(0, null);
 
@@ -74,29 +84,14 @@ public class DefaultAntlrCompletionEngineTests {
 		assertThat(candidates.tokens).isNotNull();
 		assertThat(candidates.tokens.size()).isEqualTo(1);
 		assertThat(candidates.tokens.containsKey(Test1Lexer.AB)).isTrue();
-
 	}
 
 	@Test
-	public void xxx2() {
-
-		AntlrFactory<Test2Lexer, Test2Grammar> antlrFactory = new AntlrFactory<Test2Lexer, Test2Grammar>() {
-
-			@Override
-			public Test2Grammar createParser(TokenStream tokenStream) {
-				return new Test2Grammar(tokenStream);
-			}
-
-			@Override
-			public Test2Lexer createLexer(CharStream input) {
-				return new Test2Lexer(input);
-			}
-		};
-
+	public void test2() {
 		String input = "";
 
-		Test2Lexer lexer = antlrFactory.createLexer(CharStreams.fromString(input));
-		Test2Grammar parser = antlrFactory.createParser(new CommonTokenStream(lexer));
+		Test2Lexer lexer = test2AntlrFactory.createLexer(CharStreams.fromString(input));
+		Test2Grammar parser = test2AntlrFactory.createParser(new CommonTokenStream(lexer));
 
 		parser.definitions();
 
@@ -113,25 +108,11 @@ public class DefaultAntlrCompletionEngineTests {
 
 
 	@Test
-	public void xxx3() {
-
-		AntlrFactory<Test2Lexer, Test2Grammar> antlrFactory = new AntlrFactory<Test2Lexer, Test2Grammar>() {
-
-			@Override
-			public Test2Grammar createParser(TokenStream tokenStream) {
-				return new Test2Grammar(tokenStream);
-			}
-
-			@Override
-			public Test2Lexer createLexer(CharStream input) {
-				return new Test2Lexer(input);
-			}
-		};
-
+	public void test3() {
 		String input = "statemachine M1 {";
 
-		Test2Lexer lexer = antlrFactory.createLexer(CharStreams.fromString(input));
-		Test2Grammar parser = antlrFactory.createParser(new CommonTokenStream(lexer));
+		Test2Lexer lexer = test2AntlrFactory.createLexer(CharStreams.fromString(input));
+		Test2Grammar parser = test2AntlrFactory.createParser(new CommonTokenStream(lexer));
 
 		parser.definitions();
 
@@ -146,25 +127,11 @@ public class DefaultAntlrCompletionEngineTests {
 	}
 
 	@Test
-	public void xxx4() {
-
-		AntlrFactory<Test2Lexer, Test2Grammar> antlrFactory = new AntlrFactory<Test2Lexer, Test2Grammar>() {
-
-			@Override
-			public Test2Grammar createParser(TokenStream tokenStream) {
-				return new Test2Grammar(tokenStream);
-			}
-
-			@Override
-			public Test2Lexer createLexer(CharStream input) {
-				return new Test2Lexer(input);
-			}
-		};
-
+	public void test4() {
 		String input = "statemachine M1 { state S1 {";
 
-		Test2Lexer lexer = antlrFactory.createLexer(CharStreams.fromString(input));
-		Test2Grammar parser = antlrFactory.createParser(new CommonTokenStream(lexer));
+		Test2Lexer lexer = test2AntlrFactory.createLexer(CharStreams.fromString(input));
+		Test2Grammar parser = test2AntlrFactory.createParser(new CommonTokenStream(lexer));
 
 		parser.definitions();
 
@@ -179,25 +146,11 @@ public class DefaultAntlrCompletionEngineTests {
 	}
 
 	@Test
-	public void xxx5() {
-
-		AntlrFactory<Test2Lexer, Test2Grammar> antlrFactory = new AntlrFactory<Test2Lexer, Test2Grammar>() {
-
-			@Override
-			public Test2Grammar createParser(TokenStream tokenStream) {
-				return new Test2Grammar(tokenStream);
-			}
-
-			@Override
-			public Test2Lexer createLexer(CharStream input) {
-				return new Test2Lexer(input);
-			}
-		};
-
+	public void test5() {
 		String input = "statemachine M1 { state S1 {} }";
 
-		Test2Lexer lexer = antlrFactory.createLexer(CharStreams.fromString(input));
-		Test2Grammar parser = antlrFactory.createParser(new CommonTokenStream(lexer));
+		Test2Lexer lexer = test2AntlrFactory.createLexer(CharStreams.fromString(input));
+		Test2Grammar parser = test2AntlrFactory.createParser(new CommonTokenStream(lexer));
 
 		parser.definitions();
 

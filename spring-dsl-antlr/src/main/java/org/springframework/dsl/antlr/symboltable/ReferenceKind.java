@@ -13,20 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.antlr;
+package org.springframework.dsl.antlr.symboltable;
 
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.springframework.dsl.antlr.support.DefaultAntlrCompletionEngine.CandidatesCollection;
+public enum ReferenceKind {
 
-/**
- * Defines a contract how completion infomation can be requested from
- * {@code ANTLR}.
- *
- * @author Janne Valkealahti
- *
- */
-public interface AntlrCompletionEngine {
-
-	CandidatesCollection collectCandidates(int caretTokenIndex, ParserRuleContext context);
+	Irrelevant,
+	Pointer, // Default for most languages for dynamically allocated memory ("Type*" in C++).
+	Reference, // "Type&" in C++
+	Instance; // "Type" as such and default for all value types.
 
 }

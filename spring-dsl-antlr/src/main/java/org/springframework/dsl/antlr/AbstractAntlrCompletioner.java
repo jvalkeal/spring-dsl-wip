@@ -82,7 +82,7 @@ public abstract class AbstractAntlrCompletioner<L extends Lexer, P extends Parse
 				String literalName = vocabulary.getLiteralName(e.getKey());
 				String symbolicName = vocabulary.getSymbolicName(e.getKey());
 				combletions.add(displayName);
-				log.debug("Candidates tokens {} {} {} {}", e.getKey(), displayName, literalName, symbolicName);
+				log.debug("Candidates token {} {} {} {}", e.getKey(), displayName, literalName, symbolicName);
 			}
 		}
 

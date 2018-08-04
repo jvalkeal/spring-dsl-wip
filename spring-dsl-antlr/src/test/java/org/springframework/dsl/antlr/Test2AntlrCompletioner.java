@@ -36,19 +36,6 @@ public class Test2AntlrCompletioner extends AbstractAntlrCompletioner<Test2Lexer
 		super(new Test2AntlrFactory());
 	}
 
-	private static class Test2AntlrFactory implements AntlrFactory<Test2Lexer, Test2Grammar> {
-
-		@Override
-		public Test2Lexer createLexer(CharStream input) {
-			return new Test2Lexer(input);
-		}
-
-		@Override
-		public Test2Grammar createParser(TokenStream tokenStream) {
-			return new Test2Grammar(tokenStream);
-		}
-	}
-
 	@Override
 	public List<LanguageId> getSupportedLanguageIds() {
 		return Arrays.asList(LanguageId.languageId("test2", "Antlr test2 Language"));
@@ -70,5 +57,18 @@ public class Test2AntlrCompletioner extends AbstractAntlrCompletioner<Test2Lexer
 		Test2Grammar parser = getAntlrFactory().createParser(new CommonTokenStream(lexer));
 		parser.definitions();
 		return parser;
+	}
+
+	private static class Test2AntlrFactory implements AntlrFactory<Test2Lexer, Test2Grammar> {
+
+		@Override
+		public Test2Lexer createLexer(CharStream input) {
+			return new Test2Lexer(input);
+		}
+
+		@Override
+		public Test2Grammar createParser(TokenStream tokenStream) {
+			return new Test2Grammar(tokenStream);
+		}
 	}
 }
