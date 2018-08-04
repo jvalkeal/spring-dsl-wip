@@ -1,16 +1,22 @@
 [[dsl-examples]]
 = DSL Examples
-xxx.
+This section contains documentation and instructions for various
+samples we provide with a distribution. Below sub-sections are
+mostly organised around different languages and how those
+languages are organised to a services provided by a SDSL.
 
 == Simple Language
-xxx.
+_Simple Language_ is a language demonstrating very simplistic way
+to get you familiar with language features without introducing too
+much overhead with additional supported features.
 
 === Process Server
-xxx.
+_Process Server_ is used for a _LSP Clients_ using normal _STDIO_.
 
 === Socket Server
-xxx.
+_Socker Server_ is used for a _LSP Clients_ using normal socker
+connections.
 
 === UI Editor
-xxx.
+_UI Editor_ is and example using websockets for a transport.
 

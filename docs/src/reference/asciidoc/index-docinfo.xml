@@ -1,15 +1,20 @@
 <releaseinfo>{revnumber}</releaseinfo>
-<productname>Spring Cloud IoT</productname>
+<productname>Spring Dsl</productname>
 <authorgroup>
   <author>
     <firstname>Janne</firstname>
     <surname>Valkealahti</surname>
     <affiliation>Pivotal</affiliation>
   </author>
+  <author>
+    <firstname>Kris</firstname>
+    <surname>De Volder</surname>
+    <affiliation>Pivotal</affiliation>
+  </author>
 </authorgroup>
 
 <copyright>
-  <year>2017</year>
+  <year>2018</year>
   <holder>Pivotal Software, Inc.</holder>
 </copyright>
 

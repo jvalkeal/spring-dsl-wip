@@ -1,10 +1,18 @@
 [[introduction]]
 = Introduction
+
 Spring Dsl(SDSL) is a framework for application developers to use
-Spring concepts with Dsl applications. SDSL aims to provide the
-following features:
+Spring concepts to build applications integrating to various dsl
+features.
+
+SDSL aims to provide the following features:
 
 * Easy configuration model.
+* Basing of a Language Server Protocol features.
 
 == Background
-xxx
+
+Traditionally when building _DSL_ features into an application, this
+are tend to be relatively low level. Either you need to manually parse
+a _DSL_ or somewhat find other ways to find how that fill translate
+into your own appliation code.

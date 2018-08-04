@@ -1,6 +1,6 @@
 [[dsl]]
 = Using Spring Dsl
-xxxx.
+This part documents how _Spring DSL_ is used.
 
 == Config
 xxx.

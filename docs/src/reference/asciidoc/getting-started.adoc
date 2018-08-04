@@ -17,8 +17,22 @@ The following modules are available for Spring Dsl
 |===
 |Module |Description
 
+|spring-dsl-antrl
+|ANTLR support Module
+
+|spring-dsl-autoconfigure
+|Spring Boot Autoconfigure Module
+
+|spring-dsl-bom
+|Spring DSL Bill of Materials Module
+
 |spring-dsl-core
 |Core system of a Spring Dsl 
 
+|spring-dsl-jsonrpc
+|Spring DSL JSONRPC Module
+
+|spring-dsl-websocket
+|Spring DSL Websocket Module 
 
 |===
