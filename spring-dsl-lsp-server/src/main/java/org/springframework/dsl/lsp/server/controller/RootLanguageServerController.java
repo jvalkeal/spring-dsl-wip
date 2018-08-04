@@ -17,8 +17,6 @@ package org.springframework.dsl.lsp.server.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.dsl.domain.InitializeParams;
 import org.springframework.dsl.domain.InitializeResult;
 import org.springframework.dsl.domain.InitializedParams;
@@ -29,10 +27,8 @@ import org.springframework.dsl.jsonrpc.annotation.JsonRpcRequestMapping;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcResponseBody;
 import org.springframework.dsl.jsonrpc.session.JsonRpcSession;
 import org.springframework.dsl.lsp.server.LspServerSystemConstants;
-import org.springframework.dsl.service.Completioner;
 import org.springframework.dsl.service.DefaultDocumentStateTracker;
-import org.springframework.dsl.service.Hoverer;
-import org.springframework.dsl.service.Reconciler;
+import org.springframework.dsl.service.DslServiceRegistry;
 
 import reactor.core.publisher.Mono;
 
@@ -44,27 +40,18 @@ import reactor.core.publisher.Mono;
  *
  */
 @JsonRpcController
-public class RootLanguageServerController implements InitializingBean {
+public class RootLanguageServerController {
 
 	private static final Logger log = LoggerFactory.getLogger(RootLanguageServerController.class);
-	private final ObjectProvider<Completioner> completionerProvider;
-	private final ObjectProvider<Hoverer> hovererProvider;
+	private final DslServiceRegistry registry;
 
 	/**
 	 * Instantiate a base language server controller.
 	 *
-	 * @param reconcilerProvider the provider for reconciler
-	 * @param completionerProvider the provider for completioner
-	 * @param hovererProvider the provider for hoverer
+	 * @param dslServiceRegistry the dsl service registry
 	 */
-	public RootLanguageServerController(ObjectProvider<Reconciler> reconcilerProvider,
-			ObjectProvider<Completioner> completionerProvider, ObjectProvider<Hoverer> hovererProvider) {
-		this.completionerProvider = completionerProvider;
-		this.hovererProvider = hovererProvider;
-	}
-
-	@Override
-	public void afterPropertiesSet() throws Exception {
+	public RootLanguageServerController(DslServiceRegistry dslServiceRegistry) {
+		this.registry = dslServiceRegistry;
 	}
 
 	@JsonRpcRequestMapping(method = "initialize")
@@ -78,8 +65,8 @@ public class RootLanguageServerController implements InitializingBean {
 					.getDidSave() == null;
 			return InitializeResult.initializeResult()
 				.capabilities()
-					.hoverProvider(hovererProvider.getIfAvailable() != null)
-					.completionProvider(completionerProvider.getIfAvailable() != null)
+					.hoverProvider(!registry.getHoverers().isEmpty())
+					.completionProvider(!registry.getCompletioners().isEmpty())
 						.resolveProvider(false)
 						.and()
 					.textDocumentSyncKind(oldFormat ? TextDocumentSyncKind.Incremental : null)

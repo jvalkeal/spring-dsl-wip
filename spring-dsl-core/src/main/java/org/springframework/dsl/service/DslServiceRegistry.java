@@ -28,10 +28,39 @@ import org.springframework.dsl.model.LanguageId;
 public interface DslServiceRegistry {
 
 	/**
-	 * Gets the completioners.
+	 * Gets all completioners.
+	 *
+	 * @return the completioners
+	 */
+	List<Completioner> getCompletioners();
+
+	/**
+	 * Gets all completioners for a language id.
 	 *
 	 * @param languageId the language id
 	 * @return the {@link Completioner}s
 	 */
 	List<Completioner> getCompletioners(LanguageId languageId);
+
+	/**
+	 * Gets the hoverers.
+	 *
+	 * @return the hoverers
+	 */
+	List<Hoverer> getHoverers();
+
+	/**
+	 * Gets the hoverers for a language id.
+	 *
+	 * @param languageId the language id
+	 * @return the hoverers
+	 */
+	List<Hoverer> getHoverers(LanguageId languageId);
+
+	/**
+	 * Gets the reconcilers.
+	 *
+	 * @return the reconcilers
+	 */
+	List<Reconciler> getReconcilers();
 }

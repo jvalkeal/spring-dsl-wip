@@ -36,6 +36,8 @@ import org.springframework.dsl.model.LanguageId;
 public class DefaultDslServiceRegistry implements DslServiceRegistry, ApplicationContextAware {
 
 	private List<Completioner> completioners;
+	private List<Hoverer> hoverers;
+	private List<Reconciler> reconcilers;
 
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -50,9 +52,38 @@ public class DefaultDslServiceRegistry implements DslServiceRegistry, Applicatio
 				.collect(Collectors.toList());
 	}
 
+	@Override
+	public List<Hoverer> getHoverers(LanguageId languageId) {
+		return hoverers
+				.stream()
+				.filter(competioner -> competioner.getSupportedLanguageIds().contains(languageId))
+				.collect(Collectors.toList());
+	}
+
+	@Override
+	public List<Completioner> getCompletioners() {
+		return completioners;
+	}
+
+	@Override
+	public List<Reconciler> getReconcilers() {
+		return reconcilers;
+	}
+
+	@Override
+	public List<Hoverer> getHoverers() {
+		return hoverers;
+	}
+
 	protected void initServices(ApplicationContext applicationContext) {
 		Map<String, Completioner> completionerBeans = BeanFactoryUtils.beansOfTypeIncludingAncestors(applicationContext,
 				Completioner.class, true, false);
+		Map<String, Hoverer> hovererBeans = BeanFactoryUtils.beansOfTypeIncludingAncestors(applicationContext,
+				Hoverer.class, true, false);
+		Map<String, Reconciler> reconcilerBeans = BeanFactoryUtils.beansOfTypeIncludingAncestors(applicationContext,
+				Reconciler.class, true, false);
 		this.completioners = new ArrayList<>(completionerBeans.values());
+		this.hoverers = new ArrayList<>(hovererBeans.values());
+		this.reconcilers = new ArrayList<>(reconcilerBeans.values());
 	}
 }

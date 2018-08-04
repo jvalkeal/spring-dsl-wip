@@ -61,7 +61,6 @@ public class TextDocumentLanguageServerController implements InitializingBean {
 	private static final Logger log = LoggerFactory.getLogger(TextDocumentLanguageServerController.class);
 	private final ObjectProvider<Reconciler> reconcilerProvider;
 	private Reconciler reconciler;
-	private Hoverer hoverer;
 	private DslServiceRegistry registry;
 
 	/**
@@ -191,11 +190,14 @@ public class TextDocumentLanguageServerController implements InitializingBean {
 	@JsonRpcRequestMapping(method = "hover")
 	@JsonRpcResponseBody
 	public Mono<Hover> hover(TextDocumentPositionParams params, JsonRpcSession session) {
-		if (hoverer != null) {
-			return hoverer.hover(getTracker(session).getDocument(params.getTextDocument().getUri()),
-					params.getPosition());
-		}
-		return Mono.empty();
+		log.debug("hover {}", params);
+		DocumentStateTracker documentStateTracker = getTracker(session);
+		Document document = documentStateTracker.getDocument(params.getTextDocument().getUri());
+		Position position = params.getPosition();
+
+		return Flux.fromIterable(registry.getHoverers(document.getLanguageId()))
+				.concatMap(hoverer -> hoverer.hover(document, position))
+				.next();
 	}
 
 	/**

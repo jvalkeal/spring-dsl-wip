@@ -15,28 +15,33 @@
  */
 package org.springframework.dsl.service;
 
-import org.springframework.dsl.document.Document;
-import org.springframework.dsl.domain.Hover;
-import org.springframework.dsl.domain.Position;
+import java.util.List;
 
-import reactor.core.publisher.Mono;
+import org.springframework.dsl.model.LanguageId;
+import org.springframework.util.Assert;
 
 /**
- * Strategy interface providing {@link Hover} info for current position in a
- * document.
+ * Base implementation of a {@link DslService}.
  *
- * @author Kris De Volder
  * @author Janne Valkealahti
  *
  */
-public interface Hoverer extends DslService {
+public abstract class AbstractDslService implements DslService {
+
+	private final List<LanguageId> languageIds;
 
 	/**
-	 * Provide hover for a given position in a document.
+	 * Instantiates a new abstract dsl service.
 	 *
-	 * @param document the  document
-	 * @param position the position in a document
-	 * @return a {@link Mono} completing as {@link Hover}
+	 * @param languageIds the language ids
 	 */
-	Mono<Hover> hover(Document document, Position position);
+	public AbstractDslService(List<LanguageId> languageIds) {
+		Assert.notNull(languageIds, "languageIds list cannot be null");
+		this.languageIds = languageIds;
+	}
+
+	@Override
+	public List<LanguageId> getSupportedLanguageIds() {
+		return languageIds;
+	}
 }
