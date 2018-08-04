@@ -13,20 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.antlr;
+package org.springframework.dsl.antlr.symboltable;
 
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.springframework.dsl.antlr.support.DefaultAntlrCompletionEngine.CandidatesCollection;
+import java.util.List;
 
-/**
- * Defines a contract how completion infomation can be requested from
- * {@code ANTLR}.
- *
- * @author Janne Valkealahti
- *
- */
-public interface AntlrCompletionEngine {
+public interface Type {
 
-	CandidatesCollection collectCandidates(int caretTokenIndex, ParserRuleContext context);
+	String getName();
 
+	List<Type> getBaseTypes();
+
+	TypeKind getTypeKind();
+
+	ReferenceKind getReferenceKind();
 }

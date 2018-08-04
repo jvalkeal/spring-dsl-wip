@@ -13,20 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.antlr;
+package org.springframework.dsl.antlr.symboltable;
 
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.springframework.dsl.antlr.support.DefaultAntlrCompletionEngine.CandidatesCollection;
-
-/**
- * Defines a contract how completion infomation can be requested from
- * {@code ANTLR}.
- *
- * @author Janne Valkealahti
- *
- */
-public interface AntlrCompletionEngine {
-
-	CandidatesCollection collectCandidates(int caretTokenIndex, ParserRuleContext context);
+public class FieldSymbol extends VariableSymbol {
 
 }
