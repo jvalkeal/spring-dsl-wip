@@ -1,0 +1,28 @@
+{
+  "name": "spring-dsl-editor",
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jvalkeal/spring-dsl-wip"
+  },
+  "author": {
+    "name": "Janne Valkealahti",
+    "email": "janne.valkealahti@gmail.com"
+  },
+  "keywords": [
+    "angular"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jvalkeal/spring-dsl-wip/issues"
+  },
+  "main": "spring-dsl-editor.umd.js",
+  "module": "spring-dsl-editor.js",
+  "jsnext:main": "spring-dsl-editor.js",
+  "typings": "spring-dsl-editor.d.ts",
+  "peerDependencies": {
+    "@angular/core": "^6.0.3",
+    "rxjs": "^6.0.0",
+    "zone.js": "^0.8.4"
+  }
+}
