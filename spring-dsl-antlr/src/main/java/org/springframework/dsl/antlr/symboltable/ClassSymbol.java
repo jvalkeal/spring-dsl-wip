@@ -15,13 +15,20 @@
  */
 package org.springframework.dsl.antlr.symboltable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ClassSymbol extends ScopedSymbol implements Type {
 
-	@Override
-	public String getName() {
-		return null;
+	private ReferenceKind referenceKind;
+	private List<ClassSymbol> superClasses = new ArrayList<>();
+
+	public ClassSymbol(String name, ReferenceKind referenceKind, ClassSymbol superClass) {
+		super(name);
+		this.referenceKind = referenceKind;
+		if (superClass != null) {
+			this.superClasses.add(superClass);
+		}
 	}
 
 	@Override
@@ -31,12 +38,12 @@ public class ClassSymbol extends ScopedSymbol implements Type {
 
 	@Override
 	public TypeKind getTypeKind() {
-		return null;
+		return TypeKind.Class;
 	}
 
 	@Override
 	public ReferenceKind getReferenceKind() {
-		return null;
+		return referenceKind;
 	}
 
 }

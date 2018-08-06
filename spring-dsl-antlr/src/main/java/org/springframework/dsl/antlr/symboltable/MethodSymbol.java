@@ -17,4 +17,8 @@ package org.springframework.dsl.antlr.symboltable;
 
 public class MethodSymbol extends RoutineSymbol {
 
+	public MethodSymbol(String name) {
+		super(name);
+	}
+
 }

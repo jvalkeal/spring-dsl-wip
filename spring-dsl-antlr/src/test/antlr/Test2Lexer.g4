@@ -14,4 +14,4 @@ ID                   :   LETTER (LETTER|DIGIT)* ;
 fragment LETTER      :   [a-zA-Z\u0080-\u00FF_] ;
 SEMI                 :   ';' ;
 fragment DIGIT       :   [0-9] ;
-WS                   :   [ \t\n\r]+ -> skip ;
+WS                   :   [ \t\n\r]+ -> channel(HIDDEN) ;

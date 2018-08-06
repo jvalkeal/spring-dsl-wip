@@ -63,6 +63,7 @@ public class AntlrCompletionerTests {
 		List<CompletionItem> items = completions.toStream().collect(Collectors.toList());
 		List<String> labels = items.stream().map(item -> item.getLabel()).collect(Collectors.toList());
 //		assertThat(labels, containsInAnyOrder("S1", "S2", "'}'", "SOURCE", "TARGET", "ID", "';'"));
+//		assertThat(labels, containsInAnyOrder("S1", "S2"));
 		assertThat(labels, containsInAnyOrder("'}'", "SOURCE", "TARGET", "ID", "';'"));
 	}
 }

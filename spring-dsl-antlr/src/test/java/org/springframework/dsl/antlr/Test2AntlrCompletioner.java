@@ -15,15 +15,21 @@
  */
 package org.springframework.dsl.antlr;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.TokenStream;
+import org.antlr.v4.runtime.Vocabulary;
+import org.antlr.v4.runtime.tree.ParseTree;
 import org.springframework.dsl.Test2Grammar;
 import org.springframework.dsl.Test2Lexer;
+import org.springframework.dsl.antlr.support.DefaultAntlrCompletionEngine;
 import org.springframework.dsl.domain.CompletionItem;
 import org.springframework.dsl.model.LanguageId;
 
@@ -58,6 +64,34 @@ public class Test2AntlrCompletioner extends AbstractAntlrCompletioner<Test2Lexer
 		parser.definitions();
 		return parser;
 	}
+
+	@Override
+	protected void symbolTable(Test2Grammar parser) {
+		ParseTree tree = parser.definitions();
+		Test2Visitor visitor = new Test2Visitor();
+		AntlrParseResult<Object> result = visitor.visit(tree);
+	}
+
+	protected Collection<String> xxx(String content, Test2Grammar parser) {
+		ArrayList<String> combletions = new ArrayList<String>();
+
+		DefaultAntlrCompletionEngine core = new DefaultAntlrCompletionEngine(parser);
+		DefaultAntlrCompletionEngine.CandidatesCollection candidates = core.collectCandidates(null, null);
+
+
+		for (Entry<Integer, List<Integer>> e : candidates.tokens.entrySet()) {
+			if (e.getKey() > 0) {
+				Vocabulary vocabulary = parser.getVocabulary();
+				String displayName = vocabulary.getDisplayName(e.getKey());
+				String literalName = vocabulary.getLiteralName(e.getKey());
+				String symbolicName = vocabulary.getSymbolicName(e.getKey());
+				combletions.add(displayName);
+			}
+		}
+
+		return combletions;
+	}
+
 
 	private static class Test2AntlrFactory implements AntlrFactory<Test2Lexer, Test2Grammar> {
 

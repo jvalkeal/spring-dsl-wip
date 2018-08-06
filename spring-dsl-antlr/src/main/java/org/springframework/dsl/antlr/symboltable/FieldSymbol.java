@@ -17,4 +17,8 @@ package org.springframework.dsl.antlr.symboltable;
 
 public class FieldSymbol extends VariableSymbol {
 
+	public FieldSymbol(String name) {
+		super(name);
+	}
+
 }

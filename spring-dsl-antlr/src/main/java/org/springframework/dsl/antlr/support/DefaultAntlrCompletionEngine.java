@@ -38,6 +38,7 @@ import org.antlr.v4.runtime.misc.IntervalSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dsl.antlr.AntlrCompletionEngine;
+import org.springframework.dsl.domain.Position;
 
 /**
  * Default implementation of a {@link AntlrCompletionEngine}.
@@ -115,7 +116,9 @@ public class DefaultAntlrCompletionEngine implements AntlrCompletionEngine {
 	}
 
 	@Override
-	public CandidatesCollection collectCandidates(int caretTokenIndex, ParserRuleContext context) {
+	public CandidatesCollection collectCandidates(Position position, ParserRuleContext context) {
+		int line = position.getLine() + 1;
+		int charPositionInLine = position.getCharacter();
 		this.shortcutMap.clear();
 		this.candidates.rules.clear();
 		this.candidates.tokens.clear();
@@ -131,9 +134,13 @@ public class DefaultAntlrCompletionEngine implements AntlrCompletionEngine {
 		while (true) {
 			Token token = tokenStream.LT(offset++);
 			this.tokens.add(token);
-			if (token.getTokenIndex() >= caretTokenIndex || token.getType() == Token.EOF) {
+			log.debug("TOKEN: {} {} {} {} {}", token.getTokenIndex(), token.getLine(), token.getCharPositionInLine(), token.getStartIndex(), token.getStopIndex());
+			if ((token.getLine() == line && token.getCharPositionInLine() >= charPositionInLine) || token.getType() == Token.EOF) {
 				break;
 			}
+//			if (token.getTokenIndex() >= caretTokenIndex || token.getType() == Token.EOF) {
+//				break;
+//			}
 		}
 		tokenStream.seek(currentIndex);
 

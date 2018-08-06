@@ -15,20 +15,37 @@
  */
 package org.springframework.dsl.antlr;
 
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.springframework.dsl.antlr.support.DefaultAntlrCompletionEngine.CandidatesCollection;
-import org.springframework.dsl.domain.Position;
+import java.util.List;
+
+import org.springframework.dsl.antlr.symboltable.SymbolTable;
+import org.springframework.dsl.reconcile.ReconcileProblem;
 
 /**
- * Defines a contract how completion infomation can be requested from
- * {@code ANTLR}.
  *
  * @author Janne Valkealahti
  *
+ * @param <T> the type of a result
  */
-public interface AntlrCompletionEngine {
+public interface AntlrParseResult<T> {
 
-//	CandidatesCollection collectCandidates(int caretTokenIndex, ParserRuleContext context);
-	CandidatesCollection collectCandidates(Position position, ParserRuleContext context);
+	/**
+	 * Gets the result.
+	 *
+	 * @return the result
+	 */
+	T getResult();
 
+	/**
+	 * Gets the symbol table.
+	 *
+	 * @return the symbol table
+	 */
+	SymbolTable getSymbolTable();
+
+	/**
+	 * Gets the reconcile problems.
+	 *
+	 * @return the reconcile problems
+	 */
+	List<ReconcileProblem> getReconcileProblems();
 }

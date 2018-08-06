@@ -17,4 +17,17 @@ package org.springframework.dsl.antlr.symboltable;
 
 public class VariableSymbol extends TypedSymbol {
 
+	private Object value;
+
+	public VariableSymbol(String name) {
+		super(name);
+	}
+
+	public Object getValue() {
+		return value;
+	}
+
+	public void setValue(Object value) {
+		this.value = value;
+	}
 }

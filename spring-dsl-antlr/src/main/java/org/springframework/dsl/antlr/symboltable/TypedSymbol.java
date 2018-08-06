@@ -17,4 +17,8 @@ package org.springframework.dsl.antlr.symboltable;
 
 public class TypedSymbol extends Symbol {
 
+	public TypedSymbol(String name) {
+		super(name);
+	}
+
 }

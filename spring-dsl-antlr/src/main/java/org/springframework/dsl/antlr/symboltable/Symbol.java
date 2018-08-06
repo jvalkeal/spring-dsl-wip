@@ -17,4 +17,30 @@ package org.springframework.dsl.antlr.symboltable;
 
 public class Symbol {
 
+	private String name;
+	private Symbol parent;
+
+	public Symbol(String name) {
+		this.name = name;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public Symbol getParent() {
+		return parent;
+	}
+
+	public void setParent(Symbol parent) {
+		this.parent = parent;
+	}
+
+	public Symbol resolve(String name, boolean localOnly) {
+		if (getParent() instanceof ScopedSymbol) {
+			return ((ScopedSymbol)getParent()).resolve(name, localOnly);
+		}
+		return null;
+	}
+
 }

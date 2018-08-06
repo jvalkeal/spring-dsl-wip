@@ -15,24 +15,56 @@
  */
 package org.springframework.dsl.antlr.symboltable;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.Test;
 
 public class SymbolTableTests {
 
 	@Test
-	public void test1() {
+	public void testSingleTableBase() {
+		SymbolTable symbolTable = createSymbolTable("main", new int[] {3, 3, 4, 5, 5});
+		Symbol class1 = symbolTable.resolve("class1", false);
+		assertThat(class1).isInstanceOf(ClassSymbol.class);
 
+		Symbol method2 = ((ClassSymbol)class1).resolve("method2", false);
+		assertThat(method2).isInstanceOf(MethodSymbol.class);
+
+		Symbol field2 = ((ClassSymbol)class1).resolve("field2", false);
+		assertThat(field2).isInstanceOf(FieldSymbol.class);
 	}
 
 	private static SymbolTable createSymbolTable(String name, int[] counts) {
 		SymbolTable symbolTable = new SymbolTable(name);
 
-		for (int i = 0; i < counts[0]; ++i) {
-			ClassSymbol classSymbol = new ClassSymbol();
+		int nsIndex = 0;
+		int nsCount = 1;
 
-//			symbolTable.addSymbol(symbol, parent);
+		if (counts.length > 0) {
+			for (int i = 0; i < counts[0]; ++i) {
+				ClassSymbol classSymbol = new ClassSymbol("class" + i, null, null);
 
-//			let classSymbol = symbolTable.addNewSymbolOfType(c3.ClassSymbol, nsSymbols[nsIndex], "class" + i);
+				symbolTable.addNewSymbolOfType(classSymbol, null);
+
+				if (counts.length > 1) {
+					for (int j = 0; j < counts[1]; ++j) {
+						MethodSymbol methodSymbol = new MethodSymbol("method" + i);
+						symbolTable.addNewSymbolOfType(methodSymbol, null);
+					}
+				}
+
+				if (counts.length > 2) {
+					for (int j = 0; j < counts[2]; ++j) {
+						FieldSymbol fieldSymbol = new FieldSymbol("field" + i);
+						symbolTable.addNewSymbolOfType(fieldSymbol, null);
+					}
+				}
+
+		        ++nsIndex;
+		        if (nsIndex == nsCount) {
+		            nsIndex = 0;
+		        }
+			}
 		}
 
 

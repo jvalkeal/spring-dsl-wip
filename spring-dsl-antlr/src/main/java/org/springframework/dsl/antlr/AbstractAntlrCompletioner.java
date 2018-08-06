@@ -71,7 +71,8 @@ public abstract class AbstractAntlrCompletioner<L extends Lexer, P extends Parse
 		P parser = getParser(content);
 
 		DefaultAntlrCompletionEngine core = new DefaultAntlrCompletionEngine(parser);
-		DefaultAntlrCompletionEngine.CandidatesCollection candidates = core.collectCandidates(content.length()-1, null);
+		DefaultAntlrCompletionEngine.CandidatesCollection candidates = core
+				.collectCandidates(new Position(0, content.length() - 1), null);
 
 		log.debug("Candidates tokens {}", candidates.tokens);
 
@@ -87,6 +88,10 @@ public abstract class AbstractAntlrCompletioner<L extends Lexer, P extends Parse
 		}
 
 		return combletions;
+	}
+
+	protected void symbolTable(P parser) {
+
 	}
 
 }

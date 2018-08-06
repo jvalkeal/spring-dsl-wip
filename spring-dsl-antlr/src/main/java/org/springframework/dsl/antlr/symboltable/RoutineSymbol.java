@@ -17,4 +17,8 @@ package org.springframework.dsl.antlr.symboltable;
 
 public class RoutineSymbol extends ScopedSymbol {
 
+	public RoutineSymbol(String name) {
+		super(name);
+	}
+
 }

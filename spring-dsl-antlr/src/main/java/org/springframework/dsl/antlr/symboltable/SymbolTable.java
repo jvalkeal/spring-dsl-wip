@@ -18,11 +18,14 @@ package org.springframework.dsl.antlr.symboltable;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.antlr.v4.runtime.tree.ParseTree;
+
 public class SymbolTable extends ScopedSymbol {
 
 	private final Set<SymbolTable> dependencies = new HashSet<>();
 
 	public SymbolTable(String name) {
+		super(name);
 	}
 
 	@Override
@@ -43,8 +46,52 @@ public class SymbolTable extends ScopedSymbol {
     	dependencies.remove(symbolTable);
     }
 
-    public <T extends Symbol> void addSymbol(T symbol, ScopedSymbol parent) {
+    public <T extends Symbol> void addNewSymbolOfType(T symbol, ScopedSymbol parent) {
 
+    	if (parent == null ||parent == this) {
+    		this.addSymbol(symbol);
+    	} else {
+    		parent.addSymbol(symbol);
+    	}
+    }
+
+    public Symbol symbolWithContext(ParseTree context) {
+
+//        let symbols = this.getAllSymbols(Symbol);
+//        for (let symbol of symbols) {
+//            let result = findRecursive(symbol);
+//            if (result) {
+//                return result;
+//            }
+//        }
+//
+//        for (let dependency of this.dependencies) {
+//            symbols = dependency.getAllSymbols(Symbol);
+//            for (let symbol of symbols) {
+//                let result = findRecursive(symbol);
+//                if (result) {
+//                    return result;
+//                }
+//            }
+//        }
+
+
+    	return null;
+    }
+
+    @Override
+	public Symbol resolve(String name, boolean localOnly) {
+
+    	Symbol result = super.resolve(name, localOnly);
+    	if (result == null && !localOnly) {
+    		for (SymbolTable dependency : dependencies) {
+    			result = dependency.resolve(name, false);
+    			if (result != null) {
+    				break;
+    			}
+    		}
+    	}
+    	return result;
     }
 
 }
