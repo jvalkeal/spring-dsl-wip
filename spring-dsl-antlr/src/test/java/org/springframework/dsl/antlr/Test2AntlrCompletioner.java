@@ -27,10 +27,13 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.TokenStream;
 import org.antlr.v4.runtime.Vocabulary;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dsl.Test2Grammar;
 import org.springframework.dsl.Test2Lexer;
 import org.springframework.dsl.antlr.support.DefaultAntlrCompletionEngine;
 import org.springframework.dsl.domain.CompletionItem;
+import org.springframework.dsl.domain.Position;
 import org.springframework.dsl.model.LanguageId;
 
 import reactor.core.publisher.Flux;
@@ -38,13 +41,15 @@ import reactor.core.publisher.Mono;
 
 public class Test2AntlrCompletioner extends AbstractAntlrCompletioner<Test2Lexer, Test2Grammar> {
 
+	private static final Logger log = LoggerFactory.getLogger(Test2AntlrCompletioner.class);
+
 	public Test2AntlrCompletioner() {
-		super(new Test2AntlrFactory());
+		super(TestAntrlUtils.TEST2_ANTRL_FACTORY);
 	}
 
 	@Override
 	public List<LanguageId> getSupportedLanguageIds() {
-		return Arrays.asList(LanguageId.languageId("test2", "Antlr test2 Language"));
+		return Arrays.asList(TestAntrlUtils.TEST2_LANGUAGE_ID);
 	}
 
 	@Override
@@ -57,27 +62,29 @@ public class Test2AntlrCompletioner extends AbstractAntlrCompletioner<Test2Lexer
 				});
 	}
 
-	@Override
-	protected Test2Grammar getParser(String input) {
-		Test2Lexer lexer = getAntlrFactory().createLexer(CharStreams.fromString(input));
-		Test2Grammar parser = getAntlrFactory().createParser(new CommonTokenStream(lexer));
-		parser.definitions();
-		return parser;
-	}
+	protected Collection<String> assistCompletions(String content) {
 
-	@Override
-	protected void symbolTable(Test2Grammar parser) {
-		ParseTree tree = parser.definitions();
-		Test2Visitor visitor = new Test2Visitor();
-		AntlrParseResult<Object> result = visitor.visit(tree);
-	}
 
-	protected Collection<String> xxx(String content, Test2Grammar parser) {
+		// 1. build engine completions
+		// 2. build symbol table
+		// 3. tune final completions
+
 		ArrayList<String> combletions = new ArrayList<String>();
+		Test2Grammar parser = getParser(content);
+//		P parser = getParser(content);
+
+		ParseTree tree = parser.definitions();
+//		Test2Visitor visitor = new Test2Visitor();
+//		AntlrParseResult<Object> result = visitor.visit(tree);
+
 
 		DefaultAntlrCompletionEngine core = new DefaultAntlrCompletionEngine(parser);
-		DefaultAntlrCompletionEngine.CandidatesCollection candidates = core.collectCandidates(null, null);
+		DefaultAntlrCompletionEngine.CandidatesCollection candidates = core
+				.collectCandidates(new Position(18, 0), null);
 
+		log.debug("Candidates tokens {}", candidates.tokens);
+
+//		Test2Grammar.ID;
 
 		for (Entry<Integer, List<Integer>> e : candidates.tokens.entrySet()) {
 			if (e.getKey() > 0) {
@@ -86,23 +93,11 @@ public class Test2AntlrCompletioner extends AbstractAntlrCompletioner<Test2Lexer
 				String literalName = vocabulary.getLiteralName(e.getKey());
 				String symbolicName = vocabulary.getSymbolicName(e.getKey());
 				combletions.add(displayName);
+				log.debug("Candidates token {} {} {} {}", e.getKey(), displayName, literalName, symbolicName);
 			}
 		}
-
+//
 		return combletions;
 	}
 
-
-	private static class Test2AntlrFactory implements AntlrFactory<Test2Lexer, Test2Grammar> {
-
-		@Override
-		public Test2Lexer createLexer(CharStream input) {
-			return new Test2Lexer(input);
-		}
-
-		@Override
-		public Test2Grammar createParser(TokenStream tokenStream) {
-			return new Test2Grammar(tokenStream);
-		}
-	}
 }

@@ -20,6 +20,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.Vocabulary;
@@ -27,12 +29,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dsl.antlr.support.AntlrObjectSupport;
 import org.springframework.dsl.antlr.support.DefaultAntlrCompletionEngine;
+import org.springframework.dsl.antlr.symboltable.SymbolTable;
 import org.springframework.dsl.document.Document;
 import org.springframework.dsl.domain.CompletionItem;
 import org.springframework.dsl.domain.Position;
 import org.springframework.dsl.service.Completioner;
 
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * Base {@link Completioner} providing low level support for {@code ANTLR}.
@@ -64,34 +68,42 @@ public abstract class AbstractAntlrCompletioner<L extends Lexer, P extends Parse
 
 	protected abstract Flux<CompletionItem> completeInternal(String content);
 
-	protected abstract P getParser(String input);
-
-	protected Collection<String> assistCompletions(String content) {
-		ArrayList<String> combletions = new ArrayList<String>();
-		P parser = getParser(content);
-
-		DefaultAntlrCompletionEngine core = new DefaultAntlrCompletionEngine(parser);
-		DefaultAntlrCompletionEngine.CandidatesCollection candidates = core
-				.collectCandidates(new Position(0, content.length() - 1), null);
-
-		log.debug("Candidates tokens {}", candidates.tokens);
-
-		for (Entry<Integer, List<Integer>> e : candidates.tokens.entrySet()) {
-			if (e.getKey() > 0) {
-				Vocabulary vocabulary = parser.getVocabulary();
-				String displayName = vocabulary.getDisplayName(e.getKey());
-				String literalName = vocabulary.getLiteralName(e.getKey());
-				String symbolicName = vocabulary.getSymbolicName(e.getKey());
-				combletions.add(displayName);
-				log.debug("Candidates token {} {} {} {}", e.getKey(), displayName, literalName, symbolicName);
-			}
-		}
-
-		return combletions;
+	protected P getParser(String input) {
+		L lexer = getAntlrFactory().createLexer(CharStreams.fromString(input));
+		P parser = getAntlrFactory().createParser(new CommonTokenStream(lexer));
+		return parser;
 	}
 
-	protected void symbolTable(P parser) {
-
+	protected Mono<SymbolTable> getSymbolTable() {
+		return Mono.empty();
 	}
+
+	protected AntlrCompletionEngine getAntlrCompletionEngine(P parser) {
+		return new DefaultAntlrCompletionEngine(parser);
+	}
+
+//	protected Collection<String> assistCompletions(String content) {
+//		ArrayList<String> combletions = new ArrayList<String>();
+//		P parser = getParser(content);
+//
+//		DefaultAntlrCompletionEngine core = new DefaultAntlrCompletionEngine(parser);
+//		DefaultAntlrCompletionEngine.CandidatesCollection candidates = core
+//				.collectCandidates(new Position(0, content.length() - 1), null);
+//
+//		log.debug("Candidates tokens {}", candidates.tokens);
+//
+//		for (Entry<Integer, List<Integer>> e : candidates.tokens.entrySet()) {
+//			if (e.getKey() > 0) {
+//				Vocabulary vocabulary = parser.getVocabulary();
+//				String displayName = vocabulary.getDisplayName(e.getKey());
+//				String literalName = vocabulary.getLiteralName(e.getKey());
+//				String symbolicName = vocabulary.getSymbolicName(e.getKey());
+//				combletions.add(displayName);
+//				log.debug("Candidates token {} {} {} {}", e.getKey(), displayName, literalName, symbolicName);
+//			}
+//		}
+//
+//		return combletions;
+//	}
 
 }

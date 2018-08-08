@@ -48,7 +48,7 @@ public class SymbolTable extends ScopedSymbol {
 
     public <T extends Symbol> void addNewSymbolOfType(T symbol, ScopedSymbol parent) {
 
-    	if (parent == null ||parent == this) {
+    	if (parent == null || parent == this) {
     		this.addSymbol(symbol);
     	} else {
     		parent.addSymbol(symbol);

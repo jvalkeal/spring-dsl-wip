@@ -18,6 +18,7 @@ package org.springframework.dsl.antlr;
 import org.springframework.dsl.Test2Grammar.DefinitionsContext;
 import org.springframework.dsl.Test2Grammar.IdContext;
 import org.springframework.dsl.Test2Grammar.MachineObjectListContext;
+import org.springframework.dsl.Test2Grammar.StateContext;
 import org.springframework.dsl.Test2Grammar.StatemachineContext;
 
 import java.util.List;
@@ -35,18 +36,40 @@ public class Test2Visitor extends Test2GrammarBaseVisitor<AntlrParseResult<Objec
 	public AntlrParseResult<Object> visitDefinitions(DefinitionsContext ctx) {
 
 		SymbolTable symbolTable = new SymbolTable("main");
+		ClassSymbol statemachineClassSymbol = new ClassSymbol("statemachine", null, null);
+		symbolTable.addNewSymbolOfType(statemachineClassSymbol, null);
 
 
-		StatemachineContext statemachineContext = ctx.statemachine();
-		IdContext idContext = statemachineContext.id();
-		MachineObjectListContext machineObjectListContext = statemachineContext.machineObjectList();
+		ctx.machineObjectList().state().forEach(stateContext -> {
+			String id = stateContext.id().getText();
+			ClassSymbol stateClassSymbol = new ClassSymbol("state", null, statemachineClassSymbol);
+//			stateClassSymbol.setv
+		});
 
-		ClassSymbol classSymbol = new ClassSymbol("statemachine", null, null);
-		FieldSymbol fieldSymbol = new FieldSymbol("id");
-		fieldSymbol.setValue(idContext.getText());
+		ctx.machineObjectList().transition().forEach(transitionContext -> {
 
-		symbolTable.addNewSymbolOfType(classSymbol, null);
-		symbolTable.addNewSymbolOfType(fieldSymbol, classSymbol);
+		});
+
+//		MachineObjectListContext machineObjectList = ctx.machineObjectList();
+
+//		machineObjectList.transition().stream().forEach(c -> {
+//			c.transitionParameters().transitionParameter().stream().forEach(cc -> {
+//				cc.transitionType().sourceId();
+//				cc.transitionType().targetId();
+//			});
+//		});
+
+//		machineObjectList.state().stream().forEach(xxx -> {
+//			FieldSymbol fieldSymbol = new FieldSymbol("id");
+//			fieldSymbol.setValue(xxx.id().getText());
+//			symbolTable.addNewSymbolOfType(fieldSymbol, classSymbol);
+//		});
+
+//		StatemachineContext statemachineContext = ctx.statemachine();
+//		IdContext idContext = statemachineContext.id();
+//		MachineObjectListContext machineObjectListContext = statemachineContext.machineObjectList();
+
+
 
 		return new AntlrParseResult<Object>() {
 
