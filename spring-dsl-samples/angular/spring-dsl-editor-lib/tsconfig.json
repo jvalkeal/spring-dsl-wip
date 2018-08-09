@@ -15,6 +15,14 @@
     "lib": [
       "es2017",
       "dom"
-    ]
+    ],
+    "paths": {
+      "spring-dsl-editor-lib": [
+        "dist/spring-dsl-editor-lib"
+      ],
+      "spring-dsl-editor-lib/*": [
+        "dist/spring-dsl-editor-lib/*"
+      ]
+    }
   }
 }
