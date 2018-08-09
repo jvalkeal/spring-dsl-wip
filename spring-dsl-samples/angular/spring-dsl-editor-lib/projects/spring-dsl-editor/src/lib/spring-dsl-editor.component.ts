@@ -9,7 +9,7 @@ import { Component, OnInit } from '@angular/core';
   `,
   styles: []
 })
-export class SpringDslEditorLibComponent implements OnInit {
+export class SpringDslEditorComponent implements OnInit {
 
   constructor() { }
 
