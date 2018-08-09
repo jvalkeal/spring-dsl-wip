@@ -17,20 +17,16 @@ package org.springframework.dsl.antlr;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.dsl.Test2Grammar.DefinitionsContext;
 import org.springframework.dsl.Test2Grammar.SourceIdContext;
 import org.springframework.dsl.Test2Grammar.TargetIdContext;
+import org.springframework.dsl.Test2GrammarBaseVisitor;
 import org.springframework.dsl.antlr.symboltable.ClassSymbol;
 import org.springframework.dsl.antlr.symboltable.FieldSymbol;
 import org.springframework.dsl.antlr.symboltable.SymbolTable;
-import org.springframework.dsl.Test2GrammarBaseVisitor;
 import org.springframework.dsl.reconcile.ReconcileProblem;
 
 public class Test2Visitor extends Test2GrammarBaseVisitor<AntlrParseResult<Object>> {
-
-	private static final Logger log = LoggerFactory.getLogger(Test2Visitor.class);
 
 	@Override
 	public AntlrParseResult<Object> visitDefinitions(DefinitionsContext ctx) {
@@ -41,26 +37,25 @@ public class Test2Visitor extends Test2GrammarBaseVisitor<AntlrParseResult<Objec
 		symbolTable.defineGlobalSymbol(transitionClassSymbol);
 
 		ctx.machineObjectList().state().forEach(stateContext -> {
-			log.info("X state {}", stateContext.id().getText());
 			ClassSymbol classSymbol = new ClassSymbol(stateContext.id().getText());
 			stateClassSymbol.define(classSymbol);
 		});
 
 		ctx.machineObjectList().transition().forEach(transitionContext -> {
-			log.info("X transition {}", transitionContext.id().getText());
 			ClassSymbol classSymbol = new ClassSymbol(transitionContext.id().getText());
 			transitionClassSymbol.define(classSymbol);
 			transitionContext.transitionParameters().transitionParameter().stream().forEach(transitionParameter -> {
 				SourceIdContext sourceId = transitionParameter.transitionType().sourceId();
 				TargetIdContext targetId = transitionParameter.transitionType().targetId();
-				log.info("X transition source {}", sourceId != null ? sourceId.getText() : null);
-				log.info("X transition target {}", targetId != null ? targetId.getText() : null);
 
 				if (sourceId != null) {
 					FieldSymbol fieldSymbol = new FieldSymbol(transitionParameter.transitionType().SOURCE().getText());
 					classSymbol.define(fieldSymbol);
 				}
-
+				if (targetId != null) {
+					FieldSymbol fieldSymbol = new FieldSymbol(transitionParameter.transitionType().TARGET().getText());
+					classSymbol.define(fieldSymbol);
+				}
 			});
 		});
 
@@ -82,7 +77,5 @@ public class Test2Visitor extends Test2GrammarBaseVisitor<AntlrParseResult<Objec
 				return null;
 			}
 		};
-//		return super.visitDefinitions(ctx);
 	}
-
 }

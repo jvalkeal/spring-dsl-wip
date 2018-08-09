@@ -19,6 +19,7 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,53 +41,24 @@ import reactor.core.publisher.Flux;
  */
 public class AntlrCompletionerTests {
 
-//	@Test
+	@Test
 	public void testTest2Empty() {
 		String input = "";
-		TextDocument document = new TextDocument("", LanguageId.TXT, 0, input);
-		Test2AntlrCompletioner completioner = new Test2AntlrCompletioner();
-		Flux<CompletionItem> completions = completioner.complete(document, new Position(0, 0));
-		List<CompletionItem> items = completions.toStream().collect(Collectors.toList());
-		List<String> labels = items.stream().map(item -> item.getLabel()).collect(Collectors.toList());
-		assertThat(labels, containsInAnyOrder("STATEMACHINE", "STATE", "TRANSITION"));
-	}
-
-//	@Test
-	public void testTest2GenericThings() {
-	}
-
-//	@Test
-	public void testTest2DistincIdResolving() {
-		String input = "state S1 {} state S2 {} transition { source ";
-		TextDocument document = new TextDocument("", LanguageId.TXT, 0, input);
-		Test2AntlrCompletioner completioner = new Test2AntlrCompletioner();
-		Flux<CompletionItem> completions = completioner.complete(document, new Position(0, 0));
-		List<CompletionItem> items = completions.toStream().collect(Collectors.toList());
-		List<String> labels = items.stream().map(item -> item.getLabel()).collect(Collectors.toList());
-//		assertThat(labels, containsInAnyOrder("S1", "S2", "'}'", "SOURCE", "TARGET", "ID", "';'"));
-//		assertThat(labels, containsInAnyOrder("S1", "S2"));
-		assertThat(labels, containsInAnyOrder("'}'", "SOURCE", "TARGET", "ID", "';'"));
-	}
-
-	@Test
-	public void test1() throws IOException {
-		String input = TestResourceUtils.resourceAsString(getClass(), "1.test2");
-		TextDocument document = new TextDocument("", LanguageId.TXT, 0, input);
-		Test2AntlrCompletioner completioner = new Test2AntlrCompletioner();
-		Flux<CompletionItem> completions = completioner.complete(document, new Position(0, 0));
-		List<CompletionItem> items = completions.toStream().collect(Collectors.toList());
-		List<String> labels = items.stream().map(item -> item.getLabel()).collect(Collectors.toList());
-
+		assertTest2Completions(input, Position.from(0, 0), Arrays.asList("STATEMACHINE", "STATE", "TRANSITION"));
 	}
 
 	@Test
 	public void testCompletesReferenceIds() throws IOException {
 		String input = TestResourceUtils.resourceAsString(getClass(), "2.test2");
+		assertTest2Completions(input, Position.from(9, 8), Arrays.asList("S1", "S2", "S3"));
+	}
+
+	private static void assertTest2Completions(String input, Position position, List<String> expect) {
 		TextDocument document = new TextDocument("", LanguageId.TXT, 0, input);
 		Test2AntlrCompletioner completioner = new Test2AntlrCompletioner();
 		Flux<CompletionItem> completions = completioner.complete(document, new Position(9, 8));
 		List<CompletionItem> items = completions.toStream().collect(Collectors.toList());
 		List<String> labels = items.stream().map(item -> item.getLabel()).collect(Collectors.toList());
-		assertThat(labels, containsInAnyOrder("S1", "S2", "S3"));
+		assertThat(labels, containsInAnyOrder(expect.toArray(new String[0])));
 	}
 }
