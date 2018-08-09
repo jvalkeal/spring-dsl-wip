@@ -15,10 +15,9 @@
  */
 package org.springframework.dsl.antlr.symboltable;
 
-public class RoutineSymbol extends ScopedSymbol {
+public class StructSymbol extends DataAggregateSymbol {
 
-	public RoutineSymbol(String name) {
+	public StructSymbol(String name) {
 		super(name);
 	}
-
 }

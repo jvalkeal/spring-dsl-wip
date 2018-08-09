@@ -15,60 +15,54 @@
  */
 package org.springframework.dsl.antlr;
 
-import org.springframework.dsl.Test2Grammar.DefinitionsContext;
-import org.springframework.dsl.Test2Grammar.IdContext;
-import org.springframework.dsl.Test2Grammar.MachineObjectListContext;
-import org.springframework.dsl.Test2Grammar.StateContext;
-import org.springframework.dsl.Test2Grammar.StatemachineContext;
-
 import java.util.List;
 
-import org.springframework.dsl.Test2GrammarBaseVisitor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.dsl.Test2Grammar.DefinitionsContext;
+import org.springframework.dsl.Test2Grammar.SourceIdContext;
+import org.springframework.dsl.Test2Grammar.TargetIdContext;
 import org.springframework.dsl.antlr.symboltable.ClassSymbol;
 import org.springframework.dsl.antlr.symboltable.FieldSymbol;
 import org.springframework.dsl.antlr.symboltable.SymbolTable;
+import org.springframework.dsl.Test2GrammarBaseVisitor;
 import org.springframework.dsl.reconcile.ReconcileProblem;
 
 public class Test2Visitor extends Test2GrammarBaseVisitor<AntlrParseResult<Object>> {
 
+	private static final Logger log = LoggerFactory.getLogger(Test2Visitor.class);
 
 	@Override
 	public AntlrParseResult<Object> visitDefinitions(DefinitionsContext ctx) {
-
-		SymbolTable symbolTable = new SymbolTable("main");
-		ClassSymbol statemachineClassSymbol = new ClassSymbol("statemachine", null, null);
-		symbolTable.addNewSymbolOfType(statemachineClassSymbol, null);
-
+		SymbolTable symbolTable = new SymbolTable();
+		ClassSymbol stateClassSymbol = new ClassSymbol("org.springframework.statemachine.state.State");
+		ClassSymbol transitionClassSymbol = new ClassSymbol("org.springframework.statemachine.transition.Transition");
+		symbolTable.defineGlobalSymbol(stateClassSymbol);
+		symbolTable.defineGlobalSymbol(transitionClassSymbol);
 
 		ctx.machineObjectList().state().forEach(stateContext -> {
-			String id = stateContext.id().getText();
-			ClassSymbol stateClassSymbol = new ClassSymbol("state", null, statemachineClassSymbol);
-//			stateClassSymbol.setv
+			log.info("X state {}", stateContext.id().getText());
+			ClassSymbol classSymbol = new ClassSymbol(stateContext.id().getText());
+			stateClassSymbol.define(classSymbol);
 		});
 
 		ctx.machineObjectList().transition().forEach(transitionContext -> {
+			log.info("X transition {}", transitionContext.id().getText());
+			ClassSymbol classSymbol = new ClassSymbol(transitionContext.id().getText());
+			transitionClassSymbol.define(classSymbol);
+			transitionContext.transitionParameters().transitionParameter().stream().forEach(transitionParameter -> {
+				SourceIdContext sourceId = transitionParameter.transitionType().sourceId();
+				TargetIdContext targetId = transitionParameter.transitionType().targetId();
+				log.info("X transition source {}", sourceId != null ? sourceId.getText() : null);
+				log.info("X transition target {}", targetId != null ? targetId.getText() : null);
 
+				if (sourceId != null) {
+					FieldSymbol fieldSymbol = new FieldSymbol(transitionParameter.transitionType().SOURCE().getText());
+					classSymbol.define(fieldSymbol);
+				}
+
+			});
 		});
-
-//		MachineObjectListContext machineObjectList = ctx.machineObjectList();
-
-//		machineObjectList.transition().stream().forEach(c -> {
-//			c.transitionParameters().transitionParameter().stream().forEach(cc -> {
-//				cc.transitionType().sourceId();
-//				cc.transitionType().targetId();
-//			});
-//		});
-
-//		machineObjectList.state().stream().forEach(xxx -> {
-//			FieldSymbol fieldSymbol = new FieldSymbol("id");
-//			fieldSymbol.setValue(xxx.id().getText());
-//			symbolTable.addNewSymbolOfType(fieldSymbol, classSymbol);
-//		});
-
-//		StatemachineContext statemachineContext = ctx.statemachine();
-//		IdContext idContext = statemachineContext.id();
-//		MachineObjectListContext machineObjectListContext = statemachineContext.machineObjectList();
-
 
 
 		return new AntlrParseResult<Object>() {

@@ -15,19 +15,14 @@
  */
 package org.springframework.dsl.antlr.symboltable;
 
-public class VariableSymbol extends TypedSymbol {
-
-	private Object value;
+public class VariableSymbol extends BaseSymbol implements TypedSymbol {
 
 	public VariableSymbol(String name) {
 		super(name);
 	}
 
-	public Object getValue() {
-		return value;
-	}
-
-	public void setValue(Object value) {
-		this.value = value;
+	@Override
+	public void setType(Type type) {
+		super.setType(type);
 	}
 }

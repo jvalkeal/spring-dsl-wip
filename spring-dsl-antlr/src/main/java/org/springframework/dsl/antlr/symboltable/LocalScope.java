@@ -13,22 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.antlr.symtab;
+package org.springframework.dsl.antlr.symboltable;
 
-/**
- * A method symbol is a function that lives within an aggregate/class and has a
- * slot number.
- */
-public class MethodSymbol extends FunctionSymbol implements MemberSymbol {
+/** A scope object typically associated with {...} code blocks */
+public class LocalScope extends BaseScope {
 
-	protected int slot = -1;
-
-	public MethodSymbol(String name) {
-		super(name);
+	public LocalScope(Scope enclosingScope) {
+		super(enclosingScope);
 	}
 
 	@Override
-	public int getSlotNumber() {
-		return slot;
+	public String getName() {
+		return "local";
 	}
 }

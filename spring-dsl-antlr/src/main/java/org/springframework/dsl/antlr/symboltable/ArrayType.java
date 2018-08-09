@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.antlr.symtab;
+package org.springframework.dsl.antlr.symboltable;
 
 /**
  * An element within a type type such is used in C or Java where we need to

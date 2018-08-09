@@ -87,6 +87,6 @@ public class AntlrCompletionerTests {
 		Flux<CompletionItem> completions = completioner.complete(document, new Position(9, 8));
 		List<CompletionItem> items = completions.toStream().collect(Collectors.toList());
 		List<String> labels = items.stream().map(item -> item.getLabel()).collect(Collectors.toList());
-//		assertThat(labels, containsInAnyOrder("S1", "S2", "S3"));
+		assertThat(labels, containsInAnyOrder("S1", "S2", "S3"));
 	}
 }

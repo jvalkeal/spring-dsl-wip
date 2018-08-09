@@ -15,32 +15,28 @@
  */
 package org.springframework.dsl.antlr.symboltable;
 
-public class Symbol {
+/**
+ * A generic programming language symbol. A symbol has to have a name and a
+ * scope in which it lives. It also helps to know the order in which symbols are
+ * added to a scope because this often translates to register or parameter
+ * numbers.
+ */
+public interface Symbol {
 
-	private String name;
-	private Symbol parent;
+	String getName();
 
-	public Symbol(String name) {
-		this.name = name;
-	}
+	Scope getScope();
 
-	public String getName() {
-		return name;
-	}
+	void setScope(Scope scope); // set scope (not enclosing) for this symbol; who contains it?
 
-	public Symbol getParent() {
-		return parent;
-	}
+	int getInsertionOrderNumber(); // index showing insertion order from 0
 
-	public void setParent(Symbol parent) {
-		this.parent = parent;
-	}
+	void setInsertionOrderNumber(int i);
 
-	public Symbol resolve(String name, boolean localOnly) {
-		if (getParent() instanceof ScopedSymbol) {
-			return ((ScopedSymbol)getParent()).resolve(name, localOnly);
-		}
-		return null;
-	}
+	// to satisfy adding symbols to sets, hashtables
+	@Override
+	int hashCode();
 
+	@Override
+	boolean equals(Object o);
 }

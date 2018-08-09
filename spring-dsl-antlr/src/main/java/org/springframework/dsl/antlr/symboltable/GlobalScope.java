@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.antlr.symtab;
+package org.springframework.dsl.antlr.symboltable;
 
-/** A scope object typically associated with {...} code blocks */
-public class LocalScope extends BaseScope {
+/** A scope associated with globals. */
+public class GlobalScope extends BaseScope {
 
-	public LocalScope(Scope enclosingScope) {
-		super(enclosingScope);
+	public GlobalScope(Scope scope) {
+		super(scope);
 	}
 
 	@Override
 	public String getName() {
-		return "local";
+		return "global";
 	}
 }

@@ -13,40 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.antlr.symtab;
+package org.springframework.dsl.antlr.symboltable;
 
-import java.util.List;
+public class PrimitiveType extends BaseSymbol implements Type {
 
-/**
- * For C types like "void (*)(int)", we need that to be a pointer to a function
- * taking a single integer argument returning void.
- */
-public class FunctionType implements Type {
+	protected int typeIndex;
 
-	protected final Type returnType;
-	protected final List<Type> argumentTypes;
-
-	public FunctionType(Type returnType, List<Type> argumentTypes) {
-		this.returnType = returnType;
-		this.argumentTypes = argumentTypes;
-	}
-
-	@Override
-	public String getName() {
-		return toString();
+	public PrimitiveType(String name) {
+		super(name);
 	}
 
 	@Override
 	public int getTypeIndex() {
-		return -1;
+		return typeIndex;
 	}
 
-	public List<Type> getArgumentTypes() {
-		return argumentTypes;
+	public void setTypeIndex(int typeIndex) {
+		this.typeIndex = typeIndex;
 	}
 
 	@Override
-	public String toString() {
-		return "*" + returnType;
+	public String getName() {
+		return name;
 	}
 }

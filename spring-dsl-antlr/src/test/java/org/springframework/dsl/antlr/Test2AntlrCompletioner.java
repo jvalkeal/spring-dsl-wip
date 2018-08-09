@@ -18,8 +18,10 @@ package org.springframework.dsl.antlr;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -32,9 +34,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.dsl.Test2Grammar;
 import org.springframework.dsl.Test2Lexer;
 import org.springframework.dsl.antlr.support.DefaultAntlrCompletionEngine;
+import org.springframework.dsl.antlr.symboltable.SymbolTable;
 import org.springframework.dsl.domain.CompletionItem;
 import org.springframework.dsl.domain.Position;
 import org.springframework.dsl.model.LanguageId;
+import org.springframework.util.ObjectUtils;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -73,29 +77,51 @@ public class Test2AntlrCompletioner extends AbstractAntlrCompletioner<Test2Lexer
 		Test2Grammar parser = getParser(content);
 //		P parser = getParser(content);
 
-		ParseTree tree = parser.definitions();
-//		Test2Visitor visitor = new Test2Visitor();
-//		AntlrParseResult<Object> result = visitor.visit(tree);
+//		parser.getContext()
 
-
-		DefaultAntlrCompletionEngine core = new DefaultAntlrCompletionEngine(parser);
+		HashSet<Integer> preferredRules = new HashSet<>(Arrays.asList(Test2Grammar.RULE_sourceId, Test2Grammar.RULE_targetId));
+		DefaultAntlrCompletionEngine core = new DefaultAntlrCompletionEngine(parser, preferredRules, null);
 		DefaultAntlrCompletionEngine.CandidatesCollection candidates = core
-				.collectCandidates(new Position(18, 0), null);
+				.collectCandidates(new Position(9, 9), parser.definitions());
 
 		log.debug("Candidates tokens {}", candidates.tokens);
+		log.debug("Candidates rules {}", candidates.rules);
 
-//		Test2Grammar.ID;
+		parser = getParser(content);
+		ParseTree tree = parser.definitions();
+		Test2Visitor visitor = new Test2Visitor();
+		AntlrParseResult<Object> result = visitor.visit(tree);
 
-		for (Entry<Integer, List<Integer>> e : candidates.tokens.entrySet()) {
-			if (e.getKey() > 0) {
-				Vocabulary vocabulary = parser.getVocabulary();
-				String displayName = vocabulary.getDisplayName(e.getKey());
-				String literalName = vocabulary.getLiteralName(e.getKey());
-				String symbolicName = vocabulary.getSymbolicName(e.getKey());
-				combletions.add(displayName);
-				log.debug("Candidates token {} {} {} {}", e.getKey(), displayName, literalName, symbolicName);
+		SymbolTable symbolTable = result.getSymbolTable();
+//		symbolTable.GLOBALS.getAllSymbols().stream().forEach(s -> {
+//			log.info("D {}", s);
+//		});
+
+		for (Entry<Integer, List<Integer>> e : candidates.rules.entrySet()) {
+			if (e.getKey() == Test2Grammar.RULE_sourceId) {
+//				Set<String> symbolNames = symbolTable.GLOBALS.getSymbolNames();
+//				combletions.addAll(symbolNames);
+				symbolTable.GLOBALS.getAllSymbols().stream().forEach(s -> {
+					log.info("D {}", s.getScope());
+					if (ObjectUtils.nullSafeEquals(s.getScope().getName(), "org.springframework.statemachine.state.State")) {
+						combletions.add(s.getName());
+					}
+				});
 			}
 		}
+
+
+//		Test2Grammar.ID;
+//		for (Entry<Integer, List<Integer>> e : candidates.tokens.entrySet()) {
+//			if (e.getKey() > 0) {
+//				Vocabulary vocabulary = parser.getVocabulary();
+//				String displayName = vocabulary.getDisplayName(e.getKey());
+//				String literalName = vocabulary.getLiteralName(e.getKey());
+//				String symbolicName = vocabulary.getSymbolicName(e.getKey());
+//				combletions.add(displayName);
+//				log.debug("Candidates token {} {} {} {}", e.getKey(), displayName, literalName, symbolicName);
+//			}
+//		}
 //
 		return combletions;
 	}

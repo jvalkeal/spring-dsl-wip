@@ -15,10 +15,13 @@
  */
 package org.springframework.dsl.antlr.symboltable;
 
-public class TypedSymbol extends Symbol {
+/**
+ * This interface tags user-defined symbols that have static type information,
+ * like variables and functions.
+ */
+public interface TypedSymbol {
 
-	public TypedSymbol(String name) {
-		super(name);
-	}
+	Type getType();
 
+	void setType(Type type);
 }

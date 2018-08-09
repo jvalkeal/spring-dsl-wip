@@ -13,11 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.antlr.symtab;
+package org.springframework.dsl.antlr.symboltable;
 
-public class StructSymbol extends DataAggregateSymbol {
+/** A "typedef int I;" in C results in a TypeAlias("I", ptrToIntegerType) */
+public class TypeAlias extends BaseSymbol implements Type {
 
-	public StructSymbol(String name) {
+	protected Type targetType;
+
+	public TypeAlias(String name, Type targetType) {
 		super(name);
+		this.targetType = targetType;
+	}
+
+	@Override
+	public int getTypeIndex() {
+		return -1;
+	}
+
+	public Type getTargetType() {
+		return targetType;
 	}
 }

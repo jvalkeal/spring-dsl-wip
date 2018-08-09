@@ -13,18 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.antlr.symtab;
+package org.springframework.dsl.antlr.symboltable;
+
+import java.util.List;
 
 /**
- * An element in a type tree that represents a pointer to some type, such as we
- * need for C. "int *" would need a PointerType(intType) object.
+ * For C types like "void (*)(int)", we need that to be a pointer to a function
+ * taking a single integer argument returning void.
  */
-public class PointerType implements Type {
+public class FunctionType implements Type {
 
-	protected Type targetType;
+	protected final Type returnType;
+	protected final List<Type> argumentTypes;
 
-	public PointerType(Type targetType) {
-		this.targetType = targetType;
+	public FunctionType(Type returnType, List<Type> argumentTypes) {
+		this.returnType = returnType;
+		this.argumentTypes = argumentTypes;
 	}
 
 	@Override
@@ -37,8 +41,12 @@ public class PointerType implements Type {
 		return -1;
 	}
 
+	public List<Type> getArgumentTypes() {
+		return argumentTypes;
+	}
+
 	@Override
 	public String toString() {
-		return "*" + targetType;
+		return "*" + returnType;
 	}
 }

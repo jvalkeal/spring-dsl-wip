@@ -13,15 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.antlr.symtab;
+package org.springframework.dsl.antlr.symboltable;
 
 /**
- * A parameter is just kind of variable used as an argument to a function or
- * method.
+ * An element in a type tree that represents a pointer to some type, such as we
+ * need for C. "int *" would need a PointerType(intType) object.
  */
-public class ParameterSymbol extends VariableSymbol {
+public class PointerType implements Type {
 
-	public ParameterSymbol(String name) {
-		super(name);
+	protected Type targetType;
+
+	public PointerType(Type targetType) {
+		this.targetType = targetType;
+	}
+
+	@Override
+	public String getName() {
+		return toString();
+	}
+
+	@Override
+	public int getTypeIndex() {
+		return -1;
+	}
+
+	@Override
+	public String toString() {
+		return "*" + targetType;
 	}
 }
