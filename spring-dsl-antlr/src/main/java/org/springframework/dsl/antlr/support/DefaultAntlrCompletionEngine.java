@@ -38,6 +38,7 @@ import org.antlr.v4.runtime.misc.IntervalSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dsl.antlr.AntlrCompletionEngine;
+import org.springframework.dsl.antlr.AntlrCompletionResult;
 import org.springframework.dsl.domain.Position;
 
 /**
@@ -54,23 +55,33 @@ public class DefaultAntlrCompletionEngine implements AntlrCompletionEngine {
 
 	private static final Logger log = LoggerFactory.getLogger(DefaultAntlrCompletionEngine.class);
 
-	public static class CandidatesCollection {
-		public Map<Integer, List<Integer>> tokens = new HashMap<>();
-		public Map<Integer, List<Integer>> rules = new HashMap<>();
+	private static class CandidatesCollection implements AntlrCompletionResult {
+		Map<Integer, List<Integer>> tokens = new HashMap<>();
+		Map<Integer, List<Integer>> rules = new HashMap<>();
+
+		@Override
+		public Map<Integer, List<Integer>> getTokens() {
+			return tokens;
+		}
+
+		@Override
+		public Map<Integer, List<Integer>> getRules() {
+			return rules;
+		}
 	}
 
-	public static class FollowSetWithPath {
+	private static class FollowSetWithPath {
 		public IntervalSet intervals;
 		public List<Integer> path;
 		public List<Integer> following;
 	}
 
-	public static class FollowSetsHolder {
+	private static class FollowSetsHolder {
 		public List<FollowSetWithPath> sets;
 		public IntervalSet combined;
 	}
 
-	public static class PipelineEntry {
+	private static class PipelineEntry {
 		ATNState state;
 		Integer tokenIndex;
 
@@ -116,7 +127,7 @@ public class DefaultAntlrCompletionEngine implements AntlrCompletionEngine {
 	}
 
 	@Override
-	public CandidatesCollection collectCandidates(Position position, ParserRuleContext context) {
+	public AntlrCompletionResult collectResults(Position position, ParserRuleContext context) {
 		int line = position.getLine() + 1;
 		int charPositionInLine = position.getCharacter();
 		this.shortcutMap.clear();

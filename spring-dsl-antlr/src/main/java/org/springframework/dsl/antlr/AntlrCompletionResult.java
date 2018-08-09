@@ -15,24 +15,28 @@
  */
 package org.springframework.dsl.antlr;
 
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.springframework.dsl.domain.Position;
+import java.util.List;
+import java.util.Map;
 
 /**
- * Defines a contract how completion infomation can be requested from
- * {@code ANTLR}.
+ * Contract representing a results from a {@link AntlrCompletionEngine}.
  *
  * @author Janne Valkealahti
  *
  */
-public interface AntlrCompletionEngine {
+public interface AntlrCompletionResult {
 
 	/**
-	 * Collect results from a given {@link Position} with a {@link ParserRuleContext}.
+	 * Gets the result tokens.
 	 *
-	 * @param position the position
-	 * @param context the parser rule context
-	 * @return the antlr completion result
+	 * @return the tokens
 	 */
-	AntlrCompletionResult collectResults(Position position, ParserRuleContext context);
+	Map<Integer, List<Integer>> getTokens();
+
+	/**
+	 * Gets the result rules.
+	 *
+	 * @return the rules
+	 */
+	Map<Integer, List<Integer>> getRules();
 }

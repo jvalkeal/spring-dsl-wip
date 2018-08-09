@@ -63,8 +63,8 @@ public class Test2AntlrCompletioner extends AbstractAntlrCompletioner<Test2Lexer
 
 		HashSet<Integer> preferredRules = new HashSet<>(Arrays.asList(Test2Grammar.RULE_sourceId, Test2Grammar.RULE_targetId));
 		DefaultAntlrCompletionEngine core = new DefaultAntlrCompletionEngine(parser, preferredRules, null);
-		DefaultAntlrCompletionEngine.CandidatesCollection candidates = core
-				.collectCandidates(new Position(9, 9), parser.definitions());
+		AntlrCompletionResult candidates = core
+				.collectResults(new Position(9, 9), parser.definitions());
 
 		parser = getParser(content);
 		ParseTree tree = parser.definitions();
@@ -73,7 +73,7 @@ public class Test2AntlrCompletioner extends AbstractAntlrCompletioner<Test2Lexer
 
 		SymbolTable symbolTable = result.getSymbolTable();
 
-		for (Entry<Integer, List<Integer>> e : candidates.rules.entrySet()) {
+		for (Entry<Integer, List<Integer>> e : candidates.getRules().entrySet()) {
 			if (e.getKey() == Test2Grammar.RULE_sourceId) {
 				symbolTable.GLOBALS.getAllSymbols().stream().forEach(s -> {
 					if (ObjectUtils.nullSafeEquals(s.getScope().getName(), "org.springframework.statemachine.state.State")) {
@@ -83,7 +83,7 @@ public class Test2AntlrCompletioner extends AbstractAntlrCompletioner<Test2Lexer
 			}
 		}
 
-		for (Entry<Integer, List<Integer>> e : candidates.tokens.entrySet()) {
+		for (Entry<Integer, List<Integer>> e : candidates.getTokens().entrySet()) {
 			if (e.getKey() > 0) {
 				Vocabulary vocabulary = parser.getVocabulary();
 				String displayName = vocabulary.getDisplayName(e.getKey());

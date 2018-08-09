@@ -28,6 +28,7 @@ import org.springframework.dsl.Test1Lexer;
 import org.springframework.dsl.Test1Parser;
 import org.springframework.dsl.Test2Grammar;
 import org.springframework.dsl.Test2Lexer;
+import org.springframework.dsl.antlr.AntlrCompletionResult;
 import org.springframework.dsl.antlr.AntlrFactory;
 import org.springframework.dsl.antlr.support.DefaultAntlrCompletionEngine;
 import org.springframework.dsl.domain.Position;
@@ -79,12 +80,12 @@ public class DefaultAntlrCompletionEngineTests {
 		parser.r();
 
 		DefaultAntlrCompletionEngine core = new DefaultAntlrCompletionEngine(parser);
-		DefaultAntlrCompletionEngine.CandidatesCollection candidates = core.collectCandidates(new Position(0, 0), null);
+		AntlrCompletionResult candidates = core.collectResults(new Position(0, 0), null);
 
 		assertThat(candidates).isNotNull();
-		assertThat(candidates.tokens).isNotNull();
-		assertThat(candidates.tokens.size()).isEqualTo(1);
-		assertThat(candidates.tokens.containsKey(Test1Lexer.AB)).isTrue();
+		assertThat(candidates.getTokens()).isNotNull();
+		assertThat(candidates.getTokens().size()).isEqualTo(1);
+		assertThat(candidates.getTokens().containsKey(Test1Lexer.AB)).isTrue();
 	}
 
 	@Test
@@ -97,14 +98,14 @@ public class DefaultAntlrCompletionEngineTests {
 		parser.definitions();
 
 		DefaultAntlrCompletionEngine core = new DefaultAntlrCompletionEngine(parser);
-		DefaultAntlrCompletionEngine.CandidatesCollection candidates = core.collectCandidates(new Position(0, 0), null);
+		AntlrCompletionResult candidates = core.collectResults(new Position(0, 0), null);
 
 		assertThat(candidates).isNotNull();
-		assertThat(candidates.tokens).isNotNull();
-		assertThat(candidates.tokens.size()).isEqualTo(4);
-		assertThat(candidates.tokens.containsKey(Test2Lexer.STATEMACHINE)).isTrue();
-		assertThat(candidates.tokens.containsKey(Test2Lexer.STATE)).isTrue();
-		assertThat(candidates.tokens.containsKey(Test2Lexer.TRANSITION)).isTrue();
+		assertThat(candidates.getTokens()).isNotNull();
+		assertThat(candidates.getTokens().size()).isEqualTo(4);
+		assertThat(candidates.getTokens().containsKey(Test2Lexer.STATEMACHINE)).isTrue();
+		assertThat(candidates.getTokens().containsKey(Test2Lexer.STATE)).isTrue();
+		assertThat(candidates.getTokens().containsKey(Test2Lexer.TRANSITION)).isTrue();
 	}
 
 
@@ -118,13 +119,13 @@ public class DefaultAntlrCompletionEngineTests {
 		parser.definitions();
 
 		DefaultAntlrCompletionEngine core = new DefaultAntlrCompletionEngine(parser);
-		DefaultAntlrCompletionEngine.CandidatesCollection candidates = core.collectCandidates(new Position(0, 17), null);
+		AntlrCompletionResult candidates = core.collectResults(new Position(0, 17), null);
 
 		assertThat(candidates).isNotNull();
-		assertThat(candidates.tokens).isNotNull();
-		assertThat(candidates.tokens.size()).isEqualTo(3);
-		assertThat(candidates.tokens.containsKey(Test2Lexer.STATE)).isTrue();
-		assertThat(candidates.tokens.containsKey(Test2Lexer.TRANSITION)).isTrue();
+		assertThat(candidates.getTokens()).isNotNull();
+		assertThat(candidates.getTokens().size()).isEqualTo(3);
+		assertThat(candidates.getTokens().containsKey(Test2Lexer.STATE)).isTrue();
+		assertThat(candidates.getTokens().containsKey(Test2Lexer.TRANSITION)).isTrue();
 	}
 
 	@Test
@@ -137,13 +138,13 @@ public class DefaultAntlrCompletionEngineTests {
 		parser.definitions();
 
 		DefaultAntlrCompletionEngine core = new DefaultAntlrCompletionEngine(parser);
-		DefaultAntlrCompletionEngine.CandidatesCollection candidates = core.collectCandidates(new Position(0, 28), null);
+		AntlrCompletionResult candidates = core.collectResults(new Position(0, 28), null);
 
 		assertThat(candidates).isNotNull();
-		assertThat(candidates.tokens).isNotNull();
-		assertThat(candidates.tokens.size()).isEqualTo(3);
-		assertThat(candidates.tokens.containsKey(Test2Lexer.INITIAL)).isTrue();
-		assertThat(candidates.tokens.containsKey(Test2Lexer.END)).isTrue();
+		assertThat(candidates.getTokens()).isNotNull();
+		assertThat(candidates.getTokens().size()).isEqualTo(3);
+		assertThat(candidates.getTokens().containsKey(Test2Lexer.INITIAL)).isTrue();
+		assertThat(candidates.getTokens().containsKey(Test2Lexer.END)).isTrue();
 	}
 
 	@Test
@@ -156,12 +157,12 @@ public class DefaultAntlrCompletionEngineTests {
 		parser.definitions();
 
 		DefaultAntlrCompletionEngine core = new DefaultAntlrCompletionEngine(parser);
-		DefaultAntlrCompletionEngine.CandidatesCollection candidates = core.collectCandidates(new Position(0, 13), null);
+		AntlrCompletionResult candidates = core.collectResults(new Position(0, 13), null);
 
 		assertThat(candidates).isNotNull();
-		assertThat(candidates.tokens).isNotNull();
-		assertThat(candidates.tokens.size()).isEqualTo(1);
-		assertThat(candidates.tokens.containsKey(Test2Lexer.ID)).isTrue();
+		assertThat(candidates.getTokens()).isNotNull();
+		assertThat(candidates.getTokens().size()).isEqualTo(1);
+		assertThat(candidates.getTokens().containsKey(Test2Lexer.ID)).isTrue();
 	}
 
 	@Test
@@ -174,12 +175,12 @@ public class DefaultAntlrCompletionEngineTests {
 		parser.definitions();
 
 		DefaultAntlrCompletionEngine core = new DefaultAntlrCompletionEngine(parser);
-		DefaultAntlrCompletionEngine.CandidatesCollection candidates = core.collectCandidates(new Position(0, 28), null);
+		AntlrCompletionResult candidates = core.collectResults(new Position(0, 28), null);
 
 		assertThat(candidates).isNotNull();
-		assertThat(candidates.tokens).isNotNull();
-		assertThat(candidates.tokens.size()).isEqualTo(3);
-		assertThat(candidates.tokens.containsKey(Test2Lexer.INITIAL)).isTrue();
-		assertThat(candidates.tokens.containsKey(Test2Lexer.END)).isTrue();
+		assertThat(candidates.getTokens()).isNotNull();
+		assertThat(candidates.getTokens().size()).isEqualTo(3);
+		assertThat(candidates.getTokens().containsKey(Test2Lexer.INITIAL)).isTrue();
+		assertThat(candidates.getTokens().containsKey(Test2Lexer.END)).isTrue();
 	}
 }
