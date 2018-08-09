@@ -122,38 +122,38 @@
         }
       }
     },
-    "spring-dsl-editor-lib": {
-      "root": "projects/spring-dsl-editor-lib",
-      "sourceRoot": "projects/spring-dsl-editor-lib/src",
+    "spring-dsl-editor": {
+      "root": "projects/spring-dsl-editor",
+      "sourceRoot": "projects/spring-dsl-editor/src",
       "projectType": "library",
       "prefix": "spring",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-ng-packagr:build",
           "options": {
-            "tsConfig": "projects/spring-dsl-editor-lib/tsconfig.lib.json",
-            "project": "projects/spring-dsl-editor-lib/ng-package.json"
+            "tsConfig": "projects/spring-dsl-editor/tsconfig.lib.json",
+            "project": "projects/spring-dsl-editor/ng-package.json"
           },
           "configurations": {
             "production": {
-              "project": "projects/spring-dsl-editor-lib/ng-package.prod.json"
+              "project": "projects/spring-dsl-editor/ng-package.prod.json"
             }
           }
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "main": "projects/spring-dsl-editor-lib/src/test.ts",
-            "tsConfig": "projects/spring-dsl-editor-lib/tsconfig.spec.json",
-            "karmaConfig": "projects/spring-dsl-editor-lib/karma.conf.js"
+            "main": "projects/spring-dsl-editor/src/test.ts",
+            "tsConfig": "projects/spring-dsl-editor/tsconfig.spec.json",
+            "karmaConfig": "projects/spring-dsl-editor/karma.conf.js"
           }
         },
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
             "tsConfig": [
-              "projects/spring-dsl-editor-lib/tsconfig.lib.json",
-              "projects/spring-dsl-editor-lib/tsconfig.spec.json"
+              "projects/spring-dsl-editor/tsconfig.lib.json",
+              "projects/spring-dsl-editor/tsconfig.spec.json"
             ],
             "exclude": [
               "**/node_modules/**"

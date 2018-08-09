@@ -2,7 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
-import { SpringDslEditorLibModule } from 'spring-dsl-editor-lib';
+import { SpringDslEditorModule } from 'spring-dsl-editor';
 
 @NgModule({
   declarations: [
@@ -10,7 +10,7 @@ import { SpringDslEditorLibModule } from 'spring-dsl-editor-lib';
   ],
   imports: [
     BrowserModule,
-    SpringDslEditorLibModule
+    SpringDslEditorModule
   ],
   providers: [],
   bootstrap: [AppComponent]

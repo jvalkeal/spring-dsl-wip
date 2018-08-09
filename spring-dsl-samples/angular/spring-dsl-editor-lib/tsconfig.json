@@ -17,11 +17,11 @@
       "dom"
     ],
     "paths": {
-      "spring-dsl-editor-lib": [
-        "dist/spring-dsl-editor-lib"
+      "spring-dsl-editor": [
+        "dist/spring-dsl-editor"
       ],
-      "spring-dsl-editor-lib/*": [
-        "dist/spring-dsl-editor-lib/*"
+      "spring-dsl-editor/*": [
+        "dist/spring-dsl-editor/*"
       ]
     }
   }

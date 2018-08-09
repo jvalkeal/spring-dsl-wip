@@ -1,17 +1,17 @@
 import { NgModule } from '@angular/core';
-import { SpringDslEditorLibComponent } from './spring-dsl-editor-lib.component';
+import { SpringDslEditorComponent } from './spring-dsl-editor.component';
 import { SpringMonacoEditorComponent } from './spring-monaco-editor/spring-monaco-editor.component';
 
 @NgModule({
   imports: [
   ],
   declarations: [
-    SpringDslEditorLibComponent,
+    SpringDslEditorComponent,
     SpringMonacoEditorComponent
   ],
   exports: [
-    SpringDslEditorLibComponent,
+    SpringDslEditorComponent,
     SpringMonacoEditorComponent
   ]
 })
-export class SpringDslEditorLibModule { }
+export class SpringDslEditorModule { }

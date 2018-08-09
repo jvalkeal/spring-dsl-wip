@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SpringDslEditorLibComponent } from './spring-dsl-editor-lib.component';
+import { SpringDslEditorComponent } from './spring-dsl-editor.component';
 
-describe('SpringDslEditorLibComponent', () => {
-  let component: SpringDslEditorLibComponent;
-  let fixture: ComponentFixture<SpringDslEditorLibComponent>;
+describe('SpringDslEditorComponent', () => {
+  let component: SpringDslEditorComponent;
+  let fixture: ComponentFixture<SpringDslEditorComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ SpringDslEditorLibComponent ]
+      declarations: [ SpringDslEditorComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SpringDslEditorLibComponent);
+    fixture = TestBed.createComponent(SpringDslEditorComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
