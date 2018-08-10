@@ -17,6 +17,7 @@ package org.springframework.dsl.antlr;
 
 import java.util.List;
 
+import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 import org.springframework.dsl.Test2Grammar.DefinitionsContext;
 import org.springframework.dsl.Test2Grammar.SourceIdContext;
 import org.springframework.dsl.Test2Grammar.TargetIdContext;
@@ -26,6 +27,12 @@ import org.springframework.dsl.antlr.symboltable.FieldSymbol;
 import org.springframework.dsl.antlr.symboltable.SymbolTable;
 import org.springframework.dsl.reconcile.ReconcileProblem;
 
+/**
+ * {@link ParseTreeVisitor} for {@code ANTLR test2 language}.
+ *
+ * @author Janne Valkealahti
+ *
+ */
 public class Test2Visitor extends Test2GrammarBaseVisitor<AntlrParseResult<Object>> {
 
 	@Override

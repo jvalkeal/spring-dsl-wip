@@ -17,11 +17,11 @@ package org.springframework.dsl.antlr;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Vocabulary;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.springframework.dsl.Test2Grammar;
@@ -31,11 +31,18 @@ import org.springframework.dsl.antlr.symboltable.SymbolTable;
 import org.springframework.dsl.domain.CompletionItem;
 import org.springframework.dsl.domain.Position;
 import org.springframework.dsl.model.LanguageId;
+import org.springframework.dsl.service.Completioner;
 import org.springframework.util.ObjectUtils;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+/**
+ * {@link Completioner} for {@code ANTLR test2 language}.
+ *
+ * @author Janne Valkealahti
+ *
+ */
 public class Test2AntlrCompletioner extends AbstractAntlrCompletioner<Test2Lexer, Test2Grammar> {
 
 	public Test2AntlrCompletioner() {
@@ -48,8 +55,8 @@ public class Test2AntlrCompletioner extends AbstractAntlrCompletioner<Test2Lexer
 	}
 
 	@Override
-	protected Flux<CompletionItem> completeInternal(String content) {
-		return Flux.fromIterable(assistCompletions(content))
+	protected Flux<CompletionItem> completeInternal(String content, Position position) {
+		return getCompletions(content, position)
 				.flatMap(c -> {
 					CompletionItem item = new CompletionItem();
 					item.setLabel(c);
@@ -57,40 +64,54 @@ public class Test2AntlrCompletioner extends AbstractAntlrCompletioner<Test2Lexer
 				});
 	}
 
-	protected Collection<String> assistCompletions(String content) {
-		ArrayList<String> completions = new ArrayList<String>();
-		Test2Grammar parser = getParser(content);
-
+	@Override
+	protected AntlrCompletionEngine getAntlrCompletionEngine(Test2Grammar parser) {
 		HashSet<Integer> preferredRules = new HashSet<>(Arrays.asList(Test2Grammar.RULE_sourceId, Test2Grammar.RULE_targetId));
-		DefaultAntlrCompletionEngine core = new DefaultAntlrCompletionEngine(parser, preferredRules, null);
-		AntlrCompletionResult candidates = core
-				.collectResults(new Position(9, 9), parser.definitions());
+		return new DefaultAntlrCompletionEngine(parser, preferredRules, null);
+	}
 
-		parser = getParser(content);
+	@Override
+	protected ParserRuleContext getParserRuleContext(Test2Grammar parser) {
+		return parser.definitions();
+	}
+
+	@Override
+	protected Flux<String> completeRules(AntlrCompletionResult completionResult, SymbolTable symbolTable) {
+		return Flux.defer(() -> {
+			ArrayList<String> completions = new ArrayList<String>();
+			for (Entry<Integer, List<Integer>> e : completionResult.getRules().entrySet()) {
+				if (e.getKey() == Test2Grammar.RULE_sourceId) {
+					symbolTable.GLOBALS.getAllSymbols().stream().forEach(s -> {
+						if (ObjectUtils.nullSafeEquals(s.getScope().getName(), "org.springframework.statemachine.state.State")) {
+							completions.add(s.getName());
+						}
+					});
+				}
+			}
+			return Flux.fromIterable(completions);
+		});
+	}
+
+	@Override
+	protected Flux<String> completeTokens(AntlrCompletionResult completionResult, Test2Grammar parser) {
+		return Flux.defer(() -> {
+			ArrayList<String> completions = new ArrayList<String>();
+			for (Entry<Integer, List<Integer>> e : completionResult.getTokens().entrySet()) {
+				if (e.getKey() > 0) {
+					Vocabulary vocabulary = parser.getVocabulary();
+					String displayName = vocabulary.getDisplayName(e.getKey());
+					completions.add(displayName);
+				}
+			}
+			return Flux.fromIterable(completions);
+		});
+	}
+
+	@Override
+	protected SymbolTable getSymbolTable(String content, Test2Grammar parser) {
 		ParseTree tree = parser.definitions();
 		Test2Visitor visitor = new Test2Visitor();
 		AntlrParseResult<Object> result = visitor.visit(tree);
-
-		SymbolTable symbolTable = result.getSymbolTable();
-
-		for (Entry<Integer, List<Integer>> e : candidates.getRules().entrySet()) {
-			if (e.getKey() == Test2Grammar.RULE_sourceId) {
-				symbolTable.GLOBALS.getAllSymbols().stream().forEach(s -> {
-					if (ObjectUtils.nullSafeEquals(s.getScope().getName(), "org.springframework.statemachine.state.State")) {
-						completions.add(s.getName());
-					}
-				});
-			}
-		}
-
-		for (Entry<Integer, List<Integer>> e : candidates.getTokens().entrySet()) {
-			if (e.getKey() > 0) {
-				Vocabulary vocabulary = parser.getVocabulary();
-				String displayName = vocabulary.getDisplayName(e.getKey());
-				completions.add(displayName);
-			}
-		}
-
-		return completions;
+		return result.getSymbolTable();
 	}
 }
