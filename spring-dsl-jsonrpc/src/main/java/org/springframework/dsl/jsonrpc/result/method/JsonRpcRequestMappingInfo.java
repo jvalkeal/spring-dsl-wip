@@ -32,7 +32,7 @@ public class JsonRpcRequestMappingInfo implements JsonRpcRequestCondition<JsonRp
 	 * Instantiates a new json rpc request mapping info.
 	 *
 	 * @param name the name
-	 * @param methodsCondition the methods condition
+	 * @param methods the methods condition
 	 */
 	public JsonRpcRequestMappingInfo(@Nullable String name, JsonRcpRequestMethodsRequestCondition methods) {
 		this.name = (StringUtils.hasText(name) ? name : null);

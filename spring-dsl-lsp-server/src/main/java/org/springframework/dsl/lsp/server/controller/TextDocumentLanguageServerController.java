@@ -170,7 +170,6 @@ public class TextDocumentLanguageServerController implements InitializingBean {
 	 * {@link DocumentStateTracker}.
 	 *
 	 * @param params the {@link WillSaveTextDocumentParams}
-	 * @param context the lsp client context
 	 * @return a flux of textedit's
 	 */
 	@JsonRpcRequestMapping(method = "willSaveWaitUntil")

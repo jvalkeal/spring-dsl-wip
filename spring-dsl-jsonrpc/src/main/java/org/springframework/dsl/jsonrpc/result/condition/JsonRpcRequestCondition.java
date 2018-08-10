@@ -58,7 +58,7 @@ public interface JsonRpcRequestCondition<T> {
 	/**
 	 * Compare this condition to another condition in the context of a specific
 	 * request. This method assumes both instances have been obtained via
-	 * {@link #getMatchingCondition(ServerLspExchange)} to ensure they have content
+	 * {@link #getMatchingCondition(ServerJsonRpcExchange)} to ensure they have content
 	 * relevant to current request only.
 	 *
 	 * @param other the other to compare

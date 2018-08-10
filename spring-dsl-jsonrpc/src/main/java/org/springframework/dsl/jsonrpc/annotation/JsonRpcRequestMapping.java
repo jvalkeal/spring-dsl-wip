@@ -49,7 +49,7 @@ public @interface JsonRpcRequestMapping {
 	/**
 	 * The primary mapping expressed by this annotation.
 	 * <p>
-	 * This is an alias for {@link #path}. For example
+	 * This is an alias for {@link #method()}. For example
 	 * {@code @JsonRpcRequestMapping("mymethod")} is equivalent to
 	 * {@code @JsonRpcRequestMapping(method="mymethod")}.
 	 * <p>

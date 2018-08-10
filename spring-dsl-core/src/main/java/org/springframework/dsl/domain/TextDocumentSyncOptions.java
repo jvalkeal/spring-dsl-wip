@@ -127,7 +127,7 @@ public class TextDocumentSyncOptions {
 		/**
 		 * Sets if willSave is enabled.
 		 *
-		 * @param openClose {@code true} if willSave is supported
+		 * @param willSave {@code true} if willSave is supported
 		 * @return the builder for chaining
 		 */		
 		TextDocumentSyncOptionsBuilder<P> willSave(Boolean willSave);
@@ -135,7 +135,7 @@ public class TextDocumentSyncOptions {
 		/**
 		 * Sets if willSaveWaitUntil is enabled.
 		 *
-		 * @param openClose {@code true} if willSaveWaitUntil is supported
+		 * @param willSaveWaitUntil {@code true} if willSaveWaitUntil is supported
 		 * @return the builder for chaining
 		 */		
 		TextDocumentSyncOptionsBuilder<P> willSaveWaitUntil(Boolean willSaveWaitUntil);

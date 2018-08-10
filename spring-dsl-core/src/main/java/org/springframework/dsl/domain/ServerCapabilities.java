@@ -133,7 +133,6 @@ public class ServerCapabilities {
 		 * Gets a builder for a {@link CompletionOptions}. Same as calling
 		 * {@link #completionProvider(boolean)} with {@code true}.
 		 *
-		 * @param enabled the flag to disable whole builder
 		 * @return the builder for chaining
 		 * @see #completionProvider(boolean)
 		 */

@@ -24,8 +24,7 @@ import org.springframework.dsl.document.linetracker.Region;
 import org.springframework.util.Assert;
 
 /**
- * A non-sucky alternative to {@link IRegion}. Represents a region of text in a
- * document.
+ * Represents a region of text in a document.
  * <p>
  * Caution: assumes the underlying document is not mutated during the lifetime
  * of the region object (otherwise start/end positions may no longer be valid).
