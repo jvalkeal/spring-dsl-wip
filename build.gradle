@@ -112,6 +112,7 @@ configure(subprojects) { subproject ->
 	}
 
 	dependencies {
+		optional 'com.google.code.findbugs:jsr305'
 	}
 
 	task sourcesJar(type: Jar, dependsOn:classes) {
@@ -141,7 +142,6 @@ project('spring-dsl-core') {
 		compile 'io.projectreactor:reactor-core'
 		compile 'org.javolution:javolution-core-java'
 		optional 'com.google.code.gson:gson'
-		optional 'com.google.code.findbugs:jsr305'
 		testCompile 'org.springframework.boot:spring-boot-starter-test'
 		testRuntime 'org.springframework.boot:spring-boot-starter'
 	}
@@ -161,7 +161,6 @@ project('spring-dsl-lsp-server') {
 		compile 'org.javolution:javolution-core-java'
 		optional 'org.springframework.boot:spring-boot-configuration-processor'
 		optional 'com.google.code.gson:gson'
-		optional 'com.google.code.findbugs:jsr305'
 		testCompile 'org.springframework.boot:spring-boot-starter-test'
 		testCompile 'com.jayway.jsonpath:json-path'
 		testRuntime 'org.springframework.boot:spring-boot-starter'
