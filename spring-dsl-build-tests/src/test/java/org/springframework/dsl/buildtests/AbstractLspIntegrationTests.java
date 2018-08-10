@@ -15,6 +15,10 @@
  */
 package org.springframework.dsl.buildtests;
 
+import org.junit.After;
+import org.junit.Before;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
 /**
  * Base integration lsp tests using full command structures against various
  * supported implementations.
@@ -24,22 +28,22 @@ package org.springframework.dsl.buildtests;
  */
 public abstract class AbstractLspIntegrationTests {
 
-//	protected AnnotationConfigApplicationContext context;
-//
-//	@Before
-//	public void setup() {
-//		context = buildContext();
-//	}
-//
-//	@After
-//	public void clean() {
-//		if (context != null) {
-//			context.close();
-//		}
-//		context = null;
-//	}
-//
-//	protected AnnotationConfigApplicationContext buildContext() {
-//		return null;
-//	}
+	protected AnnotationConfigApplicationContext context;
+
+	@Before
+	public void setup() {
+		context = buildContext();
+	}
+
+	@After
+	public void clean() {
+		if (context != null) {
+			context.close();
+		}
+		context = null;
+	}
+
+	protected AnnotationConfigApplicationContext buildContext() {
+		return null;
+	}
 }
