@@ -17,6 +17,8 @@ package org.springframework.dsl.lsp.server.jsonrpc;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -27,6 +29,7 @@ import org.springframework.core.io.buffer.NettyDataBufferFactory;
 import org.springframework.dsl.jsonrpc.JsonRpcInputMessage;
 import org.springframework.dsl.jsonrpc.JsonRpcOutputMessage;
 import org.springframework.dsl.jsonrpc.support.DefaultJsonRpcRequest;
+import org.springframework.util.ObjectUtils;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -37,6 +40,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
+import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.ipc.netty.NettyInbound;
@@ -54,6 +58,7 @@ public class ReactorJsonRpcHandlerAdapter implements BiFunction<NettyInbound, Ne
 
 	@Override
 	public Mono<Void> apply(NettyInbound in, NettyOutbound out) {
+		Map<String, Disposable> disposables = new HashMap<>();
 		SimpleModule module = new SimpleModule();
 		module.addDeserializer(DefaultJsonRpcRequest.class, new DefaultJsonRpcRequestDeserializer());
 		ObjectMapper mapper = new ObjectMapper();
@@ -105,12 +110,33 @@ public class ReactorJsonRpcHandlerAdapter implements BiFunction<NettyInbound, Ne
 					}
 				};
 
-
-
 				JsonRpcInputMessage adaptedRequest = new ReactorJsonRpcInputMessage(in, bufferFactory);
 				JsonRpcOutputMessage adaptedResponse = new ReactorJsonRpcOutputMessage(out, bufferFactory);
 
-				rpcHandler.handle(i, adaptedResponse)
+				String disposableId = null;
+				Disposable disposable = null;
+				if (bb.getId() != null) {
+					disposableId = in.context().channel().id().asLongText() + bb.getId();
+				}
+
+				if (ObjectUtils.nullSafeEquals("$/cancelRequest", bb.getMethod())) {
+					if (disposableId != null) {
+						disposable = disposables.remove(disposableId);
+						if (disposable != null) {
+							disposable.dispose();
+							String error = "{\"jsonrpc\":\"2.0\", \"id\":" + bb.getId() + ", \"error\":{\"code\":-32800, \"message\": \"cancel\"}}";
+							DataBuffer buffer = bufferFactory.wrap(error.getBytes(Charset.defaultCharset()));
+							Flux<DataBuffer> body = Flux.just(buffer);
+							adaptedResponse.writeWith(body).subscribe();
+							adaptedResponse.setComplete().subscribe();
+						}
+					} else {
+						log.error("Cancel request but no existing disposable");
+					}
+					return;
+				}
+
+				disposable = rpcHandler.handle(i, adaptedResponse)
 						.doOnError(ex -> {
 							log.error("Handling completed with error", ex);
 
@@ -124,6 +150,9 @@ public class ReactorJsonRpcHandlerAdapter implements BiFunction<NettyInbound, Ne
 						.doOnSuccess(aVoid -> log.debug("Handling completed with success"))
 						.subscribe();
 
+				if (disposableId != null) {
+					disposables.put(disposableId, disposable);
+				}
 			});
 
 

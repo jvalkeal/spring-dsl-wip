@@ -71,6 +71,8 @@ public class NettyTcpServerIntegrationTests {
 	private static final byte[] CONTENT12 = createContent("{\"jsonrpc\": \"2.0\",\"id\": 4, \"method\": \"monoobjectempty\", \"params\":null}");
 	private static final byte[] CONTENT13 = createContent("{\"jsonrpc\": \"2.0\",\"id\": 2, \"method\": \"session1\"}");
 	private static final byte[] CONTENT14 = createContent("{\"jsonrpc\": \"2.0\",\"id\": 2, \"method\": \"session2\"}");
+	private static final byte[] CONTENT15 = createContent("{\"jsonrpc\": \"2.0\",\"id\": 4, \"method\": \"delay\", \"params\":\"1000\"}");
+	private static final byte[] CONTENT16 = createContent("{\"jsonrpc\": \"2.0\",\"id\": 4, \"method\": \"$/cancelRequest\", \"params\":{\"id\": 4}}");
 
 	private static byte[] createContent(String... lines) {
 		StringBuilder buf = new StringBuilder();
@@ -95,6 +97,38 @@ public class NettyTcpServerIntegrationTests {
 			context.close();
 		}
 		context = null;
+	}
+
+	@Test
+	public void testCancellation() throws InterruptedException {
+		context = new AnnotationConfigApplicationContext();
+		context.register(JsonRcpConfig.class, TestJsonRcpController.class);
+		context.refresh();
+		NettyTcpServer server = context.getBean(NettyTcpServer.class);
+
+		CountDownLatch dataLatch = new CountDownLatch(1);
+		final List<String> responses = new ArrayList<>();
+
+		TcpClient.create(server.getPort())
+				.newHandler((in, out) -> {
+					in
+					.receive()
+					.subscribe(c -> {
+						responses.add(c.retain().duplicate().toString(Charset.defaultCharset()));
+						dataLatch.countDown();
+					});
+
+					return out
+							.send(Flux.just(Unpooled.copiedBuffer(CONTENT15), Unpooled.copiedBuffer(CONTENT16)))
+							.neverComplete();
+				})
+				.block(Duration.ofSeconds(30));
+
+		assertThat(dataLatch.await(2, TimeUnit.SECONDS)).isTrue();
+
+		String response = "Content-Length: 71\r\n\r\n{\"jsonrpc\":\"2.0\", \"id\":4, \"error\":{\"code\":-32800, \"message\": \"cancel\"}}";
+
+		assertThat(responses).containsExactlyInAnyOrder(response);
 	}
 
 	@Test
@@ -552,6 +586,18 @@ public class NettyTcpServerIntegrationTests {
 		@JsonRpcResponseBody
 		public Mono<String> session2(JsonRpcSession session) {
 			return Mono.just(session.getId() + session.getAttributes().get("foo"));
+		}
+
+		@JsonRpcRequestMapping(method = "delay")
+		@JsonRpcResponseBody
+		public Mono<String> delay(String params) {
+			long delay = Long.parseLong(params);
+			return Mono
+					.delay(Duration.ofMillis(delay))
+					.doOnCancel(() -> {
+						System.out.println("XXX4");
+					})
+					.thenReturn("delay");
 		}
 	}
 
