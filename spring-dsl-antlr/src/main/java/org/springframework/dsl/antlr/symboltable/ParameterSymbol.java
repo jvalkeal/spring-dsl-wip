@@ -18,6 +18,10 @@ package org.springframework.dsl.antlr.symboltable;
 /**
  * A parameter is just kind of variable used as an argument to a function or
  * method.
+ * 
+ * @author Original ANTLR Authors
+ * @author Janne Valkealahti
+ * 
  */
 public class ParameterSymbol extends VariableSymbol {
 

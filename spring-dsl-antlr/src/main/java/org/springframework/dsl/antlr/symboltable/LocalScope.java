@@ -15,7 +15,13 @@
  */
 package org.springframework.dsl.antlr.symboltable;
 
-/** A scope object typically associated with {...} code blocks */
+/**
+ * A scope object typically associated with {...} code blocks
+ * 
+ * @author Original ANTLR Authors
+ * @author Janne Valkealahti
+ * 
+ */
 public class LocalScope extends BaseScope {
 
 	public LocalScope(Scope enclosingScope) {

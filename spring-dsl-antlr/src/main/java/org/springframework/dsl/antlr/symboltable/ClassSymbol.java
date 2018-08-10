@@ -24,6 +24,10 @@ import java.util.Set;
 /**
  * A symbol representing the class. It is a kind of data aggregate that has much
  * in common with a struct.
+ * 
+ * @author Original ANTLR Authors
+ * @author Janne Valkealahti
+ * 
  */
 public class ClassSymbol extends DataAggregateSymbol {
 

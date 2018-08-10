@@ -23,6 +23,10 @@ import java.util.List;
  * classes and functions that are both symbols and scopes. There is some common
  * cut and paste functionality with {@link BaseSymbol} because of a lack of
  * multiple inheritance in Java but it is minimal.
+ * 
+ * @author Original ANTLR Authors
+ * @author Janne Valkealahti
+ *
  */
 public abstract class SymbolWithScope extends BaseScope implements Symbol, Scope {
 

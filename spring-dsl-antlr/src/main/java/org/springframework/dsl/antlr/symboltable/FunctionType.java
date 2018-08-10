@@ -20,6 +20,10 @@ import java.util.List;
 /**
  * For C types like "void (*)(int)", we need that to be a pointer to a function
  * taking a single integer argument returning void.
+ * 
+ * @author Original ANTLR Authors
+ * @author Janne Valkealahti
+ * 
  */
 public class FunctionType implements Type {
 

@@ -15,6 +15,13 @@
  */
 package org.springframework.dsl.antlr.symboltable;
 
+/**
+ * 
+ * 
+ * @author Original ANTLR Authors
+ * @author Janne Valkealahti
+ * 
+ */
 public class StructSymbol extends DataAggregateSymbol {
 
 	public StructSymbol(String name) {

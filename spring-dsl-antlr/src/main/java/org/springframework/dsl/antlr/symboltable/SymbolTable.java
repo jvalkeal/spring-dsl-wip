@@ -15,7 +15,13 @@
  */
 package org.springframework.dsl.antlr.symboltable;
 
-/** A marginally useful object to track predefined and global scopes. */
+/**
+ * A marginally useful object to track predefined and global scopes.
+ * 
+ * @author Original ANTLR Authors
+ * @author Janne Valkealahti
+ * 
+ */
 public class SymbolTable {
 
 	public static final Type INVALID_TYPE = new InvalidType();

@@ -19,6 +19,10 @@ package org.springframework.dsl.antlr.symboltable;
  * An element within a type type such is used in C or Java where we need to
  * indicate the type is an array of some element type like float[] or User[]. It
  * also tracks the size as some types indicate the size of the array.
+ * 
+ * @author Original ANTLR Authors
+ * @author Janne Valkealahti
+ * 
  */
 public class ArrayType implements Type {
 

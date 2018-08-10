@@ -15,6 +15,13 @@
  */
 package org.springframework.dsl.antlr.symboltable;
 
+/**
+ * 
+ * 
+ * @author Original ANTLR Authors
+ * @author Janne Valkealahti
+ * 
+ */
 public class PrimitiveType extends BaseSymbol implements Type {
 
 	protected int typeIndex;

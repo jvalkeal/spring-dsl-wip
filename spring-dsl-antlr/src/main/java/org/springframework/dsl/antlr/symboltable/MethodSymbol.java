@@ -18,6 +18,10 @@ package org.springframework.dsl.antlr.symboltable;
 /**
  * A method symbol is a function that lives within an aggregate/class and has a
  * slot number.
+ * 
+ * @author Original ANTLR Authors
+ * @author Janne Valkealahti
+ * 
  */
 public class MethodSymbol extends FunctionSymbol implements MemberSymbol {
 

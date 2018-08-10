@@ -18,6 +18,10 @@ package org.springframework.dsl.antlr.symboltable;
 /**
  * A scope to hold predefined symbols of your language. This could be a list of
  * type names like int or methods like print.
+ * 
+ * @author Original ANTLR Authors
+ * @author Janne Valkealahti
+ * 
  */
 public class PredefinedScope extends BaseScope {
 

@@ -22,7 +22,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/** An abstract base class that houses common functionality for scopes. */
+/**
+ * An abstract base class that houses common functionality for scopes.
+ * 
+ * @author Original ANTLR Authors
+ * @author Janne Valkealahti
+ * 
+ */
 public abstract class BaseScope implements Scope {
 
 	protected Scope enclosingScope; // null if this scope is the root of the scope tree

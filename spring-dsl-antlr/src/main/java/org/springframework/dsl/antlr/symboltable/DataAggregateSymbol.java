@@ -26,6 +26,10 @@ import java.util.Map;
  * member has a slot number indexed from 0 and we track data fields and methods
  * with different slot sequences. A DataAggregateSymbol can also be a member of
  * an aggregate itself (nested structs, ...).
+ * 
+ * @author Original ANTLR Authors
+ * @author Janne Valkealahti
+ * 
  */
 public abstract class DataAggregateSymbol extends SymbolWithScope implements MemberSymbol, Type {
 

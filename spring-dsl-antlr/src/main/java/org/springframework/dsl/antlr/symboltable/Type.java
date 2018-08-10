@@ -23,6 +23,10 @@ package org.springframework.dsl.antlr.symboltable;
  *
  * The types are typically things like struct or classes and primitive types, as
  * well as the type trees used for languages like C.
+ * 
+ * @author Original ANTLR Authors
+ * @author Janne Valkealahti
+ * 
  */
 public interface Type {
 

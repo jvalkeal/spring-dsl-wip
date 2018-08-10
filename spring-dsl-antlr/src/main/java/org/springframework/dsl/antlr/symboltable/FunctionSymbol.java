@@ -21,6 +21,10 @@ import org.antlr.v4.runtime.ParserRuleContext;
  * This symbol represents a function ala C, not a method ala Java. You can
  * associate a node in the parse tree that is responsible for defining this
  * symbol.
+ * 
+ * @author Original ANTLR Authors
+ * @author Janne Valkealahti
+ * 
  */
 public class FunctionSymbol extends SymbolWithScope implements TypedSymbol {
 

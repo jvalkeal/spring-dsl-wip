@@ -20,6 +20,10 @@ package org.springframework.dsl.antlr.symboltable;
  * scope in which it lives. It also helps to know the order in which symbols are
  * added to a scope because this often translates to register or parameter
  * numbers.
+ * 
+ * @author Original ANTLR Authors
+ * @author Janne Valkealahti
+ * 
  */
 public interface Symbol {
 

@@ -35,6 +35,10 @@ import java.util.Set;
  * For convenience of code using this library, I have added a bunch of methods
  * one can use to get lots of useful information from a scope, but they don't
  * necessarily define what a scope is.
+ * 
+ * @author Original ANTLR Authors
+ * @author Janne Valkealahti
+ * 
  */
 public interface Scope {
 

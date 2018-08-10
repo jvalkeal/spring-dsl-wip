@@ -28,6 +28,10 @@ import java.util.List;
  *
  * Yes, I know that this is similar to {@link String#intern()} but in this case,
  * I need the index out not just to make these strings unique.
+ * 
+ * @author Original ANTLR Authors
+ * @author Janne Valkealahti
+ * 
  */
 public class StringTable {
 

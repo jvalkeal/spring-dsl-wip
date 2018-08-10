@@ -29,6 +29,12 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+/**
+ * 
+ * @author Original ANTLR Authors
+ * @author Janne Valkealahti
+ *
+ */
 public class Utils {
 
 	/**

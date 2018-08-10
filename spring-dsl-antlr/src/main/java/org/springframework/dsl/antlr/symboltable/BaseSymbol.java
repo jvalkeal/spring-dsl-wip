@@ -23,6 +23,10 @@ import java.util.List;
 /**
  * An abstract base class used to house common functionality. You can associate
  * a node in the parse tree that is responsible for defining this symbol.
+ * 
+ * @author Original ANTLR Authors
+ * @author Janne Valkealahti
+ * 
  */
 public abstract class BaseSymbol implements Symbol {
 
