@@ -81,7 +81,7 @@ public class Test2AntlrCompletioner extends AbstractAntlrCompletioner<Test2Lexer
 			ArrayList<String> completions = new ArrayList<String>();
 			for (Entry<Integer, List<Integer>> e : completionResult.getRules().entrySet()) {
 				if (e.getKey() == Test2Grammar.RULE_sourceId) {
-					symbolTable.GLOBALS.getAllSymbols().stream().forEach(s -> {
+					symbolTable.getAllSymbols().stream().forEach(s -> {
 						if (ObjectUtils.nullSafeEquals(s.getScope().getName(), "org.springframework.statemachine.state.State")) {
 							completions.add(s.getName());
 						}

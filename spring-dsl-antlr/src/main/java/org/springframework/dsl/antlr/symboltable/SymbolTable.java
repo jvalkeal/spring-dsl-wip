@@ -15,6 +15,8 @@
  */
 package org.springframework.dsl.antlr.symboltable;
 
+import java.util.List;
+
 /**
  * A marginally useful object to track predefined and global scopes.
  * 
@@ -26,8 +28,8 @@ public class SymbolTable {
 
 	public static final Type INVALID_TYPE = new InvalidType();
 
-	public BaseScope PREDEFINED = new PredefinedScope();
-	public GlobalScope GLOBALS = new GlobalScope(PREDEFINED);
+	private BaseScope PREDEFINED = new PredefinedScope();
+	private GlobalScope GLOBALS = new GlobalScope(PREDEFINED);
 
 	public SymbolTable() {
 	}
@@ -42,4 +44,14 @@ public class SymbolTable {
 	public void defineGlobalSymbol(Symbol s) {
 		GLOBALS.define(s);
 	}
+	
+	/**
+	 * Return all {@link Symbol}'s this table knows about.
+	 * 
+	 * @return all known symbols.
+	 */
+	public List<? extends Symbol> getAllSymbols() {
+		return GLOBALS.getAllSymbols();
+	}
+	
 }
