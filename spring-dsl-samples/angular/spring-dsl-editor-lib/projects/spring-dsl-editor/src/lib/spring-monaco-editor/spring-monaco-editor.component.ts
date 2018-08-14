@@ -3,7 +3,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 
 import { BaseEditor } from './base-editor';
-import { NGX_MONACO_EDITOR_CONFIG, NgxMonacoEditorConfig } from './config';
+import { SPRING_DSL_EDITOR_CONFIG, SpringDslEditorConfig } from './config';
 import { NgxEditorModel } from './types';
 import { fromEvent } from 'rxjs';
 
@@ -33,7 +33,7 @@ export class SpringMonacoEditorComponent extends BaseEditor implements ControlVa
     }
   }
 
-  constructor(private zone: NgZone, @Inject(NGX_MONACO_EDITOR_CONFIG) private editorConfig: NgxMonacoEditorConfig) {
+  constructor(private zone: NgZone, @Inject(SPRING_DSL_EDITOR_CONFIG) private editorConfig: SpringDslEditorConfig) {
     super(editorConfig);
   }
 

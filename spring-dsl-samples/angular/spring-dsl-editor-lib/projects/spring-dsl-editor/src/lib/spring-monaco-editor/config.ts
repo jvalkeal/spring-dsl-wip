@@ -1,8 +1,8 @@
 import { InjectionToken } from '@angular/core';
 
-export const NGX_MONACO_EDITOR_CONFIG = new InjectionToken('NGX_MONACO_EDITOR_CONFIG');
+export const SPRING_DSL_EDITOR_CONFIG = new InjectionToken('SPRING_DSL_EDITOR_CONFIG');
 
-export interface NgxMonacoEditorConfig {
+export interface SpringDslEditorConfig {
   baseUrl?: string;
   defaultOptions?: { [key: string]: any; };
   onMonacoLoad?: Function;

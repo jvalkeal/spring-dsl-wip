@@ -1,7 +1,7 @@
 import { ModuleWithProviders, NgModule } from '@angular/core';
 import { SpringDslEditorComponent } from './spring-dsl-editor.component';
 import { SpringMonacoEditorComponent } from './spring-monaco-editor/spring-monaco-editor.component';
-import { NGX_MONACO_EDITOR_CONFIG, NgxMonacoEditorConfig } from './spring-monaco-editor/config';
+import { SPRING_DSL_EDITOR_CONFIG, SpringDslEditorConfig } from './spring-monaco-editor/config';
 
 @NgModule({
   imports: [
@@ -16,11 +16,11 @@ import { NGX_MONACO_EDITOR_CONFIG, NgxMonacoEditorConfig } from './spring-monaco
   ]
 })
 export class SpringDslEditorModule {
-  public static forRoot(config: NgxMonacoEditorConfig = {}): ModuleWithProviders {
+  public static forRoot(config: SpringDslEditorConfig = {}): ModuleWithProviders {
     return {
       ngModule: SpringDslEditorModule,
       providers: [
-        { provide: NGX_MONACO_EDITOR_CONFIG, useValue: config }
+        { provide: SPRING_DSL_EDITOR_CONFIG, useValue: config }
       ]
     };
   }

@@ -1,6 +1,6 @@
 import { AfterViewInit, ElementRef, EventEmitter, Input, OnDestroy, Output, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { NgxMonacoEditorConfig } from './config';
+import { SpringDslEditorConfig } from './config';
 
 let loadedMonaco: boolean = false;
 let loadPromise: Promise<void>;
@@ -26,7 +26,7 @@ export abstract class BaseEditor implements AfterViewInit, OnDestroy {
     return this._options;
   }
 
-  constructor(private config: NgxMonacoEditorConfig) {}
+  constructor(private config: SpringDslEditorConfig) {}
 
   ngAfterViewInit(): void {
     if (loadedMonaco) {
