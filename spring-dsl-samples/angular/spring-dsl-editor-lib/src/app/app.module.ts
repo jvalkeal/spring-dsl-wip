@@ -1,5 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 import { AppComponent } from './app.component';
 import { SpringDslEditorModule } from 'spring-dsl-editor';
@@ -10,6 +11,7 @@ import { SpringDslEditorModule } from 'spring-dsl-editor';
   ],
   imports: [
     BrowserModule,
+    FormsModule,
     SpringDslEditorModule.forRoot()
   ],
   providers: [],

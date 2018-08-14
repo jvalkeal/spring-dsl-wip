@@ -17,9 +17,7 @@ const normalizeUrl = require('normalize-url');
 @Component({
   selector: 'spring-spring-dsl-editor-lib',
   template: `
-    <p>
-      spring-dsl-editor-lib works!
-    </p>
+    <spring-spring-monaco-editor [(ngModel)]="code" [options]="editorOptions"></spring-spring-monaco-editor>
   `,
   styles: []
 })
