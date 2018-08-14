@@ -10,7 +10,7 @@ import { SpringDslEditorModule } from 'spring-dsl-editor';
   ],
   imports: [
     BrowserModule,
-    SpringDslEditorModule
+    SpringDslEditorModule.forRoot()
   ],
   providers: [],
   bootstrap: [AppComponent]
