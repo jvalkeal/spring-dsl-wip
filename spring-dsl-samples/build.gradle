@@ -10,6 +10,25 @@ project('spring-dsl-samples-simpledsl') {
 	}
 }
 
+project('spring-dsl-samples-spring-dsl-editor-lib') {
+	apply plugin: 'com.moowork.node'
+	
+	description = 'Spring Dsl Angular Module'
+	
+	node {
+		version = "8.11.3"
+		download = true
+	}
+
+	task buildPackage(type: NpmTask, dependsOn: 'npmInstall') {
+		group = 'build'
+		description = 'Package editor'
+		args = ['run','package']
+	}
+
+	build.dependsOn buildPackage
+}
+
 project('spring-dsl-samples-simpledsleditor') {
 	apply plugin: 'org.springframework.boot'
 	apply plugin: 'com.moowork.node'
@@ -21,7 +40,7 @@ project('spring-dsl-samples-simpledsleditor') {
 		compile project(':spring-dsl-websocket')
 		compile project(':spring-dsl-autoconfigure')
 		compile project(':spring-dsl-samples-common:spring-dsl-samples-simpledsl')
-		//compile 'org.springframework.boot:spring-boot-starter-websocket'
+		compile project(':spring-dsl-samples-common:spring-dsl-samples-spring-dsl-editor-lib')
 		testCompile 'junit:junit'
 	}
 
@@ -57,7 +76,8 @@ project('spring-dsl-samples-simpledsleditor') {
 
 	bootRun.dependsOn(buildClientDev)
 	bootJar.dependsOn(buildClient)
-	build.dependsOn bootJar
+	build.dependsOn bootJar 
+	npmInstall.dependsOn ':spring-dsl-samples-common:spring-dsl-samples-spring-dsl-editor-lib:buildPackage'
 	install.dependsOn bootJar
 }
 

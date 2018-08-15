@@ -13,6 +13,7 @@ include 'spring-dsl-samples:simpledsl'
 include 'spring-dsl-samples:simpledslprocessserver'
 include 'spring-dsl-samples:simpledslsocketserver'
 include 'spring-dsl-samples:simpledsleditor'
+include 'spring-dsl-samples:spring-dsl-editor-lib'
 
 rootProject.children.find {
 	if (it.name == 'spring-dsl-samples') {

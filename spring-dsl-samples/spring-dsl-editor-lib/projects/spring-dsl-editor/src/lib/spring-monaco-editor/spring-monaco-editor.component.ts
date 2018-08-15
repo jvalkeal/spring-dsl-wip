@@ -1,26 +1,15 @@
-import { Component, forwardRef, Inject, Input, NgZone } from '@angular/core';
+import { Component, OnInit, forwardRef, Inject, Input, NgZone } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-
-
-import { BaseEditor } from './base-editor';
-import { NGX_MONACO_EDITOR_CONFIG, NgxMonacoEditorConfig } from './config';
-import { NgxEditorModel } from './types';
 import { fromEvent } from 'rxjs';
+import { BaseEditor } from './base-editor';
+import { SPRING_DSL_EDITOR_CONFIG, SpringDslEditorConfig } from './config';
+import { NgxEditorModel } from './types';
+
 
 @Component({
-  selector: 'app-spring-monaco-editor',
-  template: '<div class="editor-container" #editorContainer></div>',
-  styles: [`
-    :host {
-      display: block;
-      height: 200px;
-    }
-
-    .editor-container {
-      width: 100%;
-      height: 98%;
-    }
-  `],
+  selector: 'spring-monaco-editor',
+  templateUrl: './spring-monaco-editor.component.html',
+  styleUrls: ['./spring-monaco-editor.component.css'],
   providers: [{
     provide: NG_VALUE_ACCESSOR,
     useExisting: forwardRef(() => SpringMonacoEditorComponent),
@@ -42,7 +31,7 @@ export class SpringMonacoEditorComponent extends BaseEditor implements ControlVa
     }
   }
 
-  constructor(private zone: NgZone, @Inject(NGX_MONACO_EDITOR_CONFIG) private editorConfig: NgxMonacoEditorConfig) {
+  constructor(private zone: NgZone, @Inject(SPRING_DSL_EDITOR_CONFIG) private editorConfig: SpringDslEditorConfig) {
     super(editorConfig);
   }
 

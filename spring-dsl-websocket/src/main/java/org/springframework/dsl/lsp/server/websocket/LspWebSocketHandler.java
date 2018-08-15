@@ -16,8 +16,6 @@
 package org.springframework.dsl.lsp.server.websocket;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.util.Arrays;
 import java.util.function.Function;
 
 import org.reactivestreams.Publisher;
@@ -72,9 +70,15 @@ public class LspWebSocketHandler implements WebSocketHandler {
 
 		return session.receive()
 			.map(message -> {
-				String payloadAsText = message.getPayloadAsText();
-				String[] split = payloadAsText.split("\r\n\r\n");
-				return split[1];
+				String payload = message.getPayloadAsText();
+				log.debug("Message {}", message);
+				log.debug("Message payload {}", payload);
+				String split[] = payload.split("\\r?\\n", 2);
+				if (split.length == 1) {
+					return split[0];
+				} else {
+					return split[1];
+				}
 
 			})
 			.map(jsonDecoder)
@@ -135,10 +139,11 @@ public class LspWebSocketHandler implements WebSocketHandler {
 
 			Flux<WebSocketMessage> messages = Flux.from(body)
 				.map(bodyBuffer -> {
-					String headers = "Content-Length: " + bodyBuffer.readableByteCount() + "\r\n\r\n";
-					DataBuffer headersBuffer = bufferFactory().wrap(ByteBuffer.wrap(headers.getBytes()));
-					DataBuffer buffer = bufferFactory().join(Arrays.asList(headersBuffer, bodyBuffer));
-					return new WebSocketMessage(WebSocketMessage.Type.TEXT, buffer);
+//					String headers = "Content-Length: " + bodyBuffer.readableByteCount() + "\r\n\r\n";
+//					DataBuffer headersBuffer = bufferFactory().wrap(ByteBuffer.wrap(headers.getBytes()));
+//					DataBuffer buffer = bufferFactory().join(Arrays.asList(headersBuffer, bodyBuffer));
+//					return new WebSocketMessage(WebSocketMessage.Type.TEXT, buffer);
+					return new WebSocketMessage(WebSocketMessage.Type.TEXT, bodyBuffer);
 				});
 			return session.send(messages);
 		}

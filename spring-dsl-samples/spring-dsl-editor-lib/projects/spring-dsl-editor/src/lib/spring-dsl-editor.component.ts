@@ -1,15 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { listen, MessageConnection } from 'vscode-ws-jsonrpc';
 import {
   BaseLanguageClient, CloseAction, ErrorAction,
-  createMonacoServices, createConnection
+  createConnection, MonacoServices, MonacoLanguageClient
 } from 'monaco-languageclient';
 
 const normalizeUrl = require('normalize-url');
 
-
 @Component({
-  selector: 'app-spring-dsl-editor',
+  selector: 'spring-dsl-editor',
   templateUrl: './spring-dsl-editor.component.html',
   styleUrls: ['./spring-dsl-editor.component.css']
 })
@@ -23,10 +22,13 @@ export class SpringDslEditorComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.info('ngOnInit');
   }
 
-  initLanguageClient(editor: any) {
+  public initLanguageClient(editor: any) {
+    console.info('initLanguageClient', editor);
     this.editor = editor;
+    MonacoServices.install(editor);
     const url = this.createUrl('ws');
     const webSocket = new WebSocket(url);
 
@@ -42,8 +44,7 @@ export class SpringDslEditorComponent implements OnInit {
   }
 
   private createLanguageClient(connection: MessageConnection): BaseLanguageClient {
-    const services = createMonacoServices(this.editor);
-    return new BaseLanguageClient({
+    return new MonacoLanguageClient({
       name: 'Sample Language Client',
       clientOptions: {
         // use a language id as a document selector
@@ -56,7 +57,6 @@ export class SpringDslEditorComponent implements OnInit {
           closed: () => CloseAction.DoNotRestart
         }
       },
-      services,
       // create a language client connection from the JSON RPC connection on demand
       connectionProvider: {
         get: (errorHandler, closeHandler) => {
@@ -70,4 +70,5 @@ export class SpringDslEditorComponent implements OnInit {
     const protocol = location.protocol === 'https:' ? 'wss' : 'ws';
     return normalizeUrl(`${protocol}://${location.host}${location.pathname}${path}`);
   }
+
 }
