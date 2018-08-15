@@ -101,7 +101,7 @@ public class ReactorJsonRpcHandlerAdapter implements BiFunction<NettyInbound, Ne
 
 					@Override
 					public Mono<String> getParams() {
-						return Mono.justOrEmpty(bb.getParams());
+						return Mono.justOrEmpty(bb.getParams().toString());
 					}
 
 					@Override

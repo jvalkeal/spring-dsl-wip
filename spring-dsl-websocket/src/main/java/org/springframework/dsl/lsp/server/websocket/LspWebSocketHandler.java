@@ -99,7 +99,7 @@ public class LspWebSocketHandler implements WebSocketHandler {
 
 					@Override
 					public Mono<String> getParams() {
-						return Mono.justOrEmpty(bb.getParams());
+						return Mono.justOrEmpty(bb.getParams().toString());
 					}
 
 					@Override

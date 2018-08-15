@@ -32,6 +32,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.ReactiveAdapterRegistry;
 import org.springframework.dsl.domain.InitializeParams;
+import org.springframework.dsl.jsonrpc.JsonRpcResponse;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcController;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcNotification;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcRequestMapping;
@@ -39,6 +40,7 @@ import org.springframework.dsl.jsonrpc.annotation.JsonRpcResponseBody;
 import org.springframework.dsl.jsonrpc.config.EnableJsonRcp;
 import org.springframework.dsl.jsonrpc.session.JsonRpcSession;
 import org.springframework.dsl.jsonrpc.support.DispatcherJsonRpcHandler;
+import org.springframework.dsl.lsp.client.LspClient;
 import org.springframework.dsl.lsp.server.config.LspDomainJacksonConfiguration;
 
 import io.netty.buffer.Unpooled;
@@ -480,6 +482,28 @@ public class NettyTcpServerIntegrationTests {
 		assertThat(responses.get(1)).doesNotContain("error");
 		assertThat(responses.get(0)).isEqualTo(responses.get(1));
 	}
+
+	@Test
+	public void testClient() throws InterruptedException {
+		context = new AnnotationConfigApplicationContext();
+		context.register(JsonRcpConfig.class, TestJsonRcpController.class);
+		context.refresh();
+		NettyTcpServer server = context.getBean(NettyTcpServer.class);
+		CountDownLatch dataLatch = new CountDownLatch(1);
+		final List<JsonRpcResponse> responses = new ArrayList<>();
+
+		LspClient lspClient = LspClient.builder().host("0.0.0.0").port(server.getPort()).build();
+		Mono<JsonRpcResponse> lspClientResponseMono = lspClient.request().id(1).method("methodparams").params("hi").exchange();
+		lspClientResponseMono.doOnNext(r -> {
+			responses.add(r);
+			dataLatch.countDown();
+		}).subscribe();
+
+		assertThat(dataLatch.await(2, TimeUnit.SECONDS)).isTrue();
+		assertThat(responses.get(0).getId()).isEqualTo(1);
+		assertThat(responses.get(0).getResult()).isEqualTo("hi");
+	}
+
 
 	@EnableJsonRcp
 	@Import(LspDomainJacksonConfiguration.class)
