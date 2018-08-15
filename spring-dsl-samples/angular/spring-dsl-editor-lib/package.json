@@ -8,7 +8,10 @@
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "buildlib": "ng build --prod spring-dsl-editor",
+    "npmpack": "cd dist/spring-dsl-editor && npm pack",
+    "package": "npm run buildlib && npm run npmpack"
   },
   "private": true,
   "dependencies": {
