@@ -34,21 +34,21 @@ export abstract class BaseEditor implements AfterViewInit, OnDestroy {
   @Output()
   public editorChange = new EventEmitter<any>();
 
-  protected _editor: any;
-  private _options: any;
-  protected _windowResizeSubscription: Subscription;
+  protected windowResizeSubscription: Subscription;
+  protected editor: any;
+  private editorOptions: any;
 
   @Input('options')
   set options(options: any) {
-    this._options = Object.assign({}, this.config.defaultOptions, options);
-    if (this._editor) {
-      this._editor.dispose();
+    this.editorOptions = Object.assign({}, this.config.defaultOptions, options);
+    if (this.editor) {
+      this.editor.dispose();
       this.initMonaco(options);
     }
   }
 
   get options(): any {
-    return this._options;
+    return this.editorOptions;
   }
 
   constructor(private config: SpringDslEditorConfig) {}
@@ -57,7 +57,7 @@ export abstract class BaseEditor implements AfterViewInit, OnDestroy {
     if (loadedMonaco) {
       // Wait until monaco editor is available
       loadPromise.then(() => {
-        this.initMonaco(this.options);
+        this.initMonaco(this.editorOptions);
       });
     } else {
       loadedMonaco = true;
@@ -74,7 +74,7 @@ export abstract class BaseEditor implements AfterViewInit, OnDestroy {
             if (typeof this.config.onMonacoLoad === 'function') {
               this.config.onMonacoLoad();
             }
-            this.initMonaco(this.options);
+            this.initMonaco(this.editorOptions);
             resolve();
           });
         };
@@ -96,12 +96,12 @@ export abstract class BaseEditor implements AfterViewInit, OnDestroy {
   protected abstract initMonaco(options: any): void;
 
   ngOnDestroy() {
-    if (this._windowResizeSubscription) {
-      this._windowResizeSubscription.unsubscribe();
+    if (this.windowResizeSubscription) {
+      this.windowResizeSubscription.unsubscribe();
     }
-    if (this._editor) {
-      this._editor.dispose();
-      this._editor = undefined;
+    if (this.editor) {
+      this.editor.dispose();
+      this.editor = undefined;
     }
   }
 }
