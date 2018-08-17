@@ -13,11 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { BrowserModule } from '@angular/platform-browser';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatTabsModule, MatFormFieldModule, MatCheckboxModule, MatInputModule, MatIconModule } from '@angular/material';
 import { AppComponent } from './app.component';
 import { SpringDslEditorModule, SpringDslEditorConfig } from 'spring-dsl-editor';
+import { EditorTabGroupComponent } from './editor-tab-group/editor-tab-group.component';
 
 const springDslEditorConfig: SpringDslEditorConfig = {
   onMonacoLoad: () => {
@@ -27,11 +30,19 @@ const springDslEditorConfig: SpringDslEditorConfig = {
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    EditorTabGroupComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
+    ReactiveFormsModule,
+    MatTabsModule,
+    MatFormFieldModule,
+    MatCheckboxModule,
+    MatInputModule,
+    MatIconModule,
+    NoopAnimationsModule,
     SpringDslEditorModule.forRoot(springDslEditorConfig)
   ],
   providers: [],
