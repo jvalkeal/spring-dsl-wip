@@ -1,3 +1,18 @@
+/*
+ * Copyright 2018 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 import { Component, OnInit, forwardRef, Inject, Input, NgZone } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { fromEvent } from 'rxjs';
@@ -5,7 +20,11 @@ import { BaseEditor } from './base-editor';
 import { SPRING_DSL_EDITOR_CONFIG, SpringDslEditorConfig } from './config';
 import { NgxEditorModel } from './types';
 
-
+/**
+ * Component handling low level integration with a monaco editor.
+ *
+ * @author Janne Valkealahti
+ */
 @Component({
   selector: 'spring-monaco-editor',
   templateUrl: './spring-monaco-editor.component.html',
@@ -58,10 +77,11 @@ export class SpringMonacoEditorComponent extends BaseEditor implements ControlVa
     const hasModel = !!options.model;
 
     if (hasModel) {
+      console.log('model', options.model);
       options.model = monaco.editor.createModel(options.model.value, options.model.language, options.model.uri);
     }
 
-    this._editor = monaco.editor.create(this._editorContainer.nativeElement, options);
+    this._editor = monaco.editor.create(this.editorContainer.nativeElement, options);
 
     if (!hasModel) {
       this._editor.setValue(this._value);
@@ -83,7 +103,7 @@ export class SpringMonacoEditorComponent extends BaseEditor implements ControlVa
       this._windowResizeSubscription.unsubscribe();
     }
     this._windowResizeSubscription = fromEvent(window, 'resize').subscribe(() => this._editor.layout());
-    this.onInit.emit(this._editor);
+    this.editorChange.emit(this._editor);
   }
 
 }
