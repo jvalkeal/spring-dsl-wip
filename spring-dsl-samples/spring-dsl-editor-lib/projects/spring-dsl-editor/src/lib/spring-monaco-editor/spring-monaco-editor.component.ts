@@ -18,7 +18,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { fromEvent } from 'rxjs';
 import { BaseEditor } from './base-editor';
 import { SPRING_DSL_EDITOR_CONFIG, SpringDslEditorConfig } from './config';
-import { NgxEditorModel } from './types';
+import { SpringDslEditorModel } from './types';
 
 /**
  * Component handling low level integration with a monaco editor.
@@ -42,7 +42,7 @@ export class SpringMonacoEditorComponent extends BaseEditor implements ControlVa
   onTouched = () => {};
 
   @Input('model')
-  set model(model: NgxEditorModel) {
+  set model(model: SpringDslEditorModel) {
     this.options.model = model;
     if (this.editor) {
       this.editor.dispose();
@@ -77,7 +77,6 @@ export class SpringMonacoEditorComponent extends BaseEditor implements ControlVa
     const hasModel = !!options.model;
 
     if (hasModel) {
-      console.log('model', options.model);
       options.model = monaco.editor.createModel(options.model.value, options.model.language, options.model.uri);
     }
 

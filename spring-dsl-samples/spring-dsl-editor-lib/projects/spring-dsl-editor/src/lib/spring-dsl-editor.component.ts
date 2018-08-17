@@ -35,7 +35,7 @@ const normalizeUrl = require('normalize-url');
 export class SpringDslEditorComponent implements OnInit {
 
   editorOptions = {theme: 'vs', language: 'simple'};
-  code = 'string=xxx';
+  code = '';
   private editor: any;
 
   constructor() {

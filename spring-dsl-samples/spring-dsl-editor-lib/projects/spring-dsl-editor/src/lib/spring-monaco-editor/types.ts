@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export interface NgxEditorModel {
+export interface SpringDslEditorModel {
   value: string;
   language?: string;
   uri?: any;
