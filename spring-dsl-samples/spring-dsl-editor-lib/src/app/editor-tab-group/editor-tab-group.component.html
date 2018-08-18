@@ -1,28 +1,27 @@
 <div>
-  <span class="example-input-label"> Selected tab index: </span>
-  <mat-form-field>
-    <input matInput type="number" [formControl]="selected">
-  </mat-form-field>
-</div>
-
-<div>
   <button mat-raised-button
           class="example-add-tab-button"
-          (click)="addTab(selectAfterAdding.checked)">
-    Add new tab
+          (click)="openTab('test1.simple')">
+    Open test1.simple
   </button>
-  <mat-checkbox #selectAfterAdding> Select tab after adding </mat-checkbox>
+  <button mat-raised-button
+          class="example-add-tab-button"
+          (click)="openTab('test2.simple')">
+    Open test2.simple
+  </button>
+  <button mat-raised-button
+          class="example-add-tab-button"
+          (click)="openTab('test3.simple')">
+    Open test3.simple
+  </button>
 </div>
-
 <mat-tab-group [selectedIndex]="selected.value"
                (selectedIndexChange)="selected.setValue($event)">
-  <mat-tab *ngFor="let tab of tabs; let index = index" [label]="tab">
-
+  <mat-tab *ngFor="let tab of tabs" [label]="tab">
     <ng-template mat-tab-label>
       {{tab}}
-      <mat-icon class="editor-tab-close-icon" (click)="removeTab(index)">close</mat-icon>
+      <mat-icon class="editor-tab-close-icon" (click)="closeTab(tab)">close</mat-icon>
     </ng-template>
-
-    Contents for {{tab}} tab
+    <spring-dsl-editor></spring-dsl-editor>
   </mat-tab>
 </mat-tab-group>

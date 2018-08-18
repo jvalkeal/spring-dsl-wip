@@ -13,17 +13,77 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Injectable } from '@angular/core';
+import {Injectable, OnDestroy} from '@angular/core';
+import { BaseLanguageClient, CloseAction, createConnection, ErrorAction, MonacoLanguageClient,
+  MonacoServices} from 'monaco-languageclient';
+import { listen, MessageConnection } from 'vscode-ws-jsonrpc';
+
+const normalizeUrl = require('normalize-url');
 
 /**
  * Service providing various features.
  *
  * @author Janne Valkealahti
  */
-@Injectable({
-  providedIn: 'root'
-})
-export class SpringDslEditorService {
+@Injectable()
+export class SpringDslEditorService implements OnDestroy {
 
-  constructor() { }
+  private initialised: boolean;
+
+  constructor() {
+    this.initialised = false;
+  }
+
+  ngOnDestroy() {
+  }
+
+  public initLanguageClient() {
+    if (this.initialised) {
+      return;
+    }
+    this.initialised = true;
+    // this.editor = editor;
+    // MonacoServices.install(editor);
+    MonacoServices.install(<monaco.editor.IStandaloneCodeEditor>{});
+    const url = this.createUrl('ws');
+    const webSocket = new WebSocket(url);
+
+    listen({
+      webSocket,
+      onConnection: connection => {
+        // create and start the language client
+        const languageClient = this.createLanguageClient(connection);
+        const disposable = languageClient.start();
+        connection.onClose(() => disposable.dispose());
+      }
+    });
+  }
+
+  private createLanguageClient(connection: MessageConnection): BaseLanguageClient {
+    return new MonacoLanguageClient({
+      name: 'Sample Language Client',
+      clientOptions: {
+        // use a language id as a document selector
+        documentSelector: ['simple'],
+        synchronize: {
+        },
+        // disable the default error handler
+        errorHandler: {
+          error: () => ErrorAction.Continue,
+          closed: () => CloseAction.DoNotRestart
+        }
+      },
+      // create a language client connection from the JSON RPC connection on demand
+      connectionProvider: {
+        get: (errorHandler, closeHandler) => {
+          return Promise.resolve(createConnection(connection, errorHandler, closeHandler));
+        }
+      }
+    });
+  }
+
+  private createUrl(path: string): string {
+    const protocol = location.protocol === 'https:' ? 'wss' : 'ws';
+    return normalizeUrl(`${protocol}://${location.host}${location.pathname}${path}`);
+  }
 }

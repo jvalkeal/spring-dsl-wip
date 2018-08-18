@@ -13,12 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { listen, MessageConnection } from 'vscode-ws-jsonrpc';
-import {
-  BaseLanguageClient, CloseAction, ErrorAction,
-  createConnection, MonacoServices, MonacoLanguageClient
-} from 'monaco-languageclient';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { SpringDslEditorService } from './spring-dsl-editor.service';
 
 const normalizeUrl = require('normalize-url');
 
@@ -32,61 +28,24 @@ const normalizeUrl = require('normalize-url');
   templateUrl: './spring-dsl-editor.component.html',
   styleUrls: ['./spring-dsl-editor.component.css']
 })
-export class SpringDslEditorComponent implements OnInit {
+export class SpringDslEditorComponent implements OnInit, OnDestroy {
 
-  editorOptions = {theme: 'vs', language: 'simple'};
+  editorOptions = {theme: 'vs', language: 'simple', automaticLayout: true};
   code = '';
   private editor: any;
+  private editorService: SpringDslEditorService;
 
-  constructor() {
+  constructor(editorService: SpringDslEditorService) {
+    this.editorService = editorService;
   }
 
   ngOnInit() {
   }
 
+  ngOnDestroy() {
+  }
+
   public initLanguageClient(editor: any) {
-    this.editor = editor;
-    MonacoServices.install(editor);
-    const url = this.createUrl('ws');
-    const webSocket = new WebSocket(url);
-
-    listen({
-      webSocket,
-      onConnection: connection => {
-        // create and start the language client
-        const languageClient = this.createLanguageClient(connection);
-        const disposable = languageClient.start();
-        connection.onClose(() => disposable.dispose());
-      }
-    });
+    this.editorService.initLanguageClient();
   }
-
-  private createLanguageClient(connection: MessageConnection): BaseLanguageClient {
-    return new MonacoLanguageClient({
-      name: 'Sample Language Client',
-      clientOptions: {
-        // use a language id as a document selector
-        documentSelector: ['simple'],
-        synchronize: {
-        },
-        // disable the default error handler
-        errorHandler: {
-          error: () => ErrorAction.Continue,
-          closed: () => CloseAction.DoNotRestart
-        }
-      },
-      // create a language client connection from the JSON RPC connection on demand
-      connectionProvider: {
-        get: (errorHandler, closeHandler) => {
-          return Promise.resolve(createConnection(connection, errorHandler, closeHandler));
-        }
-      }
-    });
-  }
-
-  private createUrl(path: string): string {
-    const protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-    return normalizeUrl(`${protocol}://${location.host}${location.pathname}${path}`);
-  }
-
 }

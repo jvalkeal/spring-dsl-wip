@@ -79,7 +79,6 @@ export class SpringMonacoEditorComponent extends BaseEditor implements ControlVa
     if (hasModel) {
       options.model = monaco.editor.createModel(options.model.value, options.model.language, options.model.uri);
     }
-
     this.editor = monaco.editor.create(this.editorContainer.nativeElement, options);
 
     if (!hasModel) {

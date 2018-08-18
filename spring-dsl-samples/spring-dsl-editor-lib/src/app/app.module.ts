@@ -17,7 +17,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatTabsModule, MatFormFieldModule, MatCheckboxModule, MatInputModule, MatIconModule } from '@angular/material';
+import { MatTabsModule, MatIconModule } from '@angular/material';
 import { AppComponent } from './app.component';
 import { SpringDslEditorModule, SpringDslEditorConfig } from 'spring-dsl-editor';
 import { EditorTabGroupComponent } from './editor-tab-group/editor-tab-group.component';
@@ -38,9 +38,6 @@ const springDslEditorConfig: SpringDslEditorConfig = {
     FormsModule,
     ReactiveFormsModule,
     MatTabsModule,
-    MatFormFieldModule,
-    MatCheckboxModule,
-    MatInputModule,
     MatIconModule,
     NoopAnimationsModule,
     SpringDslEditorModule.forRoot(springDslEditorConfig)

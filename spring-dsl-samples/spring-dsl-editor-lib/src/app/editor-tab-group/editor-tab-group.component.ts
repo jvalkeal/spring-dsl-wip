@@ -16,24 +16,35 @@
 import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
+/**
+ * Component wrapping logic handling editors in tabs.
+ *
+ * @author Janne Valkealahti
+ */
 @Component({
   selector: 'app-editor-tab-group',
   templateUrl: 'editor-tab-group.component.html',
   styleUrls: ['editor-tab-group.component.css'],
 })
 export class EditorTabGroupComponent {
-  tabs = ['First', 'Second', 'Third'];
-  selected = new FormControl(0);
 
-  addTab(selectAfterAdding: boolean) {
-    this.tabs.push('New');
+  public tabs = [];
+  public selected = new FormControl(0);
 
-    if (selectAfterAdding) {
+  public openTab(name: string) {
+    const index = this.tabs.indexOf(name, 0);
+    if (index > -1) {
+      this.selected.setValue(index);
+    } else {
+      this.tabs.push(name);
       this.selected.setValue(this.tabs.length - 1);
     }
   }
 
-  removeTab(index: number) {
-    this.tabs.splice(index, 1);
+  public closeTab(name: string) {
+    const index = this.tabs.indexOf(name, 0);
+    if (index > -1) {
+      this.tabs.splice(index, 1);
+    }
   }
 }

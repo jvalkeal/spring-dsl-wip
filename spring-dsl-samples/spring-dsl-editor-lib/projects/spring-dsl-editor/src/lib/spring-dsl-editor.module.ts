@@ -18,6 +18,11 @@ import { FormsModule } from '@angular/forms';
 import { SpringDslEditorComponent } from './spring-dsl-editor.component';
 import { SpringMonacoEditorComponent } from './spring-monaco-editor/spring-monaco-editor.component';
 import { SPRING_DSL_EDITOR_CONFIG, SpringDslEditorConfig } from './spring-monaco-editor/config';
+import { SpringDslEditorService } from './spring-dsl-editor.service';
+// import {MonacoServices} from 'monaco-languageclient';
+
+// https://github.com/TypeFox/monaco-languageclient/issues/37
+// MonacoServices.install(<monaco.editor.IStandaloneCodeEditor>{});
 
 /**
  * Main module definition for Spring Dsl Editor.
@@ -35,6 +40,9 @@ import { SPRING_DSL_EDITOR_CONFIG, SpringDslEditorConfig } from './spring-monaco
   exports: [
     SpringDslEditorComponent,
     SpringMonacoEditorComponent
+  ],
+  providers: [
+    SpringDslEditorService
   ]
 })
 export class SpringDslEditorModule {
