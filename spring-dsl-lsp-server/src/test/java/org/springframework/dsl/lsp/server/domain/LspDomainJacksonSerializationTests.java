@@ -45,11 +45,10 @@ import org.springframework.dsl.domain.TextDocumentClientCapabilities;
 import org.springframework.dsl.domain.TextDocumentSyncKind;
 import org.springframework.dsl.domain.TextDocumentSyncOptions;
 import org.springframework.dsl.domain.TextEdit;
+import org.springframework.dsl.lsp.server.config.LspDomainJacksonConfiguration;
 import org.springframework.util.StreamUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.jayway.jsonpath.JsonPath;
 
 public class LspDomainJacksonSerializationTests {
@@ -58,15 +57,8 @@ public class LspDomainJacksonSerializationTests {
 
 	@Before
 	public void setup() {
-		SimpleModule module = new SimpleModule();
-		module.addSerializer(ServerCapabilities.class, new ServerCapabilitiesJsonSerializer());
-		module.addDeserializer(ServerCapabilities.class, new ServerCapabilitiesJsonDeserializer());
-		module.addSerializer(DiagnosticSeverity.class, new DiagnosticSeveritySerializer());
-		module.addDeserializer(DiagnosticSeverity.class, new DiagnosticSeverityDeserializer());
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.registerModule(module);
-		mapper.enable(SerializationFeature.WRITE_ENUMS_USING_INDEX);
-		this.mapper = mapper;
+		LspDomainJacksonConfiguration configuration = new LspDomainJacksonConfiguration();
+		this.mapper = configuration.lspObjectMapper();
 	}
 
 	@After
@@ -409,6 +401,9 @@ public class LspDomainJacksonSerializationTests {
 				.build();
 
 		json = mapper.writeValueAsString(from);
+		String kind = JsonPath.read(json, "kind");
+		assertThat(kind).isEqualTo("markdown");
+
 		to = mapper.readValue(json, MarkupContent.class);
 		assertObjects(from, to);
 

@@ -3,7 +3,7 @@
   "kind": 6,
   "detail": "detail",
   "documentation": {
-    "kind": 1,
+    "kind": "markdown",
     "value": "value"
   },
   "sortText": "sortText",
