@@ -16,6 +16,7 @@
 package org.springframework.dsl.lsp.server.websocket;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.function.Function;
 
 import org.reactivestreams.Publisher;
@@ -117,7 +118,14 @@ public class LspWebSocketHandler implements WebSocketHandler {
 				JsonRpcOutputMessage adaptedResponse = new WebSocketJsonRpcOutputMessage(session, session.bufferFactory());
 
 				rpcHandler.handle(i, adaptedResponse)
-					.doOnError(ex -> log.error("Handling completed with error", ex))
+					.doOnError(ex -> {
+						log.error("Handling completed with error", ex);
+						String error = "{\"jsonrpc\":\"2.0\", \"id\":" + bb.getId() + ", \"error\":{\"code\":-32603, \"message\": \"internal server error\"}}";
+						DataBuffer buffer = session.bufferFactory().wrap(error.getBytes(Charset.defaultCharset()));
+						Flux<DataBuffer> body = Flux.just(buffer);
+						adaptedResponse.writeWith(body).subscribe();
+						adaptedResponse.setComplete().subscribe();
+					})
 					.doOnSuccess(aVoid -> log.debug("Handling completed with success"))
 					.subscribe();
 			})
