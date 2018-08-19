@@ -49,18 +49,20 @@ public class SimpleLanguageHoverer extends AbstractDslService implements Hoverer
 		// we're returning this as a supplier so that actual hover
 		// operation will happen when demand for it is requested.
 
-		SimpleLanguage simpleLanguage = SimpleLanguage.build(document);
-		Token token = simpleLanguage.getToken(position);
-		if (token != null) {
-			Hover hover = Hover.hover()
-					.contents()
-						.kind(MarkupKind.plaintext)
-						.value(token.getType().toString())
-						.and()
-					.build();
-			return Mono.just(hover);
-		} else {
-			return Mono.empty();
-		}
+		return Mono.defer(() -> {
+			SimpleLanguage simpleLanguage = SimpleLanguage.build(document);
+			Token token = simpleLanguage.getToken(position);
+			if (token != null && token.getType() != null) {
+				Hover hover = Hover.hover()
+						.contents()
+							.kind(MarkupKind.plaintext)
+							.value(token.getType().toString())
+							.and()
+						.build();
+				return Mono.just(hover);
+			} else {
+				return Mono.empty();
+			}
+		});
 	}
 }

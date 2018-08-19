@@ -26,6 +26,12 @@ import org.springframework.dsl.model.LanguageId;
 
 import reactor.core.publisher.Mono;
 
+/**
+ * Tests for {@code SimpleLanguageHoverer}.
+ *
+ * @author Janne Valkealahti
+ *
+ */
 public class SimpleLanguageHovererTests {
 
 	private final SimpleLanguageHoverer hoverer = new SimpleLanguageHoverer();
@@ -41,4 +47,12 @@ public class SimpleLanguageHovererTests {
 		assertThat(hover.block().getContents().getValue()).isEqualTo("INT");
 	}
 
+	@Test
+	public void testInvalidToken() {
+		Document document = new TextDocument("", LanguageId.TXT, 0, SimpleLanguageTests.content8);
+
+		Mono<Hover> hover = hoverer.hover(document, new Position(0, 1));
+		assertThat(hover).isNotNull();
+		assertThat(hover.block()).isNull();
+	}
 }
