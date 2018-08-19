@@ -227,7 +227,6 @@ public class SimpleLanguage {
 		if (ObjectUtils.containsConstant(keys, content)) {
 			tokenType = ObjectUtils.caseInsensitiveValueOf(keys, content);
 		}
-//		TokenType tokenType = TokenType.valueOf(content.toUpperCase());
 		return tokenType;
 	}
 
