@@ -26,6 +26,12 @@ import org.springframework.dsl.document.TextDocument;
 import org.springframework.dsl.model.LanguageId;
 import org.springframework.dsl.reconcile.ReconcileProblem;
 
+/**
+ * Tests for {@code SimpleLanguageLinter}.
+ *
+ * @author Janne Valkealahti
+ *
+ */
 public class SimpleLanguageLinterTests {
 
 	private final SimpleLanguageLinter linter = new SimpleLanguageLinter();
@@ -58,4 +64,10 @@ public class SimpleLanguageLinterTests {
 		assertThat(problem.getRange().getEnd().getCharacter()).isEqualTo(3);
 	}
 
+	@Test
+	public void testUnknownKeyType() {
+		Document document = new TextDocument("fakeuri", LanguageId.TXT, 0, SimpleLanguageTests.content8);
+		List<ReconcileProblem> problems = linter.lint(document).toStream().collect(Collectors.toList());
+		assertThat(problems).hasSize(1);
+	}
 }

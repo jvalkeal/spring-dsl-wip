@@ -36,6 +36,30 @@ import reactor.core.publisher.Flux;
  */
 public class SimpleLanguageLinter implements Linter {
 
+	@Override
+	public Flux<ReconcileProblem> lint(Document document) {
+		return Flux.defer(() -> {
+			return Flux.fromIterable(lintProblems(document));
+		});
+	}
+
+	private List<ReconcileProblem> lintProblems(Document document) {
+		List<ReconcileProblem> problems = new ArrayList<>();
+		SimpleLanguage simpleLanguage = SimpleLanguage.build(document);
+		List<Line> lines = simpleLanguage.getLines();
+
+		for (Line line : lines) {
+			if (line.getKeyToken() != null && line.getKeyToken().getType() == null) {
+				problems.add(
+						new DefaultReconcileProblem(PROBLEM, "Unknown key type", line.getKeyToken().getRange(), "xxx"));
+			} else if (line.getValueToken() == null) {
+				problems.add(
+						new DefaultReconcileProblem(PROBLEM, "Missing value", line.getKeyToken().getRange(), "xxx"));
+			}
+		}
+		return problems;
+	}
+
 	private static ProblemType PROBLEM = new ProblemType() {
 
 		@Override
@@ -48,21 +72,4 @@ public class SimpleLanguageLinter implements Linter {
 			return "code";
 		}
 	};
-
-	@Override
-	public Flux<ReconcileProblem> lint(Document document) {
-		List<ReconcileProblem> problems = new ArrayList<>();
-
-		SimpleLanguage simpleLanguage = SimpleLanguage.build(document);
-		List<Line> lines = simpleLanguage.getLines();
-
-		for (Line line : lines) {
-			if (line.getValueToken() == null) {
-				problems.add(
-						new DefaultReconcileProblem(PROBLEM, "Missing value", line.getKeyToken().getRange(), "xxx"));
-			}
-		}
-		return Flux.fromIterable(problems);
-	}
-
 }
