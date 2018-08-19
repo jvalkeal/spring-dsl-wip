@@ -70,4 +70,19 @@ public class SimpleLanguageLinterTests {
 		List<ReconcileProblem> problems = linter.lint(document).toStream().collect(Collectors.toList());
 		assertThat(problems).hasSize(1);
 	}
+
+	@Test
+	public void testWrongValueType() {
+		Document document = new TextDocument("fakeuri", LanguageId.TXT, 0, SimpleLanguageTests.content7);
+		List<ReconcileProblem> problems = linter.lint(document).toStream().collect(Collectors.toList());
+		assertThat(problems).hasSize(1);
+
+		document = new TextDocument("fakeuri", LanguageId.TXT, 0, SimpleLanguageTests.content9);
+		problems = linter.lint(document).toStream().collect(Collectors.toList());
+		assertThat(problems).hasSize(1);
+
+		document = new TextDocument("fakeuri", LanguageId.TXT, 0, SimpleLanguageTests.content10);
+		problems = linter.lint(document).toStream().collect(Collectors.toList());
+		assertThat(problems).hasSize(1);
+	}
 }

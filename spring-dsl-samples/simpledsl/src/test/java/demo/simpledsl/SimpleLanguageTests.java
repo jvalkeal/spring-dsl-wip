@@ -39,6 +39,8 @@ public class SimpleLanguageTests {
 	public final static String content6 = "int";
 	public final static String content7 = "int=hi";
 	public final static String content8 = "ddd=xxx";
+	public final static String content9 = "long=hi";
+	public final static String content10 = "double=hi";
 
 	@Test
 	public void testParse() {

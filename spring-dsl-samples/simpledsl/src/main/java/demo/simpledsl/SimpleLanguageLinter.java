@@ -26,6 +26,7 @@ import org.springframework.dsl.reconcile.ProblemType;
 import org.springframework.dsl.reconcile.ReconcileProblem;
 
 import demo.simpledsl.SimpleLanguage.Line;
+import demo.simpledsl.SimpleLanguage.Token;
 import reactor.core.publisher.Flux;
 
 /**
@@ -55,6 +56,38 @@ public class SimpleLanguageLinter implements Linter {
 			} else if (line.getValueToken() == null) {
 				problems.add(
 						new DefaultReconcileProblem(PROBLEM, "Missing value", line.getKeyToken().getRange(), "xxx"));
+			} else if (line.getKeyToken() != null && line.getKeyToken().getType() != null && line.getValueToken() != null) {
+				Token token = line.getValueToken();
+				if (token != null) {
+					switch (line.getKeyToken().getType()) {
+					case INT:
+						try {
+							Integer.parseInt(line.getValueToken().getValue());
+						} catch (NumberFormatException e) {
+							problems.add(
+									new DefaultReconcileProblem(PROBLEM, "Not int type", line.getKeyToken().getRange(), "xxx"));
+						}
+						break;
+					case DOUBLE:
+						try {
+							Double.parseDouble(line.getValueToken().getValue());
+						} catch (NumberFormatException e) {
+							problems.add(
+									new DefaultReconcileProblem(PROBLEM, "Not double type", line.getKeyToken().getRange(), "xxx"));
+						}
+						break;
+					case LONG:
+						try {
+							Long.parseLong(line.getValueToken().getValue());
+						} catch (NumberFormatException e) {
+							problems.add(
+									new DefaultReconcileProblem(PROBLEM, "Not long type", line.getKeyToken().getRange(), "xxx"));
+						}
+						break;
+					default:
+						break;
+					}
+				}
 			}
 		}
 		return problems;
