@@ -135,7 +135,6 @@ public class NettyTcpServerIntegrationTests {
 
 	@Test
 	public void testSmoke() throws InterruptedException {
-		System.out.println("XXX smoke");
 		context = new AnnotationConfigApplicationContext();
 		context.register(JsonRcpConfig.class, TestJsonRcpController.class);
 		context.refresh();
