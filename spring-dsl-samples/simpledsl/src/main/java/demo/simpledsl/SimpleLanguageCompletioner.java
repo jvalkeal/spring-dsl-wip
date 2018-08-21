@@ -43,12 +43,14 @@ public class SimpleLanguageCompletioner extends AbstractDslService implements Co
 
 	@Override
 	public Flux<CompletionItem> complete(Document document, Position position) {
-		SimpleLanguage simpleLanguage = SimpleLanguage.build(document);
-		Collection<TokenType> tokens = simpleLanguage.resolveLegalTokens(position);
-		return Flux.fromIterable(tokens)
-				.filter(tokenType -> tokenType != TokenType.VALUE)
-				.flatMap(tt -> {
-					return Mono.just(CompletionItem.completionItem().label(tt.toString().toLowerCase()).build());
-				});
+		return Flux.defer(() -> {
+			SimpleLanguage simpleLanguage = SimpleLanguage.build(document);
+			Collection<TokenType> tokens = simpleLanguage.resolveLegalTokens(position);
+			return Flux.fromIterable(tokens)
+					.filter(tokenType -> tokenType != TokenType.VALUE)
+					.flatMap(tt -> {
+						return Mono.just(CompletionItem.completionItem().label(tt.toString().toLowerCase()).build());
+					});
+		});
 	}
 }

@@ -32,7 +32,7 @@ import reactor.core.publisher.Flux;
 public interface Completioner extends DslService {
 
 	/**
-	 * Provide completion items from a document in given position.
+	 * Provide completion items for a document in a given position.
 	 *
 	 * @param document the document
 	 * @param position the position

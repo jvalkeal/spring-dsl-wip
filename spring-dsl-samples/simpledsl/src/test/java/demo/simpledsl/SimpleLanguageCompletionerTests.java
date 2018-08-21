@@ -30,6 +30,12 @@ import org.springframework.dsl.model.LanguageId;
 
 import reactor.core.publisher.Flux;
 
+/**
+ * Tests for {@link SimpleLanguageCompletioner}.
+ *
+ * @author Janne Valkealahti
+ *
+ */
 public class SimpleLanguageCompletionerTests {
 
 	private final SimpleLanguageCompletioner completioner = new SimpleLanguageCompletioner();
