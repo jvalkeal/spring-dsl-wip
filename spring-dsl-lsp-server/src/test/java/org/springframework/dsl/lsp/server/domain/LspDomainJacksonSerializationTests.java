@@ -38,8 +38,12 @@ import org.springframework.dsl.domain.InitializeResult;
 import org.springframework.dsl.domain.InsertTextFormat;
 import org.springframework.dsl.domain.MarkupContent;
 import org.springframework.dsl.domain.MarkupKind;
+import org.springframework.dsl.domain.MessageActionItem;
+import org.springframework.dsl.domain.MessageParams;
+import org.springframework.dsl.domain.MessageType;
 import org.springframework.dsl.domain.PublishDiagnosticsParams;
 import org.springframework.dsl.domain.ServerCapabilities;
+import org.springframework.dsl.domain.ShowMessageRequestParams;
 import org.springframework.dsl.domain.Synchronization;
 import org.springframework.dsl.domain.TextDocumentClientCapabilities;
 import org.springframework.dsl.domain.TextDocumentSyncKind;
@@ -508,6 +512,86 @@ public class LspDomainJacksonSerializationTests {
 
 		String expect = loadResourceAsString("CompletionList1.json");
 		to = mapper.readValue(expect, CompletionList.class);
+		assertObjects(from, to);
+	}
+
+	@Test
+	public void testMessageActionItem() throws Exception {
+		MessageActionItem from = new MessageActionItem();
+		String json = mapper.writeValueAsString(from);
+		MessageActionItem to = mapper.readValue(json, MessageActionItem.class);
+		assertObjects(from, to);
+
+		from = MessageActionItem.messageActionItem()
+				.title("title")
+				.build();
+
+		json = mapper.writeValueAsString(from);
+		to = mapper.readValue(json, MessageActionItem.class);
+		assertObjects(from, to);
+
+		String expect = loadResourceAsString("MessageActionItem1.json");
+		to = mapper.readValue(expect, MessageActionItem.class);
+		assertObjects(from, to);
+	}
+
+	@Test
+	public void testMessageParams() throws Exception {
+		MessageParams from = new MessageParams();
+		String json = mapper.writeValueAsString(from);
+		MessageParams to = mapper.readValue(json, MessageParams.class);
+		assertObjects(from, to);
+
+		from = MessageParams.messageParams()
+				.type(MessageType.Info)
+				.message("message")
+				.build();
+
+		json = mapper.writeValueAsString(from);
+		to = mapper.readValue(json, MessageParams.class);
+		assertObjects(from, to);
+
+		String expect = loadResourceAsString("MessageParams1.json");
+		to = mapper.readValue(expect, MessageParams.class);
+		assertObjects(from, to);
+	}
+
+	@Test
+	public void testShowMessageRequestParams() throws Exception {
+		ShowMessageRequestParams from = new ShowMessageRequestParams();
+		String json = mapper.writeValueAsString(from);
+		ShowMessageRequestParams to = mapper.readValue(json, ShowMessageRequestParams.class);
+		assertObjects(from, to);
+
+		from = ShowMessageRequestParams.showMessageRequestParams()
+				.action()
+					.title("title")
+					.and()
+				.build();
+
+		json = mapper.writeValueAsString(from);
+		to = mapper.readValue(json, ShowMessageRequestParams.class);
+		assertObjects(from, to);
+
+		String expect = loadResourceAsString("ShowMessageRequestParams1.json");
+		to = mapper.readValue(expect, ShowMessageRequestParams.class);
+		assertObjects(from, to);
+
+		from = ShowMessageRequestParams.showMessageRequestParams()
+				.action()
+					.title("title1")
+					.and()
+				.action()
+					.title("title2")
+					.and()
+				.build();
+
+		json = mapper.writeValueAsString(from);
+		to = mapper.readValue(json, ShowMessageRequestParams.class);
+		assertObjects(from, to);
+
+		expect = loadResourceAsString("ShowMessageRequestParams2.json");
+		to = mapper.readValue(expect, ShowMessageRequestParams.class);
 		assertObjects(from, to);
 	}
 
