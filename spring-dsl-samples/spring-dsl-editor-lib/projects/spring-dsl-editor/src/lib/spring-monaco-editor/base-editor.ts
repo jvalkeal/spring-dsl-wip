@@ -1,38 +1,63 @@
+/*
+ * Copyright 2018 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 import { AfterViewInit, ElementRef, EventEmitter, Input, OnDestroy, Output, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { SpringDslEditorConfig } from './config';
+import { SpringMonacoEditorConfig } from './config';
 
 let loadedMonaco: boolean = false;
 let loadPromise: Promise<void>;
-declare const require: any;
+// declare const require: any;
 
+/**
+ * Base class for low level integration with a monaco editor.
+ *
+ * @author Janne Valkealahti
+ */
 export abstract class BaseEditor implements AfterViewInit, OnDestroy {
-  @ViewChild('editorContainer') _editorContainer: ElementRef;
-  @Output() onInit = new EventEmitter<any>();
-  protected _editor: any;
-  private _options: any;
-  protected _windowResizeSubscription: Subscription;
+
+  @ViewChild('editorContainer')
+  protected editorContainer: ElementRef;
+
+  @Output()
+  public editorChange = new EventEmitter<any>();
+
+  protected windowResizeSubscription: Subscription;
+  protected editor: any;
+  private editorOptions: any;
 
   @Input('options')
   set options(options: any) {
-    this._options = Object.assign({}, this.config.defaultOptions, options);
-    if (this._editor) {
-      this._editor.dispose();
+    this.editorOptions = Object.assign({}, this.config.defaultOptions, options);
+    if (this.editor) {
+      this.editor.dispose();
       this.initMonaco(options);
     }
   }
 
   get options(): any {
-    return this._options;
+    return this.editorOptions;
   }
 
-  constructor(private config: SpringDslEditorConfig) {}
+  constructor(private config: SpringMonacoEditorConfig) {}
 
   ngAfterViewInit(): void {
     if (loadedMonaco) {
       // Wait until monaco editor is available
       loadPromise.then(() => {
-        this.initMonaco(this.options);
+        this.initMonaco(this.editorOptions);
       });
     } else {
       loadedMonaco = true;
@@ -49,7 +74,7 @@ export abstract class BaseEditor implements AfterViewInit, OnDestroy {
             if (typeof this.config.onMonacoLoad === 'function') {
               this.config.onMonacoLoad();
             }
-            this.initMonaco(this.options);
+            this.initMonaco(this.editorOptions);
             resolve();
           });
         };
@@ -68,15 +93,15 @@ export abstract class BaseEditor implements AfterViewInit, OnDestroy {
     }
   }
 
-  protected abstract initMonaco(options: any): void;
-
   ngOnDestroy() {
-    if (this._windowResizeSubscription) {
-      this._windowResizeSubscription.unsubscribe();
+    if (this.windowResizeSubscription) {
+      this.windowResizeSubscription.unsubscribe();
     }
-    if (this._editor) {
-      this._editor.dispose();
-      this._editor = undefined;
+    if (this.editor) {
+      this.editor.dispose();
+      this.editor = undefined;
     }
   }
+
+  protected abstract initMonaco(options: any): void;
 }
