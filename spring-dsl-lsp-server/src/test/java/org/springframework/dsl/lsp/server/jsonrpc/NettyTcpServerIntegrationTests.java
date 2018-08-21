@@ -134,6 +134,42 @@ public class NettyTcpServerIntegrationTests {
 	}
 
 	@Test
+	public void testSmoke() throws InterruptedException {
+		System.out.println("XXX smoke");
+		context = new AnnotationConfigApplicationContext();
+		context.register(JsonRcpConfig.class, TestJsonRcpController.class);
+		context.refresh();
+		NettyTcpServer server = context.getBean(NettyTcpServer.class);
+
+		CountDownLatch dataLatch = new CountDownLatch(10);
+		final List<String> responses = new ArrayList<>();
+
+		TcpClient.create(server.getPort())
+				.newHandler((in, out) -> {
+					in.context().addHandlerLast(new LspJsonRpcDecoder());
+					in.receiveObject()
+						.ofType(String.class)
+						.subscribe(c -> {
+							responses.add(c);
+							dataLatch.countDown();
+						});
+
+					return out
+							.send(Flux.range(0, 10).map(r -> {
+								return Unpooled.copiedBuffer(CONTENT2);
+							}))
+							.neverComplete();
+				})
+				.block(Duration.ofSeconds(30));
+
+		assertThat(dataLatch.await(1, TimeUnit.SECONDS)).isTrue();
+
+		String response = "{\"jsonrpc\":\"2.0\",\"id\":2,\"result\":\"hi\"}";
+		assertThat(responses).hasSize(10);
+		assertThat(responses).allMatch(c -> c.equals(response));
+	}
+
+	@Test
 	public void testOk1() throws InterruptedException {
 		context = new AnnotationConfigApplicationContext();
 		context.register(JsonRcpConfig.class, TestJsonRcpController.class);
@@ -145,12 +181,13 @@ public class NettyTcpServerIntegrationTests {
 
 		TcpClient.create(server.getPort())
 				.newHandler((in, out) -> {
-					in
-					.receive()
-					.subscribe(c -> {
-						responses.add(c.retain().duplicate().toString(Charset.defaultCharset()));
-						dataLatch.countDown();
-					});
+					in.context().addHandlerLast(new LspJsonRpcDecoder());
+					in.receiveObject()
+						.ofType(String.class)
+						.subscribe(c -> {
+							responses.add(c);
+							dataLatch.countDown();
+						});
 
 					return out
 							.send(Flux.just(Unpooled.copiedBuffer(CONTENT2), Unpooled.copiedBuffer(CONTENT3)))
@@ -159,9 +196,8 @@ public class NettyTcpServerIntegrationTests {
 				.block(Duration.ofSeconds(30));
 
 		assertThat(dataLatch.await(1, TimeUnit.SECONDS)).isTrue();
-
-		String response1 = "Content-Length: 38\r\n\r\n{\"jsonrpc\":\"2.0\",\"id\":2,\"result\":\"hi\"}";
-		String response2 = "Content-Length: 39\r\n\r\n{\"jsonrpc\":\"2.0\",\"id\":3,\"result\":\"bye\"}";
+		String response1 = "{\"jsonrpc\":\"2.0\",\"id\":2,\"result\":\"hi\"}";
+		String response2 = "{\"jsonrpc\":\"2.0\",\"id\":3,\"result\":\"bye\"}";
 
 		assertThat(responses).containsExactlyInAnyOrder(response1, response2);
 	}
