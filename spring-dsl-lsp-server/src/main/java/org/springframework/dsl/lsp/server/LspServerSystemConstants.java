@@ -15,6 +15,8 @@
  */
 package org.springframework.dsl.lsp.server;
 
+import org.springframework.dsl.service.DocumentStateTracker;
+
 /**
  * Various constants used by a system.
  *
@@ -23,6 +25,13 @@ package org.springframework.dsl.lsp.server;
  */
 public abstract class LspServerSystemConstants {
 
-	public final static String SESSION_ATTRIBUTE_DOCUMENT_STATE_TRACKER = "documentStateTracker";
+	/**
+	 * Session attribute if set to {@code TRUE} indicates that session has been initialized.
+	 */
+	public final static String SESSION_ATTRIBUTE_SESSION_INITIALIZED = "initialized";
 
+	/**
+	 * Session attribute containing access to {@link DocumentStateTracker}.
+	 */
+	public final static String SESSION_ATTRIBUTE_DOCUMENT_STATE_TRACKER = "documentStateTracker";
 }

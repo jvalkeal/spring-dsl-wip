@@ -25,7 +25,9 @@ import org.springframework.util.Assert;
 import reactor.core.publisher.Mono;
 
 /**
- * Default implementation of a {@link ServerJsonRpcExchange}.
+ * Default implementation of a {@link ServerJsonRpcExchange}. Simply returning
+ * request and response as is. Session is requested from a manager and cached in
+ * this exchange.
  *
  * @author Janne Valkealahti
  *
@@ -36,6 +38,13 @@ public class DefaultServerJsonRpcExchange implements ServerJsonRpcExchange {
 	private final JsonRpcOutputMessage response;
 	private final Mono<JsonRpcSession> sessionMono;
 
+	/**
+	 * Instantiates a new default server json rpc exchange.
+	 *
+	 * @param request the request
+	 * @param response the response
+	 * @param sessionManager the session manager
+	 */
 	public DefaultServerJsonRpcExchange(JsonRpcInputMessage request, JsonRpcOutputMessage response,
 			JsonRpcSessionManager sessionManager) {
 		Assert.notNull(request, "'request' is required");
@@ -58,6 +67,8 @@ public class DefaultServerJsonRpcExchange implements ServerJsonRpcExchange {
 
 	@Override
 	public Mono<JsonRpcSession> getSession() {
+		// sessionMono is caching last emitted session as session manager
+		// would anyway need to return same session associated with a connection.
 		return sessionMono;
 	}
 }

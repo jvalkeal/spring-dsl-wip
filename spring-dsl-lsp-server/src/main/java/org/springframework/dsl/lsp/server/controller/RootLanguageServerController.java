@@ -81,7 +81,7 @@ public class RootLanguageServerController {
 				.build();
 		}).doOnSuccess(result -> {
 			// TODO: just a conceptual tweak now to see how session is used
-			session.getAttributes().put("initialized", true);
+			session.getAttributes().put(LspServerSystemConstants.SESSION_ATTRIBUTE_SESSION_INITIALIZED, true);
 			session.getAttributes().put(LspServerSystemConstants.SESSION_ATTRIBUTE_DOCUMENT_STATE_TRACKER,
 					new DefaultDocumentStateTracker());
 		});
