@@ -15,7 +15,9 @@
  */
 package org.springframework.dsl.reconcile;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,14 +26,14 @@ import org.springframework.dsl.domain.Diagnostic;
 import org.springframework.dsl.domain.DiagnosticSeverity;
 import org.springframework.dsl.domain.PublishDiagnosticsParams;
 import org.springframework.dsl.service.Reconciler;
-import org.springframework.util.Assert;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
- * Responds to document changes and calls {@link Linter} to validate
- * document contents.
+ * Default implementation of a {@link Reconciler} delegating to know
+ * {@link Linter}s for supported {@code language id's}. Responds to document
+ * changes and calls {@link Linter} to validate document contents.
  *
  * @author Kris De Volder
  * @author Janne Valkealahti
@@ -40,33 +42,32 @@ import reactor.core.publisher.Mono;
 public class DefaultReconciler implements Reconciler {
 
 	private static final Logger log = LoggerFactory.getLogger(DefaultReconciler.class);
-	private final Linter linter;
+	private final List<Linter> linters;
 
 	/**
 	 * Instantiates a new simple reconciler.
 	 *
 	 * @param linter the linter
 	 */
-	public DefaultReconciler(Linter linter) {
-		Assert.notNull(linter, "linter must be set");
-		this.linter = linter;
+	public DefaultReconciler(List<Linter> linters) {
+		this.linters = linters != null ? linters : new ArrayList<Linter>();
 	}
 
 	@Override
 	public Flux<PublishDiagnosticsParams> reconcile(Document document) {
 		log.debug("Reconciling {}", document);
-//		Document doc = event.getDocument();
-		Flux<ReconcileProblem> problems = linter.lint(document);
-		//TODO:  make this 'smarter' to ensure responsiveness, support cancelation etc.s
 
-		return problems
+		return Flux.fromIterable(linters)
+			.filter(linter -> linter.getSupportedLanguageIds().contains(document.getLanguageId()))
+			.map(linter -> {
+				return linter.lint(document);
+			})
+			.flatMap(r -> r)
 			.filter(p -> getDiagnosticSeverity(p) != null)
 			.flatMap(p -> toDiagnostic(document, p))
-			.flatMap(d -> {
-				return Mono.just(new PublishDiagnosticsParams(document.uri(), Arrays.asList(d)));
-			}
-			);
-
+			.map(d -> {
+				return new PublishDiagnosticsParams(document.uri(), Arrays.asList(d));
+			});
 	}
 
 	private Mono<Diagnostic> toDiagnostic(Document document, ReconcileProblem problem) {

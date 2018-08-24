@@ -15,8 +15,14 @@
  */
 package org.springframework.dsl.buildtests;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.Test;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.dsl.autoconfigure.DslAutoConfiguration;
+import org.springframework.dsl.autoconfigure.LspAutoConfiguration;
 import org.springframework.dsl.jsonrpc.config.EnableJsonRcp;
 import org.springframework.dsl.lsp.server.jsonrpc.NettyTcpServer;
 
@@ -33,15 +39,15 @@ public class LspNettySocketLspServerIntegrationTests extends AbstractLspIntegrat
 
 	@Test
 	public void testLspInitialize() {
+		assertThat(server).isNotNull();
 	}
 
 	@Override
 	protected ConfigurableApplicationContext buildServerContext() {
-//		SpringApplicationBuilder builder = new SpringApplicationBuilder(DslAutoConfiguration.class,
-//				LspAutoConfiguration.class, Config1.class);
-//		SpringApplication springApplication = builder.build();
-//		return springApplication.run("--spring.dsl.lsp.server.mode=SOCKET");
-		return null;
+		SpringApplicationBuilder builder = new SpringApplicationBuilder(DslAutoConfiguration.class,
+				LspAutoConfiguration.class, Config1.class);
+		SpringApplication springApplication = builder.build();
+		return springApplication.run("--spring.dsl.lsp.server.mode=SOCKET");
 	}
 
 	@Override

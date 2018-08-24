@@ -16,6 +16,7 @@
 package org.springframework.dsl.reconcile;
 
 import org.springframework.dsl.document.Document;
+import org.springframework.dsl.service.DslService;
 
 import reactor.core.publisher.Flux;
 
@@ -26,8 +27,7 @@ import reactor.core.publisher.Flux;
  * @author Janne Valkealahti
  *
  */
-@FunctionalInterface
-public interface Linter {
+public interface Linter extends DslService {
 
 	/**
 	 * Reconcile a {@link Document}.

@@ -15,7 +15,10 @@
  */
 package org.springframework.dsl.autoconfigure;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -57,30 +60,19 @@ import org.springframework.web.reactive.socket.WebSocketHandler;
 		LspDomainJacksonConfiguration.class })
 public class LspAutoConfiguration {
 
-//	@Bean
-//	public DocumentStateTracker documentStateTracker() {
-//		return new DefaultDocumentStateTracker();
-//	}
-
 	@Bean
-	public Reconciler reconciler(Linter linter) {
-		return new DefaultReconciler(linter);
+	public Reconciler reconciler(Optional<List<Linter>> linters) {
+		return new DefaultReconciler(linters.orElseGet(ArrayList::new));
 	}
 
 	@Bean(name = DslSystemConstants.LSP_CONVERSION_SERVICE_BEAN_NAME)
 	public ConversionServiceFactoryBean lspConversionService() {
 		ConversionServiceFactoryBean factoryBean = new ConversionServiceFactoryBean();
 		Set<Object> converters = new HashSet<>();
-//		converters.add(new GenericLsp4jObjectConverter());
 		factoryBean.setConverters(converters);
 		return factoryBean;
 	}
 
-//	@Bean
-//	public LspDomainArgumentResolver lspDomainArgumentResolver(
-//			@Qualifier(DslSystemConstants.LSP_CONVERSION_SERVICE_BEAN_NAME) ConversionService conversionService) {
-//		return new LspDomainArgumentResolver(conversionService);
-//	}
 	@Bean
 	public LspDomainArgumentResolver lspDomainArgumentResolver() {
 		return new LspDomainArgumentResolver();

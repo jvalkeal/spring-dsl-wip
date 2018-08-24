@@ -28,7 +28,6 @@ import reactor.core.publisher.Mono;
  * @author Janne Valkealahti
  *
  */
-@FunctionalInterface
 public interface Reconciler {
 
 	/**
