@@ -148,4 +148,19 @@ public interface JsonRpcSession {
 	 * session doesn't expire.
 	 */
 	Duration getMaxIdleTime();
+
+	/**
+	 * Callback for customizing a given session. Designed for use with a lambda
+	 * expression or method reference.
+	 */
+	@FunctionalInterface
+	public interface JsonRpcSessionCustomizer {
+
+		/**
+		 * Customize the given session.
+		 *
+		 * @param jsonRpcSession the session
+		 */
+		void customize(JsonRpcSession jsonRpcSession);
+	}
 }

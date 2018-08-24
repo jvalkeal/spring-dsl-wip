@@ -17,6 +17,13 @@ package org.springframework.dsl.lsp.client;
 
 import org.springframework.dsl.lsp.client.LspClient.Builder;
 
+/**
+ * Default implementation of a {@link Builder} currently building instances of a
+ * {@link NettyTcpClientLspClient}.
+ *
+ * @author Janne Valkealahti
+ *
+ */
 public class DefaultLspClientBuilder implements Builder {
 
 	private String host;
@@ -37,7 +44,7 @@ public class DefaultLspClientBuilder implements Builder {
 	@Override
 	public LspClient build() {
 		NettyTcpClientLspClient nettyTcpClientLspClient = new NettyTcpClientLspClient(host, port);
-		nettyTcpClientLspClient.init();
+//		nettyTcpClientLspClient.init();
 		return nettyTcpClientLspClient;
 	}
 

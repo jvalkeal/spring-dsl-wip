@@ -35,6 +35,7 @@ import org.springframework.dsl.lsp.server.config.LspServerSocketConfiguration;
 import org.springframework.dsl.lsp.server.config.LspServerStdioConfiguration;
 import org.springframework.dsl.lsp.server.controller.RootLanguageServerController;
 import org.springframework.dsl.lsp.server.controller.TextDocumentLanguageServerController;
+import org.springframework.dsl.lsp.server.jsonrpc.LspClientArgumentResolver;
 import org.springframework.dsl.lsp.server.jsonrpc.LspDomainArgumentResolver;
 import org.springframework.dsl.lsp.server.websocket.LspWebSocketConfig;
 import org.springframework.dsl.reconcile.DefaultReconciler;
@@ -83,6 +84,11 @@ public class LspAutoConfiguration {
 	@Bean
 	public LspDomainArgumentResolver lspDomainArgumentResolver() {
 		return new LspDomainArgumentResolver();
+	}
+
+	@Bean
+	public LspClientArgumentResolver lspClientArgumentResolver() {
+		return new LspClientArgumentResolver();
 	}
 
 	@ConditionalOnProperty(prefix = "spring.dsl.lsp.server", name = "mode", havingValue = "WEBSOCKET")

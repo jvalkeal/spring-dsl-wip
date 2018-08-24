@@ -106,4 +106,10 @@ public class DefaultJsonRpcResponse extends AbstractJsonRpcObject implements Jso
 	public void setError(String error) {
 		this.error = error;
 	}
+
+	@Override
+	public String toString() {
+		return "DefaultJsonRpcResponse [result=" + result + ", error=" + error + ", toString()=" + super.toString()
+				+ "]";
+	}
 }

@@ -17,7 +17,7 @@ package org.springframework.dsl.buildtests;
 
 import org.junit.After;
 import org.junit.Before;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 
 /**
  * Base integration lsp tests using full command structures against various
@@ -28,22 +28,44 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
  */
 public abstract class AbstractLspIntegrationTests {
 
-	protected AnnotationConfigApplicationContext context;
+	protected ConfigurableApplicationContext serverContext;
+	protected ConfigurableApplicationContext clientContext;
 
 	@Before
 	public void setup() {
-		context = buildContext();
+		serverContext = buildServerContext();
+		clientContext = buildClientContext();
+		if (serverContext != null) {
+			onServerContext(serverContext);
+		}
+		if (clientContext != null) {
+			onClientContext(clientContext);
+		}
 	}
 
 	@After
 	public void clean() {
-		if (context != null) {
-			context.close();
+		if (serverContext != null) {
+			serverContext.close();
 		}
-		context = null;
+		if (clientContext != null) {
+			clientContext.close();
+		}
+		serverContext = null;
+		clientContext = null;
 	}
 
-	protected AnnotationConfigApplicationContext buildContext() {
+	protected ConfigurableApplicationContext buildServerContext() {
 		return null;
+	}
+
+	protected ConfigurableApplicationContext buildClientContext() {
+		return null;
+	}
+
+	protected void onServerContext(ConfigurableApplicationContext context) {
+	}
+
+	protected void onClientContext(ConfigurableApplicationContext context) {
 	}
 }

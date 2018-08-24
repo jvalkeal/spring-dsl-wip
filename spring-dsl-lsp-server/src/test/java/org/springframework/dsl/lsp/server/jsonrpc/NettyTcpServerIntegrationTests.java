@@ -21,8 +21,10 @@ import java.nio.charset.Charset;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.After;
 import org.junit.Before;
@@ -40,7 +42,9 @@ import org.springframework.dsl.jsonrpc.annotation.JsonRpcResponseBody;
 import org.springframework.dsl.jsonrpc.config.EnableJsonRcp;
 import org.springframework.dsl.jsonrpc.session.JsonRpcSession;
 import org.springframework.dsl.jsonrpc.support.DispatcherJsonRpcHandler;
+import org.springframework.dsl.lsp.client.ClientReactorJsonRpcHandlerAdapter;
 import org.springframework.dsl.lsp.client.LspClient;
+import org.springframework.dsl.lsp.client.NettyTcpClientLspClient;
 import org.springframework.dsl.lsp.server.config.LspDomainJacksonConfiguration;
 
 import io.netty.buffer.Unpooled;
@@ -75,6 +79,7 @@ public class NettyTcpServerIntegrationTests {
 	private static final byte[] CONTENT14 = createContent("{\"jsonrpc\": \"2.0\",\"id\": 2, \"method\": \"session2\"}");
 	private static final byte[] CONTENT15 = createContent("{\"jsonrpc\": \"2.0\",\"id\": 4, \"method\": \"delay\", \"params\":\"1000\"}");
 	private static final byte[] CONTENT16 = createContent("{\"jsonrpc\": \"2.0\",\"id\": 4, \"method\": \"$/cancelRequest\", \"params\":{\"id\": 4}}");
+	private static final byte[] CONTENT17 = createContent("{\"jsonrpc\": \"2.0\",\"id\": 2, \"method\": \"counter\"}");
 
 	private static byte[] createContent(String... lines) {
 		StringBuilder buf = new StringBuilder();
@@ -87,10 +92,12 @@ public class NettyTcpServerIntegrationTests {
 	}
 
 	private AnnotationConfigApplicationContext context;
+	private AnnotationConfigApplicationContext clientContext;
 
 	@Before
 	public void init() {
 		context = null;
+		clientContext = null;
 	}
 
 	@After
@@ -99,12 +106,16 @@ public class NettyTcpServerIntegrationTests {
 			context.close();
 		}
 		context = null;
+		if (clientContext != null) {
+			clientContext.close();
+		}
+		clientContext = null;
 	}
 
 	@Test
 	public void testCancellation() throws InterruptedException {
 		context = new AnnotationConfigApplicationContext();
-		context.register(JsonRcpConfig.class, TestJsonRcpController.class);
+		context.register(JsonRpcConfig.class, JsonRpcServerConfig.class, TestServerJsonRpcController.class);
 		context.refresh();
 		NettyTcpServer server = context.getBean(NettyTcpServer.class);
 
@@ -136,7 +147,7 @@ public class NettyTcpServerIntegrationTests {
 	@Test
 	public void testSmoke() throws InterruptedException {
 		context = new AnnotationConfigApplicationContext();
-		context.register(JsonRcpConfig.class, TestJsonRcpController.class);
+		context.register(JsonRpcConfig.class, JsonRpcServerConfig.class, TestServerJsonRpcController.class);
 		context.refresh();
 		NettyTcpServer server = context.getBean(NettyTcpServer.class);
 
@@ -171,7 +182,7 @@ public class NettyTcpServerIntegrationTests {
 	@Test
 	public void testOk1() throws InterruptedException {
 		context = new AnnotationConfigApplicationContext();
-		context.register(JsonRcpConfig.class, TestJsonRcpController.class);
+		context.register(JsonRpcConfig.class, JsonRpcServerConfig.class, TestServerJsonRpcController.class);
 		context.refresh();
 		NettyTcpServer server = context.getBean(NettyTcpServer.class);
 
@@ -204,7 +215,7 @@ public class NettyTcpServerIntegrationTests {
 	@Test
 	public void testOk2() throws InterruptedException {
 		context = new AnnotationConfigApplicationContext();
-		context.register(JsonRcpConfig.class, TestJsonRcpController.class);
+		context.register(JsonRpcConfig.class, JsonRpcServerConfig.class, TestServerJsonRpcController.class);
 		context.refresh();
 		NettyTcpServer server = context.getBean(NettyTcpServer.class);
 
@@ -236,7 +247,7 @@ public class NettyTcpServerIntegrationTests {
 	@Test
 	public void testOk4() throws InterruptedException {
 		context = new AnnotationConfigApplicationContext();
-		context.register(JsonRcpConfig.class, TestJsonRcpController.class);
+		context.register(JsonRpcConfig.class, JsonRpcServerConfig.class, TestServerJsonRpcController.class);
 		context.refresh();
 		NettyTcpServer server = context.getBean(NettyTcpServer.class);
 
@@ -264,7 +275,7 @@ public class NettyTcpServerIntegrationTests {
 	@Test
 	public void testOk5() throws InterruptedException {
 		context = new AnnotationConfigApplicationContext();
-		context.register(JsonRcpConfig.class, TestJsonRcpController.class);
+		context.register(JsonRpcConfig.class, JsonRpcServerConfig.class, TestServerJsonRpcController.class);
 		context.refresh();
 		NettyTcpServer server = context.getBean(NettyTcpServer.class);
 
@@ -292,7 +303,7 @@ public class NettyTcpServerIntegrationTests {
 	@Test
 	public void testOk3() throws InterruptedException {
 		context = new AnnotationConfigApplicationContext();
-		context.register(JsonRcpConfig.class, TestJsonRcpController.class);
+		context.register(JsonRpcConfig.class, JsonRpcServerConfig.class, TestServerJsonRpcController.class);
 		context.refresh();
 		NettyTcpServer server = context.getBean(NettyTcpServer.class);
 
@@ -324,7 +335,7 @@ public class NettyTcpServerIntegrationTests {
 	@Test
 	public void testOk6() throws InterruptedException {
 		context = new AnnotationConfigApplicationContext();
-		context.register(JsonRcpConfig.class, TestJsonRcpController.class);
+		context.register(JsonRpcConfig.class, JsonRpcServerConfig.class, TestServerJsonRpcController.class);
 		context.refresh();
 		NettyTcpServer server = context.getBean(NettyTcpServer.class);
 
@@ -356,7 +367,7 @@ public class NettyTcpServerIntegrationTests {
 	@Test
 	public void testSingleNotification() throws InterruptedException {
 		context = new AnnotationConfigApplicationContext();
-		context.register(JsonRcpConfig.class, TestJsonRcpController.class);
+		context.register(JsonRpcConfig.class, JsonRpcServerConfig.class, TestServerJsonRpcController.class);
 		context.refresh();
 		NettyTcpServer server = context.getBean(NettyTcpServer.class);
 
@@ -388,7 +399,7 @@ public class NettyTcpServerIntegrationTests {
 	@Test
 	public void testMultiNotification() throws InterruptedException {
 		context = new AnnotationConfigApplicationContext();
-		context.register(JsonRcpConfig.class, TestJsonRcpController.class);
+		context.register(JsonRpcConfig.class, JsonRpcServerConfig.class, TestServerJsonRpcController.class);
 		context.refresh();
 		NettyTcpServer server = context.getBean(NettyTcpServer.class);
 
@@ -422,7 +433,7 @@ public class NettyTcpServerIntegrationTests {
 	@Test
 	public void testMethodNotMatchedError() throws InterruptedException {
 		context = new AnnotationConfigApplicationContext();
-		context.register(JsonRcpConfig.class, TestJsonRcpController.class);
+		context.register(JsonRpcConfig.class, JsonRpcServerConfig.class, TestServerJsonRpcController.class);
 		context.refresh();
 		NettyTcpServer server = context.getBean(NettyTcpServer.class);
 
@@ -456,7 +467,7 @@ public class NettyTcpServerIntegrationTests {
 	@Test
 	public void testEmptyWithObjectReturnsNull() throws InterruptedException {
 		context = new AnnotationConfigApplicationContext();
-		context.register(JsonRcpConfig.class, TestJsonRcpController.class);
+		context.register(JsonRpcConfig.class, JsonRpcServerConfig.class, TestServerJsonRpcController.class);
 		context.refresh();
 		NettyTcpServer server = context.getBean(NettyTcpServer.class);
 
@@ -488,7 +499,7 @@ public class NettyTcpServerIntegrationTests {
 	@Test
 	public void testSession() throws InterruptedException {
 		context = new AnnotationConfigApplicationContext();
-		context.register(JsonRcpConfig.class, TestJsonRcpController.class);
+		context.register(JsonRpcConfig.class, JsonRpcServerConfig.class, TestServerJsonRpcController.class);
 		context.refresh();
 		NettyTcpServer server = context.getBean(NettyTcpServer.class);
 
@@ -521,13 +532,23 @@ public class NettyTcpServerIntegrationTests {
 	@Test
 	public void testClient() throws InterruptedException {
 		context = new AnnotationConfigApplicationContext();
-		context.register(JsonRcpConfig.class, TestJsonRcpController.class);
+		context.register(JsonRpcConfig.class, JsonRpcServerConfig.class, TestServerJsonRpcController.class);
 		context.refresh();
+
+		clientContext = new AnnotationConfigApplicationContext();
+		clientContext.register(JsonRpcConfig.class, JsonRpcClientConfig.class, TestClientJsonRpcController.class);
+		clientContext.refresh();
+
+		ClientReactorJsonRpcHandlerAdapter xxx = clientContext.getBean(ClientReactorJsonRpcHandlerAdapter.class);
+
 		NettyTcpServer server = context.getBean(NettyTcpServer.class);
 		CountDownLatch dataLatch = new CountDownLatch(1);
 		final List<JsonRpcResponse> responses = new ArrayList<>();
 
 		LspClient lspClient = LspClient.builder().host("0.0.0.0").port(server.getPort()).build();
+		((NettyTcpClientLspClient)lspClient).adapter = xxx;
+		((NettyTcpClientLspClient)lspClient).init();
+
 		Mono<JsonRpcResponse> lspClientResponseMono = lspClient.request().id(1).method("methodparams").params("hi").exchange();
 		lspClientResponseMono.doOnNext(r -> {
 			responses.add(r);
@@ -539,14 +560,97 @@ public class NettyTcpServerIntegrationTests {
 		assertThat(responses.get(0).getResult()).isEqualTo("hi");
 	}
 
+	@Test
+	public void testClientServerToClientRequest() throws InterruptedException {
+		context = new AnnotationConfigApplicationContext();
+		context.register(JsonRpcConfig.class, JsonRpcServerConfig.class, TestServerJsonRpcController.class);
+		context.refresh();
+
+		clientContext = new AnnotationConfigApplicationContext();
+		clientContext.register(JsonRpcConfig.class, JsonRpcClientConfig.class, TestClientJsonRpcController.class);
+		clientContext.refresh();
+
+		ClientReactorJsonRpcHandlerAdapter xxx = clientContext.getBean(ClientReactorJsonRpcHandlerAdapter.class);
+
+		NettyTcpServer server = context.getBean(NettyTcpServer.class);
+		CountDownLatch dataLatch = new CountDownLatch(1);
+		final List<JsonRpcResponse> responses = new ArrayList<>();
+
+		LspClient lspClient = LspClient.builder().host("0.0.0.0").port(server.getPort()).build();
+		((NettyTcpClientLspClient)lspClient).adapter = xxx;
+		((NettyTcpClientLspClient)lspClient).init();
+		Mono<JsonRpcResponse> lspClientResponseMono = lspClient.request().id(1).method("serverhi").exchange();
+		lspClientResponseMono.doOnNext(r -> {
+			responses.add(r);
+			dataLatch.countDown();
+		}).subscribe();
+
+		assertThat(dataLatch.await(2, TimeUnit.SECONDS)).isTrue();
+		assertThat(responses.get(0).getId()).isEqualTo(1);
+		assertThat(responses.get(0).getError()).isNull();
+		assertThat(responses.get(0).getResult()).isEqualTo("clienthi");
+	}
+
+	@Test
+	public void testMultipleClients() throws InterruptedException {
+		context = new AnnotationConfigApplicationContext();
+		context.register(JsonRpcConfig.class, JsonRpcServerConfig.class, TestServerJsonRpcController.class);
+		context.refresh();
+		NettyTcpServer server = context.getBean(NettyTcpServer.class);
+
+		CountDownLatch dataLatch = new CountDownLatch(2);
+		final List<String> responses = new CopyOnWriteArrayList<>();
+
+		TcpClient.create(server.getPort())
+				.newHandler((in, out) -> {
+					in
+					.receive()
+					.subscribe(c -> {
+						responses.add(c.toString(Charset.defaultCharset()));
+						dataLatch.countDown();
+					});
+
+					return out
+							.send(Flux.just(Unpooled.copiedBuffer(CONTENT17)))
+							.neverComplete();
+				})
+				.block(Duration.ofSeconds(30));
+
+		TcpClient.create(server.getPort())
+				.newHandler((in, out) -> {
+					in
+					.receive()
+					.subscribe(c -> {
+						responses.add(c.toString(Charset.defaultCharset()));
+						dataLatch.countDown();
+					});
+
+					return out
+							.send(Flux.just(Unpooled.copiedBuffer(CONTENT17)))
+							.neverComplete();
+				})
+				.block(Duration.ofSeconds(30));
+
+		assertThat(dataLatch.await(1, TimeUnit.SECONDS)).isTrue();
+
+		String response1 = "Content-Length: 37\r\n\r\n{\"jsonrpc\":\"2.0\",\"id\":2,\"result\":\"0\"}";
+		String response2 = "Content-Length: 37\r\n\r\n{\"jsonrpc\":\"2.0\",\"id\":2,\"result\":\"1\"}";
+
+		assertThat(responses).containsExactlyInAnyOrder(response1, response2);
+	}
 
 	@EnableJsonRcp
 	@Import(LspDomainJacksonConfiguration.class)
-	static class JsonRcpConfig {
+	static class JsonRpcConfig {
 
 		@Bean
 		public LspDomainArgumentResolver lspDomainArgumentResolver() {
 			return new LspDomainArgumentResolver();
+		}
+
+		@Bean
+		public LspClientArgumentResolver lspClientArgumentResolver() {
+			return new LspClientArgumentResolver();
 		}
 
 		@Bean
@@ -563,6 +667,9 @@ public class NettyTcpServerIntegrationTests {
 		public ReactorJsonRpcHandlerAdapter reactorJsonRpcHandlerAdapter(RpcJsonRpcHandlerAdapter rpcJsonRpcHandlerAdapter) {
 			return new ReactorJsonRpcHandlerAdapter(rpcJsonRpcHandlerAdapter);
 		}
+	}
+
+	static class JsonRpcServerConfig {
 
 		@Bean(initMethod = "start")
 		public NettyTcpServer nettyTcpServer(ReactorJsonRpcHandlerAdapter handlerAdapter) {
@@ -572,8 +679,42 @@ public class NettyTcpServerIntegrationTests {
 		}
 	}
 
+	static class JsonRpcClientConfig {
+
+		@Bean
+		public ClientReactorJsonRpcHandlerAdapter clientReactorJsonRpcHandlerAdapter(RpcHandler rpcHandler) {
+			return new ClientReactorJsonRpcHandlerAdapter(rpcHandler);
+		}
+	}
+
 	@JsonRpcController
-	private static class TestJsonRcpController {
+	private static class TestClientJsonRpcController {
+
+		@JsonRpcRequestMapping(method = "clienthi")
+		@JsonRpcResponseBody
+		public String clienthi() {
+			return "clienthi";
+		}
+	}
+
+	@JsonRpcController
+	private static class TestServerJsonRpcController {
+
+		private AtomicInteger counter = new AtomicInteger();
+
+		@JsonRpcRequestMapping(method = "serverhi")
+		@JsonRpcResponseBody
+		public Mono<String> serverhi(LspClient lspClient) {
+			return lspClient
+					.request().id(10).method("clienthi").exchange()
+					.map(r -> r.getResult());
+		}
+
+		@JsonRpcRequestMapping(method = "counter")
+		@JsonRpcResponseBody
+		public String counter() {
+			return Integer.toString(counter.getAndIncrement());
+		}
 
 		@JsonRpcRequestMapping(method = "hi")
 		@JsonRpcResponseBody
@@ -653,9 +794,6 @@ public class NettyTcpServerIntegrationTests {
 			long delay = Long.parseLong(params);
 			return Mono
 					.delay(Duration.ofMillis(delay))
-					.doOnCancel(() -> {
-						System.out.println("XXX4");
-					})
 					.thenReturn("delay");
 		}
 	}

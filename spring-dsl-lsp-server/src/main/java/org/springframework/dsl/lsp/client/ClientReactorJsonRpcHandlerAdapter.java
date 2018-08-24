@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.lsp.server.jsonrpc;
+package org.springframework.dsl.lsp.client;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -28,10 +28,15 @@ import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.NettyDataBufferFactory;
 import org.springframework.dsl.jsonrpc.JsonRpcInputMessage;
 import org.springframework.dsl.jsonrpc.JsonRpcOutputMessage;
+import org.springframework.dsl.jsonrpc.JsonRpcResponse;
 import org.springframework.dsl.jsonrpc.session.JsonRpcSession.JsonRpcSessionCustomizer;
 import org.springframework.dsl.jsonrpc.support.DefaultJsonRpcRequest;
 import org.springframework.dsl.jsonrpc.support.DefaultJsonRpcResponse;
-import org.springframework.dsl.lsp.client.NettyBoundedLspClient;
+import org.springframework.dsl.lsp.server.jsonrpc.LspJsonRpcDecoder;
+import org.springframework.dsl.lsp.server.jsonrpc.LspJsonRpcEncoder;
+import org.springframework.dsl.lsp.server.jsonrpc.ReactorJsonRpcInputMessage;
+import org.springframework.dsl.lsp.server.jsonrpc.ReactorJsonRpcOutputMessage;
+import org.springframework.dsl.lsp.server.jsonrpc.RpcHandler;
 import org.springframework.util.ObjectUtils;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -43,7 +48,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
+import io.netty.buffer.ByteBuf;
 import reactor.core.Disposable;
+import reactor.core.publisher.EmitterProcessor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.ipc.netty.NettyInbound;
@@ -55,12 +62,14 @@ import reactor.ipc.netty.NettyPipeline;
  * @author Janne Valkealahti
  *
  */
-public class ReactorJsonRpcHandlerAdapter implements BiFunction<NettyInbound, NettyOutbound, Mono<Void>> {
+public class ClientReactorJsonRpcHandlerAdapter implements BiFunction<NettyInbound, NettyOutbound, Mono<Void>> {
 
-	private static final Logger log = LoggerFactory.getLogger(ReactorJsonRpcHandlerAdapter.class);
+	private static final Logger log = LoggerFactory.getLogger(ClientReactorJsonRpcHandlerAdapter.class);
 	private final RpcHandler rpcHandler;
+	public EmitterProcessor<JsonRpcResponse> responses = EmitterProcessor.create();
+	public EmitterProcessor<ByteBuf> requests = EmitterProcessor.create();
 
-	public ReactorJsonRpcHandlerAdapter(RpcHandler rpcHandler) {
+	public ClientReactorJsonRpcHandlerAdapter(RpcHandler rpcHandler) {
 		this.rpcHandler = rpcHandler;
 	}
 
@@ -78,7 +87,6 @@ public class ReactorJsonRpcHandlerAdapter implements BiFunction<NettyInbound, Ne
 			try {
 				return mapper.readValue(s, DefaultJsonRpcRequest.class);
 			} catch(Exception e) {
-				e.printStackTrace();
 				throw new RuntimeException(e);
 			}
 		};
@@ -87,7 +95,6 @@ public class ReactorJsonRpcHandlerAdapter implements BiFunction<NettyInbound, Ne
 			try {
 				return mapper.readValue(s, DefaultJsonRpcResponse.class);
 			} catch(Exception e) {
-				e.printStackTrace();
 				throw new RuntimeException(e);
 			}
 		};
@@ -100,6 +107,11 @@ public class ReactorJsonRpcHandlerAdapter implements BiFunction<NettyInbound, Ne
 		NettyBoundedLspClient lspClient = new NettyBoundedLspClient(out);
 		JsonRpcSessionCustomizer customizer = session -> session.getAttributes().put("lspClient", lspClient);
 
+
+		requests.doOnNext(bb -> {
+			out.sendObject(bb).then().subscribe();
+		}).subscribe();
+
 		Flux<String> shared = in.receiveObject()
 			.ofType(String.class)
 			.share();
@@ -109,6 +121,7 @@ public class ReactorJsonRpcHandlerAdapter implements BiFunction<NettyInbound, Ne
 			.filter(response -> response.getResult() != null || response.getError() != null)
 			.subscribe(bb -> {
 				lspClient.getResponses().onNext(bb);
+				responses.onNext(bb);
 			});
 
 //		in.receiveObject()
@@ -217,8 +230,7 @@ public class ReactorJsonRpcHandlerAdapter implements BiFunction<NettyInbound, Ne
 		    }
 		    JsonNode jsonNodeId = node.get("id");
 		    Integer id = jsonNodeId != null ? jsonNodeId.asInt() : null;
-		    JsonNode jsonNodeMethod = node.get("method");
-		    String method = jsonNodeMethod != null ? jsonNodeMethod.asText() : null;
+		    String method = node.get("method").asText();
 			return new DefaultJsonRpcRequest(jsonrpc, id, method, params);
 		}
 
@@ -234,9 +246,7 @@ public class ReactorJsonRpcHandlerAdapter implements BiFunction<NettyInbound, Ne
 			JsonNode jsonrpcNode = node.get("jsonrpc");
 			response.setJsonrpc(jsonrpcNode.asText());
 			JsonNode idNode = node.get("id");
-			if (idNode != null) {
-				response.setId(idNode.asInt());
-			}
+			response.setId(idNode.asInt());
 			JsonNode resultsNode = node.get("result");
 			if (resultsNode != null) {
 				response.setResult(resultsNode.asText());

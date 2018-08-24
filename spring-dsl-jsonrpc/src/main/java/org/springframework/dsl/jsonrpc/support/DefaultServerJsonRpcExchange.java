@@ -19,6 +19,7 @@ import org.springframework.dsl.jsonrpc.JsonRpcInputMessage;
 import org.springframework.dsl.jsonrpc.JsonRpcOutputMessage;
 import org.springframework.dsl.jsonrpc.ServerJsonRpcExchange;
 import org.springframework.dsl.jsonrpc.session.JsonRpcSession;
+import org.springframework.dsl.jsonrpc.session.JsonRpcSession.JsonRpcSessionCustomizer;
 import org.springframework.dsl.jsonrpc.session.JsonRpcSessionManager;
 import org.springframework.util.Assert;
 
@@ -47,12 +48,29 @@ public class DefaultServerJsonRpcExchange implements ServerJsonRpcExchange {
 	 */
 	public DefaultServerJsonRpcExchange(JsonRpcInputMessage request, JsonRpcOutputMessage response,
 			JsonRpcSessionManager sessionManager) {
+		this(request, response, sessionManager, null);
+	}
+
+	/**
+	 * Instantiates a new default server json rpc exchange.
+	 *
+	 * @param request the request
+	 * @param response the response
+	 * @param sessionManager the session manager
+	 * @param sessionCustomizer the session customizer
+	 */
+	public DefaultServerJsonRpcExchange(JsonRpcInputMessage request, JsonRpcOutputMessage response,
+			JsonRpcSessionManager sessionManager, JsonRpcSessionCustomizer sessionCustomizer) {
 		Assert.notNull(request, "'request' is required");
 		Assert.notNull(response, "'response' is required");
 		Assert.notNull(sessionManager, "'sessionManager' is required");
 		this.request = request;
 		this.response = response;
-		this.sessionMono = sessionManager.getSession(this).cache();
+		this.sessionMono = sessionManager.getSession(this).doOnNext(session -> {
+			if (sessionCustomizer != null) {
+				sessionCustomizer.customize(session);
+			}
+		}).cache();
 	}
 
 	@Override

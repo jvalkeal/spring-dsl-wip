@@ -15,6 +15,8 @@
  */
 package org.springframework.dsl.lsp.client;
 
+import java.io.IOException;
+
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.slf4j.Logger;
@@ -23,12 +25,15 @@ import org.springframework.dsl.jsonrpc.JsonRpcRequest;
 import org.springframework.dsl.jsonrpc.JsonRpcResponse;
 import org.springframework.dsl.jsonrpc.support.DefaultJsonRpcRequest;
 import org.springframework.dsl.jsonrpc.support.DefaultJsonRpcResponse;
-import org.springframework.dsl.lsp.server.jsonrpc.LspJsonRpcDecoder;
-import org.springframework.dsl.lsp.server.jsonrpc.LspJsonRpcEncoder;
 import org.springframework.util.ObjectUtils;
 
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -37,6 +42,12 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.ipc.netty.tcp.TcpClient;
 
+/**
+ * {@link LspClient} connecting to a known {@code Language Server} address.
+ *
+ * @author Janne Valkealahti
+ *
+ */
 public class NettyTcpClientLspClient implements LspClient {
 
 	private static final Logger log = LoggerFactory.getLogger(NettyTcpClientLspClient.class);
@@ -45,6 +56,7 @@ public class NettyTcpClientLspClient implements LspClient {
 	private EmitterProcessor<String> responses = EmitterProcessor.create();
 	private final String host;
 	private final Integer port;
+	public ClientReactorJsonRpcHandlerAdapter adapter;
 
 	public NettyTcpClientLspClient(String host, int port) {
 		this.host = host;
@@ -59,23 +71,26 @@ public class NettyTcpClientLspClient implements LspClient {
 	public void init() {
 
 		TcpClient.create(host, port)
-			.newHandler((in, out) -> {
+			.start(adapter);
 
-				in.context().addHandlerLast(new LspJsonRpcDecoder());
-				out.context().addHandlerLast(new LspJsonRpcEncoder());
-
-				in.receiveObject()
-					.log()
-					.ofType(String.class)
-					.subscribe(responses);
-
-				requests.doOnNext(bb -> {
-					out.sendObject(bb).then().subscribe();
-				}).subscribe();
-
-				return out.neverComplete();
-			})
-			.block();
+//		TcpClient.create(host, port)
+//			.newHandler((in, out) -> {
+//
+//				in.context().addHandlerLast(new LspJsonRpcDecoder());
+//				out.context().addHandlerLast(new LspJsonRpcEncoder());
+//
+//				in.receiveObject()
+//					.log()
+//					.ofType(String.class)
+//					.subscribe(responses);
+//
+//				requests.doOnNext(bb -> {
+//					out.sendObject(bb).then().subscribe();
+//				}).subscribe();
+//
+//				return out.neverComplete();
+//			})
+//			.block();
 
 	}
 
@@ -123,15 +138,20 @@ public class NettyTcpClientLspClient implements LspClient {
 
 	}
 
-	private static class DefaultExchangeFunction implements ExchangeFunction {
+	private class DefaultExchangeFunction implements ExchangeFunction {
 
 		Subscriber<ByteBuf> requests;
 		Publisher<String> responses;
-		ObjectMapper mapper = new ObjectMapper();
+		ObjectMapper mapper;
 
 		public DefaultExchangeFunction(Subscriber<ByteBuf> requests, Publisher<String> responses) {
 			this.requests = requests;
 			this.responses = responses;
+
+			SimpleModule module = new SimpleModule();
+			module.addDeserializer(DefaultJsonRpcResponse.class, new DefaultJsonRpcResponseJsonDeserializer());
+			mapper = new ObjectMapper();
+			mapper.registerModule(module);
 		}
 
 		@Override
@@ -145,24 +165,50 @@ public class NettyTcpClientLspClient implements LspClient {
 						log.error("Mapper error", e);
 						throw new RuntimeException(e);
 					}
-					requests.onNext(Unpooled.copiedBuffer(r.getBytes()));
+//					requests.onNext(Unpooled.copiedBuffer(r.getBytes()));
+					adapter.requests.onNext(Unpooled.copiedBuffer(r.getBytes()));
 					return Mono.empty();
 				})
-				.then(Mono.from(Flux.from(responses).map(r -> {
-						try {
-							return mapper.readValue(r, DefaultJsonRpcResponse.class);
-						} catch (Exception e) {
-							log.error("Mapper error", e);
-							throw new RuntimeException(e);
-						}
-					})
-					.filter(r -> {
-						return ObjectUtils.nullSafeEquals(request.getId(), r.getId());
-					})
-				));
+				.then(Mono.from(Flux.from(adapter.responses).filter(r -> {
+					return ObjectUtils.nullSafeEquals(r.getId(), request.getId());
+				})));
+//				.then(Mono.from(Flux.from(responses).map(r -> {
+//						try {
+//							return mapper.readValue(r, DefaultJsonRpcResponse.class);
+//						} catch (Exception e) {
+//							log.error("Mapper error", e);
+//							throw new RuntimeException(e);
+//						}
+//					})
+//					.filter(r -> {
+//						return ObjectUtils.nullSafeEquals(request.getId(), r.getId());
+//					})
+//				));
 
 		}
 
 	}
 
+	private static class DefaultJsonRpcResponseJsonDeserializer extends JsonDeserializer<DefaultJsonRpcResponse> {
+
+		@Override
+		public DefaultJsonRpcResponse deserialize(JsonParser p, DeserializationContext ctxt)
+				throws IOException, JsonProcessingException {
+			DefaultJsonRpcResponse response = new DefaultJsonRpcResponse();
+			JsonNode node = p.getCodec().readTree(p);
+			JsonNode jsonrpcNode = node.get("jsonrpc");
+			response.setJsonrpc(jsonrpcNode.asText());
+			JsonNode idNode = node.get("id");
+			response.setId(idNode.asInt());
+			JsonNode resultsNode = node.get("result");
+			if (resultsNode != null) {
+				response.setResult(resultsNode.asText());
+			}
+			JsonNode errorNode = node.get("error");
+			if (errorNode != null) {
+				response.setError(errorNode.asText());
+			}
+			return response;
+		}
+	}
 }

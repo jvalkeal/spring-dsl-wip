@@ -19,10 +19,27 @@ import org.springframework.dsl.jsonrpc.JsonRpcResponse;
 
 import reactor.core.publisher.Mono;
 
+/**
+ * A non-blocking, reactive client for performing {@code LSP} related
+ * {@code JSONRCP} requests with Reactive Streams back pressure.
+ *
+ * @author Janne Valkealahti
+ *
+ */
 public interface LspClient {
 
+	/**
+	 * Prepare a {@code JSONRCP} request.
+	 *
+	 * @return a spec for specifying the request
+	 */
 	RequestSpec request();
 
+	/**
+	 * Gets a builder for instances of a {@link LspClient}s.
+	 *
+	 * @return the builder for building lsp clients
+	 */
 	static Builder builder() {
 		return new DefaultLspClientBuilder();
 	}

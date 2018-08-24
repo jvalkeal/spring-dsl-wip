@@ -15,7 +15,10 @@
  */
 package org.springframework.dsl.buildtests;
 
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.junit.Test;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.dsl.jsonrpc.config.EnableJsonRcp;
+import org.springframework.dsl.lsp.server.jsonrpc.NettyTcpServer;
 
 /**
  * Command flow tests using Netty's socker server integration into generic lsp
@@ -26,11 +29,36 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
  */
 public class LspNettySocketLspServerIntegrationTests extends AbstractLspIntegrationTests {
 
-	public void testInitialize() {
+	private NettyTcpServer server;
+
+	@Test
+	public void testLspInitialize() {
 	}
 
 	@Override
-	protected AnnotationConfigApplicationContext buildContext() {
-		return new AnnotationConfigApplicationContext();
+	protected ConfigurableApplicationContext buildServerContext() {
+//		SpringApplicationBuilder builder = new SpringApplicationBuilder(DslAutoConfiguration.class,
+//				LspAutoConfiguration.class, Config1.class);
+//		SpringApplication springApplication = builder.build();
+//		return springApplication.run("--spring.dsl.lsp.server.mode=SOCKET");
+		return null;
+	}
+
+	@Override
+	protected ConfigurableApplicationContext buildClientContext() {
+		return null;
+	}
+
+	@Override
+	protected void onServerContext(ConfigurableApplicationContext context) {
+		server = context.getBean(NettyTcpServer.class);
+	}
+
+	@Override
+	protected void onClientContext(ConfigurableApplicationContext context) {
+	}
+
+	@EnableJsonRcp
+	private static class Config1 {
 	}
 }

@@ -22,6 +22,7 @@ import org.springframework.dsl.jsonrpc.JsonRpcInputMessage;
 import org.springframework.dsl.jsonrpc.JsonRpcOutputMessage;
 import org.springframework.dsl.jsonrpc.ServerJsonRpcExchange;
 import org.springframework.dsl.jsonrpc.session.DefaultJsonRpcSessionManager;
+import org.springframework.dsl.jsonrpc.session.JsonRpcSession.JsonRpcSessionCustomizer;
 import org.springframework.dsl.jsonrpc.session.JsonRpcSessionManager;
 import org.springframework.dsl.jsonrpc.support.DefaultServerJsonRpcExchange;
 import org.springframework.util.Assert;
@@ -38,7 +39,7 @@ public class RpcJsonRpcHandlerAdapter implements RpcHandler {
 
 	private static final Logger log = LoggerFactory.getLogger(RpcJsonRpcHandlerAdapter.class);
 	private final JsonRpcHandler delegate;
-	private final JsonRpcSessionManager sessionManager = new DefaultJsonRpcSessionManager();
+	private JsonRpcSessionManager sessionManager = new DefaultJsonRpcSessionManager();
 
 	/**
 	 * Instantiates a new rpc json rpc handler adapter.
@@ -51,15 +52,41 @@ public class RpcJsonRpcHandlerAdapter implements RpcHandler {
 	}
 
 	@Override
-	public Mono<Void> handle(JsonRpcInputMessage request, JsonRpcOutputMessage response) {
-		ServerJsonRpcExchange exchange = createExchange(request, response);
+	public Mono<Void> handle(JsonRpcInputMessage request, JsonRpcOutputMessage response, JsonRpcSessionCustomizer sessionCustomizer) {
+		ServerJsonRpcExchange exchange = createExchange(request, response, sessionCustomizer);
 		return delegate.handle(exchange)
 				.onErrorResume(exception -> handleFailure(request, response, exception))
 				.then(Mono.defer(response::setComplete));
 	}
 
-	protected ServerJsonRpcExchange createExchange(JsonRpcInputMessage request, JsonRpcOutputMessage response) {
-		return new DefaultServerJsonRpcExchange(request, response, sessionManager);
+	/**
+	 * Gets the session manager.
+	 *
+	 * @return the session manager
+	 */
+	public JsonRpcSessionManager getSessionManager() {
+		return sessionManager;
+	}
+
+	/**
+	 * Sets the session manager.
+	 *
+	 * @param sessionManager the new session manager
+	 */
+	public void setSessionManager(JsonRpcSessionManager sessionManager) {
+		Assert.notNull(sessionManager, "JsonRpcSessionManager must be set");
+		this.sessionManager = sessionManager;
+	}
+
+	/**
+	 * Creates the {@link ServerJsonRpcExchange}.
+	 *
+	 * @param request the request
+	 * @param response the response
+	 * @return the server json rpc exchange
+	 */
+	protected ServerJsonRpcExchange createExchange(JsonRpcInputMessage request, JsonRpcOutputMessage response, JsonRpcSessionCustomizer sessionCustomizer) {
+		return new DefaultServerJsonRpcExchange(request, response, sessionManager, sessionCustomizer);
 	}
 
 	private Mono<Void> handleFailure(JsonRpcInputMessage request, JsonRpcOutputMessage response, Throwable exception) {

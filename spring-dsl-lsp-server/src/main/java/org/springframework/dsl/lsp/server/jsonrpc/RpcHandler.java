@@ -17,6 +17,7 @@ package org.springframework.dsl.lsp.server.jsonrpc;
 
 import org.springframework.dsl.jsonrpc.JsonRpcInputMessage;
 import org.springframework.dsl.jsonrpc.JsonRpcOutputMessage;
+import org.springframework.dsl.jsonrpc.session.JsonRpcSession.JsonRpcSessionCustomizer;
 
 import reactor.core.publisher.Mono;
 
@@ -36,5 +37,9 @@ public interface RpcHandler {
 	 * @param response the current response
 	 * @return indicates completion of request handling
 	 */
-	Mono<Void> handle(JsonRpcInputMessage request, JsonRpcOutputMessage response);
+	Mono<Void> handle(JsonRpcInputMessage request, JsonRpcOutputMessage response, JsonRpcSessionCustomizer sessionCustomizer);
+
+	default Mono<Void> handle(JsonRpcInputMessage request, JsonRpcOutputMessage response) {
+		return handle(request, response, null);
+	}
 }
