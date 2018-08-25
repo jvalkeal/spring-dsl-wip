@@ -44,16 +44,69 @@ public interface LspClient {
 		return new DefaultLspClientBuilder();
 	}
 
+	/**
+	 * Interface for building {@link LspClient}.
+	 */
 	interface Builder {
+
+		/**
+		 * Sets a host address where client should connect to.
+		 *
+		 * @param host the host
+		 * @return the builder
+		 */
 		Builder host(String host);
+
+		/**
+		 * Sets a port where client should connect to.
+		 *
+		 * @param port the port
+		 * @return the builder
+		 */
 		Builder port(Integer port);
+
+		/**
+		 * Builds the {@link LspClient}.
+		 *
+		 * @return the lsp client
+		 */
 		LspClient build();
 	}
 
+	/**
+	 * Defines a contract for a request.
+	 */
 	interface RequestSpec {
+
+		/**
+		 * Sets the message id.
+		 *
+		 * @param id the id
+		 * @return the request spec
+		 */
 		RequestSpec id(Integer id);
+
+		/**
+		 * Sets the message method.
+		 *
+		 * @param method the method
+		 * @return the request spec
+		 */
 		RequestSpec method(String method);
+
+		/**
+		 * Sets the message params.
+		 *
+		 * @param params the params
+		 * @return the request spec
+		 */
 		RequestSpec params(Object params);
+
+		/**
+		 * Gets the exchange.
+		 *
+		 * @return the mono of a response
+		 */
 		Mono<JsonRpcResponse> exchange();
 	}
 }
