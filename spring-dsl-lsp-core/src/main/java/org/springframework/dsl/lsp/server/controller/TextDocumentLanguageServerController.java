@@ -194,7 +194,7 @@ public class TextDocumentLanguageServerController implements InitializingBean {
 		Document document = documentStateTracker.getDocument(params.getTextDocument().getUri());
 		Position position = params.getPosition();
 
-		return Flux.fromIterable(registry.getHoverers(document.getLanguageId()))
+		return Flux.fromIterable(registry.getHoverers(document.languageId()))
 				.concatMap(hoverer -> hoverer.hover(document, position))
 				.next();
 	}
@@ -218,7 +218,7 @@ public class TextDocumentLanguageServerController implements InitializingBean {
 		Position position = params.getPosition();
 
 		// TODO: think how to integrate into isIncomplete setting
-		return Flux.fromIterable(registry.getCompletioners(document.getLanguageId()))
+		return Flux.fromIterable(registry.getCompletioners(document.languageId()))
 				.concatMap(completioner -> completioner.complete(document, position))
 				.buffer()
 				.map(completionItems -> {

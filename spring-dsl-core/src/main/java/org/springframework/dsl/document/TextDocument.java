@@ -33,6 +33,8 @@ import org.springframework.dsl.model.LanguageId;
 import javolution.text.Text;
 
 /**
+ * {@link Document} implementation having a textual content and understands
+ * normal line delimiters.
  *
  * @author Kris De Volder
  * @author Janne Valkealahti
@@ -44,15 +46,14 @@ public class TextDocument implements Document {
 	private static final Pattern NEWLINE = Pattern.compile("\\r(\\n)?|\\n");
 
 	//TODO: should try to avoid haveing any methods returning String
-	// This defeats the point of using javaolution.Text (i.e. converion into
-	// String can cause massive string copying)
+	//      This defeats the point of using javaolution.Text (i.e. converion into
+	//      String can cause massive string copying)
 
 	//TODO: this 'stateful' object should be
-	// - renamed to TextDocumentState
-	// - not implement IDocument but have a method obtain an IDocument
-	//   representing a read-only snapshot of the document contents.
-	// - replace line tracker with something better.
-
+	//      - renamed to TextDocumentState
+	//      - not implement IDocument but have a method obtain an IDocument
+	//      - representing a read-only snapshot of the document contents.
+	//      - replace line tracker with something better.
 
 	private LineTracker lineTracker = new DefaultLineTracker();
 	private final LanguageId languageId;
@@ -77,7 +78,7 @@ public class TextDocument implements Document {
 
 	private TextDocument(TextDocument other) {
 		this.uri = other.uri;
-		this.languageId = other.getLanguageId();
+		this.languageId = other.languageId();
 		this.text = other.text;
 		this.lineTracker.set(text.toString());
 		this.version = other.version;
@@ -163,7 +164,7 @@ public class TextDocument implements Document {
 		log.trace("New content after apply is '{}'", content());
 	}
 
-	@Override
+//	@Override
 	public Position toPosition(int offset) throws BadLocationException {
 		int line = lineNumber(offset);
 		int startOfLine = startOfLine(line);
@@ -197,7 +198,7 @@ public class TextDocument implements Document {
 		return text.length();
 	}
 
-	@Override
+//	@Override
 	public String content(int start, int len) throws BadLocationException {
 		try {
 			return text.subtext(start, start+len).toString();
@@ -207,11 +208,11 @@ public class TextDocument implements Document {
 	}
 
 	@Override
-	public int getNumberOfLines() {
+	public int lineCount() {
 		return lineTracker.getNumberOfLines();
 	}
 
-	@Override
+//	@Override
 	public String getDefaultLineDelimiter() {
 		Matcher newlineFinder = NEWLINE.matcher(text);
 		if (newlineFinder.find()) {
@@ -220,15 +221,16 @@ public class TextDocument implements Document {
 		return System.getProperty("line.separator");
 	}
 
+//	@Override
 	@Override
-	public char getChar(int offset) throws BadLocationException {
+	public char charAt(int offset) throws BadLocationException {
 		if (offset >= 0 && offset < text.length()) {
 			return text.charAt(offset);
 		}
 		throw new BadLocationException("Offset location not in bounds");
 	}
 
-	@Override
+//	@Override
 	public int getLineOfOffset(int offset) throws BadLocationException {
 		return lineTracker.getLineNumberOfOffset(offset);
 	}
@@ -243,7 +245,7 @@ public class TextDocument implements Document {
 //		return null;
 //	}
 
-	@Override
+//	@Override
 	public int getLineOffset(int line) throws BadLocationException {
 		return lineTracker.getLineOffset(line);
 	}
@@ -254,7 +256,7 @@ public class TextDocument implements Document {
 		return lineStart + position.getCharacter();
 	}
 
-	@Override
+//	@Override
 	public synchronized void replace(int start, int len, String ins) throws BadLocationException {
 		int end = start+len;
 		text = text
@@ -267,7 +269,7 @@ public class TextDocument implements Document {
 		return new TextDocument(this);
 	}
 
-	@Override
+//	@Override
 	public String textBetween(int start, int end) throws BadLocationException {
 		return content(start, end-start);
 	}
@@ -320,14 +322,14 @@ public class TextDocument implements Document {
 	 */
 	public char getSafeChar(int offset) {
 		try {
-			return getChar(offset);
+			return charAt(offset);
 		} catch (BadLocationException e) {
 			return 0;
 		}
 	}
 
 	@Override
-	public LanguageId getLanguageId() {
+	public LanguageId languageId() {
 		return languageId;
 	}
 

@@ -34,6 +34,8 @@ import org.springframework.util.Assert;
  * functions which expect a {@link CharSequence}.
  *
  * @author Kris De Volder
+ * @author Janne Valkealahti
+ *
  */
 public class DocumentRegion implements CharSequence, Region {
 
@@ -41,6 +43,12 @@ public class DocumentRegion implements CharSequence, Region {
 	final int start;
 	final int end;
 
+	/**
+	 * Instantiates a new document region.
+	 *
+	 * @param document the document
+	 * @param r the r
+	 */
 	public DocumentRegion(Document document, Region r) {
 		this(document, r.getOffset(), r.getOffset() + r.getLength());
 	}
@@ -81,11 +89,6 @@ public class DocumentRegion implements CharSequence, Region {
 		return offset;
 	}
 
-	// @Override
-	// public String toString() {
-	// return DocumentUtil.textBetween(doc, start, end);
-	// }
-
 	public DocumentRegion trim() {
 		return trimEnd().trimStart();
 	}
@@ -124,7 +127,7 @@ public class DocumentRegion implements CharSequence, Region {
 			throw new IndexOutOfBoundsException("" + offset);
 		}
 		try {
-			return document.getChar(start + offset);
+			return document.charAt(start + offset);
 		} catch (BadLocationException e) {
 			throw new IndexOutOfBoundsException("" + offset);
 		}
@@ -166,10 +169,6 @@ public class DocumentRegion implements CharSequence, Region {
 	public DocumentRegion subSequence(int start) {
 		return subSequence(start, length());
 	}
-
-	// public IRegion asRegion() {
-	// return new Region(start, end-start);
-	// }
 
 	public int indexOf(char ch, int fromIndex) {
 		while (fromIndex < length()) {
@@ -258,10 +257,6 @@ public class DocumentRegion implements CharSequence, Region {
 		return new DocumentRegion(document, start - len, start);
 	}
 
-	// public IDocument getDocument() {
-	// return doc;
-	// }
-
 	/**
 	 * Get the start of this region in 'absolute' terms (i.e. relative to the
 	 * document).
@@ -325,10 +320,6 @@ public class DocumentRegion implements CharSequence, Region {
 		numChars = Math.min(getLength(), numChars);
 		return new DocumentRegion(document, end - numChars, end);
 	}
-
-	// public Range asRange() throws BadLocationException {
-	// return doc.toRange(asRegion());
-	// }
 
 	public DocumentRegion leadingWhitespace() {
 		int howMany = 0;

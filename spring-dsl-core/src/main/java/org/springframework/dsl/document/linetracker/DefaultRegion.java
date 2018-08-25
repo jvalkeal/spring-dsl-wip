@@ -17,44 +17,47 @@ package org.springframework.dsl.document.linetracker;
 
 /**
  * Trivial implementation of {@link Region}
- *
- * Deprecated should be replaced with sometinh based on start/end instead
- * offset / len
+ * <p>
+ * Deprecated should be replaced with sometinh based on start/end instead offset
+ * / len
  *
  * @author Kris De Volder
+ * @author Janne Valkealahti
+ *
  */
 public class DefaultRegion implements Region {
 
-	private int ofs;
-	private int len;
+	private int offset;
+	private int length;
 
+	/**
+	 * Instantiates a new default region.
+	 *
+	 * @param ofs the ofs
+	 * @param len the len
+	 */
 	public DefaultRegion(int ofs, int len) {
 		super();
-		this.ofs = ofs;
-		this.len = len;
+		this.offset = ofs;
+		this.length = len;
 	}
 
 	@Override
 	public int getOffset() {
-		return ofs;
+		return offset;
 	}
 
 	@Override
 	public int getLength() {
-		return len;
-	}
-
-	@Override
-	public String toString() {
-		return "Region [ofs=" + ofs + ", len=" + len + "]";
+		return length;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + len;
-		result = prime * result + ofs;
+		result = prime * result + length;
+		result = prime * result + offset;
 		return result;
 	}
 
@@ -67,11 +70,15 @@ public class DefaultRegion implements Region {
 		if (getClass() != obj.getClass())
 			return false;
 		DefaultRegion other = (DefaultRegion) obj;
-		if (len != other.len)
+		if (length != other.length)
 			return false;
-		if (ofs != other.ofs)
+		if (offset != other.offset)
 			return false;
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		return "DefaultRegion [offset=" + offset + ", length=" + length + "]";
+	}
 }

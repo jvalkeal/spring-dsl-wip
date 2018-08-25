@@ -23,6 +23,13 @@ import org.springframework.dsl.model.LanguageId;
  * <p>
  * A {@code Document} instance is immutable and represents a snapshot of the
  * document state.
+ * <p>
+ * {@code Document} works using both position concepts as {@link Range} and
+ * {@link Position} from {@code LSP} and raw {@code start} and {@code offset}
+ * for supporting editors using those concepts. Difference is that {@code LSP}
+ * don't care about line delimiters while some other editors care about position
+ * having line delimiters included in a position information. Depending on a
+ * system, line delimiter can be either one or two characters.
  *
  * @author Kris De Volder
  * @author Janne Valkealahti
@@ -30,15 +37,33 @@ import org.springframework.dsl.model.LanguageId;
  */
 public interface Document {
 
-	// TODO: Cleanup this interface and get rid of
-	// methods using IRegion
-	// methods using IRegion-like access based on offset + length
-	// (should only use methods based on start - end type character
-	// ranges)
-
+	/**
+	 * Gets the {@code uri} of a document.
+	 *
+	 * @return the uri
+	 */
 	String uri();
 
+	/**
+	 * Gets the version of a document.
+	 *
+	 * @return the version
+	 */
+	int getVersion();
+
+	/**
+	 * Gets the full content of a document.
+	 *
+	 * @return the content
+	 */
 	String content();
+
+	/**
+	 * Gets a length of a document.
+	 *
+	 * @return the length
+	 */
+	int length();
 
 	/**
 	 * Gets an absolute position in a content representing a {@link Position}. As
@@ -52,34 +77,44 @@ public interface Document {
 	 */
 	int caret(Position position);
 
+	/**
+	 * Gets a number of lines in a document.
+	 *
+	 * @return the line count
+	 */
+	int lineCount();
+
+	/**
+	 * Gets a language id of a document.
+	 *
+	 * @return the language id
+	 */
+	LanguageId languageId();
+
+	/**
+	 * Get a character at an offset position.
+	 *
+	 * @param offset the offset
+	 * @return the char
+	 */
+	char charAt(int offset);
+
 //	Region getLineInformationOfOffset(int offset);
-
-	int length();
-
-	String content(int start, int len);
-
-	int getNumberOfLines();
-
-	String getDefaultLineDelimiter();
-
-	char getChar(int offset);
-
-	int getLineOfOffset(int offset);
-
+//	String content(int start, int len);
+//	String getDefaultLineDelimiter();
+//	int getLineOfOffset(int offset);
 //	Region getLineInformation(int line);
-
-	int getLineOffset(int line);
-
-	void replace(int start, int len, String text);
-
-	String textBetween(int start, int end);
-
-	LanguageId getLanguageId();
-
-	int getVersion();
-
+//	int getLineOffset(int line);
+//	void replace(int start, int len, String text);
+//	String textBetween(int start, int end);
 //	Range toRange(Region asRegion) throws BadLocationException;
+//	Position toPosition(int offset);
 
-	Position toPosition(int offset);
+
+	// TODO: Cleanup this interface and get rid of
+	// methods using IRegion
+	// methods using IRegion-like access based on offset + length
+	// (should only use methods based on start - end type character
+	// ranges)
 
 }

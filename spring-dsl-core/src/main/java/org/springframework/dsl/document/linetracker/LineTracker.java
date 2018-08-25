@@ -25,16 +25,10 @@ import org.springframework.dsl.document.BadLocationException;
  * the mapping information. It is the client's responsibility to actively inform
  * the line tacker about text changes. For example, when using a line tracker in
  * combination with a document the document controls the line tracker.
- * <p>
- * In order to provide backward compatibility for clients of <code>ILineTracker</code>, extension
- * interfaces are used to provide a means of evolution. The following extension interfaces
- * exist:
- * <ul>
- * <li> {@code org.springframework.ide.org.springframework.ide.vscode.commons.util.linetracker.ILineTrackerExtension} since version 3.1 introducing the concept
- *      of rewrite sessions.</li>
- * </ul>
- * <p>
- * Clients may implement this interface or use the standard implementation
+ *
+ * @author Kris De Volder
+ * @author Janne Valkealahti
+ *
  */
 public interface LineTracker {
 

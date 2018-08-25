@@ -17,10 +17,24 @@ package org.springframework.dsl.document.linetracker;
 
 /**
  * Describes a raw reqion as offset as starting point and length as ending point.
+ *
+ * @author Kris De Volder
+ * @author Janne Valkealahti
+ *
  */
 public interface Region {
 
+	/**
+	 * Gets the offset.
+	 *
+	 * @return the offset
+	 */
 	int getOffset();
-	int getLength();
 
+	/**
+	 * Gets the length.
+	 *
+	 * @return the length
+	 */
+	int getLength();
 }

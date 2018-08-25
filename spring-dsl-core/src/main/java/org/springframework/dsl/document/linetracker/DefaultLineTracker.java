@@ -18,14 +18,14 @@ package org.springframework.dsl.document.linetracker;
 import java.util.Arrays;
 
 /**
- * Standard implementation of {@code org.eclipse.jface.text.ILineTracker}.
+ * Default implementation of {@link LineTracker}.
  * <p>
  * The line tracker considers the three common line delimiters which are '\n',
  * '\r', '\r\n'.
- * <p>
- * This class is not intended to be subclassed.
- * </p>
- * This class is not intended to be subclassed by clients.
+ *
+ * @author Kris De Volder
+ * @author Janne Valkealahti
+ *
  */
 public class DefaultLineTracker extends AbstractLineTracker {
 

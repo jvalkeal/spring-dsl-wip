@@ -30,6 +30,7 @@ public class TextDocumentTests {
 
 	private final static String DOC1 = "line1";
 	private final static String DOC2 = "line1\n" + "line2\n";
+	private final static String DOC3 = "line1\n" + "line2\n" + "line3\n";
 
 	@Test
 	public void testSimpleContent() {
@@ -42,6 +43,16 @@ public class TextDocumentTests {
 		TextDocument textDocument = new TextDocument(DOC2);
 		int caretPosition = textDocument.caret(new Position(1, 0));
 		assertThat(caretPosition).isEqualTo(6);
+	}
+
+	@Test
+	public void testLineCount() {
+		TextDocument textDocument = new TextDocument(DOC1);
+		assertThat(textDocument.lineCount()).isEqualTo(1);
+		textDocument = new TextDocument(DOC2);
+		assertThat(textDocument.lineCount()).isEqualTo(3);
+		textDocument = new TextDocument(DOC3);
+		assertThat(textDocument.lineCount()).isEqualTo(4);
 	}
 
 }
