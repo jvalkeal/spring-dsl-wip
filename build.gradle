@@ -147,8 +147,8 @@ project('spring-dsl-core') {
 	}
 }
 
-project('spring-dsl-lsp-server') {
-	description = "Spring Dsl Lsp Server"
+project('spring-dsl-lsp-core') {
+	description = "Spring Dsl Lsp Core"
 
 	dependencies {
 		compile project(':spring-dsl-core')
@@ -173,7 +173,7 @@ project('spring-dsl-autoconfigure') {
 	dependencies {
 		compile project(':spring-dsl-core')
 		optional project(':spring-dsl-jsonrpc')
-		optional project(':spring-dsl-lsp-server')
+		optional project(':spring-dsl-lsp-core')
 		optional project(':spring-dsl-antlr')
 		optional project(':spring-dsl-websocket')
 		optional 'org.springframework.boot:spring-boot-configuration-processor'
@@ -185,7 +185,7 @@ project('spring-dsl-websocket') {
 	description = "Spring Dsl Websocket"
 
 	dependencies {
-		compile project(':spring-dsl-lsp-server')
+		compile project(':spring-dsl-lsp-core')
 		//compile 'org.springframework.boot:spring-boot-starter-websocket'
 		compile 'org.springframework.boot:spring-boot-starter-webflux'
 	}
@@ -303,7 +303,7 @@ project('spring-dsl-build-tests') {
 	tasks.findByPath("artifactoryPublish")?.enabled = false
 
 	dependencies {
-		testCompile project(":spring-dsl-lsp-server")
+		testCompile project(":spring-dsl-lsp-core")
 		testCompile project(":spring-dsl-autoconfigure")
 		testCompile 'org.springframework.boot:spring-boot-starter-test'
 		testCompile 'org.hamcrest:hamcrest-core'
