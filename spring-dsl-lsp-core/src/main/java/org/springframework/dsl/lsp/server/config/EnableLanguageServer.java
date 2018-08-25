@@ -21,7 +21,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.springframework.dsl.jsonrpc.config.EnableJsonRcp;
+import org.springframework.dsl.jsonrpc.config.EnableJsonRpc;
 
 /**
  * Adding this annotation to an {@code @Configuration} class enables and imports
@@ -33,6 +33,6 @@ import org.springframework.dsl.jsonrpc.config.EnableJsonRcp;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Documented
-@EnableJsonRcp
+@EnableJsonRpc
 public @interface EnableLanguageServer {
 }

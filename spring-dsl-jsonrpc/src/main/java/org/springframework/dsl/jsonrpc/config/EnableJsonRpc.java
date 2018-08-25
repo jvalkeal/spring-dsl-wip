@@ -25,7 +25,7 @@ import org.springframework.context.annotation.Import;
 
 /**
  * Adding this annotation to an {@code @Configuration} class enables and imports
- * needed functionalities for a {@code JSON RCP}.
+ * needed functionalities for a {@code JSON RPC}.
  *
  * @author Janne Valkealahti
  *
@@ -34,5 +34,5 @@ import org.springframework.context.annotation.Import;
 @Target(ElementType.TYPE)
 @Documented
 @Import(DelegatingJsonRpcConfiguration.class)
-public @interface EnableJsonRcp {
+public @interface EnableJsonRpc {
 }

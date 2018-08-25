@@ -39,7 +39,7 @@ import org.springframework.dsl.jsonrpc.annotation.JsonRpcController;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcNotification;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcRequestMapping;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcResponseBody;
-import org.springframework.dsl.jsonrpc.config.EnableJsonRcp;
+import org.springframework.dsl.jsonrpc.config.EnableJsonRpc;
 import org.springframework.dsl.jsonrpc.session.JsonRpcSession;
 import org.springframework.dsl.jsonrpc.support.DispatcherJsonRpcHandler;
 import org.springframework.dsl.lsp.client.ClientReactorJsonRpcHandlerAdapter;
@@ -639,7 +639,7 @@ public class NettyTcpServerIntegrationTests {
 		assertThat(responses).containsExactlyInAnyOrder(response1, response2);
 	}
 
-	@EnableJsonRcp
+	@EnableJsonRpc
 	@Import(LspDomainJacksonConfiguration.class)
 	static class JsonRpcConfig {
 

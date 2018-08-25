@@ -23,7 +23,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.dsl.autoconfigure.DslAutoConfiguration;
 import org.springframework.dsl.autoconfigure.LspAutoConfiguration;
-import org.springframework.dsl.jsonrpc.config.EnableJsonRcp;
+import org.springframework.dsl.jsonrpc.config.EnableJsonRpc;
 import org.springframework.dsl.lsp.server.jsonrpc.NettyTcpServer;
 
 /**
@@ -64,7 +64,7 @@ public class LspNettySocketLspServerIntegrationTests extends AbstractLspIntegrat
 	protected void onClientContext(ConfigurableApplicationContext context) {
 	}
 
-	@EnableJsonRcp
+	@EnableJsonRpc
 	private static class Config1 {
 	}
 }
