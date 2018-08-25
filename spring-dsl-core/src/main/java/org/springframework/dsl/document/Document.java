@@ -99,8 +99,9 @@ public interface Document {
 	 */
 	char charAt(int offset);
 
+	String content(int start, int len);
+
 //	Region getLineInformationOfOffset(int offset);
-//	String content(int start, int len);
 //	String getDefaultLineDelimiter();
 //	int getLineOfOffset(int offset);
 //	Region getLineInformation(int line);

@@ -335,4 +335,30 @@ public class DocumentRegion implements CharSequence, Region {
 		return getStart();
 	}
 
+	@Override
+	public String toString() {
+//		return DocumentUtil.textBetween(doc, start, end);
+		return textBetween(document, start, end);
+	}
+
+	public static String textBetween(Document doc, int start, int end) {
+		if (start >= doc.length()) {
+			return "";
+		}
+		if (start < 0) {
+			start = 0;
+		}
+		if (end > doc.length()) {
+			end = doc.length();
+		}
+		if (end < start) {
+			end = start;
+		}
+		try {
+			return doc.content(start, end - start);
+		} catch (BadLocationException e) {
+			throw new IllegalStateException("Bug!", e);
+		}
+	}
+
 }

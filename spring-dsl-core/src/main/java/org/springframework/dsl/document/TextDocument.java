@@ -108,7 +108,7 @@ public class TextDocument implements Document {
 		this.lineTracker.set(content);
 	}
 
-	public synchronized void apply(DidChangeTextDocumentParams params) throws BadLocationException {
+	public synchronized void apply(DidChangeTextDocumentParams params) {
 		int newVersion = params.getTextDocument().getVersion();
 		if (version < newVersion) {
 			log.trace("Number of changes {}", params.getContentChanges().size());
@@ -131,7 +131,7 @@ public class TextDocument implements Document {
 	 * @return the range
 	 * @throws BadLocationException the bad location exception
 	 */
-	public Range toRange(int offset, int length) throws BadLocationException {
+	public Range toRange(int offset, int length) {
 		int end = Math.min(offset + length, length());
 		Range range = new Range();
 		range.setStart(toPosition(offset));
@@ -146,11 +146,11 @@ public class TextDocument implements Document {
 	 * @return the int
 	 * @throws BadLocationException the bad location exception
 	 */
-	private int lineNumber(int offset) throws BadLocationException {
+	private int lineNumber(int offset) {
 		return lineTracker.getLineNumberOfOffset(offset);
 	}
 
-	private void apply(TextDocumentContentChangeEvent change) throws BadLocationException {
+	private void apply(TextDocumentContentChangeEvent change) {
 		log.trace("Old content before apply is '{}'", content());
 		Range rng = change.getRange();
 		if (rng==null) {
@@ -165,7 +165,7 @@ public class TextDocument implements Document {
 	}
 
 //	@Override
-	public Position toPosition(int offset) throws BadLocationException {
+	public Position toPosition(int offset) {
 		int line = lineNumber(offset);
 		int startOfLine = startOfLine(line);
 		int column = offset - startOfLine;
@@ -175,7 +175,7 @@ public class TextDocument implements Document {
 		return pos;
 	}
 
-	private int startOfLine(int line) throws BadLocationException {
+	private int startOfLine(int line) {
 		Region region = lineTracker.getLineInformation(line);
 		return region.getOffset();
 	}
@@ -199,7 +199,8 @@ public class TextDocument implements Document {
 	}
 
 //	@Override
-	public String content(int start, int len) throws BadLocationException {
+	@Override
+	public String content(int start, int len) {
 		try {
 			return text.subtext(start, start+len).toString();
 		} catch (Exception e) {
@@ -223,7 +224,7 @@ public class TextDocument implements Document {
 
 //	@Override
 	@Override
-	public char charAt(int offset) throws BadLocationException {
+	public char charAt(int offset) {
 		if (offset >= 0 && offset < text.length()) {
 			return text.charAt(offset);
 		}
@@ -231,7 +232,7 @@ public class TextDocument implements Document {
 	}
 
 //	@Override
-	public int getLineOfOffset(int offset) throws BadLocationException {
+	public int getLineOfOffset(int offset) {
 		return lineTracker.getLineNumberOfOffset(offset);
 	}
 
@@ -246,18 +247,18 @@ public class TextDocument implements Document {
 //	}
 
 //	@Override
-	public int getLineOffset(int line) throws BadLocationException {
+	public int getLineOffset(int line) {
 		return lineTracker.getLineOffset(line);
 	}
 
-	public int toOffset(Position position) throws BadLocationException {
+	public int toOffset(Position position) {
 		Region region = lineTracker.getLineInformation(position.getLine());
 		int lineStart = region.getOffset();
 		return lineStart + position.getCharacter();
 	}
 
 //	@Override
-	public synchronized void replace(int start, int len, String ins) throws BadLocationException {
+	public synchronized void replace(int start, int len, String ins) {
 		int end = start+len;
 		text = text
 			.delete(start, end)
@@ -270,7 +271,7 @@ public class TextDocument implements Document {
 	}
 
 //	@Override
-	public String textBetween(int start, int end) throws BadLocationException {
+	public String textBetween(int start, int end) {
 		return content(start, end-start);
 	}
 
@@ -278,40 +279,6 @@ public class TextDocument implements Document {
 	public String toString() {
 		return "TextDocument(uri="+uri+"["+version+"],\n"+this.text+"\n)";
 	}
-
-	/**
-	 * Returns the number of leading spaces in front of a line. If the line only contains spaces then
-	 * this returns the number of spaces the line contains.
-	 * <p>
-	 * This may return -1 if, for some reason, a line's indentation cannot be determined (e.g. the line does
-	 * not exist in the document)
-	 *
-	 * @param line the line
-	 * @return the line indentation
-	 */
-//	public int getLineIndentation(int line) {
-//		//TODO: this works fine only if we assume all indentation is done with spaces only.
-//		// To generalize this it should probably return a String containing exactly the spaces
-//		// and tabs at the front of the line.
-//		Region r = getLineInformation(line);
-//		if (r==null) {
-//			//not a line in the document so it has no indentation
-//			return -1;
-//		}
-//		int len = r.getLength();
-//		int startOfLine = r.getOffset();
-//		int leadingSpaces = 0;
-//		while (leadingSpaces<len) {
-//			char c = getSafeChar(startOfLine+leadingSpaces);
-//			if (c==' ') {
-//				leadingSpaces++;
-//			} else if (c!=' ') {
-//				return leadingSpaces;
-//			}
-//			leadingSpaces++;
-//		}
-//		return leadingSpaces;
-//	}
 
 	/**
 	 * Like getChar but never throws {@link BadLocationException}. Instead it
@@ -332,11 +299,6 @@ public class TextDocument implements Document {
 	public LanguageId languageId() {
 		return languageId;
 	}
-
-//	@Override
-//	public Range toRange(Region region) throws BadLocationException {
-//		return toRange(region.getOffset(), region.getLength());
-//	}
 
 	@Override
 	public int getVersion() {
