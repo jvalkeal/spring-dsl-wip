@@ -132,6 +132,11 @@ public abstract class AbstractLineTracker implements LineTracker/*, LineTrackerE
 		return delegate.getLineInformation(line);
 	}
 
+//	@Override
+//	public Range getLineInformationRange(int line) {
+//		return delegate.getLineInformationRange(line);
+//	}
+
 	@Override
 	public Region getLineInformationOfOffset(int offset) throws BadLocationException {
 		return delegate.getLineInformationOfOffset(offset);

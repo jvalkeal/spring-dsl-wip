@@ -47,10 +47,10 @@ public class DocumentRegion implements CharSequence, Region {
 	 * Instantiates a new document region.
 	 *
 	 * @param document the document
-	 * @param r the r
+	 * @param region the region
 	 */
-	public DocumentRegion(Document document, Region r) {
-		this(document, r.getOffset(), r.getOffset() + r.getLength());
+	public DocumentRegion(Document document, Region region) {
+		this(document, region.getOffset(), region.getOffset() + region.getLength());
 	}
 
 	/**
@@ -78,6 +78,11 @@ public class DocumentRegion implements CharSequence, Region {
 	public DocumentRegion(Document doc) {
 		this(doc, 0, doc.length());
 	}
+
+//	public DocumentRegion(Document document, Range range) {
+//		this.document = document;
+//
+//	}
 
 	private int limitRange(int offset, int min, int max) {
 		if (offset < min) {

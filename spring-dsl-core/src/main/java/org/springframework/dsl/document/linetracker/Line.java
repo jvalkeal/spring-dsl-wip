@@ -38,9 +38,9 @@ final class Line implements Region {
 	 * @param delimiter the line's delimiter
 	 */
 	public Line(int offset, int end, String delimiter) {
-		this.offset= offset;
-		this.length= (end - offset) +1;
-		this.delimiter= delimiter;
+		this.offset = offset;
+		this.length = (end - offset) + 1;
+		this.delimiter = delimiter;
 	}
 
 	/**
@@ -50,9 +50,9 @@ final class Line implements Region {
 	 * @param length the length of the line
 	 */
 	public Line(int offset, int length) {
-		this.offset= offset;
-		this.length= length;
-		this.delimiter= null;
+		this.offset = offset;
+		this.length = length;
+		this.delimiter = null;
 	}
 
 	@Override

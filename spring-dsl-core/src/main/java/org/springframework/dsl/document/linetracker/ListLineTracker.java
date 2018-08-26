@@ -22,7 +22,7 @@ import org.springframework.dsl.document.BadLocationException;
 import org.springframework.dsl.document.linetracker.AbstractLineTracker.DelimiterInfo;
 
 /**
- * Abstract, read-only implementation of <code>ILineTracker</code>. It lets the definition of
+ * Abstract, read-only implementation of {@link LineTracker}. It lets the definition of
  * line delimiters to subclasses. Assuming that '\n' is the only line delimiter, this abstract
  * implementation defines the following line scheme:
  * <ul>
@@ -58,37 +58,41 @@ abstract class ListLineTracker implements LineTracker {
 	 */
 	private int findLine(int offset) {
 
-		if (linesList.size() == 0)
+		if (linesList.size() == 0) {
 			return -1;
+		}
 
-		int left= 0;
-		int right= linesList.size() - 1;
-		int mid= 0;
-		Line line= null;
+		int left = 0;
+		int right = linesList.size() - 1;
+		int mid = 0;
+		Line line = null;
 
 		while (left < right) {
 
-			mid= (left + right) / 2;
+			mid = (left + right) / 2;
 
-			line= linesList.get(mid);
+			line = linesList.get(mid);
 			if (offset < line.offset) {
-				if (left == mid)
-					right= left;
-				else
-					right= mid - 1;
+				if (left == mid) {
+					right = left;
+				} else {
+					right = mid - 1;
+				}
 			} else if (offset > line.offset) {
-				if (right == mid)
-					left= right;
-				else
-					left= mid + 1;
+				if (right == mid) {
+					left = right;
+				} else {
+					left = mid + 1;
+				}
 			} else if (offset == line.offset) {
-				left= right= mid;
+				left = right = mid;
 			}
 		}
 
-		line= linesList.get(left);
-		if (line.offset > offset)
+		line = linesList.get(left);
+		if (line.offset > offset) {
 			--left;
+		}
 		return left;
 	}
 
@@ -102,52 +106,59 @@ abstract class ListLineTracker implements LineTracker {
 	 * @exception BadLocationException if range is undefined in this tracker
 	 */
 	private int getNumberOfLines(int startLine, int offset, int length) throws BadLocationException {
-
-		if (length == 0)
+		if (length == 0) {
 			return 1;
+		}
 
-		int target= offset + length;
+		int target = offset + length;
 
-		Line l= linesList.get(startLine);
+		Line l = linesList.get(startLine);
 
-		if (l.delimiter == null)
+		if (l.delimiter == null) {
 			return 1;
+		}
 
-		if (l.offset + l.length > target)
+		if (l.offset + l.length > target) {
 			return 1;
+		}
 
-		if (l.offset + l.length == target)
+		if (l.offset + l.length == target) {
 			return 2;
+		}
 
 		return getLineNumberOfOffset(target) - startLine + 1;
 	}
 
 	@Override
 	public final int getLineLength(int line) throws BadLocationException {
-		int lines= linesList.size();
+		int lines = linesList.size();
 
-		if (line < 0 || line > lines)
+		if (line < 0 || line > lines) {
 			throw new BadLocationException("Line not in bounds");
+		}
 
-		if (lines == 0 || lines == line)
+		if (lines == 0 || lines == line) {
 			return 0;
+		}
 
-		Line l= linesList.get(line);
+		Line l = linesList.get(line);
 		return l.length;
 	}
 
 	@Override
 	public final int getLineNumberOfOffset(int position) throws BadLocationException {
-		if (position < 0 || position > textLength)
+		if (position < 0 || position > textLength) {
 			throw new BadLocationException("Offset location not in bounds");
+		}
 
 		if (position == textLength) {
 
-			int lastLine= linesList.size() - 1;
-			if (lastLine < 0)
+			int lastLine = linesList.size() - 1;
+			if (lastLine < 0) {
 				return 0;
+			}
 
-			Line l= linesList.get(lastLine);
+			Line l = linesList.get(lastLine);
 			return (l.delimiter != null ? lastLine + 1 : lastLine);
 		}
 
@@ -156,14 +167,16 @@ abstract class ListLineTracker implements LineTracker {
 
 	@Override
 	public final Region getLineInformationOfOffset(int position) {
-		if (position > textLength)
+		if (position > textLength) {
 			throw new BadLocationException("Position location not in bounds");
+		}
 
 		if (position == textLength) {
-			int size= linesList.size();
-			if (size == 0)
+			int size = linesList.size();
+			if (size == 0) {
 				return new DefaultRegion(0, 0);
-			Line l= linesList.get(size - 1);
+			}
+			Line l = linesList.get(size - 1);
 			return (l.delimiter != null ? new Line(textLength, 0) : new Line(textLength - l.length, l.length));
 		}
 
@@ -172,94 +185,105 @@ abstract class ListLineTracker implements LineTracker {
 
 	@Override
 	public final Region getLineInformation(int line) throws BadLocationException {
-		int lines= linesList.size();
+		int lines = linesList.size();
 
-		if (line < 0 || line > lines)
+		if (line < 0 || line > lines) {
 			throw new BadLocationException("Line not in bounds");
+		}
 
-		if (lines == 0)
+		if (lines == 0) {
 			return new Line(0, 0);
+		}
 
 		if (line == lines) {
-			Line l= linesList.get(line - 1);
+			Line l = linesList.get(line - 1);
 			return new Line(l.offset + l.length, 0);
 		}
 
-		Line l= linesList.get(line);
+		Line l = linesList.get(line);
 		return (l.delimiter != null ? new Line(l.offset, l.length - l.delimiter.length()) : l);
 	}
 
+
 	@Override
 	public final int getLineOffset(int line) throws BadLocationException {
-		int lines= linesList.size();
+		int lines = linesList.size();
 
-		if (line < 0 || line > lines)
-			throw new BadLocationException("Line not in bounds");
-
-		if (lines == 0)
-			return 0;
-
-		if (line == lines) {
-			Line l= linesList.get(line - 1);
-			if (l.delimiter != null)
-				return l.offset + l.length;
+		if (line < 0 || line > lines) {
 			throw new BadLocationException("Line not in bounds");
 		}
 
-		Line l= linesList.get(line);
+		if (lines == 0) {
+			return 0;
+		}
+
+		if (line == lines) {
+			Line l = linesList.get(line - 1);
+			if (l.delimiter != null) {
+				return l.offset + l.length;
+			}
+			throw new BadLocationException("Line not in bounds");
+		}
+
+		Line l = linesList.get(line);
 		return l.offset;
 	}
 
 	@Override
 	public final int getNumberOfLines() {
-		int lines= linesList.size();
+		int lines = linesList.size();
 
-		if (lines == 0)
+		if (lines == 0) {
 			return 1;
+		}
 
-		Line l= linesList.get(lines - 1);
+		Line l = linesList.get(lines - 1);
 		return (l.delimiter != null ? lines + 1 : lines);
 	}
 
 	@Override
 	public final int getNumberOfLines(int position, int length) throws BadLocationException {
-
-		if (position < 0 || position + length > textLength)
+		if (position < 0 || position + length > textLength) {
 			throw new BadLocationException("Position not in bounds");
+		}
 
-		if (length == 0) // optimization
+		if (length == 0) {
 			return 1;
+		}
 
 		return getNumberOfLines(getLineNumberOfOffset(position), position, length);
 	}
 
 	@Override
 	public final int computeNumberOfLines(String text) {
-		int count= 0;
-		int start= 0;
-		DelimiterInfo delimiterInfo= nextDelimiterInfo(text, start);
+		int count = 0;
+		int start = 0;
+		DelimiterInfo delimiterInfo = nextDelimiterInfo(text, start);
 		while (delimiterInfo != null && delimiterInfo.delimiterIndex > -1) {
 			++count;
-			start= delimiterInfo.delimiterIndex + delimiterInfo.delimiterLength;
-			delimiterInfo= nextDelimiterInfo(text, start);
+			start = delimiterInfo.delimiterIndex + delimiterInfo.delimiterLength;
+			delimiterInfo = nextDelimiterInfo(text, start);
 		}
 		return count;
 	}
 
 	@Override
 	public final String getLineDelimiter(int line) throws BadLocationException {
-		int lines= linesList.size();
+		int lines = linesList.size();
 
-		if (line < 0 || line > lines)
+		if (line < 0 || line > lines) {
 			throw new BadLocationException("Line not in bounds");
+		}
 
-		if (lines == 0)
+		if (lines == 0) {
 			return null;
+		}
 
-		if (line == lines)
+		if (line == lines) {
 			return null;
+		}
 
-		Line l= linesList.get(line);
+		Line l = linesList.get(line);
 		return l.delimiter;
 	}
 
@@ -284,32 +308,33 @@ abstract class ListLineTracker implements LineTracker {
 	 * @return the number of newly created lines
 	 */
 	private int createLines(String text, int insertPosition, int offset) {
-
-		int count= 0;
-		int start= 0;
-		DelimiterInfo delimiterInfo= nextDelimiterInfo(text, 0);
+		int count = 0;
+		int start = 0;
+		DelimiterInfo delimiterInfo = nextDelimiterInfo(text, 0);
 
 		while (delimiterInfo != null && delimiterInfo.delimiterIndex > -1) {
 
-			int index= delimiterInfo.delimiterIndex + (delimiterInfo.delimiterLength - 1);
+			int index = delimiterInfo.delimiterIndex + (delimiterInfo.delimiterLength - 1);
 
-			if (insertPosition + count >= linesList.size())
+			if (insertPosition + count >= linesList.size()) {
 				linesList.add(new Line(offset + start, offset + index, delimiterInfo.delimiter));
-			else
-				linesList.add(insertPosition + count, new Line(offset + start, offset + index, delimiterInfo.delimiter));
+			} else {
+				linesList.add(insertPosition + count,
+						new Line(offset + start, offset + index, delimiterInfo.delimiter));
+			}
 
 			++count;
-			start= index + 1;
-			delimiterInfo= nextDelimiterInfo(text, start);
+			start = index + 1;
+			delimiterInfo = nextDelimiterInfo(text, start);
 		}
 
 		if (start < text.length()) {
 			if (insertPosition + count < linesList.size()) {
 				// there is a line below the current
-				Line l= linesList.get(insertPosition + count);
-				int delta= text.length() - start;
-				l.offset-= delta;
-				l.length+= delta;
+				Line l = linesList.get(insertPosition + count);
+				int delta = text.length() - start;
+				l.offset -= delta;
+				l.length += delta;
 			} else {
 				linesList.add(new Line(offset + start, offset + text.length() - 1, null));
 				++count;
@@ -328,7 +353,7 @@ abstract class ListLineTracker implements LineTracker {
 	public final void set(String text) {
 		linesList.clear();
 		if (text != null) {
-			textLength= text.length();
+			textLength = text.length();
 			createLines(text, 0, 0);
 		}
 	}

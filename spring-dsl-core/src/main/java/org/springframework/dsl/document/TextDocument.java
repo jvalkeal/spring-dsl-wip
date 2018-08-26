@@ -122,7 +122,7 @@ public class TextDocument implements Document {
 	}
 
 	/**
-	 * Convert a simple offset+length pair into a vscode range. This is a method on
+	 * Convert a simple offset+length pair into a {@link Range}. This is a method on
 	 * TextDocument because it requires splitting document into lines to determine
 	 * line numbers from offsets.
 	 *
@@ -152,19 +152,19 @@ public class TextDocument implements Document {
 
 	private void apply(TextDocumentContentChangeEvent change) {
 		log.trace("Old content before apply is '{}'", content());
-		Range rng = change.getRange();
-		if (rng==null) {
+		Range range = change.getRange();
+		if (range == null) {
 			//full sync mode
 			setText(change.getText());
 		} else {
-			int start = toOffset(rng.getStart());
-			int end = toOffset(rng.getEnd());
+			int start = toOffset(range.getStart());
+			int end = toOffset(range.getEnd());
 			replace(start, end-start, change.getText());
 		}
 		log.trace("New content after apply is '{}'", content());
 	}
 
-//	@Override
+	@Override
 	public Position toPosition(int offset) {
 		int line = lineNumber(offset);
 		int startOfLine = startOfLine(line);

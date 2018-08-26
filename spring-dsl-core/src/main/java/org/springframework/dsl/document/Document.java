@@ -101,6 +101,8 @@ public interface Document {
 
 	String content(int start, int len);
 
+	Position toPosition(int offset);
+
 //	Region getLineInformationOfOffset(int offset);
 //	String getDefaultLineDelimiter();
 //	int getLineOfOffset(int offset);
@@ -109,7 +111,6 @@ public interface Document {
 //	void replace(int start, int len, String text);
 //	String textBetween(int start, int end);
 //	Range toRange(Region asRegion) throws BadLocationException;
-//	Position toPosition(int offset);
 
 
 	// TODO: Cleanup this interface and get rid of
