@@ -10,6 +10,15 @@ project('spring-dsl-samples-simpledsl') {
 	}
 }
 
+project('spring-dsl-samples-wordcheckdsl') {
+	description = 'Spring Dsl Wordcheck Dsl Sample'
+	dependencies {
+		compile project(':spring-dsl-lsp-core')
+		testCompile 'junit:junit'
+		testCompile 'org.springframework.boot:spring-boot-starter-test'
+	}
+}
+
 project('spring-dsl-samples-spring-dsl-editor-lib') {
 	apply plugin: 'com.moowork.node'
 	
