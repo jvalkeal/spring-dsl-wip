@@ -18,6 +18,7 @@ package org.springframework.dsl.document;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
+import org.springframework.dsl.domain.Range;
 
 public class DocumentRegionTests {
 
@@ -26,6 +27,8 @@ public class DocumentRegionTests {
 	@Test
 	public void test() {
 		DocumentRegion documentRegion = new DocumentRegion(TDOC1, 0, 5);
+		assertThat(documentRegion.toString()).isEqualTo(TextDocumentTests.DOC1);
+		documentRegion = new DocumentRegion(TDOC1, Range.from(0, 0, 0, 5));
 		assertThat(documentRegion.toString()).isEqualTo(TextDocumentTests.DOC1);
 	}
 }

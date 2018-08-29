@@ -28,9 +28,9 @@ import org.springframework.dsl.domain.Position;
  */
 public class TextDocumentTests {
 
-	private final static String DOC1 = "line1";
-	private final static String DOC2 = "line1\n" + "line2\n";
-	private final static String DOC3 = "line1\n" + "line2\n" + "line3\n";
+	public final static String DOC1 = "line1";
+	public final static String DOC2 = "line1\n" + "line2\n";
+	public final static String DOC3 = "line1\n" + "line2\n" + "line3\n";
 
 	@Test
 	public void testSimpleContent() {
@@ -46,6 +46,20 @@ public class TextDocumentTests {
 	}
 
 	@Test
+	public void testPositions() {
+		TextDocument textDocument = new TextDocument(DOC1);
+		assertThat(textDocument.toPosition(0)).isEqualTo(Position.from(0, 0));
+		assertThat(textDocument.toPosition(4)).isEqualTo(Position.from(0, 4));
+		assertThat(textDocument.toPosition(5)).isEqualTo(Position.from(0, 5));
+
+		textDocument = new TextDocument(DOC2);
+		assertThat(textDocument.toPosition(6)).isEqualTo(Position.from(1, 0));
+
+		textDocument = new TextDocument(DOC3);
+		assertThat(textDocument.toPosition(12)).isEqualTo(Position.from(2, 0));
+	}
+
+	@Test
 	public void testLineCount() {
 		TextDocument textDocument = new TextDocument(DOC1);
 		assertThat(textDocument.lineCount()).isEqualTo(1);
@@ -54,5 +68,4 @@ public class TextDocumentTests {
 		textDocument = new TextDocument(DOC3);
 		assertThat(textDocument.lineCount()).isEqualTo(4);
 	}
-
 }
