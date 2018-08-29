@@ -90,6 +90,16 @@ public class TextDocument implements Document {
 	}
 
 	@Override
+	public LanguageId languageId() {
+		return languageId;
+	}
+
+	@Override
+	public int getVersion() {
+		return version;
+	}
+
+	@Override
 	public String content() {
 		return getText().toString();
 	}
@@ -97,6 +107,17 @@ public class TextDocument implements Document {
 	@Override
 	public int caret(Position position) {
 		return lineTracker.getLineOffset(position.getLine()) + position.getCharacter();
+	}
+
+	@Override
+	public Position toPosition(int offset) {
+		int line = lineNumber(offset);
+		int startOfLine = startOfLine(line);
+		int column = offset - startOfLine;
+		Position pos = new Position();
+		pos.setCharacter(column);
+		pos.setLine(line);
+		return pos;
 	}
 
 	public synchronized Text getText() {
@@ -150,55 +171,11 @@ public class TextDocument implements Document {
 		return lineTracker.getLineNumberOfOffset(offset);
 	}
 
-	private void apply(TextDocumentContentChangeEvent change) {
-		log.trace("Old content before apply is '{}'", content());
-		Range range = change.getRange();
-		if (range == null) {
-			//full sync mode
-			setText(change.getText());
-		} else {
-			int start = toOffset(range.getStart());
-			int end = toOffset(range.getEnd());
-			replace(start, end-start, change.getText());
-		}
-		log.trace("New content after apply is '{}'", content());
-	}
-
-	@Override
-	public Position toPosition(int offset) {
-		int line = lineNumber(offset);
-		int startOfLine = startOfLine(line);
-		int column = offset - startOfLine;
-		Position pos = new Position();
-		pos.setCharacter(column);
-		pos.setLine(line);
-		return pos;
-	}
-
-	private int startOfLine(int line) {
-		Region region = lineTracker.getLineInformation(line);
-		return region.getOffset();
-	}
-
-//	@Override
-//	public Region getLineInformationOfOffset(int offset) {
-//		try {
-//			if (offset<=getLength()) {
-//				int line = lineNumber(offset);
-//				return getLineInformation(line);
-//			}
-//		} catch (BadLocationException e) {
-//			//outside document.
-//		}
-//		return null;
-//	}
-
 	@Override
 	public int length() {
 		return text.length();
 	}
 
-//	@Override
 	@Override
 	public String content(int start, int len) {
 		try {
@@ -213,7 +190,7 @@ public class TextDocument implements Document {
 		return lineTracker.getNumberOfLines();
 	}
 
-//	@Override
+	@Override
 	public String getDefaultLineDelimiter() {
 		Matcher newlineFinder = NEWLINE.matcher(text);
 		if (newlineFinder.find()) {
@@ -222,7 +199,6 @@ public class TextDocument implements Document {
 		return System.getProperty("line.separator");
 	}
 
-//	@Override
 	@Override
 	public char charAt(int offset) {
 		if (offset >= 0 && offset < text.length()) {
@@ -231,33 +207,41 @@ public class TextDocument implements Document {
 		throw new BadLocationException("Offset location not in bounds");
 	}
 
-//	@Override
-	public int getLineOfOffset(int offset) {
-		return lineTracker.getLineNumberOfOffset(offset);
+	@Override
+	public char charAtPosition(Position position) {
+		return charAt(caret(position));
 	}
 
-//	@Override
-//	public Region getLineInformation(int line) {
-//		try {
-//			return lineTracker.getLineInformation(line);
-//		} catch (BadLocationException e) {
-//			//line doesn't exist
-//		}
-//		return null;
-//	}
-
-//	@Override
-	public int getLineOffset(int line) {
-		return lineTracker.getLineOffset(line);
+	@Override
+	public boolean positionInBounds(Position position) {
+		int offset = caret(position);
+		return offset >= 0 && offset < text.length();
 	}
 
+	@Override
 	public int toOffset(Position position) {
 		Region region = lineTracker.getLineInformation(position.getLine());
 		int lineStart = region.getOffset();
 		return lineStart + position.getCharacter();
 	}
 
-//	@Override
+	public int getLineOfOffset(int offset) {
+		return lineTracker.getLineNumberOfOffset(offset);
+	}
+
+	public Region getLineInformation(int line) {
+		try {
+			return lineTracker.getLineInformation(line);
+		} catch (BadLocationException e) {
+			//line doesn't exist
+		}
+		return null;
+	}
+
+	public int getLineOffset(int line) {
+		return lineTracker.getLineOffset(line);
+	}
+
 	public synchronized void replace(int start, int len, String ins) {
 		int end = start+len;
 		text = text
@@ -270,39 +254,8 @@ public class TextDocument implements Document {
 		return new TextDocument(this);
 	}
 
-//	@Override
 	public String textBetween(int start, int end) {
 		return content(start, end-start);
-	}
-
-	@Override
-	public String toString() {
-		return "TextDocument(uri="+uri+"["+version+"],\n"+this.text+"\n)";
-	}
-
-	/**
-	 * Like getChar but never throws {@link BadLocationException}. Instead it
-	 * return (char)0 for offsets outside the document.
-	 *
-	 * @param offset the offset
-	 * @return the safe char
-	 */
-	public char getSafeChar(int offset) {
-		try {
-			return charAt(offset);
-		} catch (BadLocationException e) {
-			return 0;
-		}
-	}
-
-	@Override
-	public LanguageId languageId() {
-		return languageId;
-	}
-
-	@Override
-	public int getVersion() {
-		return version;
 	}
 
 	public TextDocumentIdentifier getId() {
@@ -310,5 +263,41 @@ public class TextDocument implements Document {
 			return new TextDocumentIdentifier(uri);
 		}
 		return null;
+	}
+
+	private void apply(TextDocumentContentChangeEvent change) {
+		log.trace("Old content before apply is '{}'", content());
+		Range range = change.getRange();
+		if (range == null) {
+			//full sync mode
+			setText(change.getText());
+		} else {
+			int start = toOffset(range.getStart());
+			int end = toOffset(range.getEnd());
+			replace(start, end-start, change.getText());
+		}
+		log.trace("New content after apply is '{}'", content());
+	}
+
+	private int startOfLine(int line) {
+		Region region = lineTracker.getLineInformation(line);
+		return region.getOffset();
+	}
+
+	public Region getLineInformationOfOffset(int offset) {
+		try {
+			if (offset<=length()) {
+				int line = lineNumber(offset);
+				return getLineInformation(line);
+			}
+		} catch (BadLocationException e) {
+			//outside document.
+		}
+		return null;
+	}
+
+	@Override
+	public String toString() {
+		return "TextDocument(uri="+uri+"["+version+"],\n"+this.text+"\n)";
 	}
 }

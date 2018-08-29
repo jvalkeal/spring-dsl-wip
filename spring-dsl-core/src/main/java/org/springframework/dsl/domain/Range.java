@@ -60,6 +60,14 @@ public class Range {
 		this.end = new Position(line, endCharacter);
 	}
 
+	public static Range from(int startLine, int startCharacter, int endLine, int endCharacter) {
+		return new Range(startLine, startCharacter, endLine, endCharacter);
+	}
+
+	public static Range from(Position start, Position end) {
+		return new Range(Position.from(start), Position.from(end));
+	}
+
 	public Position getStart() {
 		return start;
 	}

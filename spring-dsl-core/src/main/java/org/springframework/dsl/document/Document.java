@@ -19,7 +19,7 @@ import org.springframework.dsl.domain.Position;
 import org.springframework.dsl.model.LanguageId;
 
 /**
- * Interface for accessing information about a document including its content.
+ * Contract for accessing information about a {@code Document} including its content.
  * <p>
  * A {@code Document} instance is immutable and represents a snapshot of the
  * document state.
@@ -99,24 +99,51 @@ public interface Document {
 	 */
 	char charAt(int offset);
 
-	String content(int start, int len);
+	/**
+	 * Get a character at a position.
+	 *
+	 * @param position the position
+	 * @return the char
+	 */
+	char charAtPosition(Position position);
 
+	/**
+	 * Get a content from a given start position with given length.
+	 *
+	 * @param start the start
+	 * @param length the length
+	 * @return the string
+	 */
+	String content(int start, int length);
+
+	/**
+	 * Gets a position from a given offset.
+	 *
+	 * @param offset the offset
+	 * @return the position
+	 */
 	Position toPosition(int offset);
 
-//	Region getLineInformationOfOffset(int offset);
-//	String getDefaultLineDelimiter();
-//	int getLineOfOffset(int offset);
-//	Region getLineInformation(int line);
-//	int getLineOffset(int line);
-//	void replace(int start, int len, String text);
-//	String textBetween(int start, int end);
-//	Range toRange(Region asRegion) throws BadLocationException;
+	/**
+	 * Gets an offset from a given position.
+	 *
+	 * @param position the position
+	 * @return the offset
+	 */
+	int toOffset(Position position);
 
+	/**
+	 * Checks if a given position is in bounds for a current document.
+	 *
+	 * @param position the position
+	 * @return true, if successful
+	 */
+	boolean positionInBounds(Position position);
 
-	// TODO: Cleanup this interface and get rid of
-	// methods using IRegion
-	// methods using IRegion-like access based on offset + length
-	// (should only use methods based on start - end type character
-	// ranges)
-
+	/**
+	 * Gets the default line delimiter.
+	 *
+	 * @return the default line delimiter
+	 */
+	String getDefaultLineDelimiter();
 }

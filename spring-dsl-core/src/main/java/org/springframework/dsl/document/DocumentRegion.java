@@ -21,6 +21,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.springframework.dsl.document.linetracker.Region;
+import org.springframework.dsl.domain.Range;
 import org.springframework.util.Assert;
 
 /**
@@ -72,17 +73,49 @@ public class DocumentRegion implements CharSequence, Region {
 		this.end = limitRange(end, start, document.length());
 	}
 
-	/**
-	 * Create {@link DocumentRegion} covering the whole document.
-	 */
 	public DocumentRegion(Document doc) {
 		this(doc, 0, doc.length());
 	}
 
-//	public DocumentRegion(Document document, Range range) {
-//		this.document = document;
-//
-//	}
+	public DocumentRegion(Document document, Range range) {
+		this.document = document;
+		this.start = document.toOffset(range.getStart());
+		this.end = document.toOffset(range.getEnd());
+	}
+
+	@Override
+	public int length() {
+		return end - start;
+	}
+
+	/**
+	 * Gets character from the region, offset from the start of the region
+	 *
+	 * @return the character from the document (char)0 if the offset is outside the
+	 *         region.
+	 */
+	@Override
+	public char charAt(int offset) {
+		if (offset < 0 || offset >= length()) {
+			throw new IndexOutOfBoundsException("" + offset);
+		}
+		try {
+			return document.charAt(start + offset);
+		} catch (BadLocationException e) {
+			throw new IndexOutOfBoundsException("" + offset);
+		}
+	}
+
+	@Override
+	public DocumentRegion subSequence(int start, int end) {
+		int len = length();
+		Assert.isTrue(start >= 0, "'start' cannot be negative");
+		Assert.isTrue(end <= len, "'end' cannot be higher than current length");
+		if (start == 0 && end == len) {
+			return this;
+		}
+		return new DocumentRegion(document, this.start + start, this.start + end);
+	}
 
 	private int limitRange(int offset, int min, int max) {
 		if (offset < min) {
@@ -121,24 +154,6 @@ public class DocumentRegion implements CharSequence, Region {
 	}
 
 	/**
-	 * Gets character from the region, offset from the start of the region
-	 *
-	 * @return the character from the document (char)0 if the offset is outside the
-	 *         region.
-	 */
-	@Override
-	public char charAt(int offset) {
-		if (offset < 0 || offset >= length()) {
-			throw new IndexOutOfBoundsException("" + offset);
-		}
-		try {
-			return document.charAt(start + offset);
-		} catch (BadLocationException e) {
-			throw new IndexOutOfBoundsException("" + offset);
-		}
-	}
-
-	/**
 	 * Determines whether this range contains a given (absolute) offset.
 	 * <p>
 	 * Note that even a empty region will be treated as containing at least the
@@ -149,22 +164,6 @@ public class DocumentRegion implements CharSequence, Region {
 	 */
 	public boolean containsOffset(int absoluteOffset) {
 		return absoluteOffset >= start && absoluteOffset <= end;
-	}
-
-	@Override
-	public int length() {
-		return end - start;
-	}
-
-	@Override
-	public DocumentRegion subSequence(int start, int end) {
-		int len = length();
-		Assert.isTrue(start >= 0, "'start' cannot be negative");
-		Assert.isTrue(end <= len, "'end' cannot be higher than current length");
-		if (start == 0 && end == len) {
-			return this;
-		}
-		return new DocumentRegion(document, this.start + start, this.start + end);
 	}
 
 	public boolean isEmpty() {
@@ -342,7 +341,6 @@ public class DocumentRegion implements CharSequence, Region {
 
 	@Override
 	public String toString() {
-//		return DocumentUtil.textBetween(doc, start, end);
 		return textBetween(document, start, end);
 	}
 

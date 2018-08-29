@@ -58,7 +58,7 @@ public class DefaultReconciler implements Reconciler {
 		log.debug("Reconciling {}", document);
 
 		return Flux.fromIterable(linters)
-			.filter(linter -> linter.getSupportedLanguageIds().contains(document.getLanguageId()))
+			.filter(linter -> linter.getSupportedLanguageIds().contains(document.languageId()))
 			.map(linter -> {
 				return linter.lint(document);
 			})

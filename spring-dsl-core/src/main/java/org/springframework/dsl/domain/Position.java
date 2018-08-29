@@ -44,6 +44,15 @@ public class Position {
 		this.character = character;
 	}
 
+	public Position(Position other) {
+		this.line = other.getLine();
+		this.character = other.getCharacter();
+	}
+
+	public static Position from(Position other) {
+		return new Position(other);
+	}
+
 	public int getLine() {
 		return line;
 	}
