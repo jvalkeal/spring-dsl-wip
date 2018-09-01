@@ -47,7 +47,7 @@ public class DefaultReconciler implements Reconciler {
 	/**
 	 * Instantiates a new simple reconciler.
 	 *
-	 * @param linter the linter
+	 * @param linters the linters
 	 */
 	public DefaultReconciler(List<Linter> linters) {
 		this.linters = linters != null ? linters : new ArrayList<Linter>();
@@ -100,5 +100,4 @@ public class DefaultReconciler implements Reconciler {
 			throw new IllegalStateException("Bug! Missing switch case?");
 		}
 	}
-
 }
