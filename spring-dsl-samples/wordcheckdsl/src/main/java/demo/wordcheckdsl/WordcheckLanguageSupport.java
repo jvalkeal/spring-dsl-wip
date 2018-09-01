@@ -18,6 +18,7 @@ package demo.wordcheckdsl;
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dsl.model.LanguageId;
 import org.springframework.dsl.service.AbstractDslService;
 
 /**
@@ -29,10 +30,11 @@ import org.springframework.dsl.service.AbstractDslService;
  */
 public abstract class WordcheckLanguageSupport extends AbstractDslService {
 
+	private final static LanguageId LANGUAGEID = LanguageId.languageId("wordcheck", "Wordcheck Language");
 	private WordcheckProperties properties = new WordcheckProperties();
 
 	public WordcheckLanguageSupport() {
-		super(Arrays.asList(WordcheckLanguage.LANGUAGEID));
+		super(Arrays.asList(LANGUAGEID));
 	}
 
 	public WordcheckProperties getProperties() {

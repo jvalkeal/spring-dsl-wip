@@ -35,6 +35,7 @@ import reactor.core.publisher.Mono;
 @SpringBootApplication
 public class Application {
 
+	// TODO: wait https://github.com/spring-projects/spring-boot/issues/9785
 	@Component
 	public class CustomWebFilter implements WebFilter {
 		@Override
@@ -43,7 +44,6 @@ public class Application {
 				return chain.filter(
 						exchange.mutate().request(exchange.getRequest().mutate().path("/index.html").build()).build());
 			}
-
 			return chain.filter(exchange);
 		}
 	}

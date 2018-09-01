@@ -38,21 +38,22 @@ public class WordcheckLanguageCompletioner extends WordcheckLanguageSupport impl
 
 	@Override
 	public Flux<CompletionItem> complete(Document document, Position position) {
-		Position start = Position.from(document.validatePosition(position));
-		while (document.positionInBounds(start) && Character.isLetter(document.charAtPosition(start))
-				&& start.getCharacter() > 0) {
-			start.setCharacter(start.getCharacter() - 1);
-		}
+		return Flux.defer(() -> {
+			Position start = Position.from(document.validatePosition(position));
+			while (document.positionInBounds(start) && Character.isLetter(document.charAtPosition(start))
+					&& start.getCharacter() > 0) {
+				start.setCharacter(start.getCharacter() - 1);
+			}
+			DocumentRegion region = new DocumentRegion(document, Range.from(start, position));
+			DocumentRegion trimmed = region.trim();
 
-		DocumentRegion region = new DocumentRegion(document, Range.from(start, position));
-		DocumentRegion trimmed = region.trim();
-
-		return Flux.fromIterable(getProperties().getWords())
-			.flatMap(word -> {
-				if (FuzzyMatcher.matchScore(trimmed, word) != 0.0) {
-					return Mono.just(CompletionItem.completionItem().label(word).build());
-				}
-				return Mono.empty();
+			return Flux.fromIterable(getProperties().getWords())
+				.flatMap(word -> {
+					if (FuzzyMatcher.matchScore(trimmed, word) != 0.0) {
+						return Mono.just(CompletionItem.completionItem().label(word).build());
+					}
+					return Mono.empty();
+				});
 			});
 	}
 }
