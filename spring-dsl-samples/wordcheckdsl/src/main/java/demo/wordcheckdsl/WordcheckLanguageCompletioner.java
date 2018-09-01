@@ -15,14 +15,11 @@
  */
 package demo.wordcheckdsl;
 
-import java.util.Arrays;
-
 import org.springframework.dsl.document.Document;
 import org.springframework.dsl.document.DocumentRegion;
 import org.springframework.dsl.domain.CompletionItem;
 import org.springframework.dsl.domain.Position;
 import org.springframework.dsl.domain.Range;
-import org.springframework.dsl.service.AbstractDslService;
 import org.springframework.dsl.service.Completioner;
 
 import reactor.core.publisher.Flux;
@@ -37,33 +34,25 @@ import reactor.core.publisher.Mono;
  * @see EnableWordcheckLanguage
  *
  */
-public class WordcheckLanguageCompletioner extends AbstractDslService implements Completioner {
-
-	private WordcheckProperties properties;
-
-	public WordcheckLanguageCompletioner() {
-		super(Arrays.asList(WordcheckLanguage.LANGUAGEID));
-	}
+public class WordcheckLanguageCompletioner extends WordcheckLanguageSupport implements Completioner {
 
 	@Override
 	public Flux<CompletionItem> complete(Document document, Position position) {
-		Position start = Position.from(position);
-		while (document.positionInBounds(position) && Character.isLetter(document.charAtPosition(start))) {
+		Position start = Position.from(document.validatePosition(position));
+		while (document.positionInBounds(start) && Character.isLetter(document.charAtPosition(start))
+				&& start.getCharacter() > 0) {
 			start.setCharacter(start.getCharacter() - 1);
 		}
 
 		DocumentRegion region = new DocumentRegion(document, Range.from(start, position));
+		DocumentRegion trimmed = region.trim();
 
-		return Flux.fromIterable(properties.getWords())
+		return Flux.fromIterable(getProperties().getWords())
 			.flatMap(word -> {
-					if (FuzzyMatcher.matchScore(region, word) != 0.0) {
-						return Mono.just(CompletionItem.completionItem().label(word).build());
+				if (FuzzyMatcher.matchScore(trimmed, word) != 0.0) {
+					return Mono.just(CompletionItem.completionItem().label(word).build());
 				}
 				return Mono.empty();
 			});
-	}
-
-	public void setProperties(WordcheckProperties properties) {
-		this.properties = properties;
 	}
 }

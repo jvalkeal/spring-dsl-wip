@@ -146,4 +146,13 @@ public interface Document {
 	 * @return the default line delimiter
 	 */
 	String getDefaultLineDelimiter();
+
+	/**
+	 * Create a valid position so that it always lies within
+	 * bounds of a document content.
+	 *
+	 * @param position the position
+	 * @return the position
+	 */
+	Position validatePosition(Position position);
 }

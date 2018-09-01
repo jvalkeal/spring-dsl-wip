@@ -15,27 +15,32 @@
  */
 package demo.wordcheckdsl;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.util.Arrays;
 
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Import;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dsl.service.AbstractDslService;
 
 /**
- * Meta annotation for enabling all supported services for a {@code wordcheck}
- * sample language.
+ * Base class for all {@code wordcheck} language services.
  *
  * @author Janne Valkealahti
  * @author Kris De Volder
  *
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-@Documented
-@Import(WordcheckLanguageConfiguration.class)
-@EnableConfigurationProperties(WordcheckProperties.class)
-public @interface EnableWordcheckLanguage {
+public abstract class WordcheckLanguageSupport extends AbstractDslService {
+
+	private WordcheckProperties properties;
+
+	public WordcheckLanguageSupport() {
+		super(Arrays.asList(WordcheckLanguage.LANGUAGEID));
+	}
+
+	public WordcheckProperties getProperties() {
+		return properties;
+	}
+
+	@Autowired
+	public void setProperties(WordcheckProperties properties) {
+		this.properties = properties;
+	}
 }

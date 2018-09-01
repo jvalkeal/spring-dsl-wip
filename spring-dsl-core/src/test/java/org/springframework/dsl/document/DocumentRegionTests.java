@@ -28,6 +28,7 @@ public class DocumentRegionTests {
 	public void test() {
 		DocumentRegion documentRegion = new DocumentRegion(TDOC1, 0, 5);
 		assertThat(documentRegion.toString()).isEqualTo(TextDocumentTests.DOC1);
+
 		documentRegion = new DocumentRegion(TDOC1, Range.from(0, 0, 0, 5));
 		assertThat(documentRegion.toString()).isEqualTo(TextDocumentTests.DOC1);
 	}

@@ -18,6 +18,7 @@ package demo.wordcheckdsl;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -42,19 +43,66 @@ public class WordcheckLanguageCompletionerTests {
 
 	@Test
 	public void test() {
-		Document document = new TextDocument("", LanguageId.TXT, 0, "");
-		WordcheckLanguageCompletioner completioner = buildCompletioner("jack", "is", "a", "dull", "boy");
-		Flux<CompletionItem> complete = completioner.complete(document, Position.from(0, 0));
-		assertThat(complete).isNotNull();
-		List<CompletionItem> items = complete.toStream().collect(Collectors.toList());
-		assertThat(items).hasSize(5);
-		List<String> labels = items.stream().flatMap(item -> Stream.of(item.getLabel())).collect(Collectors.toList());
-		assertThat(labels).containsExactlyInAnyOrder("jack", "is", "a", "dull", "boy");
+		assertCompletion("",
+				Arrays.asList("jack", "is", "a", "dull", "boy"),
+				Arrays.asList("jack", "is", "a", "dull", "boy"),
+				Position.from(0, 0));
+
+		assertCompletion("x",
+				Arrays.asList("jack", "is", "a", "dull", "boy"),
+				Collections.emptyList(),
+				Position.from(0, 1));
+
+		assertCompletion("j",
+				Arrays.asList("jack", "is", "a", "dull", "boy"),
+				Arrays.asList("jack"),
+				Position.from(0, 1));
+
+		assertCompletion("ja",
+				Arrays.asList("jack", "is", "a", "dull", "boy"),
+				Arrays.asList("jack"),
+				Position.from(0, 2));
+
+		assertCompletion("jac",
+				Arrays.asList("jack", "is", "a", "dull", "boy"),
+				Arrays.asList("jack"),
+				Position.from(0, 3));
+
+		assertCompletion("jack",
+				Arrays.asList("jack", "is", "a", "dull", "boy"),
+				Arrays.asList("jack"),
+				Position.from(0, 4));
+
+		assertCompletion("jack ",
+				Arrays.asList("jack", "is", "a", "dull", "boy"),
+				Arrays.asList("jack", "is", "a", "dull", "boy"),
+				Position.from(0, 5));
+
+		assertCompletion("jack i",
+				Arrays.asList("jack", "is", "a", "dull", "boy"),
+				Arrays.asList("is"),
+				Position.from(0, 6));
+
+		assertCompletion("jack is a",
+				Arrays.asList("jack", "is", "a", "dull", "boy"),
+				Arrays.asList("jack", "a"),
+				Position.from(0, 9));
 	}
 
-	private static WordcheckLanguageCompletioner buildCompletioner(String... words) {
+	private static void assertCompletion(String text, List<String> words, List<String> expected, Position position) {
+		Document document = new TextDocument("", LanguageId.TXT, 0, text);
+		WordcheckLanguageCompletioner completioner = buildCompletioner(words);
+		Flux<CompletionItem> complete = completioner.complete(document, position);
+		assertThat(complete).isNotNull();
+		List<CompletionItem> items = complete.toStream().collect(Collectors.toList());
+		assertThat(items).hasSize(expected.size());
+		List<String> labels = items.stream().flatMap(item -> Stream.of(item.getLabel())).collect(Collectors.toList());
+		assertThat(labels).containsExactlyInAnyOrderElementsOf(expected);
+	}
+
+	private static WordcheckLanguageCompletioner buildCompletioner(List<String> words) {
 		WordcheckProperties properties = new WordcheckProperties();
-		properties.setWords(Arrays.asList(words));
+		properties.setWords(words);
 		WordcheckLanguageCompletioner completioner = new WordcheckLanguageCompletioner();
 		completioner.setProperties(properties);
 		return completioner;

@@ -73,36 +73,32 @@ public interface LineTracker {
 	 * @param offset the offset of the specified text range
 	 * @param length the length of the specified text range
 	 * @return the number of lines occupied by the specified range
-	 * @exception BadLocationException if specified range is unknown to this tracker
 	 */
-	int getNumberOfLines(int offset, int length) throws BadLocationException;
+	int getNumberOfLines(int offset, int length);
 
 	/**
 	 * Returns the position of the first character of the specified line.
 	 *
 	 * @param line the line of interest
 	 * @return offset of the first character of the line
-	 * @exception BadLocationException if the line is unknown to this tracker
 	 */
-	int getLineOffset(int line) throws BadLocationException;
+	int getLineOffset(int line);
 
 	/**
 	 * Returns length of the specified line including the line's delimiter.
 	 *
 	 * @param line the line of interest
 	 * @return the length of the line
-	 * @exception BadLocationException if line is unknown to this tracker
 	 */
-	int getLineLength(int line) throws BadLocationException;
+	int getLineLength(int line);
 
 	/**
 	 * Returns the line number the character at the given offset belongs to.
 	 *
 	 * @param offset the offset whose line number to be determined
 	 * @return the number of the line the offset is on
-	 * @exception BadLocationException if the offset is invalid in this tracker
 	 */
-	int getLineNumberOfOffset(int offset) throws BadLocationException;
+	int getLineNumberOfOffset(int offset);
 
 	/**
 	 * Returns a line description of the line at the given offset.
@@ -111,9 +107,8 @@ public interface LineTracker {
 	 *
 	 * @param offset the offset whose line should be described
 	 * @return a region describing the line
-	 * @exception BadLocationException if offset is invalid in this tracker
 	 */
-	Region getLineInformationOfOffset(int offset) throws BadLocationException;
+	Region getLineInformationOfOffset(int offset);
 
 	/**
 	 * Returns a line description of the given line. The description
@@ -122,9 +117,8 @@ public interface LineTracker {
 	 *
 	 * @param line the line that should be described
 	 * @return a region describing the line
-	 * @exception BadLocationException if line is unknown to this tracker
 	 */
-	Region getLineInformation(int line) throws BadLocationException;
+	Region getLineInformation(int line);
 
 	/**
 	 * Informs the line tracker about the specified change in the tracked text.
@@ -132,9 +126,8 @@ public interface LineTracker {
 	 * @param offset the offset of the replaced text
 	 * @param length the length of the replaced text
 	 * @param text the substitution text
-	 * @exception BadLocationException if specified range is unknown to this tracker
 	 */
-	void replace(int offset, int length, String text) throws BadLocationException;
+	void replace(int offset, int length, String text);
 
 	/**
 	 * Sets the tracked text to the specified text.

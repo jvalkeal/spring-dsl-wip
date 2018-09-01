@@ -16,28 +16,23 @@
 package demo.wordcheckdsl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.dsl.document.Document;
 import org.springframework.dsl.reconcile.Linter;
 import org.springframework.dsl.reconcile.ReconcileProblem;
-import org.springframework.dsl.service.AbstractDslService;
 
 import reactor.core.publisher.Flux;
 
 /**
- * A {@link Linter} for a {@code simple} language.
+ * A {@link Linter} for a {@code wordcheck} language.
  *
  * @author Janne Valkealahti
  * @author Kris De Volder
+ * @see EnableWordcheckLanguage
  *
  */
-public class WordcheckLanguageLinter extends AbstractDslService implements Linter {
-
-	public WordcheckLanguageLinter() {
-		super(Arrays.asList(WordcheckLanguage.LANGUAGEID));
-	}
+public class WordcheckLanguageLinter extends WordcheckLanguageSupport implements Linter {
 
 	@Override
 	public Flux<ReconcileProblem> lint(Document document) {

@@ -204,7 +204,7 @@ public class TextDocument implements Document {
 		if (offset >= 0 && offset < text.length()) {
 			return text.charAt(offset);
 		}
-		throw new BadLocationException("Offset location not in bounds");
+		throw new BadLocationException("Offset location not in bounds, offset=" + offset + " text length=" + text.length());
 	}
 
 	@Override
@@ -223,6 +223,14 @@ public class TextDocument implements Document {
 		Region region = lineTracker.getLineInformation(position.getLine());
 		int lineStart = region.getOffset();
 		return lineStart + position.getCharacter();
+	}
+
+	@Override
+	public Position validatePosition(Position position) {
+		int adjustedLineCount = Math.min(position.getLine(), lineTracker.getNumberOfLines());
+		int adjustedCharacter = Math.min(position.getCharacter(), lineTracker.getLineLength(adjustedLineCount) - 1);
+		return Position.from(adjustedLineCount < 0 ? 0 : adjustedLineCount,
+				adjustedCharacter < 0 ? 0 : adjustedCharacter);
 	}
 
 	public int getLineOfOffset(int offset) {
