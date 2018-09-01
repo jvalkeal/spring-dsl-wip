@@ -1,0 +1,17 @@
+logging:
+  level:
+    org.springframework.dsl: trace
+    org.eclipse.lsp4j: trace
+spring:
+  dsl:
+    lsp:
+      server:
+        mode: WEBSOCKET
+demo:
+  wordcheckdsl:
+    words:
+    - jack
+    - is
+    - a
+    - dull
+    - boy

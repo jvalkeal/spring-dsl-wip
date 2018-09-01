@@ -10,10 +10,11 @@ include 'spring-dsl-bom'
 include 'spring-dsl-build-tests'
 include 'spring-dsl-samples'
 include 'spring-dsl-samples:simpledsl'
-include 'spring-dsl-samples:wordcheckdsl'
 include 'spring-dsl-samples:simpledslprocessserver'
 include 'spring-dsl-samples:simpledslsocketserver'
 include 'spring-dsl-samples:simpledsleditor'
+include 'spring-dsl-samples:wordcheckdsl'
+include 'spring-dsl-samples:wordcheckdsleditor'
 include 'spring-dsl-samples:spring-dsl-editor-lib'
 
 rootProject.children.find {

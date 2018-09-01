@@ -30,7 +30,8 @@ const normalizeUrl = require('normalize-url');
 })
 export class SpringDslEditorComponent implements OnInit, OnDestroy {
 
-  editorOptions = {theme: 'vs', language: 'simple', automaticLayout: true, fixedOverflowWidgets: true};
+  editorOptions = {theme: 'vs', automaticLayout: true, fixedOverflowWidgets: true};
+  // editorOptions = {theme: 'vs', language: 'simple', automaticLayout: true, fixedOverflowWidgets: true};
   // code = '';
   private editor: any;
   private editorService: SpringDslEditorService;

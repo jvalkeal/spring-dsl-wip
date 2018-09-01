@@ -7,3 +7,4 @@ export * from './lib/spring-dsl-editor.component';
 export * from './lib/spring-dsl-editor.module';
 export * from './lib/spring-monaco-editor/spring-monaco-editor.component';
 export * from './lib/spring-monaco-editor/config';
+export * from './lib/config';

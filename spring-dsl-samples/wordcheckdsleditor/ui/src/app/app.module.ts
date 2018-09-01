@@ -6,16 +6,17 @@ import { SpringDslEditorModule, SpringDslEditorConfig, SpringMonacoEditorConfig 
 
 const springMonacoEditorConfig: SpringMonacoEditorConfig = {
   defaultOptions: {
-    language: 'simple'
+    language: 'wordcheck'
   },
   onMonacoLoad: () => {
-    (<any>window).monaco.languages.register({ id: 'simple' });
+    (<any>window).monaco.languages.register({ id: 'wordcheck' });
   }
 };
 
 const springDslEditorConfig: SpringDslEditorConfig = {
-  documentSelector: ['simple']
+  documentSelector: ['wordcheck']
 };
+
 
 @NgModule({
   declarations: [

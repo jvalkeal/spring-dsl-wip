@@ -17,8 +17,9 @@ import { ModuleWithProviders, NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SpringDslEditorComponent } from './spring-dsl-editor.component';
 import { SpringMonacoEditorComponent } from './spring-monaco-editor/spring-monaco-editor.component';
-import { SPRING_MONACO_EDITOR_CONFIG, SpringMonacoEditorConfig } from './spring-monaco-editor/config';
 import { SpringDslEditorService } from './spring-dsl-editor.service';
+import { SPRING_MONACO_EDITOR_CONFIG, SpringMonacoEditorConfig } from './spring-monaco-editor/config';
+import { SPRING_DSL_EDITOR_CONFIG, SpringDslEditorConfig } from './config';
 
 /**
  * Main module definition for Spring Dsl Editor.
@@ -42,11 +43,13 @@ import { SpringDslEditorService } from './spring-dsl-editor.service';
   ]
 })
 export class SpringDslEditorModule {
-  public static forRoot(springMonacoEditorConfig: SpringMonacoEditorConfig = {}): ModuleWithProviders {
+  public static forRoot(springMonacoEditorConfig: SpringMonacoEditorConfig = {},
+                        springDslEditorConfig: SpringDslEditorConfig = {}): ModuleWithProviders {
     return {
       ngModule: SpringDslEditorModule,
       providers: [
-        { provide: SPRING_MONACO_EDITOR_CONFIG, useValue: springMonacoEditorConfig }
+        { provide: SPRING_MONACO_EDITOR_CONFIG, useValue: springMonacoEditorConfig },
+        { provide: SPRING_DSL_EDITOR_CONFIG, useValue: springDslEditorConfig }
       ]
     };
   }

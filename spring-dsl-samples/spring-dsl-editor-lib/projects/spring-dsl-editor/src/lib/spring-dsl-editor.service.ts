@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {Injectable, OnDestroy} from '@angular/core';
+import {Inject, Injectable, OnDestroy} from '@angular/core';
 import { BaseLanguageClient, CloseAction, createConnection, ErrorAction, MonacoLanguageClient,
   MonacoServices} from 'monaco-languageclient';
 import { listen, MessageConnection } from 'vscode-ws-jsonrpc';
+import { SPRING_DSL_EDITOR_CONFIG, SpringDslEditorConfig } from './config';
 
 const normalizeUrl = require('normalize-url');
 
@@ -29,9 +30,11 @@ const normalizeUrl = require('normalize-url');
 export class SpringDslEditorService implements OnDestroy {
 
   private initialised: boolean;
+  private editorConfig: SpringDslEditorConfig;
 
-  constructor() {
+  constructor(@Inject(SPRING_DSL_EDITOR_CONFIG) editorConfig: SpringDslEditorConfig) {
     this.initialised = false;
+    this.editorConfig = editorConfig;
   }
 
   ngOnDestroy() {
@@ -42,8 +45,6 @@ export class SpringDslEditorService implements OnDestroy {
       return;
     }
     this.initialised = true;
-    // this.editor = editor;
-    // MonacoServices.install(editor);
     MonacoServices.install(<monaco.editor.IStandaloneCodeEditor>{});
     const url = this.createUrl('ws');
     const webSocket = new WebSocket(url);
@@ -64,7 +65,7 @@ export class SpringDslEditorService implements OnDestroy {
       name: 'Sample Language Client',
       clientOptions: {
         // use a language id as a document selector
-        documentSelector: ['simple'],
+        documentSelector: this.editorConfig.documentSelector,
         synchronize: {
         },
         // disable the default error handler

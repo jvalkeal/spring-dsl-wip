@@ -19,13 +19,19 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatTabsModule, MatIconModule } from '@angular/material';
 import { AppComponent } from './app.component';
-import { SpringDslEditorModule, SpringMonacoEditorConfig } from 'spring-dsl-editor';
+import { SpringDslEditorModule, SpringMonacoEditorConfig, SpringDslEditorConfig } from 'spring-dsl-editor';
 import { EditorTabGroupComponent } from './editor-tab-group/editor-tab-group.component';
 
 const springMonacoEditorConfig: SpringMonacoEditorConfig = {
+  defaultOptions: {
+    language: 'simple'
+  },
   onMonacoLoad: () => {
     (<any>window).monaco.languages.register({ id: 'simple' });
   }
+};
+const springDslEditorConfig: SpringDslEditorConfig = {
+  documentSelector: ['simple']
 };
 
 @NgModule({
@@ -40,7 +46,7 @@ const springMonacoEditorConfig: SpringMonacoEditorConfig = {
     MatTabsModule,
     MatIconModule,
     NoopAnimationsModule,
-    SpringDslEditorModule.forRoot(springMonacoEditorConfig)
+    SpringDslEditorModule.forRoot(springMonacoEditorConfig, springDslEditorConfig)
   ],
   providers: [],
   bootstrap: [AppComponent]
