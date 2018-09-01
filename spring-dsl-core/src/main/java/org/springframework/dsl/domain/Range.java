@@ -115,6 +115,11 @@ public class Range {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		return "Range [start=" + start + ", end=" + end + "]";
+	}
+
 	/**
 	 * Builder interface for {@link Range}.
 	 *

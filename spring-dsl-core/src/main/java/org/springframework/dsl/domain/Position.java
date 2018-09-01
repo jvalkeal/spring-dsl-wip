@@ -98,6 +98,11 @@ public class Position {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		return "Position [line=" + line + ", character=" + character + "]";
+	}
+
 	/**
 	 * Builder interface for {@link Position}.
 	 *
