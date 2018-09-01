@@ -19,6 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
 import org.springframework.dsl.domain.Position;
+import org.springframework.dsl.domain.Range;
 
 /**
  * Tests for {@link TextDocument}.
@@ -54,9 +55,26 @@ public class TextDocumentTests {
 
 		textDocument = new TextDocument(DOC2);
 		assertThat(textDocument.toPosition(6)).isEqualTo(Position.from(1, 0));
+		assertThat(textDocument.toPosition(7)).isEqualTo(Position.from(1, 1));
 
 		textDocument = new TextDocument(DOC3);
 		assertThat(textDocument.toPosition(12)).isEqualTo(Position.from(2, 0));
+	}
+
+	@Test
+	public void testRanges() {
+		TextDocument textDocument = new TextDocument(DOC1);
+		assertThat(textDocument.toRange(0, 0)).isEqualTo(Range.from(0, 0, 0, 0));
+		assertThat(textDocument.toRange(0, 1)).isEqualTo(Range.from(0, 0, 0, 1));
+		assertThat(textDocument.toRange(0, 5)).isEqualTo(Range.from(0, 0, 0, 5));
+		textDocument = new TextDocument(DOC2);
+		assertThat(textDocument.toRange(0, 6)).isEqualTo(Range.from(0, 0, 1, 0));
+		assertThat(textDocument.toRange(0, 7)).isEqualTo(Range.from(0, 0, 1, 1));
+		assertThat(textDocument.toRange(6, 0)).isEqualTo(Range.from(1, 0, 1, 0));
+		assertThat(textDocument.toRange(6, 1)).isEqualTo(Range.from(1, 0, 1, 1));
+		textDocument = new TextDocument(DOC3);
+		assertThat(textDocument.toRange(0, 12)).isEqualTo(Range.from(0, 0, 2, 0));
+		assertThat(textDocument.toRange(0, 13)).isEqualTo(Range.from(0, 0, 2, 1));
 	}
 
 	@Test

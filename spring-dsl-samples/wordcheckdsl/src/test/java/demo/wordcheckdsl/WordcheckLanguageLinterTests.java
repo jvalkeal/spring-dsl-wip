@@ -55,5 +55,28 @@ public class WordcheckLanguageLinterTests {
 		document = new TextDocument("fakeuri", LanguageId.TXT, 0, "jack is a xxx dull xxx boy");
 		problems = linter.lint(document).toStream().collect(Collectors.toList());
 		assertThat(problems).hasSize(2);
+
+		document = new TextDocument("fakeuri", LanguageId.TXT, 0, "jack is a dull boy\nxxx\njack is a dull boy");
+		problems = linter.lint(document).toStream().collect(Collectors.toList());
+		assertThat(problems).hasSize(1);
+		ReconcileProblem problem = problems.get(0);
+		assertThat(problem.getRange().getStart().getLine()).isEqualTo(1);
+		assertThat(problem.getRange().getStart().getCharacter()).isEqualTo(0);
+		assertThat(problem.getRange().getEnd().getLine()).isEqualTo(1);
+		assertThat(problem.getRange().getEnd().getCharacter()).isEqualTo(3);
+
+		document = new TextDocument("fakeuri", LanguageId.TXT, 0, "jack\nxxx\njack\nddd\njack");
+		problems = linter.lint(document).toStream().collect(Collectors.toList());
+		assertThat(problems).hasSize(2);
+		problem = problems.get(0);
+		assertThat(problem.getRange().getStart().getLine()).isEqualTo(1);
+		assertThat(problem.getRange().getStart().getCharacter()).isEqualTo(0);
+		assertThat(problem.getRange().getEnd().getLine()).isEqualTo(1);
+		assertThat(problem.getRange().getEnd().getCharacter()).isEqualTo(3);
+		problem = problems.get(1);
+		assertThat(problem.getRange().getStart().getLine()).isEqualTo(3);
+		assertThat(problem.getRange().getStart().getCharacter()).isEqualTo(0);
+		assertThat(problem.getRange().getEnd().getLine()).isEqualTo(3);
+		assertThat(problem.getRange().getEnd().getCharacter()).isEqualTo(3);
 	}
 }

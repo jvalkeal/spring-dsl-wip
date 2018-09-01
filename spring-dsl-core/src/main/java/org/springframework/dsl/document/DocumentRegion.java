@@ -118,7 +118,7 @@ public class DocumentRegion implements CharSequence, Region {
 	}
 
 	public Range toRange() {
-		return document.toRange(start, end);
+		return document.toRange(start, end - start);
 	}
 
 	private int limitRange(int offset, int min, int max) {
