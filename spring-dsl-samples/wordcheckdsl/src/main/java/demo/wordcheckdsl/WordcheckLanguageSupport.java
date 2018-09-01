@@ -29,7 +29,7 @@ import org.springframework.dsl.service.AbstractDslService;
  */
 public abstract class WordcheckLanguageSupport extends AbstractDslService {
 
-	private WordcheckProperties properties;
+	private WordcheckProperties properties = new WordcheckProperties();
 
 	public WordcheckLanguageSupport() {
 		super(Arrays.asList(WordcheckLanguage.LANGUAGEID));

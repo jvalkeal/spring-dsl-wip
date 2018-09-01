@@ -16,6 +16,7 @@
 package org.springframework.dsl.document;
 
 import org.springframework.dsl.domain.Position;
+import org.springframework.dsl.domain.Range;
 import org.springframework.dsl.model.LanguageId;
 
 /**
@@ -155,4 +156,13 @@ public interface Document {
 	 * @return the position
 	 */
 	Position validatePosition(Position position);
+
+	/**
+	 * Gets a range for given offset and length.
+	 *
+	 * @param offset the offset
+	 * @param length the length
+	 * @return the range
+	 */
+	Range toRange(int offset, int length);
 }

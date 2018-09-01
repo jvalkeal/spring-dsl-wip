@@ -15,11 +15,14 @@
  */
 package demo.wordcheckdsl;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.regex.Pattern;
 
 import org.springframework.dsl.document.Document;
+import org.springframework.dsl.document.DocumentRegion;
+import org.springframework.dsl.lsp.server.support.DefaultReconcileProblem;
 import org.springframework.dsl.reconcile.Linter;
+import org.springframework.dsl.reconcile.ProblemSeverity;
+import org.springframework.dsl.reconcile.ProblemType;
 import org.springframework.dsl.reconcile.ReconcileProblem;
 
 import reactor.core.publisher.Flux;
@@ -34,15 +37,30 @@ import reactor.core.publisher.Flux;
  */
 public class WordcheckLanguageLinter extends WordcheckLanguageSupport implements Linter {
 
+	private static final Pattern SPACE = Pattern.compile("[^\\w]+");
+
 	@Override
 	public Flux<ReconcileProblem> lint(Document document) {
-		return Flux.defer(() -> {
-			return Flux.fromIterable(lintProblems(document));
-		});
+		return Flux.defer(() -> Flux.fromArray(new DocumentRegion(document).split(SPACE)))
+				.filter(w -> w.length() > 0)
+				.filter(w -> !getProperties().getWords().contains(w.toString()))
+				.map(this::problem);
 	}
 
-	private List<ReconcileProblem> lintProblems(Document document) {
-		List<ReconcileProblem> problems = new ArrayList<>();
-		return problems;
+	private ReconcileProblem problem(DocumentRegion region) {
+		return new DefaultReconcileProblem(PROBLEM, "Bad word '" + region.toString() + "'", region.toRange(), "xxx");
 	}
+
+	private static ProblemType PROBLEM = new ProblemType() {
+
+		@Override
+		public ProblemSeverity getDefaultSeverity() {
+			return ProblemSeverity.ERROR;
+		}
+
+		@Override
+		public String getCode() {
+			return "code";
+		}
+	};
 }

@@ -152,6 +152,7 @@ public class TextDocument implements Document {
 	 * @return the range
 	 * @throws BadLocationException the bad location exception
 	 */
+	@Override
 	public Range toRange(int offset, int length) {
 		int end = Math.min(offset + length, length());
 		Range range = new Range();
