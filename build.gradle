@@ -350,6 +350,7 @@ configure(rootProject) {
 			'spring-dsl-version' : project.version,
 			'spring-version' : springVersion,
 			'spring-boot-version' : springBootVersion,
+            'antlr-version' : antlr4Version,
 			revnumber : project.version
 	}
 

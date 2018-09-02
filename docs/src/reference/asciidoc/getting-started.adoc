@@ -8,8 +8,7 @@ introduction to Spring Dsl.
 == System Requirements
 Spring Dsl {revnumber} is built and tested with
 JDK 8, Spring Framework {spring-version}, Spring Boot
-{spring-boot-version}.
-
+{spring-boot-version} and ANTLR {antlr-version}.
 
 == Modules
 The following modules are available for Spring Dsl
@@ -27,10 +26,13 @@ The following modules are available for Spring Dsl
 |Spring DSL Bill of Materials Module
 
 |spring-dsl-core
-|Core system of a Spring Dsl 
+|Core system of a Spring DSL
 
 |spring-dsl-jsonrpc
-|Spring DSL JSONRPC Module
+|Core JSONRPC Module
+
+|spring-dsl-lsp-core
+|Core LSP Module
 
 |spring-dsl-websocket
 |Spring DSL Websocket Module 
