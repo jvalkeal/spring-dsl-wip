@@ -75,7 +75,7 @@ public class DefaultReconciler implements Reconciler {
 		if (severity != null) {
 				Diagnostic d = new Diagnostic();
 				d.setRange(problem.getRange());
-				d.setCode(problem.getCode());
+				d.setCode(problem.getType() != null ? problem.getType().getCode() : null);
 				d.setMessage(problem.getMessage());
 				d.setSeverity(getDiagnosticSeverity(problem));
 				return Mono.just(d);
@@ -84,7 +84,7 @@ public class DefaultReconciler implements Reconciler {
 	}
 
 	protected DiagnosticSeverity getDiagnosticSeverity(ReconcileProblem problem) {
-		ProblemSeverity severity = problem.getType().getDefaultSeverity();
+		ProblemSeverity severity = problem.getType().getSeverity();
 		switch (severity) {
 		case ERROR:
 			return DiagnosticSeverity.Error;

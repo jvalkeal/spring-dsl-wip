@@ -27,11 +27,24 @@ import org.springframework.dsl.domain.Range;
  */
 public interface ReconcileProblem {
 
+	/**
+	 * Gets the type.
+	 *
+	 * @return the type
+	 */
 	ProblemType getType();
 
+	/**
+	 * Gets the message.
+	 *
+	 * @return the message
+	 */
 	String getMessage();
 
+	/**
+	 * Gets the range.
+	 *
+	 * @return the range
+	 */
 	Range getRange();
-
-	String getCode();
 }

@@ -16,13 +16,9 @@
 package org.springframework.dsl.reconcile;
 
 /**
- * Besides the methods below, the only hard requirement for a 'problem type' is
- * that it is a unique object that is not 'equals' to any other object.
- * <p>
- * It is probably nice if you implement a good toString however.
- * <p>
- * A good way to implement a discrete set of problemType objects is as an enum
- * that implements this interace.
+ * {@code ProblemType} represents type of a problem in a
+ * {@link ReconcileProblem}. {@code ProblemType} usually have its severity and
+ * possible {@code code} associated with it.
  *
  * @author Kris De Volder
  * @author Janne Valkealahti
@@ -30,7 +26,17 @@ package org.springframework.dsl.reconcile;
  */
 public interface ProblemType {
 
-	ProblemSeverity getDefaultSeverity();
+	/**
+	 * Gets the severity.
+	 *
+	 * @return the severity
+	 */
+	ProblemSeverity getSeverity();
 
+	/**
+	 * Gets the code.
+	 *
+	 * @return the code
+	 */
 	String getCode();
 }

@@ -31,13 +31,15 @@ public class DefaultReconcileProblem implements ReconcileProblem {
 	private final ProblemType type;
 	private final String message;
 	private Range range;
-	private final String code;
 
-	public DefaultReconcileProblem(ProblemType type, String message, Range range, String code) {
+	public DefaultReconcileProblem(String message, Range range) {
+		this(null, message, range);
+	}
+
+	public DefaultReconcileProblem(ProblemType type, String message, Range range) {
 		this.type = type;
 		this.message = message;
 		this.range = range;
-		this.code = code;
 	}
 
 	@Override
@@ -53,10 +55,5 @@ public class DefaultReconcileProblem implements ReconcileProblem {
 	@Override
 	public Range getRange() {
 		return range;
-	}
-
-	@Override
-	public String getCode() {
-		return code;
 	}
 }

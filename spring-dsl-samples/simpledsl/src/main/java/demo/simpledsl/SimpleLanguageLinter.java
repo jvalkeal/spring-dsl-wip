@@ -58,10 +58,10 @@ public class SimpleLanguageLinter extends AbstractDslService implements Linter {
 		for (Line line : lines) {
 			if (line.getKeyToken() != null && line.getKeyToken().getType() == null) {
 				problems.add(
-						new DefaultReconcileProblem(PROBLEM, "Unknown key type", line.getKeyToken().getRange(), "xxx"));
+						new DefaultReconcileProblem(PROBLEM, "Unknown key type", line.getKeyToken().getRange()));
 			} else if (line.getValueToken() == null) {
 				problems.add(
-						new DefaultReconcileProblem(PROBLEM, "Missing value", line.getKeyToken().getRange(), "xxx"));
+						new DefaultReconcileProblem(PROBLEM, "Missing value", line.getKeyToken().getRange()));
 			} else if (line.getKeyToken() != null && line.getKeyToken().getType() != null && line.getValueToken() != null) {
 				Token token = line.getValueToken();
 				if (token != null) {
@@ -71,7 +71,7 @@ public class SimpleLanguageLinter extends AbstractDslService implements Linter {
 							Integer.parseInt(line.getValueToken().getValue());
 						} catch (NumberFormatException e) {
 							problems.add(
-									new DefaultReconcileProblem(PROBLEM, "Not int type", line.getKeyToken().getRange(), "xxx"));
+									new DefaultReconcileProblem(PROBLEM, "Not int type", line.getKeyToken().getRange()));
 						}
 						break;
 					case DOUBLE:
@@ -79,7 +79,7 @@ public class SimpleLanguageLinter extends AbstractDslService implements Linter {
 							Double.parseDouble(line.getValueToken().getValue());
 						} catch (NumberFormatException e) {
 							problems.add(
-									new DefaultReconcileProblem(PROBLEM, "Not double type", line.getKeyToken().getRange(), "xxx"));
+									new DefaultReconcileProblem(PROBLEM, "Not double type", line.getKeyToken().getRange()));
 						}
 						break;
 					case LONG:
@@ -87,7 +87,7 @@ public class SimpleLanguageLinter extends AbstractDslService implements Linter {
 							Long.parseLong(line.getValueToken().getValue());
 						} catch (NumberFormatException e) {
 							problems.add(
-									new DefaultReconcileProblem(PROBLEM, "Not long type", line.getKeyToken().getRange(), "xxx"));
+									new DefaultReconcileProblem(PROBLEM, "Not long type", line.getKeyToken().getRange()));
 						}
 						break;
 					default:
@@ -102,7 +102,7 @@ public class SimpleLanguageLinter extends AbstractDslService implements Linter {
 	private static ProblemType PROBLEM = new ProblemType() {
 
 		@Override
-		public ProblemSeverity getDefaultSeverity() {
+		public ProblemSeverity getSeverity() {
 			return ProblemSeverity.ERROR;
 		}
 

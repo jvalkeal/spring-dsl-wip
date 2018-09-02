@@ -48,19 +48,19 @@ public class WordcheckLanguageLinter extends WordcheckLanguageSupport implements
 	}
 
 	private ReconcileProblem problem(DocumentRegion region) {
-		return new DefaultReconcileProblem(PROBLEM, "Bad word '" + region.toString() + "'", region.toRange(), "xxx");
+		return new DefaultReconcileProblem(PROBLEM, "Bad word '" + region.toString() + "'", region.toRange());
 	}
 
 	private static ProblemType PROBLEM = new ProblemType() {
 
 		@Override
-		public ProblemSeverity getDefaultSeverity() {
+		public ProblemSeverity getSeverity() {
 			return ProblemSeverity.ERROR;
 		}
 
 		@Override
 		public String getCode() {
-			return "code";
+			return "badword";
 		}
 	};
 }

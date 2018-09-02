@@ -34,7 +34,7 @@ public class ProblemTypes {
 				return typeName;
 			}
 			@Override
-			public ProblemSeverity getDefaultSeverity() {
+			public ProblemSeverity getSeverity() {
 				return defaultSeverity;
 			}
 			@Override

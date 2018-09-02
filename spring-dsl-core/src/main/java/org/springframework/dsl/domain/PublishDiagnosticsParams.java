@@ -22,20 +22,40 @@ import org.springframework.dsl.domain.Diagnostic.DiagnosticBuilder;
 import org.springframework.dsl.support.AbstractDomainBuilder;
 import org.springframework.dsl.support.DomainBuilder;
 
+/**
+ * {@code LSP} domain object for a specification {@code PublishDiagnosticsParams}.
+ *
+ * @author Janne Valkealahti
+ *
+ */
 public class PublishDiagnosticsParams {
 
 	private String uri;
 	private List<Diagnostic> diagnostics;
 
+	/**
+	 * Instantiates a new publish diagnostics params.
+	 */
 	public PublishDiagnosticsParams() {
 		this.diagnostics = new ArrayList<>();
 	}
 
+	/**
+	 * Instantiates a new publish diagnostics params.
+	 *
+	 * @param uri the uri
+	 */
 	public PublishDiagnosticsParams(String uri) {
 		this.uri = uri;
 		this.diagnostics = new ArrayList<>();
 	}
 
+	/**
+	 * Instantiates a new publish diagnostics params.
+	 *
+	 * @param uri the uri
+	 * @param diagnostics the diagnostics
+	 */
 	public PublishDiagnosticsParams(String uri, List<Diagnostic> diagnostics) {
 		this.uri = uri;
 		this.diagnostics = diagnostics;
@@ -88,12 +108,34 @@ public class PublishDiagnosticsParams {
 		return true;
 	}
 
+	/**
+	 * Builder interface for {@link PublishDiagnosticsParams}.
+	 *
+	 * @param <P> the parent builder type
+	 */
 	public interface PublishDiagnosticsParamsBuilder<P> extends DomainBuilder<PublishDiagnosticsParams, P> {
-		
-		DiagnosticBuilder<PublishDiagnosticsParamsBuilder<P>> diagnostic();
+
+		/**
+		 * Sets an uri.
+		 *
+		 * @param uri the uri
+		 * @return the builder for chaining
+		 */
 		PublishDiagnosticsParamsBuilder<P> uri(String uri);
+
+		/**
+		 * Gets a builder for diagnostics.
+		 *
+		 * @return the builder for chaining
+		 */
+		DiagnosticBuilder<PublishDiagnosticsParamsBuilder<P>> diagnostic();
 	}
 
+	/**
+	 * Gets a builder for {@link PublishDiagnosticsParams}.
+	 *
+	 * @return the initialize params builder
+	 */
 	public static <P> PublishDiagnosticsParamsBuilder<P> publishDiagnosticsParams() {
 		return new InternalPublishDiagnosticsParamsBuilder<>(null);
 	}
@@ -101,7 +143,7 @@ public class PublishDiagnosticsParams {
 	protected static <P> PublishDiagnosticsParamsBuilder<P> publishDiagnosticsParams(P parent) {
 		return new InternalPublishDiagnosticsParamsBuilder<>(parent);
 	}
-	
+
 	private static class InternalPublishDiagnosticsParamsBuilder<P>
 			extends AbstractDomainBuilder<PublishDiagnosticsParams, P> implements PublishDiagnosticsParamsBuilder<P> {
 
@@ -111,7 +153,7 @@ public class PublishDiagnosticsParams {
 		InternalPublishDiagnosticsParamsBuilder(P parent) {
 			super(parent);
 		}
-		
+
 		@Override
 		public DiagnosticBuilder<PublishDiagnosticsParamsBuilder<P>> diagnostic() {
 			DiagnosticBuilder<PublishDiagnosticsParamsBuilder<P>> diagnosticBuilder = Diagnostic.diagnostic(this);

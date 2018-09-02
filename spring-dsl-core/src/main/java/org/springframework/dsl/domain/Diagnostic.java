@@ -34,9 +34,21 @@ public class Diagnostic {
 	private String source;
 	private String message;
 
+	/**
+	 * Instantiates a new diagnostic.
+	 */
 	public Diagnostic() {
 	}
 
+	/**
+	 * Instantiates a new diagnostic.
+	 *
+	 * @param range the range
+	 * @param severity the severity
+	 * @param code the code
+	 * @param source the source
+	 * @param message the message
+	 */
 	public Diagnostic(Range range, DiagnosticSeverity severity, String code, String source, String message) {
 		this.range = range;
 		this.severity = severity;
@@ -130,17 +142,59 @@ public class Diagnostic {
 			return false;
 		return true;
 	}
-	
+
+	/**
+	 * Builder interface for {@link Diagnostic}.
+	 *
+	 * @param <P> the parent builder type
+	 */
 	public interface DiagnosticBuilder<P> extends DomainBuilder<Diagnostic, P> {
 
-		RangeBuilder<DiagnosticBuilder<P>> range();
+		/**
+		 * Sets a severity.
+		 *
+		 * @param severity the severity
+		 * @return the builder for chaining
+		 */
 		DiagnosticBuilder<P> severity(DiagnosticSeverity severity);
+
+		/**
+		 * Sets a code.
+		 *
+		 * @param code the code
+		 * @return the builder for chaining
+		 */
 		DiagnosticBuilder<P> code(String code);
+
+		/**
+		 * Sets a source.
+		 *
+		 * @param source the source
+		 * @return the builder for chaining
+		 */
 		DiagnosticBuilder<P> source(String source);
+
+		/**
+		 * Sets a message.
+		 *
+		 * @param message the message
+		 * @return the builder for chaining
+		 */
 		DiagnosticBuilder<P> message(String message);
-		
+
+		/**
+		 * Gets a builder for range.
+		 *
+		 * @return the builder for chaining
+		 */
+		RangeBuilder<DiagnosticBuilder<P>> range();
 	}
 
+	/**
+	 * Gets a builder for {@link Diagnostic}.
+	 *
+	 * @return the initialize params builder
+	 */
 	public static <P> DiagnosticBuilder<P> diagnostic() {
 		return new InternalDiagnosticBuilder<>(null);
 	}
@@ -148,7 +202,7 @@ public class Diagnostic {
 	protected static <P> DiagnosticBuilder<P> diagnostic(P parent) {
 		return new InternalDiagnosticBuilder<>(parent);
 	}
-	
+
 	private static class InternalDiagnosticBuilder<P>
 			extends AbstractDomainBuilder<Diagnostic, P> implements DiagnosticBuilder<P> {
 
@@ -157,7 +211,7 @@ public class Diagnostic {
 		private String code;
 		private String source;
 		private String message;
-		
+
 		InternalDiagnosticBuilder(P parent) {
 			super(parent);
 		}

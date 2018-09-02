@@ -15,6 +15,13 @@
  */
 package org.springframework.dsl.domain;
 
+/**
+ * Enumeration of a {@code LSP} {@code DiagnosticSeverity} mapping to protocol
+ * integer fields.
+ *
+ * @author Janne Valkealahti
+ *
+ */
 public enum DiagnosticSeverity {
 
 	Error(1),
@@ -41,6 +48,4 @@ public enum DiagnosticSeverity {
 			throw new IllegalArgumentException("Illegal enum value: " + value);
 		return allValues[value - 1];
 	}
-
-
 }
