@@ -15,25 +15,22 @@
  */
 package org.springframework.dsl.antlr.symboltable;
 
-import org.antlr.v4.runtime.ParserRuleContext;
-
 import java.util.Collections;
 import java.util.List;
 
 /**
  * An abstract base class used to house common functionality. You can associate
  * a node in the parse tree that is responsible for defining this symbol.
- * 
+ *
  * @author Original ANTLR Authors
  * @author Janne Valkealahti
- * 
+ *
  */
 public abstract class BaseSymbol implements Symbol {
 
 	protected final String name; // All symbols at least have a name
 	protected Type type; // If language statically typed, record type
 	protected Scope scope; // All symbols know what scope contains them.
-	protected ParserRuleContext defNode; // points at definition node in tree
 	protected int lexicalOrder; // order seen or insertion order from 0; compilers often need this
 
 	public BaseSymbol(String name) {
@@ -61,14 +58,6 @@ public abstract class BaseSymbol implements Symbol {
 
 	public void setType(Type type) {
 		this.type = type;
-	}
-
-	public void setDefNode(ParserRuleContext defNode) {
-		this.defNode = defNode;
-	}
-
-	public ParserRuleContext getDefNode() {
-		return defNode;
 	}
 
 	@Override

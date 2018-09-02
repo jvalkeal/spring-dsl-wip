@@ -15,8 +15,6 @@
  */
 package org.springframework.dsl.antlr.symboltable;
 
-import org.antlr.v4.runtime.ParserRuleContext;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -26,27 +24,18 @@ import java.util.Map;
  * member has a slot number indexed from 0 and we track data fields and methods
  * with different slot sequences. A DataAggregateSymbol can also be a member of
  * an aggregate itself (nested structs, ...).
- * 
+ *
  * @author Original ANTLR Authors
  * @author Janne Valkealahti
- * 
+ *
  */
 public abstract class DataAggregateSymbol extends SymbolWithScope implements MemberSymbol, Type {
 
-	protected ParserRuleContext defNode;
 	protected int nextFreeFieldSlot = 0; // next slot to allocate
 	protected int typeIndex;
 
 	public DataAggregateSymbol(String name) {
 		super(name);
-	}
-
-	public void setDefNode(ParserRuleContext defNode) {
-		this.defNode = defNode;
-	}
-
-	public ParserRuleContext getDefNode() {
-		return defNode;
 	}
 
 	@Override

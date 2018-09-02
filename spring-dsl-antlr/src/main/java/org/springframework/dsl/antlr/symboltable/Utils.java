@@ -15,9 +15,6 @@
  */
 package org.springframework.dsl.antlr.symboltable;
 
-import org.antlr.v4.runtime.Parser;
-import org.antlr.v4.runtime.ParserRuleContext;
-
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,49 +27,12 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
- * 
+ *
  * @author Original ANTLR Authors
  * @author Janne Valkealahti
  *
  */
 public class Utils {
-
-	/**
-	 * Return first ancestor node up the chain towards the root that has ruleName.
-	 * Search includes the current node.
-	 */
-	public static ParserRuleContext getAncestor(Parser parser, ParserRuleContext ctx, String ruleName) {
-		int ruleIndex = parser.getRuleIndex(ruleName);
-		return getAncestor(ctx, ruleIndex);
-	}
-
-	/**
-	 * Return first ancestor node up the chain towards the root that has the rule
-	 * index. Search includes the current node.
-	 */
-	public static ParserRuleContext getAncestor(ParserRuleContext t, int ruleIndex) {
-		while (t != null) {
-			if (t.getRuleIndex() == ruleIndex) {
-				return t;
-			}
-			t = t.getParent();
-		}
-		return null;
-	}
-
-	/**
-	 * Return first ancestor node up the chain towards the root that is clazz.
-	 * Search includes the current node.
-	 */
-	public static ParserRuleContext getFirstAncestorOfType(ParserRuleContext t, Class<?> clazz) {
-		while (t != null) {
-			if (t.getClass() == clazz) {
-				return t;
-			}
-			t = t.getParent();
-		}
-		return null;
-	}
 
 	public static Field[] getAllFields(Class<?> clazz) {
 		List<Field> fields = new ArrayList<>();

@@ -15,32 +15,21 @@
  */
 package org.springframework.dsl.antlr.symboltable;
 
-import org.antlr.v4.runtime.ParserRuleContext;
-
 /**
  * This symbol represents a function ala C, not a method ala Java. You can
  * associate a node in the parse tree that is responsible for defining this
  * symbol.
- * 
+ *
  * @author Original ANTLR Authors
  * @author Janne Valkealahti
- * 
+ *
  */
 public class FunctionSymbol extends SymbolWithScope implements TypedSymbol {
 
-	protected ParserRuleContext defNode;
 	protected Type retType;
 
 	public FunctionSymbol(String name) {
 		super(name);
-	}
-
-	public void setDefNode(ParserRuleContext defNode) {
-		this.defNode = defNode;
-	}
-
-	public ParserRuleContext getDefNode() {
-		return defNode;
 	}
 
 	@Override
