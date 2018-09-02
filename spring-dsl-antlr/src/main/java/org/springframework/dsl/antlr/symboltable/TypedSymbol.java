@@ -18,14 +18,24 @@ package org.springframework.dsl.antlr.symboltable;
 /**
  * This interface tags user-defined symbols that have static type information,
  * like variables and functions.
- * 
+ *
  * @author Original ANTLR Authors
  * @author Janne Valkealahti
- * 
+ *
  */
 public interface TypedSymbol {
 
+	/**
+	 * Gets the type.
+	 *
+	 * @return the type
+	 */
 	Type getType();
 
+	/**
+	 * Sets the type.
+	 *
+	 * @param type the new type
+	 */
 	void setType(Type type);
 }

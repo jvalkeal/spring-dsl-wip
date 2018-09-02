@@ -35,28 +35,36 @@ import java.util.Set;
  * For convenience of code using this library, I have added a bunch of methods
  * one can use to get lots of useful information from a scope, but they don't
  * necessarily define what a scope is.
- * 
+ *
  * @author Original ANTLR Authors
  * @author Janne Valkealahti
- * 
+ *
  */
 public interface Scope {
 
 	/**
-	 * Often scopes have names like function or class names. For unnamed scopes like
-	 * code blocks, you can just return "local" or something.
+	 * Gets a scope name. Often scopes have names like function or class names. For
+	 * unnamed scopes like code blocks, you can just return "local" or something.
+	 *
+	 * @return the scope name
 	 */
 	String getName();
 
-	/** Scope in which this scope defined. null if no enclosing scope */
+	/**
+	 * Gets an enclosing scope in which this scope defined. null if no enclosing scope.
+	 *
+	 * @return the enclosing scope
+	 */
 	Scope getEnclosingScope();
 
 	/**
-	 * What scope encloses this scope. E.g., if this scope is a function, the
-	 * enclosing scope could be a class. The BaseScope class automatically adds this
+	 * Sets the enclosing scope. E.g., if this scope is a function, the enclosing
+	 * scope could be a class. The {@link BaseScope} class automatically adds this
 	 * to nested scope list of s.
+	 *
+	 * @param scope the new enclosing scope
 	 */
-	void setEnclosingScope(Scope s);
+	void setEnclosingScope(Scope scope);
 
 	/**
 	 * Define a symbol in this scope, throw IllegalArgumentException if sym already
@@ -66,10 +74,18 @@ public interface Scope {
 	 *
 	 * The order in which symbols are defined must be preserved so that
 	 * {@link #getSymbols()} returns the list in definition order.
+	 *
+	 * @param symbol the symbol
 	 */
-	void define(Symbol sym) throws IllegalArgumentException;
+	void define(Symbol symbol);
 
-	/** Look up name in this scope or recursively in parent scope if not here */
+	/**
+	 * Resolve a {@link Symbol} from this scope or recursively in parent scope if
+	 * not here.
+	 *
+	 * @param name the symbol name
+	 * @return the resolved symbol
+	 */
 	Symbol resolve(String name);
 
 	/** Get symbol if name defined within this specific scope */

@@ -23,7 +23,7 @@ import java.util.List;
  * classes and functions that are both symbols and scopes. There is some common
  * cut and paste functionality with {@link BaseSymbol} because of a lack of
  * multiple inheritance in Java but it is minimal.
- * 
+ *
  * @author Original ANTLR Authors
  * @author Janne Valkealahti
  *
@@ -33,6 +33,11 @@ public abstract class SymbolWithScope extends BaseScope implements Symbol, Scope
 	protected final String name; // All symbols at least have a name
 	protected int index; // insertion order from 0; compilers often need this
 
+	/**
+	 * Instantiates a new symbol with scope.
+	 *
+	 * @param name the name
+	 */
 	public SymbolWithScope(String name) {
 		this.name = name;
 	}
@@ -44,7 +49,7 @@ public abstract class SymbolWithScope extends BaseScope implements Symbol, Scope
 
 	@Override
 	public Scope getScope() {
-		return enclosingScope;
+		return getEnclosingScope();
 	}
 
 	@Override
@@ -52,22 +57,17 @@ public abstract class SymbolWithScope extends BaseScope implements Symbol, Scope
 		setEnclosingScope(scope);
 	}
 
-	@Override
-	public Scope getEnclosingScope() {
-		return enclosingScope;
-	}
-
 	/**
 	 * Return the name prefixed with the name of its enclosing scope using '.' (dot)
 	 * as the scope separator.
 	 */
 	public String getQualifiedName() {
-		return enclosingScope.getName() + "." + name;
+		return getEnclosingScope().getName() + "." + name;
 	}
 
 	/** Return the name prefixed with the name of its enclosing scope. */
 	public String getQualifiedName(String scopePathSeparator) {
-		return enclosingScope.getName() + scopePathSeparator + name;
+		return getEnclosingScope().getName() + scopePathSeparator + name;
 	}
 
 	/**

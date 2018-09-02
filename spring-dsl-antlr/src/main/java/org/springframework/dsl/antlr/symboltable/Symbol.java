@@ -20,27 +20,45 @@ package org.springframework.dsl.antlr.symboltable;
  * scope in which it lives. It also helps to know the order in which symbols are
  * added to a scope because this often translates to register or parameter
  * numbers.
- * 
+ *
  * @author Original ANTLR Authors
  * @author Janne Valkealahti
- * 
+ *
  */
 public interface Symbol {
 
+	/**
+	 * Gets the name.
+	 *
+	 * @return the name
+	 */
 	String getName();
 
+	/**
+	 * Gets the scope.
+	 *
+	 * @return the scope
+	 */
 	Scope getScope();
 
-	void setScope(Scope scope); // set scope (not enclosing) for this symbol; who contains it?
+	/**
+	 * Sets the scope. This is not the enclosing scope.
+	 *
+	 * @param scope the new scope
+	 */
+	void setScope(Scope scope);
 
-	int getInsertionOrderNumber(); // index showing insertion order from 0
+	/**
+	 * Gets the insertion order number.
+	 *
+	 * @return the insertion order number
+	 */
+	int getInsertionOrderNumber();
 
-	void setInsertionOrderNumber(int i);
-
-	// to satisfy adding symbols to sets, hashtables
-	@Override
-	int hashCode();
-
-	@Override
-	boolean equals(Object o);
+	/**
+	 * Sets the insertion order number.
+	 *
+	 * @param order the new insertion order number
+	 */
+	void setInsertionOrderNumber(int order);
 }

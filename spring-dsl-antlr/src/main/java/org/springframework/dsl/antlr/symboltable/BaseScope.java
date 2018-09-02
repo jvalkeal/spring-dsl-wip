@@ -24,14 +24,14 @@ import java.util.Set;
 
 /**
  * An abstract base class that houses common functionality for scopes.
- * 
+ *
  * @author Original ANTLR Authors
  * @author Janne Valkealahti
- * 
+ *
  */
 public abstract class BaseScope implements Scope {
 
-	protected Scope enclosingScope; // null if this scope is the root of the scope tree
+	private Scope enclosingScope; // null if this scope is the root of the scope tree
 
 	/**
 	 * All symbols defined in this scope; can include classes, functions, variables,
@@ -47,9 +47,17 @@ public abstract class BaseScope implements Scope {
 	 */
 	protected List<Scope> nestedScopesNotSymbols = new ArrayList<>();
 
+	/**
+	 * Instantiates a new base scope.
+	 */
 	public BaseScope() {
 	}
 
+	/**
+	 * Instantiates a new base scope.
+	 *
+	 * @param enclosingScope the enclosing scope
+	 */
 	public BaseScope(Scope enclosingScope) {
 		setEnclosingScope(enclosingScope);
 	}

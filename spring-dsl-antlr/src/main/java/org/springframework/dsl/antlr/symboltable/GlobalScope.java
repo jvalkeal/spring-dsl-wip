@@ -16,11 +16,11 @@
 package org.springframework.dsl.antlr.symboltable;
 
 /**
- * A scope associated with globals.
- * 
+ * A {@link Scope} associated with globals.
+ *
  * @author Original ANTLR Authors
  * @author Janne Valkealahti
- * 
+ *
  */
 public class GlobalScope extends BaseScope {
 

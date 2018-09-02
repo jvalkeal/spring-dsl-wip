@@ -16,12 +16,12 @@
 package org.springframework.dsl.antlr.symboltable;
 
 /**
- * A field symbol is just a variable that lives inside an aggregate like a class
- * or struct.
- * 
+ * A {@code FieldSymbol} is just a {@link VariableSymbol} that lives inside an
+ * aggregate like a {@code class} or {@code struct}.
+ *
  * @author Original ANTLR Authors
  * @author Janne Valkealahti
- * 
+ *
  */
 public class FieldSymbol extends VariableSymbol implements MemberSymbol {
 

@@ -16,15 +16,23 @@
 package org.springframework.dsl.antlr.symboltable;
 
 /**
- * A symbol within an aggregate like a class or struct. Each symbol in an
- * aggregate knows its slot number so we can order elements in memory, for
- * example, or keep overridden method slots in sync for vtables.
- * 
+ * A {@link Symbol} within an aggregate like a {@code class} or {@code struct}.
+ * Each {@link Symbol} in an aggregate knows its slot number so we can order
+ * elements in memory, for example, or keep overridden method slots in sync for
+ * vtables.
+ *
  * @author Original ANTLR Authors
  * @author Janne Valkealahti
- * 
+ *
  */
 public interface MemberSymbol extends Symbol {
 
-	int getSlotNumber(); // index giving order in the aggregate (from 0)
+	/**
+	 * Gets the slot number.
+	 * <p>
+	 * index giving order in the aggregate (from 0).
+	 *
+	 * @return the slot number
+	 */
+	int getSlotNumber();
 }
