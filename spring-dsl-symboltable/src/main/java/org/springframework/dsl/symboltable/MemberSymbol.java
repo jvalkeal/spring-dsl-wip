@@ -13,39 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.antlr;
-
-import java.util.List;
-
-import org.springframework.dsl.reconcile.ReconcileProblem;
-import org.springframework.dsl.symboltable.SymbolTable;
+package org.springframework.dsl.symboltable;
 
 /**
+ * A {@link Symbol} within an aggregate like a {@code class} or {@code struct}.
+ * Each {@link Symbol} in an aggregate knows its slot number so we can order
+ * elements in memory, for example, or keep overridden method slots in sync for
+ * vtables.
  *
+ * @author Original ANTLR Authors
  * @author Janne Valkealahti
  *
- * @param <T> the type of a result
  */
-public interface AntlrParseResult<T> {
+public interface MemberSymbol extends Symbol {
 
 	/**
-	 * Gets the result.
+	 * Gets the slot number.
+	 * <p>
+	 * index giving order in the aggregate (from 0).
 	 *
-	 * @return the result
+	 * @return the slot number
 	 */
-	T getResult();
-
-	/**
-	 * Gets the symbol table.
-	 *
-	 * @return the symbol table
-	 */
-	SymbolTable getSymbolTable();
-
-	/**
-	 * Gets the reconcile problems.
-	 *
-	 * @return the reconcile problems
-	 */
-	List<ReconcileProblem> getReconcileProblems();
+	int getSlotNumber();
 }

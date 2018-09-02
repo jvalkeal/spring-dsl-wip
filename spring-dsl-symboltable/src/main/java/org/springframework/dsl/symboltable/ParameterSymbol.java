@@ -13,39 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.antlr;
-
-import java.util.List;
-
-import org.springframework.dsl.reconcile.ReconcileProblem;
-import org.springframework.dsl.symboltable.SymbolTable;
+package org.springframework.dsl.symboltable;
 
 /**
- *
+ * A parameter is just kind of variable used as an argument to a function or
+ * method.
+ * 
+ * @author Original ANTLR Authors
  * @author Janne Valkealahti
- *
- * @param <T> the type of a result
+ * 
  */
-public interface AntlrParseResult<T> {
+public class ParameterSymbol extends VariableSymbol {
 
-	/**
-	 * Gets the result.
-	 *
-	 * @return the result
-	 */
-	T getResult();
-
-	/**
-	 * Gets the symbol table.
-	 *
-	 * @return the symbol table
-	 */
-	SymbolTable getSymbolTable();
-
-	/**
-	 * Gets the reconcile problems.
-	 *
-	 * @return the reconcile problems
-	 */
-	List<ReconcileProblem> getReconcileProblems();
+	public ParameterSymbol(String name) {
+		super(name);
+	}
 }

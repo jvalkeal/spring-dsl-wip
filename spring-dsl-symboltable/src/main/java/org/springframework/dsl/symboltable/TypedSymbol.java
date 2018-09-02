@@ -13,39 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.antlr;
-
-import java.util.List;
-
-import org.springframework.dsl.reconcile.ReconcileProblem;
-import org.springframework.dsl.symboltable.SymbolTable;
+package org.springframework.dsl.symboltable;
 
 /**
+ * This interface tags user-defined symbols that have static type information,
+ * like variables and functions.
  *
+ * @author Original ANTLR Authors
  * @author Janne Valkealahti
  *
- * @param <T> the type of a result
  */
-public interface AntlrParseResult<T> {
+public interface TypedSymbol {
 
 	/**
-	 * Gets the result.
+	 * Gets the type.
 	 *
-	 * @return the result
+	 * @return the type
 	 */
-	T getResult();
+	Type getType();
 
 	/**
-	 * Gets the symbol table.
+	 * Sets the type.
 	 *
-	 * @return the symbol table
+	 * @param type the new type
 	 */
-	SymbolTable getSymbolTable();
-
-	/**
-	 * Gets the reconcile problems.
-	 *
-	 * @return the reconcile problems
-	 */
-	List<ReconcileProblem> getReconcileProblems();
+	void setType(Type type);
 }

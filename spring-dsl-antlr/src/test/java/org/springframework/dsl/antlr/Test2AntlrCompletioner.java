@@ -27,11 +27,11 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.springframework.dsl.Test2Grammar;
 import org.springframework.dsl.Test2Lexer;
 import org.springframework.dsl.antlr.support.DefaultAntlrCompletionEngine;
-import org.springframework.dsl.antlr.symboltable.SymbolTable;
 import org.springframework.dsl.domain.CompletionItem;
 import org.springframework.dsl.domain.Position;
 import org.springframework.dsl.model.LanguageId;
 import org.springframework.dsl.service.Completioner;
+import org.springframework.dsl.symboltable.SymbolTable;
 import org.springframework.util.ObjectUtils;
 
 import reactor.core.publisher.Flux;

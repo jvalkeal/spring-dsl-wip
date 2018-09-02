@@ -216,8 +216,21 @@ project('spring-dsl-antlr') {
 	dependencies {
 		antlr 'org.antlr:antlr4'
 		compile project(':spring-dsl-core')
+		compile project(':spring-dsl-symboltable')
 		compile 'org.antlr:antlr4-runtime'
 		testCompile 'org.antlr:antlr4'
+		testCompile 'org.springframework.boot:spring-boot-starter-test'
+	}
+}
+
+project('spring-dsl-symboltable') {
+	description = "Spring Dsl Symboltable"
+
+	dependencies {
+		compile project(':spring-dsl-core')
+		testCompile 'org.hamcrest:hamcrest-core'
+		testCompile 'org.hamcrest:hamcrest-library'
+		testCompile 'junit:junit'
 		testCompile 'org.springframework.boot:spring-boot-starter-test'
 	}
 }

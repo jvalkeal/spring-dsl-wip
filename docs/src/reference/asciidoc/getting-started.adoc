@@ -34,6 +34,9 @@ The following modules are available for Spring Dsl
 |spring-dsl-lsp-core
 |Core LSP Module
 
+|spring-dsl-symboltable
+|Spring DSL Symboltable
+
 |spring-dsl-websocket
 |Spring DSL Websocket Module 
 

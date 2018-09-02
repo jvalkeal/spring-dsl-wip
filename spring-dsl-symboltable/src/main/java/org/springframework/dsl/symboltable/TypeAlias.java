@@ -13,39 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.antlr;
-
-import java.util.List;
-
-import org.springframework.dsl.reconcile.ReconcileProblem;
-import org.springframework.dsl.symboltable.SymbolTable;
+package org.springframework.dsl.symboltable;
 
 /**
- *
+ * A "typedef int I;" in C results in a TypeAlias("I", ptrToIntegerType)
+ * 
+ * @author Original ANTLR Authors
  * @author Janne Valkealahti
- *
- * @param <T> the type of a result
+ * 
  */
-public interface AntlrParseResult<T> {
+public class TypeAlias extends BaseSymbol implements Type {
 
-	/**
-	 * Gets the result.
-	 *
-	 * @return the result
-	 */
-	T getResult();
+	protected Type targetType;
 
-	/**
-	 * Gets the symbol table.
-	 *
-	 * @return the symbol table
-	 */
-	SymbolTable getSymbolTable();
+	public TypeAlias(String name, Type targetType) {
+		super(name);
+		this.targetType = targetType;
+	}
 
-	/**
-	 * Gets the reconcile problems.
-	 *
-	 * @return the reconcile problems
-	 */
-	List<ReconcileProblem> getReconcileProblems();
+	@Override
+	public int getTypeIndex() {
+		return -1;
+	}
+
+	public Type getTargetType() {
+		return targetType;
+	}
 }

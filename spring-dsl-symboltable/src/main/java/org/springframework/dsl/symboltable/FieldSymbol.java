@@ -13,39 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.antlr;
-
-import java.util.List;
-
-import org.springframework.dsl.reconcile.ReconcileProblem;
-import org.springframework.dsl.symboltable.SymbolTable;
+package org.springframework.dsl.symboltable;
 
 /**
+ * A {@code FieldSymbol} is just a {@link VariableSymbol} that lives inside an
+ * aggregate like a {@code class} or {@code struct}.
  *
+ * @author Original ANTLR Authors
  * @author Janne Valkealahti
  *
- * @param <T> the type of a result
  */
-public interface AntlrParseResult<T> {
+public class FieldSymbol extends VariableSymbol implements MemberSymbol {
 
-	/**
-	 * Gets the result.
-	 *
-	 * @return the result
-	 */
-	T getResult();
+	protected int slot;
 
-	/**
-	 * Gets the symbol table.
-	 *
-	 * @return the symbol table
-	 */
-	SymbolTable getSymbolTable();
+	public FieldSymbol(String name) {
+		super(name);
+	}
 
-	/**
-	 * Gets the reconcile problems.
-	 *
-	 * @return the reconcile problems
-	 */
-	List<ReconcileProblem> getReconcileProblems();
+	@Override
+	public int getSlotNumber() {
+		return slot;
+	}
 }

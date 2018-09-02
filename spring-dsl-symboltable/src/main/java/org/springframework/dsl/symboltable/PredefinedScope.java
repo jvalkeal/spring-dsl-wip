@@ -13,39 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.antlr;
-
-import java.util.List;
-
-import org.springframework.dsl.reconcile.ReconcileProblem;
-import org.springframework.dsl.symboltable.SymbolTable;
+package org.springframework.dsl.symboltable;
 
 /**
- *
+ * A scope to hold predefined symbols of your language. This could be a list of
+ * type names like int or methods like print.
+ * 
+ * @author Original ANTLR Authors
  * @author Janne Valkealahti
- *
- * @param <T> the type of a result
+ * 
  */
-public interface AntlrParseResult<T> {
+public class PredefinedScope extends BaseScope {
 
-	/**
-	 * Gets the result.
-	 *
-	 * @return the result
-	 */
-	T getResult();
-
-	/**
-	 * Gets the symbol table.
-	 *
-	 * @return the symbol table
-	 */
-	SymbolTable getSymbolTable();
-
-	/**
-	 * Gets the reconcile problems.
-	 *
-	 * @return the reconcile problems
-	 */
-	List<ReconcileProblem> getReconcileProblems();
+	@Override
+	public String getName() {
+		return "predefined";
+	}
 }

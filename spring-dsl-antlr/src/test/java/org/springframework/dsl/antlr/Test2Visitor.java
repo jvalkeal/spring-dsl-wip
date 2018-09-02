@@ -22,10 +22,10 @@ import org.springframework.dsl.Test2Grammar.DefinitionsContext;
 import org.springframework.dsl.Test2Grammar.SourceIdContext;
 import org.springframework.dsl.Test2Grammar.TargetIdContext;
 import org.springframework.dsl.Test2GrammarBaseVisitor;
-import org.springframework.dsl.antlr.symboltable.ClassSymbol;
-import org.springframework.dsl.antlr.symboltable.FieldSymbol;
-import org.springframework.dsl.antlr.symboltable.SymbolTable;
 import org.springframework.dsl.reconcile.ReconcileProblem;
+import org.springframework.dsl.symboltable.ClassSymbol;
+import org.springframework.dsl.symboltable.FieldSymbol;
+import org.springframework.dsl.symboltable.SymbolTable;
 
 /**
  * {@link ParseTreeVisitor} for {@code ANTLR test2 language}.
