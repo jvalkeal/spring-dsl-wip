@@ -15,6 +15,9 @@
  */
 package org.springframework.dsl.lsp.server.controller;
 
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -96,8 +99,13 @@ public class TextDocumentLanguageServerController implements InitializingBean {
 		log.debug("clientDocumentOpened {}", params);
 		DocumentStateTracker documentStateTracker = getTracker(session);
 		return Flux.from(documentStateTracker.didOpen(params))
-				.flatMap(document -> reconciler.reconcile(document)
-				.switchIfEmpty(Mono.just(new PublishDiagnosticsParams(params.getTextDocument().getUri()))));
+			.flatMap(document -> reconciler.reconcile(document)
+			.reduce((l, r) -> {
+				l.setDiagnostics(Stream.concat(l.getDiagnostics().stream(), r.getDiagnostics().stream())
+						.collect(Collectors.toList()));
+				return l;
+			})
+			.switchIfEmpty(Mono.just(new PublishDiagnosticsParams(params.getTextDocument().getUri()))));
 	}
 
 	/**
@@ -113,8 +121,13 @@ public class TextDocumentLanguageServerController implements InitializingBean {
 		log.debug("clientDocumentChanged {}", params);
 		DocumentStateTracker documentStateTracker = getTracker(session);
 		return Flux.from(documentStateTracker.didChange(params))
-				.flatMap(document -> reconciler.reconcile(document)
-				.switchIfEmpty(Mono.just(new PublishDiagnosticsParams(params.getTextDocument().getUri()))));
+			.flatMap(document -> reconciler.reconcile(document)
+			.reduce((l, r) -> {
+				l.setDiagnostics(Stream.concat(l.getDiagnostics().stream(), r.getDiagnostics().stream())
+						.collect(Collectors.toList()));
+				return l;
+			})
+			.switchIfEmpty(Mono.just(new PublishDiagnosticsParams(params.getTextDocument().getUri()))));
 	}
 
 	/**
