@@ -18,17 +18,26 @@ package org.springframework.dsl.symboltable;
 import java.util.List;
 
 /**
- * Generic interface for accessing information from a {@code symboltable}.
  *
  * @author Janne Valkealahti
  *
  */
-public interface SymbolTable {
+public abstract class AbstractSymbolTable implements SymbolTable {
 
-	/**
-	 * Gets the all symbols known to symbol table.
-	 *
-	 * @return the all symbols
-	 */
-	List<? extends Symbol> getAllSymbols();
+	private final BaseScope prefefined = new PredefinedScope();
+	private final GlobalScope globals = new GlobalScope(prefefined);
+
+	@Override
+	public List<? extends Symbol> getAllSymbols() {
+		return globals.getAllSymbols();
+	}
+
+	public void definePredefined(Symbol symbol) {
+		prefefined.define(symbol);
+	}
+
+	public void defineGlobal(Symbol symbol) {
+		globals.define(symbol);
+	}
+
 }

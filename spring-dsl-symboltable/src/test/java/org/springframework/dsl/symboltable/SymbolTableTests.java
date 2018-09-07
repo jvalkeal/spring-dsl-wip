@@ -18,9 +18,6 @@ package org.springframework.dsl.symboltable;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
-import org.springframework.dsl.symboltable.ClassSymbol;
-import org.springframework.dsl.symboltable.FieldSymbol;
-import org.springframework.dsl.symboltable.PrimitiveType;
 
 public class SymbolTableTests {
 
@@ -31,17 +28,24 @@ public class SymbolTableTests {
 		//		protected Long variable2;
 		//		private String variable3;
 		//	}
+		Modifier privateModifier = new VisibilityModifier("private");
+		Modifier protectedModifier = new VisibilityModifier("protected");
+		Modifier publicModifier = new VisibilityModifier("public");
 
 		ClassSymbol cSymbol = new ClassSymbol("TestClass1");
+		cSymbol.addModifier(privateModifier);
 
 		FieldSymbol fSymbol1 = new FieldSymbol("variable1");
 		fSymbol1.setType(new PrimitiveType("int"));
+		fSymbol1.addModifier(privateModifier);
 
 		FieldSymbol fSymbol2 = new FieldSymbol("variable2");
 		fSymbol2.setType(new ClassSymbol("Long"));
+		fSymbol2.addModifier(protectedModifier);
 
 		FieldSymbol fSymbol3 = new FieldSymbol("variable3");
 		fSymbol3.setType(new ClassSymbol("String"));
+		fSymbol3.addModifier(publicModifier);
 
 		cSymbol.define(fSymbol1);
 		cSymbol.define(fSymbol2);
@@ -50,16 +54,75 @@ public class SymbolTableTests {
 		assertThat(fSymbol1.getScope()).isSameAs(cSymbol);
 		assertThat(fSymbol1.getType().getName()).isEqualTo("int");
 		assertThat(fSymbol1.getType()).isInstanceOf(PrimitiveType.class);
+		assertThat(fSymbol1.getModifiers()).hasSize(1);
 
 		assertThat(fSymbol2.getScope()).isSameAs(cSymbol);
 		assertThat(fSymbol2.getType().getName()).isEqualTo("Long");
 		assertThat(fSymbol2.getType()).isInstanceOf(ClassSymbol.class);
+		assertThat(fSymbol2.getModifiers()).hasSize(1);
 
 		assertThat(fSymbol3.getScope()).isSameAs(cSymbol);
 		assertThat(fSymbol3.getType().getName()).isEqualTo("String");
 		assertThat(fSymbol3.getType()).isInstanceOf(ClassSymbol.class);
+		assertThat(fSymbol3.getModifiers()).hasSize(1);
 
 		assertThat(cSymbol.getAllSymbols()).hasSize(3);
+		assertThat(cSymbol.getNumberOfSymbols()).isEqualTo(3);
+		assertThat(cSymbol.getNumberOfFields()).isEqualTo(3);
+		assertThat(cSymbol.getSymbolNames()).hasSize(3);
+		assertThat(cSymbol.getModifiers()).hasSize(1);
+
+		assertThat(cSymbol.getSymbol("variable2")).isNotNull();
+		assertThat(cSymbol.getSymbol("variable2").getScope()).isSameAs(cSymbol);
+		assertThat(cSymbol.getSymbol("variable2").getClass()).isEqualTo(FieldSymbol.class);
 	}
 
+	@Test
+	public void testStateConcepts() {
+		StatemachineSymbolTable table = new StatemachineSymbolTable();
+
+		ClassSymbol state1Symbol = new ClassSymbol("S1");
+		state1Symbol.addModifier(new NamedModifier("initial"));
+
+		table.defineState(state1Symbol);
+
+		ClassSymbol state2Symbol = new ClassSymbol("S2");
+		state2Symbol.addModifier(new NamedModifier("end"));
+
+		table.defineState(state2Symbol);
+
+		ClassSymbol transition1Symbol = new ClassSymbol("T1");
+
+		FieldSymbol sourceVariable = new FieldSymbol("S1");
+		sourceVariable.setType(StatemachineSymbolTable.SOURCE);
+		transition1Symbol.define(sourceVariable);
+
+		FieldSymbol targetVariable = new FieldSymbol("S2");
+		targetVariable.setType(StatemachineSymbolTable.TARGET);
+		transition1Symbol.define(targetVariable);
+
+		table.defineTransition(transition1Symbol);
+
+		table.getAllSymbols().stream().forEach(s -> {
+			System.out.println(s + " / " + s.getName() + " / " + s.getClass());
+		});
+	}
+
+	private static class StatemachineSymbolTable extends AbstractSymbolTable {
+
+		public static final ClassSymbol STATE = new ClassSymbol("state");
+		public static final ClassSymbol TRANSITION = new ClassSymbol("transition");
+		public static final ClassSymbol SOURCE = new ClassSymbol("source");
+		public static final ClassSymbol TARGET = new ClassSymbol("target");
+
+		public void defineState(ClassSymbol state) {
+			state.setEnclosingScope(STATE);
+			defineGlobal(state);
+		}
+
+		public void defineTransition(ClassSymbol transition) {
+			transition.setEnclosingScope(TRANSITION);
+			defineGlobal(transition);
+		}
+	}
 }

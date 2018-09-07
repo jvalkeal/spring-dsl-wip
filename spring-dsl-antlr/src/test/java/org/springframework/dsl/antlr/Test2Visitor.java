@@ -24,6 +24,7 @@ import org.springframework.dsl.Test2Grammar.TargetIdContext;
 import org.springframework.dsl.Test2GrammarBaseVisitor;
 import org.springframework.dsl.reconcile.ReconcileProblem;
 import org.springframework.dsl.symboltable.ClassSymbol;
+import org.springframework.dsl.symboltable.DefaultSymbolTable;
 import org.springframework.dsl.symboltable.FieldSymbol;
 import org.springframework.dsl.symboltable.SymbolTable;
 
@@ -37,11 +38,11 @@ public class Test2Visitor extends Test2GrammarBaseVisitor<AntlrParseResult<Objec
 
 	@Override
 	public AntlrParseResult<Object> visitDefinitions(DefinitionsContext ctx) {
-		SymbolTable symbolTable = new SymbolTable();
+		DefaultSymbolTable symbolTable = new DefaultSymbolTable();
 		ClassSymbol stateClassSymbol = new ClassSymbol("org.springframework.statemachine.state.State");
 		ClassSymbol transitionClassSymbol = new ClassSymbol("org.springframework.statemachine.transition.Transition");
-		symbolTable.defineGlobalSymbol(stateClassSymbol);
-		symbolTable.defineGlobalSymbol(transitionClassSymbol);
+		symbolTable.defineGlobal(stateClassSymbol);
+		symbolTable.defineGlobal(transitionClassSymbol);
 
 		ctx.machineObjectList().state().forEach(stateContext -> {
 			ClassSymbol classSymbol = new ClassSymbol(stateContext.id().getText());

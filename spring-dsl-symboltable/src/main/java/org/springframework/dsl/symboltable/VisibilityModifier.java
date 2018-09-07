@@ -15,20 +15,15 @@
  */
 package org.springframework.dsl.symboltable;
 
-import java.util.List;
-
 /**
- * Generic interface for accessing information from a {@code symboltable}.
  *
  * @author Janne Valkealahti
  *
  */
-public interface SymbolTable {
+public class VisibilityModifier extends NamedModifier {
 
-	/**
-	 * Gets the all symbols known to symbol table.
-	 *
-	 * @return the all symbols
-	 */
-	List<? extends Symbol> getAllSymbols();
+	public VisibilityModifier(String name) {
+		super(name);
+	}
+
 }

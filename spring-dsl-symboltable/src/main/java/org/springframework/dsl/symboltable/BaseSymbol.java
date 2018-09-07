@@ -15,6 +15,7 @@
  */
 package org.springframework.dsl.symboltable;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -32,6 +33,7 @@ public abstract class BaseSymbol implements Symbol {
 	protected Type type; // If language statically typed, record type
 	protected Scope scope; // All symbols know what scope contains them.
 	protected int lexicalOrder; // order seen or insertion order from 0; compilers often need this
+	private final ArrayList<Modifier> modifiers = new ArrayList<>();
 
 	public BaseSymbol(String name) {
 		this.name = name;
@@ -50,6 +52,14 @@ public abstract class BaseSymbol implements Symbol {
 	@Override
 	public void setScope(Scope scope) {
 		this.scope = scope;
+	}
+
+	public void addModifier(Modifier modifier) {
+		this.modifiers.add(modifier);
+	}
+
+	public List<Modifier> getModifiers() {
+		return modifiers;
 	}
 
 	public Type getType() {
@@ -96,8 +106,9 @@ public abstract class BaseSymbol implements Symbol {
 	@Override
 	public String toString() {
 		String s = "";
-		if (scope != null)
+		if (scope != null) {
 			s = scope.getName() + ".";
+		}
 		if (type != null) {
 			String ts = type.toString();
 			if (type instanceof SymbolWithScope) {

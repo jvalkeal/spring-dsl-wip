@@ -223,13 +223,13 @@ public abstract class BaseScope implements Scope {
 		return Utils.toQualifierString(this, separator);
 	}
 
-	public String toTestString() {
-		return toTestString(", ", ".");
-	}
-
-	public String toTestString(String separator, String scopePathSeparator) {
-		List<? extends Symbol> allSymbols = this.getAllSymbols();
-		List<String> syms = Utils.map(allSymbols, s -> s.getScope().getName() + scopePathSeparator + s.getName());
-		return Utils.join(syms, separator);
-	}
+//	public String toTestString() {
+//		return toTestString(", ", ".");
+//	}
+//
+//	public String toTestString(String separator, String scopePathSeparator) {
+//		List<? extends Symbol> allSymbols = this.getAllSymbols();
+//		List<String> syms = Utils.map(allSymbols, s -> s.getScope().getName() + scopePathSeparator + s.getName());
+//		return Utils.join(syms, separator);
+//	}
 }
