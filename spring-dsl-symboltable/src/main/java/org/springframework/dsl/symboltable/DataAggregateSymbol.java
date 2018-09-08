@@ -18,6 +18,7 @@ package org.springframework.dsl.symboltable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * A symbol representing a collection of data like a struct or class. Each
@@ -41,7 +42,7 @@ public abstract class DataAggregateSymbol extends SymbolWithScope implements Mem
 	@Override
 	public void define(Symbol sym) throws IllegalArgumentException {
 		if (!(sym instanceof MemberSymbol)) {
-			throw new IllegalArgumentException("sym is " + sym.getClass().getSimpleName() + " not MemberSymbol");
+			throw new SymbolTableException("sym is " + sym.getClass().getSimpleName() + " not MemberSymbol");
 		}
 		super.define(sym);
 		setSlotNumber(sym);
@@ -49,12 +50,17 @@ public abstract class DataAggregateSymbol extends SymbolWithScope implements Mem
 
 	@Override
 	public List<MemberSymbol> getSymbols() {
-		return (List<MemberSymbol>) super.getSymbols();
+		return super.getSymbols().stream()
+				.filter(s -> s instanceof MemberSymbol)
+				.map(s -> (MemberSymbol)s)
+				.collect(Collectors.toList());
 	}
 
 	@Override
 	public Map<String, ? extends MemberSymbol> getMembers() {
-		return (Map<String, ? extends MemberSymbol>) super.getMembers();
+		return super.getMembers().entrySet().stream()
+			.filter(e -> e.getValue() instanceof MemberSymbol)
+			.collect(Collectors.toMap(Map.Entry::getKey, e -> (MemberSymbol)e.getValue()));
 	}
 
 	/**

@@ -21,6 +21,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * An abstract base class that houses common functionality for scopes.
@@ -84,8 +85,10 @@ public abstract class BaseScope implements Scope {
 
 	@Override
 	public List<Scope> getNestedScopedSymbols() {
-		List<? extends Symbol> scopes = Utils.filter(getSymbols(), s -> s instanceof Scope);
-		return (List) scopes; // force it to cast
+		return getSymbols().stream()
+				.filter(s -> s instanceof Scope)
+				.map(s -> (Scope)s)
+				.collect(Collectors.toList());
 	}
 
 	@Override

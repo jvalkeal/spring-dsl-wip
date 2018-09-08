@@ -23,7 +23,14 @@ public class ClassSymbolTests {
 
 	@Test
 	public void test() {
-		ClassSymbol sym = new ClassSymbol("xxx");
-		assertThat(sym.getName()).isEqualTo("xxx");
+		ClassSymbol sym1 = new ClassSymbol("sym1");
+		assertThat(sym1.getName()).isEqualTo("sym1");
+		assertThat(sym1.getNestedScopedSymbols()).hasSize(0);
+
+		ClassSymbol sym2 = new ClassSymbol("sym2");
+		sym1.define(sym2);
+		assertThat(sym1.getNestedScopedSymbols()).hasSize(1);
+		assertThat(sym1.getSymbols()).hasSize(1);
+		assertThat(sym1.getMembers()).hasSize(1);
 	}
 }
