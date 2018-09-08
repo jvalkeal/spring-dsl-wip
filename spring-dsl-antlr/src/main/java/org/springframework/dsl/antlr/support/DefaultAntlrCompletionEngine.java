@@ -91,11 +91,6 @@ public class DefaultAntlrCompletionEngine implements AntlrCompletionEngine {
 		}
 	}
 
-	private boolean showResult = true;
-	private boolean showDebugOutput = true;
-	private boolean debugOutputWithTransitions = true;
-	private boolean showRuleStack = true;
-
 	private final Set<Integer> ignoredTokens;
 	private final Set<Integer> preferredRules;
 
@@ -398,7 +393,7 @@ public class DefaultAntlrCompletionEngine implements AntlrCompletionEngine {
 																						// set.
 								else {
 									// More than one following list for the same symbol.
-									if (!this.candidates.tokens.get(symbol).equals(set.following)) { // XXX js uses !=
+									if (!this.candidates.tokens.get(symbol).equals(set.following)) {
 										this.candidates.tokens.put(symbol, new LinkedList<Integer>());
 									}
 								}
@@ -445,7 +440,7 @@ public class DefaultAntlrCompletionEngine implements AntlrCompletionEngine {
 			if (log.isDebugEnabled()) {
 				printDescription(indentation, currentEntry.state, this.generateBaseDescription(currentEntry.state),
 						currentEntry.tokenIndex);
-				if (this.showRuleStack) {
+				if (log.isTraceEnabled()) {
 					printRuleState(callStack);
 				}
 			}
@@ -569,7 +564,7 @@ public class DefaultAntlrCompletionEngine implements AntlrCompletionEngine {
 		StringBuilder output = new StringBuilder(currentIndent);
 
 		StringBuilder transitionDescription = new StringBuilder();
-		if (this.debugOutputWithTransitions) {
+		if (log.isDebugEnabled()) {
 			for (Transition transition : state.getTransitions()) {
 				StringBuilder labels = new StringBuilder();
 				List<Integer> symbols = (transition.label() != null) ? transition.label().toList() : new LinkedList<>();
