@@ -19,22 +19,22 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * A scope is a dictionary of symbols that are grouped together by some lexical
- * construct in the input language. Examples include structs, functions, {...}
- * code blocks, argument lists, etc...
- *
+ * {@code Scope} is a dictionary of symbols that are grouped together by some
+ * lexical construct in the input language. Examples include {@code structs},
+ * {@code functions}, {@code code blocks}, {@code argument lists}, etc...
+ * <p>
  * Scopes all have an enclosing scope that encloses them lexically. In other
- * words, am I wrapped in a class? a function? a {...} code block?
- *
+ * words, am I wrapped in a class? a function? a code block?
+ * <p>
  * This is distinguished from the parent scope. The parent scope is usually the
  * enclosing scope, but in the case of inheritance, it is the superclass rather
  * than the enclosing scope. Otherwise, the global scope would be considered the
  * parent scope of a class. When resolving symbols, we look up the parent scope
  * chain not the enclosing scope chain.
- *
- * For convenience of code using this library, I have added a bunch of methods
- * one can use to get lots of useful information from a scope, but they don't
- * necessarily define what a scope is.
+ * <p>
+ * For convenience of code using this library, a bunch of methods have been
+ * added one can use to get lots of useful information from a scope, but they
+ * don't necessarily define what a scope is.
  *
  * @author Original ANTLR Authors
  * @author Janne Valkealahti
@@ -51,7 +51,8 @@ public interface Scope {
 	String getName();
 
 	/**
-	 * Gets an enclosing scope in which this scope defined. null if no enclosing scope.
+	 * Gets an enclosing scope in which this scope defined. null if no enclosing
+	 * scope.
 	 *
 	 * @return the enclosing scope
 	 */
@@ -88,7 +89,12 @@ public interface Scope {
 	 */
 	Symbol resolve(String name);
 
-	/** Get symbol if name defined within this specific scope */
+	/**
+	 * Gets the symbol if defined within this specific scope.
+	 *
+	 * @param name the symbol name
+	 * @return the symbol
+	 */
 	Symbol getSymbol(String name);
 
 	/**
@@ -96,9 +102,9 @@ public interface Scope {
 	 * SymbolWithScope objects. E.g., a FunctionSymbol will add a LocalScope for its
 	 * block via this method.
 	 *
-	 * @throws IllegalArgumentException if you pass in a SymbolWithScope.
+	 * @param scope the scope
 	 */
-	void nest(Scope scope) throws IllegalArgumentException;
+	void nest(Scope scope);
 
 	/**
 	 * Return a list of scopes nested within this scope. It has both ScopedSymbols
@@ -106,14 +112,16 @@ public interface Scope {
 	 * same set as {@link #getNestedScopedSymbols}. ScopedSymbols come first then
 	 * all non-ScopedSymbols Scope objects. Insertion order is used within each
 	 * sublist.
+	 *
+	 * @return all nested scopes
 	 */
 	List<Scope> getNestedScopes();
-
-	// ------------ Convenience methods --------------------------------
 
 	/**
 	 * Return (inclusive) list of all scopes on path to root scope. The first
 	 * element is the current scope and the last is the root scope.
+	 *
+	 * @return all scopes to root
 	 */
 	List<Scope> getEnclosingPathToRoot();
 
@@ -125,12 +133,16 @@ public interface Scope {
 	 * scopes that are in the symbols list of "this" scope. E.g., does not get local
 	 * scopes within a function. This returns a subset or same set as
 	 * {@link #getNestedScopes}.
+	 *
+	 * @return all nested scopes
 	 */
 	List<Scope> getNestedScopedSymbols();
 
 	/**
 	 * Return the symbols defined within this scope. The order of insertion into the
 	 * scope is the order returned in this list.
+	 *
+	 * @return all symbols
 	 */
 	List<? extends Symbol> getSymbols();
 
@@ -138,15 +150,30 @@ public interface Scope {
 	 * Return all symbols found in all nested scopes. The order of insertion into
 	 * the scope is the order returned in this list for each scope. The scopes are
 	 * traversed in the order in which they are encountered in the input.
+	 *
+	 * @return all known symbols
 	 */
 	List<? extends Symbol> getAllSymbols();
 
-	/** Return the set of names associated with all symbols in the scope. */
+	/**
+	 * Gets the set of names associated with all symbols in the scope.
+	 *
+	 * @return the symbol names
+	 */
 	Set<String> getSymbolNames();
 
-	/** Number of symbols in this specific scope */
+	/**
+	 * Number of symbols in this specific scope.
+	 *
+	 * @return the number of symbols
+	 */
 	int getNumberOfSymbols();
 
-	/** Return scopes from to current with separator in between */
+	/**
+	 * Return scopes from to current with separator in between.
+	 *
+	 * @param separator the separator
+	 * @return the qualifier string
+	 */
 	public String toQualifierString(String separator);
 }

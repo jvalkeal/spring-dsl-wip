@@ -22,6 +22,10 @@ package org.springframework.dsl.symboltable;
  */
 public interface Modifier {
 
+	/**
+	 * Gets the name.
+	 *
+	 * @return the name
+	 */
 	public String getName();
-
 }

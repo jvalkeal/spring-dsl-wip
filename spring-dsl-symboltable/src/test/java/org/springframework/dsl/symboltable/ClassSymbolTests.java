@@ -15,22 +15,15 @@
  */
 package org.springframework.dsl.symboltable;
 
-import java.util.List;
+import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Generic interface for accessing information from a {@code symboltable}. By
- * design this interface is currently kept relatively conservative in terms of
- * what is exposed.
- *
- * @author Janne Valkealahti
- *
- */
-public interface SymbolTable {
+import org.junit.Test;
 
-	/**
-	 * Gets the all symbols known to symbol table.
-	 *
-	 * @return the all symbols
-	 */
-	List<? extends Symbol> getAllSymbols();
+public class ClassSymbolTests {
+
+	@Test
+	public void test() {
+		ClassSymbol sym = new ClassSymbol("xxx");
+		assertThat(sym.getName()).isEqualTo("xxx");
+	}
 }

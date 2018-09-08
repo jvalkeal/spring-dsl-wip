@@ -20,9 +20,9 @@ package org.springframework.dsl.symboltable;
  * type. Every type knows its name. In languages like C where we need a
  * tree-like structure to represent a type, one could return a string
  * representation as the name.
- *
- * The types are typically things like struct or classes and primitive types, as
- * well as the type trees used for languages like C.
+ * <p>
+ * The types are typically things like {@code struct} or {@code classes} and
+ * {@code primitive types}, as well as the type trees used for languages like C.
  *
  * @author Original ANTLR Authors
  * @author Janne Valkealahti
@@ -41,7 +41,7 @@ public interface Type {
 	 * It is useful during type computation and code gen to assign an int index to
 	 * the primitive types and possibly user-defined types like structs and classes.
 	 *
-	 * @return Return 0-indexed type index else -1 if no index.
+	 * @return Return 0-indexed type index or -1 if no index.
 	 */
 	public int getTypeIndex();
 }

@@ -38,31 +38,6 @@ public class ClassSymbol extends DataAggregateSymbol {
 		super(name);
 	}
 
-	/**
-	 * Return the ClassSymbol associated with superClassName or null if superclass
-	 * is not resolved looking up the enclosing scope chain.
-	 */
-	public ClassSymbol getSuperClassScope() {
-		if (superClassName != null) {
-			if (getEnclosingScope() != null) {
-				Symbol superClass = getEnclosingScope().resolve(superClassName);
-				if (superClass instanceof ClassSymbol) {
-					return (ClassSymbol) superClass;
-				}
-			}
-		}
-		return null;
-	}
-
-	/** Multiple superclass or interface implementations and the like... */
-	public List<ClassSymbol> getSuperClassScopes() {
-		ClassSymbol superClassScope = getSuperClassScope();
-		if (superClassScope != null) {
-			return Collections.singletonList(superClassScope);
-		}
-		return null;
-	}
-
 	@Override
 	public Symbol resolve(String name) {
 		Symbol s = resolveMember(name);
@@ -113,27 +88,6 @@ public class ClassSymbol extends DataAggregateSymbol {
 		return null;
 	}
 
-	/**
-	 * Look for a method with this name in this scope or any super class. Return
-	 * null if no method found.
-	 */
-	public MethodSymbol resolveMethod(String name) {
-		Symbol s = resolveMember(name);
-		if (s instanceof MethodSymbol) {
-			return (MethodSymbol) s;
-		}
-		return null;
-	}
-
-	public void setSuperClass(String superClassName) {
-		this.superClassName = superClassName;
-		nextFreeMethodSlot = getNumberOfMethods();
-	}
-
-	public String getSuperClassName() {
-		return superClassName;
-	}
-
 	@Override
 	public void setSlotNumber(Symbol sym) {
 		if (sym instanceof MethodSymbol) {
@@ -153,6 +107,28 @@ public class ClassSymbol extends DataAggregateSymbol {
 		} else {
 			super.setSlotNumber(sym);
 		}
+	}
+
+	@Override
+	public List<? extends FieldSymbol> getFields() {
+		List<FieldSymbol> fields = new ArrayList<>();
+		ClassSymbol superClassScope = getSuperClassScope();
+		if (superClassScope != null) {
+			fields.addAll(superClassScope.getFields());
+		}
+		fields.addAll(getDefinedFields());
+		return fields;
+	}
+
+	@Override
+	public int getNumberOfFields() {
+		int n = 0;
+		ClassSymbol superClassScope = getSuperClassScope();
+		if (superClassScope != null) {
+			n += superClassScope.getNumberOfFields();
+		}
+		n += getNumberOfDefinedFields();
+		return n;
 	}
 
 	/** Return the set of all methods defined within this class */
@@ -178,15 +154,25 @@ public class ClassSymbol extends DataAggregateSymbol {
 		return methods;
 	}
 
-	@Override
-	public List<? extends FieldSymbol> getFields() {
-		List<FieldSymbol> fields = new ArrayList<>();
-		ClassSymbol superClassScope = getSuperClassScope();
-		if (superClassScope != null) {
-			fields.addAll(superClassScope.getFields());
+	/**
+	 * Look for a method with this name in this scope or any super class. Return
+	 * null if no method found.
+	 */
+	public MethodSymbol resolveMethod(String name) {
+		Symbol s = resolveMember(name);
+		if (s instanceof MethodSymbol) {
+			return (MethodSymbol) s;
 		}
-		fields.addAll(getDefinedFields());
-		return fields;
+		return null;
+	}
+
+	public void setSuperClass(String superClassName) {
+		this.superClassName = superClassName;
+		nextFreeMethodSlot = getNumberOfMethods();
+	}
+
+	public String getSuperClassName() {
+		return superClassName;
 	}
 
 	/** get the number of methods defined specifically in this class */
@@ -211,15 +197,29 @@ public class ClassSymbol extends DataAggregateSymbol {
 		return n;
 	}
 
-	@Override
-	public int getNumberOfFields() {
-		int n = 0;
+	/**
+	 * Return the ClassSymbol associated with superClassName or null if superclass
+	 * is not resolved looking up the enclosing scope chain.
+	 */
+	public ClassSymbol getSuperClassScope() {
+		if (superClassName != null) {
+			if (getEnclosingScope() != null) {
+				Symbol superClass = getEnclosingScope().resolve(superClassName);
+				if (superClass instanceof ClassSymbol) {
+					return (ClassSymbol) superClass;
+				}
+			}
+		}
+		return null;
+	}
+
+	/** Multiple superclass or interface implementations and the like... */
+	public List<ClassSymbol> getSuperClassScopes() {
 		ClassSymbol superClassScope = getSuperClassScope();
 		if (superClassScope != null) {
-			n += superClassScope.getNumberOfFields();
+			return Collections.singletonList(superClassScope);
 		}
-		n += getNumberOfDefinedFields();
-		return n;
+		return null;
 	}
 
 	@Override

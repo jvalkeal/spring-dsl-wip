@@ -17,6 +17,9 @@ package org.springframework.dsl.symboltable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.junit.Test;
 
 public class SymbolTableTests {
@@ -103,9 +106,13 @@ public class SymbolTableTests {
 
 		table.defineTransition(transition1Symbol);
 
-		table.getAllSymbols().stream().forEach(s -> {
-			System.out.println(s + " / " + s.getName() + " / " + s.getClass());
-		});
+		List<? extends Symbol> stateSymbols = table.getAllSymbols().stream()
+				.filter(s -> {
+					System.out.println(s + " / " + s.getName() + " / " + s.getScope().getName());
+					return s.getScope().getName().equals("state");
+				})
+				.collect(Collectors.toList());
+		assertThat(stateSymbols).hasSize(2);
 	}
 
 	private static class StatemachineSymbolTable extends AbstractSymbolTable {
@@ -115,14 +122,19 @@ public class SymbolTableTests {
 		public static final ClassSymbol SOURCE = new ClassSymbol("source");
 		public static final ClassSymbol TARGET = new ClassSymbol("target");
 
+		public StatemachineSymbolTable() {
+			defineGlobal(STATE);
+			defineGlobal(TRANSITION);
+			defineGlobal(SOURCE);
+			defineGlobal(TARGET);
+		}
+
 		public void defineState(ClassSymbol state) {
-			state.setEnclosingScope(STATE);
-			defineGlobal(state);
+			STATE.define(state);
 		}
 
 		public void defineTransition(ClassSymbol transition) {
-			transition.setEnclosingScope(TRANSITION);
-			defineGlobal(transition);
+			TRANSITION.define(transition);
 		}
 	}
 }

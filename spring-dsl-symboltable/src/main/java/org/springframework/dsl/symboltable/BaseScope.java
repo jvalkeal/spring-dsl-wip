@@ -101,9 +101,9 @@ public abstract class BaseScope implements Scope {
 	 * language allows nested functions.
 	 */
 	@Override
-	public void nest(Scope scope) throws IllegalArgumentException {
+	public void nest(Scope scope) {
 		if (scope instanceof SymbolWithScope) {
-			throw new IllegalArgumentException("Add SymbolWithScope instance " + scope.getName() + " via define()");
+			throw new SymbolTableException("Add SymbolWithScope instance " + scope.getName() + " via define()");
 		}
 		nestedScopesNotSymbols.add(scope);
 	}
@@ -122,12 +122,13 @@ public abstract class BaseScope implements Scope {
 	}
 
 	@Override
-	public void define(Symbol sym) throws IllegalArgumentException {
+	public void define(Symbol sym) {
 		if (symbols.containsKey(sym.getName())) {
-			throw new IllegalArgumentException("duplicate symbol " + sym.getName());
+			throw new SymbolTableException("duplicate symbol " + sym.getName());
 		}
 		sym.setScope(this);
-		sym.setInsertionOrderNumber(symbols.size()); // set to insertion position from 0
+		// set to insertion position from 0
+		sym.setInsertionOrderNumber(symbols.size());
 		symbols.put(sym.getName(), sym);
 	}
 

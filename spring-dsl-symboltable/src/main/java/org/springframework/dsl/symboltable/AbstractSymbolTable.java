@@ -18,6 +18,14 @@ package org.springframework.dsl.symboltable;
 import java.util.List;
 
 /**
+ * Base implementation of a {@link SymbolTable} meant to provide generic
+ * functionality for language features. Most languages having a need for a
+ * symbol table will need its own specific tweaks but there are always some
+ * number of shared features.
+ * <p>
+ * This implementation allows to define concept of a {@code global} and
+ * {@code predefined} symbols and resolving everything what {@link SymbolTable}
+ * defines.
  *
  * @author Janne Valkealahti
  *
@@ -32,12 +40,21 @@ public abstract class AbstractSymbolTable implements SymbolTable {
 		return globals.getAllSymbols();
 	}
 
+	/**
+	 * Define a predefined symbol.
+	 *
+	 * @param symbol the symbol
+	 */
 	public void definePredefined(Symbol symbol) {
 		prefefined.define(symbol);
 	}
 
+	/**
+	 * Define a global symbol.
+	 *
+	 * @param symbol the symbol
+	 */
 	public void defineGlobal(Symbol symbol) {
 		globals.define(symbol);
 	}
-
 }
