@@ -15,7 +15,6 @@
  */
 package org.springframework.dsl.lsp.server.jsonrpc;
 
-import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,16 +29,12 @@ import org.springframework.dsl.jsonrpc.JsonRpcInputMessage;
 import org.springframework.dsl.jsonrpc.JsonRpcOutputMessage;
 import org.springframework.dsl.jsonrpc.session.JsonRpcSession.JsonRpcSessionCustomizer;
 import org.springframework.dsl.jsonrpc.support.DefaultJsonRpcRequest;
+import org.springframework.dsl.jsonrpc.support.DefaultJsonRpcRequestJsonDeserializer;
 import org.springframework.dsl.jsonrpc.support.DefaultJsonRpcResponse;
+import org.springframework.dsl.jsonrpc.support.DefaultJsonRpcResponseJsonDeserializer;
 import org.springframework.dsl.lsp.client.NettyBoundedLspClient;
 import org.springframework.util.ObjectUtils;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.ObjectCodec;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
@@ -68,7 +63,7 @@ public class ReactorJsonRpcHandlerAdapter implements BiFunction<NettyInbound, Ne
 	public Mono<Void> apply(NettyInbound in, NettyOutbound out) {
 		Map<String, Disposable> disposables = new HashMap<>();
 		SimpleModule module = new SimpleModule();
-		module.addDeserializer(DefaultJsonRpcRequest.class, new DefaultJsonRpcRequestDeserializer());
+		module.addDeserializer(DefaultJsonRpcRequest.class, new DefaultJsonRpcRequestJsonDeserializer());
 		module.addDeserializer(DefaultJsonRpcResponse.class, new DefaultJsonRpcResponseJsonDeserializer());
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.registerModule(module);
@@ -196,56 +191,5 @@ public class ReactorJsonRpcHandlerAdapter implements BiFunction<NettyInbound, Ne
 
 		return out.options(NettyPipeline.SendOptions::flushOnEach)
 				.neverComplete();
-	}
-
-	private static class DefaultJsonRpcRequestDeserializer extends JsonDeserializer<DefaultJsonRpcRequest> {
-
-		@Override
-		public DefaultJsonRpcRequest deserialize(JsonParser p, DeserializationContext ctxt)
-				throws IOException, JsonProcessingException {
-			ObjectCodec c = p.getCodec();
-		    JsonNode node = c.readTree(p);
-		    String jsonrpc = node.get("jsonrpc").asText();
-		    JsonNode jsonNodeParams = node.get("params");
-		    String params = null;
-		    if (jsonNodeParams != null) {
-			    if (jsonNodeParams.isValueNode()) {
-			    	params = jsonNodeParams.asText();
-			    } else {
-			    	params = jsonNodeParams.toString();
-			    }
-		    }
-		    JsonNode jsonNodeId = node.get("id");
-		    Integer id = jsonNodeId != null ? jsonNodeId.asInt() : null;
-		    JsonNode jsonNodeMethod = node.get("method");
-		    String method = jsonNodeMethod != null ? jsonNodeMethod.asText() : null;
-			return new DefaultJsonRpcRequest(jsonrpc, id, method, params);
-		}
-
-	}
-
-	private static class DefaultJsonRpcResponseJsonDeserializer extends JsonDeserializer<DefaultJsonRpcResponse> {
-
-		@Override
-		public DefaultJsonRpcResponse deserialize(JsonParser p, DeserializationContext ctxt)
-				throws IOException, JsonProcessingException {
-			DefaultJsonRpcResponse response = new DefaultJsonRpcResponse();
-			JsonNode node = p.getCodec().readTree(p);
-			JsonNode jsonrpcNode = node.get("jsonrpc");
-			response.setJsonrpc(jsonrpcNode.asText());
-			JsonNode idNode = node.get("id");
-			if (idNode != null) {
-				response.setId(idNode.asInt());
-			}
-			JsonNode resultsNode = node.get("result");
-			if (resultsNode != null) {
-				response.setResult(resultsNode.asText());
-			}
-			JsonNode errorNode = node.get("error");
-			if (errorNode != null) {
-				response.setError(errorNode.asText());
-			}
-			return response;
-		}
 	}
 }

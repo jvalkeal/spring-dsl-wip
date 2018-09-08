@@ -15,7 +15,6 @@
  */
 package org.springframework.dsl.lsp.server.websocket;
 
-import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.function.Function;
 
@@ -28,17 +27,12 @@ import org.springframework.dsl.jsonrpc.JsonRpcInputMessage;
 import org.springframework.dsl.jsonrpc.JsonRpcOutputMessage;
 import org.springframework.dsl.jsonrpc.support.AbstractJsonRpcOutputMessage;
 import org.springframework.dsl.jsonrpc.support.DefaultJsonRpcRequest;
+import org.springframework.dsl.jsonrpc.support.DefaultJsonRpcRequestJsonDeserializer;
 import org.springframework.dsl.lsp.server.jsonrpc.RpcHandler;
 import org.springframework.web.reactive.socket.WebSocketHandler;
 import org.springframework.web.reactive.socket.WebSocketMessage;
 import org.springframework.web.reactive.socket.WebSocketSession;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.ObjectCodec;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
@@ -57,7 +51,7 @@ public class LspWebSocketHandler implements WebSocketHandler {
 	@Override
 	public Mono<Void> handle(WebSocketSession session) {
 		SimpleModule module = new SimpleModule();
-		module.addDeserializer(DefaultJsonRpcRequest.class, new DefaultJsonRpcRequestDeserializer());
+		module.addDeserializer(DefaultJsonRpcRequest.class, new DefaultJsonRpcRequestJsonDeserializer());
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.registerModule(module);
 
@@ -147,10 +141,6 @@ public class LspWebSocketHandler implements WebSocketHandler {
 
 			Flux<WebSocketMessage> messages = Flux.from(body)
 				.map(bodyBuffer -> {
-//					String headers = "Content-Length: " + bodyBuffer.readableByteCount() + "\r\n\r\n";
-//					DataBuffer headersBuffer = bufferFactory().wrap(ByteBuffer.wrap(headers.getBytes()));
-//					DataBuffer buffer = bufferFactory().join(Arrays.asList(headersBuffer, bodyBuffer));
-//					return new WebSocketMessage(WebSocketMessage.Type.TEXT, buffer);
 					return new WebSocketMessage(WebSocketMessage.Type.TEXT, bodyBuffer);
 				});
 			return session.send(messages);
@@ -161,31 +151,4 @@ public class LspWebSocketHandler implements WebSocketHandler {
 			return null;
 		}
 	}
-
-	private static class DefaultJsonRpcRequestDeserializer extends JsonDeserializer<DefaultJsonRpcRequest> {
-
-		@Override
-		public DefaultJsonRpcRequest deserialize(JsonParser p, DeserializationContext ctxt)
-				throws IOException, JsonProcessingException {
-			ObjectCodec c = p.getCodec();
-		    JsonNode node = c.readTree(p);
-		    String jsonrpc = node.get("jsonrpc").asText();
-		    JsonNode jsonNodeParams = node.get("params");
-		    String params = null;
-		    if (jsonNodeParams != null) {
-			    if (jsonNodeParams.isValueNode()) {
-			    	params = jsonNodeParams.asText();
-			    } else {
-			    	params = jsonNodeParams.toString();
-			    }
-		    }
-		    JsonNode jsonNodeId = node.get("id");
-		    Integer id = jsonNodeId != null ? jsonNodeId.asInt() : null;
-		    String method = node.get("method").asText();
-			return new DefaultJsonRpcRequest(jsonrpc, id, method, params);
-		}
-
-	}
-
-
 }
