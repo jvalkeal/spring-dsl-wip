@@ -22,7 +22,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.dsl.autoconfigure.DslAutoConfiguration;
-import org.springframework.dsl.autoconfigure.LspAutoConfiguration;
+import org.springframework.dsl.autoconfigure.LspServerAutoConfiguration;
 import org.springframework.dsl.autoconfigure.LspClientAutoConfiguration;
 import org.springframework.dsl.domain.InitializeParams;
 import org.springframework.dsl.jsonrpc.JsonRpcResponse;
@@ -69,7 +69,7 @@ public class LspNettySocketLspServerIntegrationTests extends AbstractLspIntegrat
 	@Override
 	protected ConfigurableApplicationContext buildServerContext() {
 		SpringApplicationBuilder builder = new SpringApplicationBuilder(DslAutoConfiguration.class,
-				LspAutoConfiguration.class, Config1.class);
+				LspServerAutoConfiguration.class, Config1.class);
 		SpringApplication springApplication = builder.build();
 		return springApplication.run("--spring.dsl.lsp.server.mode=SOCKET",
 				"--logging.level.org.springframework.dsl=trace", "--logging.level.reactor.ipc.netty.tcp=debug");

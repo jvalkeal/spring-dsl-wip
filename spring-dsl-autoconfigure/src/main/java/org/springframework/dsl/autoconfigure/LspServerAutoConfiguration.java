@@ -58,7 +58,7 @@ import org.springframework.web.reactive.socket.WebSocketHandler;
 @EnableLanguageServer
 @Import({ RootLanguageServerController.class, TextDocumentLanguageServerController.class,
 		LspDomainJacksonConfiguration.class })
-public class LspAutoConfiguration {
+public class LspServerAutoConfiguration {
 
 	@Bean
 	public Reconciler reconciler(Optional<List<Linter>> linters) {
