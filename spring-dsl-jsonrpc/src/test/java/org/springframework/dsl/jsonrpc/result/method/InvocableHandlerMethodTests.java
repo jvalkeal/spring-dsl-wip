@@ -31,7 +31,6 @@ import org.junit.Test;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DefaultDataBufferFactory;
 import org.springframework.dsl.jsonrpc.JsonRpcHandlerResult;
-import org.springframework.dsl.jsonrpc.JsonRpcOutputMessage;
 import org.springframework.dsl.jsonrpc.ServerJsonRpcExchange;
 import org.springframework.dsl.jsonrpc.support.MockServerJsonRpcExchange;
 
@@ -50,10 +49,6 @@ public class InvocableHandlerMethodTests {
 
 		assertThat(result).isNull();
 		assertThat(this.exchange.getResponse().getBodyAsString().block(Duration.ZERO)).isEqualTo("body");
-	}
-
-	private Mono<JsonRpcHandlerResult> invoke(Object handler, Method method) {
-		return invoke(handler, method, new JsonRpcHandlerMethodArgumentResolver[0]);
 	}
 
 	private Mono<JsonRpcHandlerResult> invoke(Object handler, Method method, JsonRpcHandlerMethodArgumentResolver... resolver) {
@@ -84,18 +79,11 @@ public class InvocableHandlerMethodTests {
 		public void exceptionMethod() {
 			throw new IllegalStateException("boo");
 		}
-
-//		@ResponseStatus(HttpStatus.CREATED)
-//		public String responseStatus() {
-//			return "created";
-//		}
 	}
 
-	@SuppressWarnings("unused")
 	private static class VoidController {
 
 		public Mono<Void> exchangeMonoVoid(ServerJsonRpcExchange exchange) {
-			JsonRpcOutputMessage xxx = exchange.getResponse();
 			return exchange.getResponse().writeWith(getBody("body"));
 		}
 
