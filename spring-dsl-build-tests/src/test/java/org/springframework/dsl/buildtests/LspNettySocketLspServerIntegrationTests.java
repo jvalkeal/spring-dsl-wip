@@ -23,7 +23,12 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.dsl.autoconfigure.DslAutoConfiguration;
 import org.springframework.dsl.autoconfigure.LspAutoConfiguration;
+import org.springframework.dsl.autoconfigure.LspClientAutoConfiguration;
+import org.springframework.dsl.domain.InitializeParams;
+import org.springframework.dsl.jsonrpc.JsonRpcResponse;
 import org.springframework.dsl.jsonrpc.config.EnableJsonRpc;
+import org.springframework.dsl.lsp.client.ClientReactorJsonRpcHandlerAdapter;
+import org.springframework.dsl.lsp.client.NettyTcpClientLspClient;
 import org.springframework.dsl.lsp.server.jsonrpc.NettyTcpServer;
 
 /**
@@ -36,10 +41,29 @@ import org.springframework.dsl.lsp.server.jsonrpc.NettyTcpServer;
 public class LspNettySocketLspServerIntegrationTests extends AbstractLspIntegrationTests {
 
 	private NettyTcpServer server;
+	private NettyTcpClientLspClient client;
 
 	@Test
 	public void testLspInitialize() {
 		assertThat(server).isNotNull();
+		assertThat(client).isNotNull();
+
+		InitializeParams initializeParams = InitializeParams.initializeParams()
+			.capabilities()
+				.textDocument()
+					.synchronization()
+					.and()
+				.and()
+			.and()
+			.build();
+
+		JsonRpcResponse response = client.request()
+				.id(1)
+				.method("initialize")
+				.params(initializeParams)
+				.exchange().block();
+		assertThat(response).isNotNull();
+		assertThat(response.getResult()).contains("textDocumentSync");
 	}
 
 	@Override
@@ -47,12 +71,17 @@ public class LspNettySocketLspServerIntegrationTests extends AbstractLspIntegrat
 		SpringApplicationBuilder builder = new SpringApplicationBuilder(DslAutoConfiguration.class,
 				LspAutoConfiguration.class, Config1.class);
 		SpringApplication springApplication = builder.build();
-		return springApplication.run("--spring.dsl.lsp.server.mode=SOCKET");
+		return springApplication.run("--spring.dsl.lsp.server.mode=SOCKET",
+				"--logging.level.org.springframework.dsl=trace", "--logging.level.reactor.ipc.netty.tcp=debug");
 	}
 
 	@Override
 	protected ConfigurableApplicationContext buildClientContext() {
-		return null;
+		SpringApplicationBuilder builder = new SpringApplicationBuilder(DslAutoConfiguration.class,
+				LspClientAutoConfiguration.class, Config1.class);
+		SpringApplication springApplication = builder.build();
+		return springApplication.run("--spring.dsl.lsp.client.mode=SOCKET",
+				"--logging.level.org.springframework.dsl=trace", "--logging.level.reactor.ipc.netty.tcp=debug", "--logging.level.root=debug");
 	}
 
 	@Override
@@ -62,6 +91,11 @@ public class LspNettySocketLspServerIntegrationTests extends AbstractLspIntegrat
 
 	@Override
 	protected void onClientContext(ConfigurableApplicationContext context) {
+		ClientReactorJsonRpcHandlerAdapter xxx1 = context.getBean(ClientReactorJsonRpcHandlerAdapter.class);
+		NettyTcpClientLspClient xxx2 = new NettyTcpClientLspClient("0.0.0.0", server.getPort());
+		xxx2.adapter = xxx1;
+		xxx2.init();
+		client = xxx2;
 	}
 
 	@EnableJsonRpc

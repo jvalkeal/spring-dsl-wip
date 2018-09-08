@@ -249,7 +249,11 @@ public class ClientReactorJsonRpcHandlerAdapter implements BiFunction<NettyInbou
 			response.setId(idNode.asInt());
 			JsonNode resultsNode = node.get("result");
 			if (resultsNode != null) {
-				response.setResult(resultsNode.asText());
+				if (resultsNode.isValueNode()) {
+					response.setResult(resultsNode.asText());
+				} else {
+					response.setResult(resultsNode.toString());
+				}
 			}
 			JsonNode errorNode = node.get("error");
 			if (errorNode != null) {
