@@ -1,0 +1,5 @@
+[[dsl-core-hover]]
+=== Hovering
+`Hoverer` is an interface to provide a `Hover` information for a `Document`
+in a particular `Position`.
+

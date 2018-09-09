@@ -8,7 +8,7 @@ features.
 SDSL aims to provide the following features:
 
 * Easy configuration model.
-* Basing of a Language Server Protocol features.
+* Heavily based on a <<glossary-lsp,Language Server Protocol>> features.
 
 == Background
 

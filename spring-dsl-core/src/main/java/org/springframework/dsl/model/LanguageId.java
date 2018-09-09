@@ -29,6 +29,7 @@ public class LanguageId {
 	public static final LanguageId TXT = languageId("txt", "Plaintext");
 	public static final LanguageId BAT = languageId("bat", "Windows Bat");
 	public static final LanguageId JAVA = languageId("java", "Java");
+	// TODO: map all languages from LSP
 
 	private final String identifier;
 	private final String language;

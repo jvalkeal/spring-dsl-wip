@@ -1,5 +1,6 @@
 [[dsl-boot]]
 
 == Spring Boot Auto Configuration
-xxx.
+_Spring Dsl_ is currently not managed by a _Spring Boot_, thus we have our
+own `Auto-Configuration` module.
 

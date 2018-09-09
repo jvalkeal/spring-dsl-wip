@@ -368,15 +368,9 @@ configure(rootProject) {
 	}
 
 	task copyDocsSamples(type: Copy) {
-		from 'spring-dsl-core/src/test/java'
-		from 'spring-dsl-core/src/test/resources'
-		from 'spring-dsl-boot/src/test/java'
-		from 'spring-dsl-boot/src/test/resources'
-		include '**/docs/*.java'
-		include '**/docs/*.uml'
-		include '**/docs/*.yml'
-		include '**/docs/*.properties'
-		include '**/docs/*.json'
+		from 'spring-dsl-core'
+		from 'spring-dsl-jsonrpc'
+		include '**/src/test/**/docs/*.java'
 		into 'docs/src/reference/asciidoc/samples'
 
 		from 'spring-dsl-samples'

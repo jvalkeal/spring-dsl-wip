@@ -1,5 +1,11 @@
 [[dsl-lsp]]
 
 == LSP
-xxx.
+Language Server Protocol <<glossary-lsp, LSP>>.
+
+=== Language Server
+TBD.
+
+=== Language Client
+TBD.
 

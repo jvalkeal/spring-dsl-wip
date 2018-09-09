@@ -1,0 +1,5 @@
+[[dsl-core-codecompletion]]
+=== Code Completion
+`Completioner` is an interface to provide a `Flux` of `CompletionItem`s
+for a `Document` in a particular `Position`.
+
