@@ -15,7 +15,16 @@
  */
 package org.springframework.dsl.lsp.client;
 
+import java.util.function.BiFunction;
+
+import org.reactivestreams.Processor;
+import org.springframework.dsl.jsonrpc.JsonRpcResponse;
 import org.springframework.dsl.lsp.client.LspClient.Builder;
+
+import io.netty.buffer.ByteBuf;
+import reactor.core.publisher.Mono;
+import reactor.ipc.netty.NettyInbound;
+import reactor.ipc.netty.NettyOutbound;
 
 /**
  * Default implementation of a {@link Builder} currently building instances of a
@@ -28,6 +37,8 @@ public class DefaultLspClientBuilder implements Builder {
 
 	private String host;
 	private Integer port;
+	private BiFunction<NettyInbound, NettyOutbound, Mono<Void>> function;
+	private Processor<ByteBuf, JsonRpcResponse> processor;
 
 	@Override
 	public Builder host(String host) {
@@ -42,10 +53,20 @@ public class DefaultLspClientBuilder implements Builder {
 	}
 
 	@Override
+	public Builder function(BiFunction<NettyInbound, NettyOutbound, Mono<Void>> function) {
+		this.function = function;
+		return this;
+	}
+
+	@Override
+	public Builder processor(Processor<ByteBuf, JsonRpcResponse> processor) {
+		this.processor = processor;
+		return this;
+	}
+
+	@Override
 	public LspClient build() {
-		NettyTcpClientLspClient nettyTcpClientLspClient = new NettyTcpClientLspClient(host, port);
-//		nettyTcpClientLspClient.init();
-		return nettyTcpClientLspClient;
+		return new NettyTcpClientLspClient(host, port, function, processor);
 	}
 
 }

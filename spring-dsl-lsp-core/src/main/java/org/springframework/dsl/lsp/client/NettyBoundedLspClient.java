@@ -45,6 +45,16 @@ public class NettyBoundedLspClient implements LspClient {
 	}
 
 	@Override
+	public void start() {
+		// no-op
+	}
+
+	@Override
+	public void stop() {
+		// no-op
+	}
+
+	@Override
 	public RequestSpec request() {
 		return new DefaultRequestSpec();
 	}

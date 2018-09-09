@@ -15,9 +15,15 @@
  */
 package org.springframework.dsl.lsp.client;
 
+import java.util.function.BiFunction;
+
+import org.reactivestreams.Processor;
 import org.springframework.dsl.jsonrpc.JsonRpcResponse;
 
+import io.netty.buffer.ByteBuf;
 import reactor.core.publisher.Mono;
+import reactor.ipc.netty.NettyInbound;
+import reactor.ipc.netty.NettyOutbound;
 
 /**
  * A non-blocking, reactive client for performing {@code LSP} related
@@ -27,6 +33,20 @@ import reactor.core.publisher.Mono;
  *
  */
 public interface LspClient {
+
+	/**
+	 * Starts the lsp client. Calling this method on an already started client has
+	 * no effect. Some client implementations may discard this method if there is
+	 * nothing to start.
+	 */
+	void start();
+
+	/**
+	 * Stops the lsp client. Calling this method on an already stopped client has no
+	 * effect. Some client implementations may discard this method if there is
+	 * nothing to stop.
+	 */
+	void stop();
 
 	/**
 	 * Prepare a {@code JSONRCP} request.
@@ -64,6 +84,10 @@ public interface LspClient {
 		 * @return the builder
 		 */
 		Builder port(Integer port);
+
+		Builder function(BiFunction<NettyInbound, NettyOutbound, Mono<Void>> function);
+		Builder processor(Processor<ByteBuf, JsonRpcResponse> processor);
+
 
 		/**
 		 * Builds the {@link LspClient}.

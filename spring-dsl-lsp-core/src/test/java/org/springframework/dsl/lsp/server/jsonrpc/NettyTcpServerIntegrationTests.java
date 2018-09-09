@@ -44,7 +44,6 @@ import org.springframework.dsl.jsonrpc.session.JsonRpcSession;
 import org.springframework.dsl.jsonrpc.support.DispatcherJsonRpcHandler;
 import org.springframework.dsl.lsp.client.ClientReactorJsonRpcHandlerAdapter;
 import org.springframework.dsl.lsp.client.LspClient;
-import org.springframework.dsl.lsp.client.NettyTcpClientLspClient;
 import org.springframework.dsl.lsp.server.config.LspDomainJacksonConfiguration;
 
 import io.netty.buffer.Unpooled;
@@ -545,9 +544,13 @@ public class NettyTcpServerIntegrationTests {
 		CountDownLatch dataLatch = new CountDownLatch(1);
 		final List<JsonRpcResponse> responses = new ArrayList<>();
 
-		LspClient lspClient = LspClient.builder().host("0.0.0.0").port(server.getPort()).build();
-		((NettyTcpClientLspClient)lspClient).adapter = xxx;
-		((NettyTcpClientLspClient)lspClient).init();
+		LspClient lspClient = LspClient.builder()
+				.host("0.0.0.0")
+				.port(server.getPort())
+				.function(xxx)
+				.processor(xxx)
+				.build();
+		lspClient.start();
 
 		Mono<JsonRpcResponse> lspClientResponseMono = lspClient.request().id(1).method("methodparams").params("hi").exchange();
 		lspClientResponseMono.doOnNext(r -> {
@@ -576,9 +579,14 @@ public class NettyTcpServerIntegrationTests {
 		CountDownLatch dataLatch = new CountDownLatch(1);
 		final List<JsonRpcResponse> responses = new ArrayList<>();
 
-		LspClient lspClient = LspClient.builder().host("0.0.0.0").port(server.getPort()).build();
-		((NettyTcpClientLspClient)lspClient).adapter = xxx;
-		((NettyTcpClientLspClient)lspClient).init();
+		LspClient lspClient = LspClient.builder()
+				.host("0.0.0.0")
+				.port(server.getPort())
+				.function(xxx)
+				.processor(xxx)
+				.build();
+		lspClient.start();
+
 		Mono<JsonRpcResponse> lspClientResponseMono = lspClient.request().id(1).method("serverhi").exchange();
 		lspClientResponseMono.doOnNext(r -> {
 			responses.add(r);

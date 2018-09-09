@@ -91,10 +91,8 @@ public class LspNettySocketLspServerIntegrationTests extends AbstractLspIntegrat
 
 	@Override
 	protected void onClientContext(ConfigurableApplicationContext context) {
-		ClientReactorJsonRpcHandlerAdapter xxx1 = context.getBean(ClientReactorJsonRpcHandlerAdapter.class);
-		NettyTcpClientLspClient xxx2 = new NettyTcpClientLspClient("0.0.0.0", server.getPort());
-		xxx2.adapter = xxx1;
-		xxx2.init();
-		client = xxx2;
+		ClientReactorJsonRpcHandlerAdapter adapter = context.getBean(ClientReactorJsonRpcHandlerAdapter.class);
+		client = new NettyTcpClientLspClient("0.0.0.0", server.getPort(), adapter, adapter);
+		client.start();
 	}
 }

@@ -21,6 +21,9 @@ import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import org.reactivestreams.Processor;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.buffer.DataBuffer;
@@ -57,15 +60,46 @@ import reactor.ipc.netty.NettyPipeline;
  * @author Janne Valkealahti
  *
  */
-public class ClientReactorJsonRpcHandlerAdapter implements BiFunction<NettyInbound, NettyOutbound, Mono<Void>> {
+public class ClientReactorJsonRpcHandlerAdapter
+		implements BiFunction<NettyInbound, NettyOutbound, Mono<Void>>, Processor<ByteBuf, JsonRpcResponse> {
 
 	private static final Logger log = LoggerFactory.getLogger(ClientReactorJsonRpcHandlerAdapter.class);
 	private final RpcHandler rpcHandler;
-	public EmitterProcessor<JsonRpcResponse> responses = EmitterProcessor.create();
-	public EmitterProcessor<ByteBuf> requests = EmitterProcessor.create();
+	private final EmitterProcessor<ByteBuf> requests = EmitterProcessor.create();
+	private final EmitterProcessor<JsonRpcResponse> responses = EmitterProcessor.create();
 
+	/**
+	 * Instantiates a new client reactor json rpc handler adapter.
+	 *
+	 * @param rpcHandler the rpc handler
+	 */
 	public ClientReactorJsonRpcHandlerAdapter(RpcHandler rpcHandler) {
 		this.rpcHandler = rpcHandler;
+	}
+
+	@Override
+	public void onSubscribe(Subscription s) {
+		requests.onSubscribe(s);
+	}
+
+	@Override
+	public void onNext(ByteBuf t) {
+		requests.onNext(t);
+	}
+
+	@Override
+	public void onError(Throwable t) {
+		requests.onError(t);
+	}
+
+	@Override
+	public void onComplete() {
+		requests.onComplete();
+	}
+
+	@Override
+	public void subscribe(Subscriber<? super JsonRpcResponse> s) {
+		responses.subscribe(s);
 	}
 
 	@Override

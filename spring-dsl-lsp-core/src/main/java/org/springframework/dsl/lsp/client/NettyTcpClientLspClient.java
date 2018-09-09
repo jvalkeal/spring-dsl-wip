@@ -15,6 +15,11 @@
  */
 package org.springframework.dsl.lsp.client;
 
+import java.util.function.BiFunction;
+
+import org.reactivestreams.Processor;
+import org.reactivestreams.Publisher;
+import org.reactivestreams.Subscriber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dsl.jsonrpc.JsonRpcRequest;
@@ -28,9 +33,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
+import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.ipc.netty.NettyInbound;
+import reactor.ipc.netty.NettyOutbound;
+import reactor.ipc.netty.tcp.BlockingNettyContext;
 import reactor.ipc.netty.tcp.TcpClient;
 
 /**
@@ -42,52 +51,50 @@ import reactor.ipc.netty.tcp.TcpClient;
 public class NettyTcpClientLspClient implements LspClient {
 
 	private static final Logger log = LoggerFactory.getLogger(NettyTcpClientLspClient.class);
-
-//	private EmitterProcessor<ByteBuf> requests = EmitterProcessor.create();
-//	private EmitterProcessor<String> responses = EmitterProcessor.create();
 	private final String host;
 	private final Integer port;
-	public ClientReactorJsonRpcHandlerAdapter adapter;
+	private BlockingNettyContext blockingNettyContext;
+	private BiFunction<NettyInbound, NettyOutbound, Mono<Void>> function;
+	private Processor<ByteBuf, JsonRpcResponse> processor;
 
-	public NettyTcpClientLspClient(String host, int port) {
+	/**
+	 * Instantiates a new netty tcp client lsp client.
+	 *
+	 * @param host the host
+	 * @param port the port
+	 * @param function the function
+	 * @param processor the processor
+	 */
+	public NettyTcpClientLspClient(String host, int port, BiFunction<NettyInbound, NettyOutbound, Mono<Void>> function,
+			Processor<ByteBuf, JsonRpcResponse> processor) {
 		this.host = host;
 		this.port = port;
+		this.function = function;
+		this.processor = processor;
 	}
 
-//	public Mono<String> sendReceive(String request) {
-//		requests.onNext(Unpooled.copiedBuffer(request.getBytes()));
-//		return Mono.from(responses);
-//	}
+	@Override
+	public void start() {
+		if (blockingNettyContext == null) {
+			init();
+		}
+	}
 
-	public void init() {
-
-		TcpClient.create(host, port)
-			.start(adapter);
-
-//		TcpClient.create(host, port)
-//			.newHandler((in, out) -> {
-//
-//				in.context().addHandlerLast(new LspJsonRpcDecoder());
-//				out.context().addHandlerLast(new LspJsonRpcEncoder());
-//
-//				in.receiveObject()
-//					.log()
-//					.ofType(String.class)
-//					.subscribe(responses);
-//
-//				requests.doOnNext(bb -> {
-//					out.sendObject(bb).then().subscribe();
-//				}).subscribe();
-//
-//				return out.neverComplete();
-//			})
-//			.block();
-
+	@Override
+	public void stop() {
+		if (blockingNettyContext != null) {
+			blockingNettyContext.shutdown();
+		}
+		blockingNettyContext = null;
 	}
 
 	@Override
 	public RequestSpec request() {
-		return new DefaultRequestSpec(new DefaultExchangeFunction(/*requests, responses*/));
+		return new DefaultRequestSpec(new DefaultExchangeFunction(processor, processor));
+	}
+
+	private void init() {
+		blockingNettyContext = TcpClient.create(host, port).start(function);
 	}
 
 	private static class DefaultRequestSpec implements RequestSpec {
@@ -121,23 +128,20 @@ public class NettyTcpClientLspClient implements LspClient {
 
 		@Override
 		public Mono<JsonRpcResponse> exchange() {
-
 			JsonRpcRequest request = new DefaultJsonRpcRequest(id, method, params);
-
 			return exchangeFunction.exchange(request);
 		}
-
 	}
 
 	private class DefaultExchangeFunction implements ExchangeFunction {
 
-//		Subscriber<ByteBuf> requests;
-//		Publisher<String> responses;
+		final Subscriber<ByteBuf> requests;
+		final Publisher<JsonRpcResponse> responses;
 		ObjectMapper mapper;
 
-		public DefaultExchangeFunction(/*Subscriber<ByteBuf> requests, Publisher<String> responses*/) {
-//			this.requests = requests;
-//			this.responses = responses;
+		public DefaultExchangeFunction(Subscriber<ByteBuf> requests, Publisher<JsonRpcResponse> responses) {
+			this.requests = requests;
+			this.responses = responses;
 
 			SimpleModule module = new SimpleModule();
 			module.addDeserializer(DefaultJsonRpcResponse.class, new DefaultJsonRpcResponseJsonDeserializer());
@@ -156,15 +160,12 @@ public class NettyTcpClientLspClient implements LspClient {
 						log.error("Mapper error", e);
 						throw new RuntimeException(e);
 					}
-					// Subscriber
-					adapter.requests.onNext(Unpooled.copiedBuffer(r.getBytes()));
+					requests.onNext(Unpooled.copiedBuffer(r.getBytes()));
 					return Mono.empty();
 				})
-				// Publisher
-				.then(Mono.from(Flux.from(adapter.responses).filter(r -> {
+				.then(Mono.from(Flux.from(responses).filter(r -> {
 					return ObjectUtils.nullSafeEquals(r.getId(), request.getId());
 				})));
 		}
-
 	}
 }
