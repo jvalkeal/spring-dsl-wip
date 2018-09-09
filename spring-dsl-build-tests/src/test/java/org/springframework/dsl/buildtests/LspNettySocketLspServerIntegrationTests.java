@@ -22,11 +22,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.dsl.autoconfigure.DslAutoConfiguration;
-import org.springframework.dsl.autoconfigure.LspServerAutoConfiguration;
 import org.springframework.dsl.autoconfigure.LspClientAutoConfiguration;
+import org.springframework.dsl.autoconfigure.LspServerAutoConfiguration;
 import org.springframework.dsl.domain.InitializeParams;
 import org.springframework.dsl.jsonrpc.JsonRpcResponse;
-import org.springframework.dsl.jsonrpc.config.EnableJsonRpc;
 import org.springframework.dsl.lsp.client.ClientReactorJsonRpcHandlerAdapter;
 import org.springframework.dsl.lsp.client.NettyTcpClientLspClient;
 import org.springframework.dsl.lsp.server.jsonrpc.NettyTcpServer;
@@ -63,13 +62,14 @@ public class LspNettySocketLspServerIntegrationTests extends AbstractLspIntegrat
 				.params(initializeParams)
 				.exchange().block();
 		assertThat(response).isNotNull();
+		assertThat(response.getError()).isNull();
 		assertThat(response.getResult()).contains("textDocumentSync");
 	}
 
 	@Override
 	protected ConfigurableApplicationContext buildServerContext() {
 		SpringApplicationBuilder builder = new SpringApplicationBuilder(DslAutoConfiguration.class,
-				LspServerAutoConfiguration.class, Config1.class);
+				LspServerAutoConfiguration.class);
 		SpringApplication springApplication = builder.build();
 		return springApplication.run("--spring.dsl.lsp.server.mode=SOCKET",
 				"--logging.level.org.springframework.dsl=trace", "--logging.level.reactor.ipc.netty.tcp=debug");
@@ -78,7 +78,7 @@ public class LspNettySocketLspServerIntegrationTests extends AbstractLspIntegrat
 	@Override
 	protected ConfigurableApplicationContext buildClientContext() {
 		SpringApplicationBuilder builder = new SpringApplicationBuilder(DslAutoConfiguration.class,
-				LspClientAutoConfiguration.class, Config1.class);
+				LspClientAutoConfiguration.class);
 		SpringApplication springApplication = builder.build();
 		return springApplication.run("--spring.dsl.lsp.client.mode=SOCKET",
 				"--logging.level.org.springframework.dsl=trace", "--logging.level.reactor.ipc.netty.tcp=debug", "--logging.level.root=debug");
@@ -96,9 +96,5 @@ public class LspNettySocketLspServerIntegrationTests extends AbstractLspIntegrat
 		xxx2.adapter = xxx1;
 		xxx2.init();
 		client = xxx2;
-	}
-
-	@EnableJsonRpc
-	private static class Config1 {
 	}
 }

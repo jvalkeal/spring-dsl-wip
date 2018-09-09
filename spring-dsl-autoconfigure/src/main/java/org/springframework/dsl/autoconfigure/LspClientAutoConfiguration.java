@@ -19,8 +19,12 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.core.ReactiveAdapterRegistry;
 import org.springframework.dsl.jsonrpc.support.DispatcherJsonRpcHandler;
 import org.springframework.dsl.lsp.client.ClientReactorJsonRpcHandlerAdapter;
+import org.springframework.dsl.lsp.client.config.EnableLanguageClient;
+import org.springframework.dsl.lsp.server.config.LspDomainJacksonConfiguration;
 import org.springframework.dsl.lsp.server.jsonrpc.ReactorJsonRpcHandlerAdapter;
 import org.springframework.dsl.lsp.server.jsonrpc.RpcHandler;
 import org.springframework.dsl.lsp.server.jsonrpc.RpcJsonRpcHandlerAdapter;
@@ -33,7 +37,14 @@ import org.springframework.dsl.lsp.server.jsonrpc.RpcJsonRpcHandlerAdapter;
  */
 @Configuration
 @ConditionalOnProperty(prefix = "spring.dsl.lsp.client", name = "mode")
+@EnableLanguageClient
+@Import({ LspDomainJacksonConfiguration.class })
 public class LspClientAutoConfiguration {
+
+	@Bean
+	public ReactiveAdapterRegistry jsonRpcAdapterRegistry() {
+		return new ReactiveAdapterRegistry();
+	}
 
 	@Bean
 	public DispatcherJsonRpcHandler dispatcherJsonRpcHandler() {
