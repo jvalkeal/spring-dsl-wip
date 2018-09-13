@@ -13,30 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.reconcile;
+package org.springframework.dsl.service.reconcile;
+
+import org.springframework.dsl.domain.Range;
 
 /**
- * {@code ProblemType} represents type of a problem in a
- * {@link ReconcileProblem}. {@code ProblemType} usually have its severity and
- * possible {@code code} associated with it.
+ * Minimal interface that objects representing a reconciler problem must
+ * implement.
  *
  * @author Kris De Volder
  * @author Janne Valkealahti
  *
  */
-public interface ProblemType {
+public interface ReconcileProblem {
 
 	/**
-	 * Gets the severity.
+	 * Gets the type.
 	 *
-	 * @return the severity
+	 * @return the type
 	 */
-	ProblemSeverity getSeverity();
+	ProblemType getType();
 
 	/**
-	 * Gets the code.
+	 * Gets the message.
 	 *
-	 * @return the code
+	 * @return the message
 	 */
-	String getCode();
+	String getMessage();
+
+	/**
+	 * Gets the range.
+	 *
+	 * @return the range
+	 */
+	Range getRange();
 }

@@ -13,42 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.reconcile;
-
-import org.springframework.dsl.domain.DiagnosticSeverity;
+package org.springframework.dsl.service.reconcile;
 
 /**
- * Enumeration for a problem severities. Mostly just mapping to {@code LSP}'s
- * {@link DiagnosticSeverity} but having extra {@code IGNORE} type.
+ * {@code ProblemType} represents type of a problem in a
+ * {@link ReconcileProblem}. {@code ProblemType} usually have its severity and
+ * possible {@code code} associated with it.
  *
  * @author Kris De Volder
  * @author Janne Valkealahti
  *
  */
-public enum ProblemSeverity {
+public interface ProblemType {
 
 	/**
-	 * Problem is ignored.
+	 * Gets the severity.
+	 *
+	 * @return the severity
 	 */
-	IGNORE,
+	ProblemSeverity getSeverity();
 
 	/**
-	 * Problem on info level.
+	 * Gets the code.
+	 *
+	 * @return the code
 	 */
-	INFO,
-
-	/**
-	 * Problem on warning level.
-	 */
-	WARNING,
-
-	/**
-	 * Problem on hint level.
-	 */
-	HINT,
-
-	/**
-	 * Problem on error level.
-	 */
-	ERROR;
+	String getCode();
 }

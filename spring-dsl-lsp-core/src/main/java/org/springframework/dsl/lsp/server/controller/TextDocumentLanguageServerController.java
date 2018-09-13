@@ -41,11 +41,11 @@ import org.springframework.dsl.jsonrpc.annotation.JsonRpcRequestMapping;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcResponseBody;
 import org.springframework.dsl.jsonrpc.session.JsonRpcSession;
 import org.springframework.dsl.lsp.server.LspServerSystemConstants;
-import org.springframework.dsl.reconcile.Reconciler;
 import org.springframework.dsl.service.Completioner;
 import org.springframework.dsl.service.DocumentStateTracker;
 import org.springframework.dsl.service.DslServiceRegistry;
 import org.springframework.dsl.service.Hoverer;
+import org.springframework.dsl.service.reconcile.Reconciler;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;

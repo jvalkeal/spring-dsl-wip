@@ -16,8 +16,8 @@
 package org.springframework.dsl.lsp.server.support;
 
 import org.springframework.dsl.domain.Range;
-import org.springframework.dsl.reconcile.ProblemType;
-import org.springframework.dsl.reconcile.ReconcileProblem;
+import org.springframework.dsl.service.reconcile.ProblemType;
+import org.springframework.dsl.service.reconcile.ReconcileProblem;
 
 /**
  * Default implementation of a {@link ReconcileProblem}.

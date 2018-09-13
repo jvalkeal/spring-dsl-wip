@@ -17,7 +17,7 @@ package org.springframework.dsl.antlr;
 
 import java.util.List;
 
-import org.springframework.dsl.reconcile.ReconcileProblem;
+import org.springframework.dsl.service.reconcile.ReconcileProblem;
 import org.springframework.dsl.symboltable.SymbolTable;
 
 /**

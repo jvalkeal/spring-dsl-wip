@@ -13,38 +13,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.reconcile;
+package org.springframework.dsl.service.reconcile;
 
-import org.springframework.dsl.domain.Range;
+import org.springframework.dsl.domain.DiagnosticSeverity;
 
 /**
- * Minimal interface that objects representing a reconciler problem must
- * implement.
+ * Enumeration for a problem severities. Mostly just mapping to {@code LSP}'s
+ * {@link DiagnosticSeverity} but having extra {@code IGNORE} type.
  *
  * @author Kris De Volder
  * @author Janne Valkealahti
  *
  */
-public interface ReconcileProblem {
+public enum ProblemSeverity {
 
 	/**
-	 * Gets the type.
-	 *
-	 * @return the type
+	 * Problem is ignored.
 	 */
-	ProblemType getType();
+	IGNORE,
 
 	/**
-	 * Gets the message.
-	 *
-	 * @return the message
+	 * Problem on info level.
 	 */
-	String getMessage();
+	INFO,
 
 	/**
-	 * Gets the range.
-	 *
-	 * @return the range
+	 * Problem on warning level.
 	 */
-	Range getRange();
+	WARNING,
+
+	/**
+	 * Problem on hint level.
+	 */
+	HINT,
+
+	/**
+	 * Problem on error level.
+	 */
+	ERROR;
 }

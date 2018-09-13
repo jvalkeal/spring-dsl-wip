@@ -25,7 +25,7 @@ import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.dsl.model.LanguageId;
-import org.springframework.dsl.reconcile.Reconciler;
+import org.springframework.dsl.service.reconcile.Reconciler;
 
 /**
  * Default implementation of a {@link DslServiceRegistry} which resolves

@@ -25,7 +25,7 @@ import org.junit.Test;
 import org.springframework.dsl.document.Document;
 import org.springframework.dsl.document.TextDocument;
 import org.springframework.dsl.model.LanguageId;
-import org.springframework.dsl.reconcile.ReconcileProblem;
+import org.springframework.dsl.service.reconcile.ReconcileProblem;
 
 /**
  * Tests for {@link WordcheckLanguageLinter}.

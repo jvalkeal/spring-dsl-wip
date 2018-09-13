@@ -16,8 +16,8 @@
 package org.springframework.dsl.docs;
 
 import org.springframework.dsl.document.Document;
-import org.springframework.dsl.reconcile.Linter;
-import org.springframework.dsl.reconcile.ReconcileProblem;
+import org.springframework.dsl.service.reconcile.Linter;
+import org.springframework.dsl.service.reconcile.ReconcileProblem;
 
 import reactor.core.publisher.Flux;
 

@@ -17,9 +17,9 @@ package demo.simpledsl;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.dsl.reconcile.Linter;
 import org.springframework.dsl.service.Completioner;
 import org.springframework.dsl.service.Hoverer;
+import org.springframework.dsl.service.reconcile.Linter;
 
 /**
  * Configuration for a {@code simple} sample language supporting

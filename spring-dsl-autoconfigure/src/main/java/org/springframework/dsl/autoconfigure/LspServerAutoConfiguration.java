@@ -41,9 +41,9 @@ import org.springframework.dsl.lsp.server.controller.TextDocumentLanguageServerC
 import org.springframework.dsl.lsp.server.jsonrpc.LspClientArgumentResolver;
 import org.springframework.dsl.lsp.server.jsonrpc.LspDomainArgumentResolver;
 import org.springframework.dsl.lsp.server.websocket.LspWebSocketConfig;
-import org.springframework.dsl.reconcile.DefaultReconciler;
-import org.springframework.dsl.reconcile.Linter;
-import org.springframework.dsl.reconcile.Reconciler;
+import org.springframework.dsl.service.reconcile.DefaultReconciler;
+import org.springframework.dsl.service.reconcile.Linter;
+import org.springframework.dsl.service.reconcile.Reconciler;
 import org.springframework.web.reactive.socket.WebSocketHandler;
 
 /**

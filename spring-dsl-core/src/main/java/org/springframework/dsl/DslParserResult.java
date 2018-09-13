@@ -17,7 +17,7 @@ package org.springframework.dsl;
 
 import java.util.List;
 
-import org.springframework.dsl.reconcile.ReconcileProblem;
+import org.springframework.dsl.service.reconcile.ReconcileProblem;
 
 /**
  * Generic interface for a {@code parser} to return a result.

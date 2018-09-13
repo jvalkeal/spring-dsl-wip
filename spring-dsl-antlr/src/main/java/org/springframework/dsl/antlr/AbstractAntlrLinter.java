@@ -19,8 +19,8 @@ import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Parser;
 import org.springframework.dsl.antlr.support.AntlrObjectSupport;
 import org.springframework.dsl.document.Document;
-import org.springframework.dsl.reconcile.Linter;
-import org.springframework.dsl.reconcile.ReconcileProblem;
+import org.springframework.dsl.service.reconcile.Linter;
+import org.springframework.dsl.service.reconcile.ReconcileProblem;
 
 import reactor.core.publisher.Flux;
 

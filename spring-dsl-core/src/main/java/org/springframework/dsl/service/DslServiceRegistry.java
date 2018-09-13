@@ -18,7 +18,7 @@ package org.springframework.dsl.service;
 import java.util.List;
 
 import org.springframework.dsl.model.LanguageId;
-import org.springframework.dsl.reconcile.Reconciler;
+import org.springframework.dsl.service.reconcile.Reconciler;
 
 /**
  * A generic registry for services which can be requested by a {@link LanguageId}.

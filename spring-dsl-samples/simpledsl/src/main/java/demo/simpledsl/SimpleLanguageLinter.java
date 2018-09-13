@@ -21,11 +21,11 @@ import java.util.List;
 
 import org.springframework.dsl.document.Document;
 import org.springframework.dsl.lsp.server.support.DefaultReconcileProblem;
-import org.springframework.dsl.reconcile.Linter;
-import org.springframework.dsl.reconcile.ProblemSeverity;
-import org.springframework.dsl.reconcile.ProblemType;
-import org.springframework.dsl.reconcile.ReconcileProblem;
 import org.springframework.dsl.service.AbstractDslService;
+import org.springframework.dsl.service.reconcile.Linter;
+import org.springframework.dsl.service.reconcile.ProblemSeverity;
+import org.springframework.dsl.service.reconcile.ProblemType;
+import org.springframework.dsl.service.reconcile.ReconcileProblem;
 
 import demo.simpledsl.SimpleLanguage.Line;
 import demo.simpledsl.SimpleLanguage.Token;
