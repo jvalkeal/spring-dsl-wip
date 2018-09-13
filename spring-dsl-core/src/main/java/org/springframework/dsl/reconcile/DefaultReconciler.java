@@ -25,7 +25,6 @@ import org.springframework.dsl.document.Document;
 import org.springframework.dsl.domain.Diagnostic;
 import org.springframework.dsl.domain.DiagnosticSeverity;
 import org.springframework.dsl.domain.PublishDiagnosticsParams;
-import org.springframework.dsl.service.Reconciler;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;

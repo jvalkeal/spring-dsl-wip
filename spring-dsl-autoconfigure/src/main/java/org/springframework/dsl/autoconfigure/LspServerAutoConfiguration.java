@@ -43,7 +43,7 @@ import org.springframework.dsl.lsp.server.jsonrpc.LspDomainArgumentResolver;
 import org.springframework.dsl.lsp.server.websocket.LspWebSocketConfig;
 import org.springframework.dsl.reconcile.DefaultReconciler;
 import org.springframework.dsl.reconcile.Linter;
-import org.springframework.dsl.service.Reconciler;
+import org.springframework.dsl.reconcile.Reconciler;
 import org.springframework.web.reactive.socket.WebSocketHandler;
 
 /**

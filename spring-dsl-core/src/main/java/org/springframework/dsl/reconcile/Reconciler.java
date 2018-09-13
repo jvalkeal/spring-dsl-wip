@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.service;
+package org.springframework.dsl.reconcile;
 
 import org.springframework.dsl.document.Document;
 import org.springframework.dsl.domain.PublishDiagnosticsParams;
@@ -22,11 +22,15 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
- * Strategy interface for reconciling a {@code document}.
+ * Strategy interface for reconciling a {@code Document}. This interface is more
+ * aligned with {@code LSP} protocol as it returns
+ * {@link PublishDiagnosticsParams}. While not required but most likely actual
+ * implementation will use {@link Linter}.
  *
  * @author Kris De Volder
  * @author Janne Valkealahti
  *
+ * @see Linter
  */
 public interface Reconciler {
 
