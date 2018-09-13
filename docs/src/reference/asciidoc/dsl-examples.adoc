@@ -20,3 +20,42 @@ connections.
 === UI Editor
 _UI Editor_ is and example using websockets for a transport.
 
+== Wordcheck Language
+_Wordcheck Language_ is a language recognizing words from a given
+text and checking those words against legal allowed words.
+
+[source,java,indent=0]
+----
+include::samples/demo/wordcheckdsl/EnableWordcheckLanguage.java[tags=snippet1]
+----
+
+[source,java,indent=0]
+----
+include::samples/demo/wordcheckdsl/WordcheckLanguageLinter.java[tags=snippet1]
+----
+
+[source,java,indent=0]
+----
+include::samples/demo/wordcheckdsl/WordcheckLanguageCompletioner.java[tags=snippet1]
+----
+
+=== UI Editor
+_UI Editor_ is and example using websockets for a transport.
+
+[source,java,indent=0]
+----
+include::samples/demo/wordcheckdsleditor/Application.java[tags=snippet1]
+----
+
+[NOTE]
+====
+`SampleRedirectConfiguration` simply defines a bean to redirect request from
+root path to `index.html` as _Spring Boot_ doesn't do this automatically for
+_WebFlux_ as it does for _Servlet_ environment.
+====
+
+[source,yaml,indent=0]
+----
+include::samples/wordcheckdsleditor/src/main/resources/application.yml[tags=snippet1]
+----
+

@@ -4,7 +4,7 @@ Base interface for _reconciliation_ is a _Linter_ which implements a method show
 
 [source,java,indent=0]
 ----
-include::samples/src/test/java/org/springframework/dsl/docs/ReconcileDocs.java[tags=snippet1]
+include::samples/org/springframework/dsl/docs/ReconcileDocs.java[tags=snippet1]
 ----
 
 [NOTE]

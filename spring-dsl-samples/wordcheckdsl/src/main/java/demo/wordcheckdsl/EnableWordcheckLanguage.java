@@ -32,6 +32,7 @@ import org.springframework.context.annotation.Import;
  * @author Kris De Volder
  *
  */
+//tag::snippet1[]
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Documented
@@ -39,3 +40,4 @@ import org.springframework.context.annotation.Import;
 @EnableConfigurationProperties(WordcheckProperties.class)
 public @interface EnableWordcheckLanguage {
 }
+//end::snippet1[]

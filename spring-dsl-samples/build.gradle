@@ -46,6 +46,7 @@ project('spring-dsl-samples-simpledsleditor') {
 	description = 'Spring Dsl Simple Editor Sample'
 	
 	dependencies {
+		compile project(':spring-dsl-samples-common')
 		compile project(':spring-dsl-lsp-core')
 		compile project(':spring-dsl-websocket')
 		compile project(':spring-dsl-autoconfigure')
@@ -127,6 +128,7 @@ project('spring-dsl-samples-wordcheckdsleditor') {
 	description = 'Spring Dsl Wordcheck Editor Sample'
 	
 	dependencies {
+		compile project(':spring-dsl-samples-common')
 		compile project(':spring-dsl-lsp-core')
 		compile project(':spring-dsl-websocket')
 		compile project(':spring-dsl-autoconfigure')

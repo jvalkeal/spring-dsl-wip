@@ -2,5 +2,6 @@
 
 == Spring Boot Auto Configuration
 _Spring Dsl_ is currently not managed by a _Spring Boot_, thus we have our
-own `Auto-Configuration` module.
+own `Auto-Configuration` module. `Auto-Configuration` greatly simplifies
+cases where _Language Services_ needs to be created.
 

@@ -307,6 +307,7 @@ project('spring-dsl-samples-common') {
 	dependencies {
 		compile project(':spring-dsl-core')
 		compile 'org.springframework.boot:spring-boot-starter'
+		optional 'org.springframework:spring-web'
 	}
 }
 
@@ -367,16 +368,37 @@ configure(rootProject) {
 			revnumber : project.version
 	}
 
-	task copyDocsSamples(type: Copy) {
-		from 'spring-dsl-core'
-		from 'spring-dsl-jsonrpc'
-		include '**/src/test/**/docs/*.java'
-		into 'docs/src/reference/asciidoc/samples'
+	task copyDocsSamples(/*type: Copy*/) {
 
-		from 'spring-dsl-samples'
-		include '**/src/main/**/*.java'
-		include '**/src/main/**/*.yml'
-		into 'docs/src/reference/asciidoc/samples'
+        copy {
+            from 'spring-dsl-core/src/test/java'
+            from 'spring-dsl-jsonrpc/src/test/java'
+		    include '**/docs/*.java'
+		    into 'docs/src/reference/asciidoc/samples'
+        }
+
+        copy {
+		    from 'spring-dsl-samples/src/main/java'
+		    include '**/*.java'
+		    into 'docs/src/reference/asciidoc/samples'
+        }
+
+        copy {
+		    from 'spring-dsl-samples/simpledsleditor/src/main/java'
+		    from 'spring-dsl-samples/wordcheckdsl/src/main/java'
+		    from 'spring-dsl-samples/wordcheckdsleditor/src/main/java'
+		    include '**/*.java'
+		    into 'docs/src/reference/asciidoc/samples'
+        }
+
+        copy {
+		    from 'spring-dsl-samples'
+		    include 'src/**/*.yml'
+		    include 'simpledsleditor/src/**/*.yml'
+		    include 'wordcheckdsleditor/src/**/*.yml'
+		    into 'docs/src/reference/asciidoc/samples'
+        }
+
 	}
 
 	asciidoctor.dependsOn copyDocsSamples

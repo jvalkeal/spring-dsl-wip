@@ -34,6 +34,7 @@ import reactor.core.publisher.Mono;
  * @see EnableWordcheckLanguage
  *
  */
+//tag::snippet1[]
 public class WordcheckLanguageCompletioner extends WordcheckLanguageSupport implements Completioner {
 
 	@Override
@@ -57,3 +58,4 @@ public class WordcheckLanguageCompletioner extends WordcheckLanguageSupport impl
 			});
 	}
 }
+//end::snippet1[]

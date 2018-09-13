@@ -21,7 +21,7 @@ _JSONRPC_ request having method defined as _hi_.
 
 [source,java,indent=0]
 ----
-include::samples/src/test/java/org/springframework/dsl/jsonrpc/docs/ControllerDocs.java[tags=snippet1]
+include::samples/org/springframework/dsl/jsonrpc/docs/ControllerDocs.java[tags=snippet1]
 ----
 
 If same controller is used to handle same subset of _JSONRPC_ requests, class itself can also
@@ -30,7 +30,7 @@ For example in a below sample _hi_ method would be actually mapped to _prefix/hi
 
 [source,java,indent=0]
 ----
-include::samples/src/test/java/org/springframework/dsl/jsonrpc/docs/ControllerDocs.java[tags=snippet2]
+include::samples/org/springframework/dsl/jsonrpc/docs/ControllerDocs.java[tags=snippet2]
 ----
 
 You can also return any other reactive type similarly as it is possible in
@@ -38,6 +38,6 @@ a _Spring WebFlux_.
 
 [source,java,indent=0]
 ----
-include::samples/src/test/java/org/springframework/dsl/jsonrpc/docs/ControllerDocs.java[tags=snippet3]
+include::samples/org/springframework/dsl/jsonrpc/docs/ControllerDocs.java[tags=snippet3]
 ----
 

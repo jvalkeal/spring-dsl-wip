@@ -7,7 +7,7 @@ defined it like:
 
 [source,java,indent=0]
 ----
-include::samples/src/test/java/org/springframework/dsl/docs/CoreDocs.java[tags=snippet1]
+include::samples/org/springframework/dsl/docs/CoreDocs.java[tags=snippet1]
 ----
 
 First time one is about to use `LanguageId` is with <<dsl-core-dslservice>>.

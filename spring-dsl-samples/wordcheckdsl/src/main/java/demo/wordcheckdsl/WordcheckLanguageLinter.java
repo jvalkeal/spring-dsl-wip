@@ -35,6 +35,7 @@ import reactor.core.publisher.Flux;
  * @see EnableWordcheckLanguage
  *
  */
+//tag::snippet1[]
 public class WordcheckLanguageLinter extends WordcheckLanguageSupport implements Linter {
 
 	private static final Pattern SPACE = Pattern.compile("[^\\w]+");
@@ -64,3 +65,4 @@ public class WordcheckLanguageLinter extends WordcheckLanguageSupport implements
 		}
 	};
 }
+//end::snippet1[]

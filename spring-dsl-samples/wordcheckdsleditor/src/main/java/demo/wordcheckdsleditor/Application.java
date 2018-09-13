@@ -17,13 +17,10 @@ package demo.wordcheckdsleditor;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.stereotype.Component;
-import org.springframework.web.server.ServerWebExchange;
-import org.springframework.web.server.WebFilter;
-import org.springframework.web.server.WebFilterChain;
+import org.springframework.context.annotation.Import;
 
+import demo.common.SampleRedirectConfiguration;
 import demo.wordcheckdsl.EnableWordcheckLanguage;
-import reactor.core.publisher.Mono;
 
 /**
  * {@code LSP} server implementing support for a {@code wordcheck} sample language.
@@ -31,24 +28,14 @@ import reactor.core.publisher.Mono;
  * @author Janne Valkealahti
  *
  */
+//tag::snippet1[]
 @EnableWordcheckLanguage
 @SpringBootApplication
+@Import(SampleRedirectConfiguration.class)
 public class Application {
-
-	// TODO: wait https://github.com/spring-projects/spring-boot/issues/9785
-	@Component
-	public class CustomWebFilter implements WebFilter {
-		@Override
-		public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-			if (exchange.getRequest().getURI().getPath().equals("/")) {
-				return chain.filter(
-						exchange.mutate().request(exchange.getRequest().mutate().path("/index.html").build()).build());
-			}
-			return chain.filter(exchange);
-		}
-	}
 
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
 	}
 }
+//end::snippet1[]
