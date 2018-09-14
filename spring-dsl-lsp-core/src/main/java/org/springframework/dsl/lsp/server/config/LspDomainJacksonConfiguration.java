@@ -17,11 +17,11 @@ package org.springframework.dsl.lsp.server.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.dsl.DslSystemConstants;
 import org.springframework.dsl.domain.DiagnosticSeverity;
 import org.springframework.dsl.domain.MarkupKind;
 import org.springframework.dsl.domain.MessageType;
 import org.springframework.dsl.domain.ServerCapabilities;
+import org.springframework.dsl.jsonrpc.jackson.JsonRpcJackson2ObjectMapperBuilderCustomizer;
 import org.springframework.dsl.lsp.server.domain.DiagnosticSeverityDeserializer;
 import org.springframework.dsl.lsp.server.domain.DiagnosticSeveritySerializer;
 import org.springframework.dsl.lsp.server.domain.MarkupKindDeserializer;
@@ -32,9 +32,7 @@ import org.springframework.dsl.lsp.server.domain.ServerCapabilitiesJsonDeseriali
 import org.springframework.dsl.lsp.server.domain.ServerCapabilitiesJsonSerializer;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 
 /**
  * Configuration for a specific LSP jackson related beans.
@@ -45,21 +43,19 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 @Configuration
 public class LspDomainJacksonConfiguration {
 
-	@Bean(name = DslSystemConstants.LSP_OBJECT_MAPPER_BEAN_NAME)
-	public ObjectMapper lspJacksonObjectMapper() {
-		SimpleModule module = new SimpleModule();
-		module.addSerializer(ServerCapabilities.class, new ServerCapabilitiesJsonSerializer());
-		module.addDeserializer(ServerCapabilities.class, new ServerCapabilitiesJsonDeserializer());
-		module.addSerializer(DiagnosticSeverity.class, new DiagnosticSeveritySerializer());
-		module.addDeserializer(DiagnosticSeverity.class, new DiagnosticSeverityDeserializer());
-		module.addSerializer(MarkupKind.class, new MarkupKindSerializer());
-		module.addDeserializer(MarkupKind.class, new MarkupKindDeserializer());
-		module.addSerializer(MessageType.class, new MessageTypeSerializer());
-		module.addDeserializer(MessageType.class, new MessageTypeDeserializer());
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.registerModule(module);
-		mapper.enable(SerializationFeature.WRITE_ENUMS_USING_INDEX);
-		mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-		return mapper;
+	@Bean
+	public JsonRpcJackson2ObjectMapperBuilderCustomizer lspJackson2ObjectMapperBuilderCustomizer() {
+		return builder -> {
+			builder.serializerByType(ServerCapabilities.class, new ServerCapabilitiesJsonSerializer());
+			builder.deserializerByType(ServerCapabilities.class, new ServerCapabilitiesJsonDeserializer());
+			builder.serializerByType(DiagnosticSeverity.class, new DiagnosticSeveritySerializer());
+			builder.deserializerByType(DiagnosticSeverity.class, new DiagnosticSeverityDeserializer());
+			builder.serializerByType(MarkupKind.class, new MarkupKindSerializer());
+			builder.deserializerByType(MarkupKind.class, new MarkupKindDeserializer());
+			builder.serializerByType(MessageType.class, new MessageTypeSerializer());
+			builder.deserializerByType(MessageType.class, new MessageTypeDeserializer());
+			builder.featuresToEnable(SerializationFeature.WRITE_ENUMS_USING_INDEX);
+			builder.serializationInclusion(JsonInclude.Include.NON_NULL);
+		};
 	}
 }

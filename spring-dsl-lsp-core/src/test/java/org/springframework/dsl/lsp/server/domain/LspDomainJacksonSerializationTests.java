@@ -49,6 +49,7 @@ import org.springframework.dsl.domain.TextDocumentClientCapabilities;
 import org.springframework.dsl.domain.TextDocumentSyncKind;
 import org.springframework.dsl.domain.TextDocumentSyncOptions;
 import org.springframework.dsl.domain.TextEdit;
+import org.springframework.dsl.jsonrpc.jackson.JsonRpcJackson2ObjectMapperBuilder;
 import org.springframework.dsl.lsp.server.config.LspDomainJacksonConfiguration;
 import org.springframework.util.StreamUtils;
 
@@ -62,7 +63,9 @@ public class LspDomainJacksonSerializationTests {
 	@Before
 	public void setup() {
 		LspDomainJacksonConfiguration configuration = new LspDomainJacksonConfiguration();
-		this.mapper = configuration.lspJacksonObjectMapper();
+		JsonRpcJackson2ObjectMapperBuilder builder = new JsonRpcJackson2ObjectMapperBuilder();
+		configuration.lspJackson2ObjectMapperBuilderCustomizer().customize(builder);
+		this.mapper = builder.build();
 	}
 
 	@After

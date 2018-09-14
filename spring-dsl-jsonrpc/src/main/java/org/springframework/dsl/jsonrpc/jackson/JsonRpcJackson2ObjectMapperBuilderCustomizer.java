@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl;
+package org.springframework.dsl.jsonrpc.jackson;
 
-/**
- * Various constants defined for a whole {@code DSL} space.
- *
- * @author Janne Valkealahti
- *
- */
-public final class DslSystemConstants {
+@FunctionalInterface
+public interface JsonRpcJackson2ObjectMapperBuilderCustomizer {
+
+	/**
+	 * Customize the Jackson2ObjectMapperBuilder.
+	 *
+	 * @param builder the builder to customize
+	 */
+	void customize(JsonRpcJackson2ObjectMapperBuilder builder);
 }

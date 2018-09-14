@@ -40,6 +40,7 @@ import org.springframework.dsl.jsonrpc.annotation.JsonRpcNotification;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcRequestMapping;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcResponseBody;
 import org.springframework.dsl.jsonrpc.config.EnableJsonRpc;
+import org.springframework.dsl.jsonrpc.config.JsonRpcJacksonConfiguration;
 import org.springframework.dsl.jsonrpc.session.JsonRpcSession;
 import org.springframework.dsl.jsonrpc.support.DispatcherJsonRpcHandler;
 import org.springframework.dsl.lsp.client.ClientReactorJsonRpcHandlerAdapter;
@@ -648,7 +649,7 @@ public class NettyTcpServerIntegrationTests {
 	}
 
 	@EnableJsonRpc
-	@Import(LspDomainJacksonConfiguration.class)
+	@Import({ JsonRpcJacksonConfiguration.class, LspDomainJacksonConfiguration.class })
 	static class JsonRpcConfig {
 
 		@Bean

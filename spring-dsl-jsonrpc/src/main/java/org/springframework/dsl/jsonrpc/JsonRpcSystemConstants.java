@@ -13,13 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl;
+package org.springframework.dsl.jsonrpc;
 
 /**
- * Various constants defined for a whole {@code DSL} space.
+ * Various constants defined for a whole {@code JSONRPC} space.
  *
  * @author Janne Valkealahti
  *
  */
-public final class DslSystemConstants {
+public class JsonRpcSystemConstants {
+
+	/** Bean name for jsonrpc jackson object mapper */
+	public final static String JSONRPC_OBJECT_MAPPER_BEAN_NAME = "jsonRpcObjectMapper";
 }

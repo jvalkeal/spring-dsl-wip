@@ -21,7 +21,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.springframework.context.annotation.Import;
 import org.springframework.dsl.jsonrpc.config.EnableJsonRpc;
+import org.springframework.dsl.lsp.server.config.GenericLspConfiguration;
 
 /**
  * Adding this annotation to an {@code @Configuration} class enables and imports
@@ -34,5 +36,6 @@ import org.springframework.dsl.jsonrpc.config.EnableJsonRpc;
 @Target(ElementType.TYPE)
 @Documented
 @EnableJsonRpc
+@Import(GenericLspConfiguration.class)
 public @interface EnableLanguageClient {
 }

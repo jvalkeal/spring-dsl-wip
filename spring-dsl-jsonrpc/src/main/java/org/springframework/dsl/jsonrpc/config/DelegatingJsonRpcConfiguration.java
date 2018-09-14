@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.ReactiveAdapterRegistry;
+import org.springframework.dsl.jsonrpc.JsonRpcSystemConstants;
 import org.springframework.dsl.jsonrpc.codec.Jackson2JsonRpcMessageWriter;
 import org.springframework.dsl.jsonrpc.codec.JsonRpcMessageWriter;
 import org.springframework.dsl.jsonrpc.result.method.JsonRpcHandlerMethodArgumentResolver;
@@ -44,7 +45,7 @@ public class DelegatingJsonRpcConfiguration {
 
 	@Bean
 	public Jackson2JsonRpcMessageWriter jackson2JsonRpcMessageWriter(
-			@Qualifier("lspJacksonObjectMapper") ObjectMapper objectMapper) {
+			@Qualifier(JsonRpcSystemConstants.JSONRPC_OBJECT_MAPPER_BEAN_NAME) ObjectMapper objectMapper) {
 		return new Jackson2JsonRpcMessageWriter(objectMapper);
 	}
 

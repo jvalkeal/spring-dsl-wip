@@ -22,6 +22,7 @@ import java.util.Optional;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.dsl.jsonrpc.config.JsonRpcJacksonConfiguration;
 import org.springframework.dsl.jsonrpc.support.DispatcherJsonRpcHandler;
 import org.springframework.dsl.lsp.server.jsonrpc.LspClientArgumentResolver;
 import org.springframework.dsl.lsp.server.jsonrpc.LspDomainArgumentResolver;
@@ -38,7 +39,7 @@ import org.springframework.dsl.service.reconcile.Reconciler;
  *
  */
 @Configuration
-@Import(LspDomainJacksonConfiguration.class)
+@Import({ JsonRpcJacksonConfiguration.class, LspDomainJacksonConfiguration.class })
 public class GenericLspConfiguration {
 
 	@Bean
