@@ -25,6 +25,8 @@ import org.springframework.dsl.document.Document;
 import org.springframework.dsl.domain.Diagnostic;
 import org.springframework.dsl.domain.DiagnosticSeverity;
 import org.springframework.dsl.domain.PublishDiagnosticsParams;
+import org.springframework.dsl.model.LanguageId;
+import org.springframework.dsl.service.AbstractDslService;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -32,13 +34,15 @@ import reactor.core.publisher.Mono;
 /**
  * Default implementation of a {@link Reconciler} delegating to know
  * {@link Linter}s for supported {@code language id's}. Responds to document
- * changes and calls {@link Linter} to validate document contents.
+ * changes and calls {@link Linter} to validate document contents. This
+ * reconciler supports all language id's as it dispatches to all available
+ * linters which handles their own support for languages.
  *
  * @author Kris De Volder
  * @author Janne Valkealahti
  *
  */
-public class DefaultReconciler implements Reconciler {
+public class DefaultReconciler extends AbstractDslService implements Reconciler {
 
 	private static final Logger log = LoggerFactory.getLogger(DefaultReconciler.class);
 	private final List<Linter> linters;
@@ -49,6 +53,7 @@ public class DefaultReconciler implements Reconciler {
 	 * @param linters the linters
 	 */
 	public DefaultReconciler(List<Linter> linters) {
+		super(Arrays.asList(LanguageId.ALL));
 		this.linters = linters != null ? linters : new ArrayList<Linter>();
 	}
 

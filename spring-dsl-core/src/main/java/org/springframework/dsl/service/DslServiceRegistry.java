@@ -64,4 +64,12 @@ public interface DslServiceRegistry {
 	 * @return the reconcilers
 	 */
 	List<Reconciler> getReconcilers();
+
+	/**
+	 * Gets the reconcilers for a language id.
+	 *
+	 * @param languageId the language id
+	 * @return the reconcilers
+	 */
+	List<Reconciler> getReconcilers(LanguageId languageId);
 }

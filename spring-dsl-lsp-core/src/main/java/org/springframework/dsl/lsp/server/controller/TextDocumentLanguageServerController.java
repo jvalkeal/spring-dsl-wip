@@ -20,8 +20,6 @@ import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.dsl.document.Document;
 import org.springframework.dsl.domain.CompletionList;
 import org.springframework.dsl.domain.CompletionParams;
@@ -46,6 +44,7 @@ import org.springframework.dsl.service.DocumentStateTracker;
 import org.springframework.dsl.service.DslServiceRegistry;
 import org.springframework.dsl.service.Hoverer;
 import org.springframework.dsl.service.reconcile.Reconciler;
+import org.springframework.util.Assert;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -59,28 +58,19 @@ import reactor.core.publisher.Mono;
  */
 @JsonRpcController
 @JsonRpcRequestMapping(method = "textDocument/")
-public class TextDocumentLanguageServerController implements InitializingBean {
+public class TextDocumentLanguageServerController {
 
 	private static final Logger log = LoggerFactory.getLogger(TextDocumentLanguageServerController.class);
-	private final ObjectProvider<Reconciler> reconcilerProvider;
-	private Reconciler reconciler;
 	private DslServiceRegistry registry;
 
 	/**
 	 * Instantiates a new text document language server controller.
 	 *
-	 * @param reconcilerProvider the reconciler provider
 	 * @param dslServiceRegistry the dsl service registry
 	 */
-	public TextDocumentLanguageServerController(ObjectProvider<Reconciler> reconcilerProvider,
-			DslServiceRegistry dslServiceRegistry) {
-		this.reconcilerProvider = reconcilerProvider;
+	public TextDocumentLanguageServerController(DslServiceRegistry dslServiceRegistry) {
+		Assert.notNull(dslServiceRegistry, "dslServiceRegistry must be set");
 		this.registry = dslServiceRegistry;
-	}
-
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		this.reconciler = reconcilerProvider.getIfAvailable();
 	}
 
 	/**
@@ -99,13 +89,20 @@ public class TextDocumentLanguageServerController implements InitializingBean {
 		log.debug("clientDocumentOpened {}", params);
 		DocumentStateTracker documentStateTracker = getTracker(session);
 		return Flux.from(documentStateTracker.didOpen(params))
-			.flatMap(document -> reconciler.reconcile(document)
-			.reduce((l, r) -> {
-				l.setDiagnostics(Stream.concat(l.getDiagnostics().stream(), r.getDiagnostics().stream())
-						.collect(Collectors.toList()));
-				return l;
-			})
-			.switchIfEmpty(Mono.just(new PublishDiagnosticsParams(params.getTextDocument().getUri()))));
+				.flatMap(document -> Flux.fromIterable(registry.getReconcilers())
+					.filter(reconciler -> reconciler.getSupportedLanguageIds().stream()
+						.anyMatch(l -> l.isCompatibleWith(document.languageId()))
+					)
+					.flatMap(reconciler -> reconciler.reconcile(document))
+				)
+				.reduce((l, r) -> {
+					l.setDiagnostics(
+							Stream.concat(l.getDiagnostics().stream(), r.getDiagnostics().stream())
+								.collect(Collectors.toList()));
+					return l;
+				})
+				.switchIfEmpty(Mono.just(new PublishDiagnosticsParams(params.getTextDocument().getUri())))
+				.flux();
 	}
 
 	/**
@@ -121,13 +118,20 @@ public class TextDocumentLanguageServerController implements InitializingBean {
 		log.debug("clientDocumentChanged {}", params);
 		DocumentStateTracker documentStateTracker = getTracker(session);
 		return Flux.from(documentStateTracker.didChange(params))
-			.flatMap(document -> reconciler.reconcile(document)
-			.reduce((l, r) -> {
-				l.setDiagnostics(Stream.concat(l.getDiagnostics().stream(), r.getDiagnostics().stream())
-						.collect(Collectors.toList()));
-				return l;
-			})
-			.switchIfEmpty(Mono.just(new PublishDiagnosticsParams(params.getTextDocument().getUri()))));
+				.flatMap(document -> Flux.fromIterable(registry.getReconcilers())
+					.filter(reconciler -> reconciler.getSupportedLanguageIds().stream()
+						.anyMatch(l -> l.isCompatibleWith(document.languageId()))
+					)
+					.flatMap(reconciler -> reconciler.reconcile(document))
+				)
+				.reduce((l, r) -> {
+					l.setDiagnostics(
+							Stream.concat(l.getDiagnostics().stream(), r.getDiagnostics().stream())
+								.collect(Collectors.toList()));
+					return l;
+				})
+				.switchIfEmpty(Mono.just(new PublishDiagnosticsParams(params.getTextDocument().getUri())))
+				.flux();
 	}
 
 	/**

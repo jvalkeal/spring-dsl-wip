@@ -17,6 +17,7 @@ package org.springframework.dsl.service.reconcile;
 
 import org.springframework.dsl.document.Document;
 import org.springframework.dsl.domain.PublishDiagnosticsParams;
+import org.springframework.dsl.service.DslService;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -32,7 +33,7 @@ import reactor.core.publisher.Mono;
  *
  * @see Linter
  */
-public interface Reconciler {
+public interface Reconciler extends DslService {
 
 	/**
 	 * Reconcile a {@link Document} and return {@link Mono} for completion.

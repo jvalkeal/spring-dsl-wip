@@ -62,6 +62,14 @@ public class DefaultDslServiceRegistry implements DslServiceRegistry, Applicatio
 	}
 
 	@Override
+	public List<Reconciler> getReconcilers(LanguageId languageId) {
+		return reconcilers
+				.stream()
+				.filter(reconciler -> reconciler.getSupportedLanguageIds().contains(languageId))
+				.collect(Collectors.toList());
+	}
+
+	@Override
 	public List<Completioner> getCompletioners() {
 		return completioners;
 	}
