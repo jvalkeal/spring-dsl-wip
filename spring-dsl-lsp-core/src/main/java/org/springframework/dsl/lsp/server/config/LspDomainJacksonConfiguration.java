@@ -17,6 +17,7 @@ package org.springframework.dsl.lsp.server.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.dsl.DslSystemConstants;
 import org.springframework.dsl.domain.DiagnosticSeverity;
 import org.springframework.dsl.domain.MarkupKind;
 import org.springframework.dsl.domain.MessageType;
@@ -35,11 +36,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
+/**
+ * Configuration for a specific LSP jackson related beans.
+ *
+ * @author Janne Valkealahti
+ *
+ */
 @Configuration
 public class LspDomainJacksonConfiguration {
 
-	@Bean(name = "lspJacksonObjectMapper")
-	public ObjectMapper lspObjectMapper() {
+	@Bean(name = DslSystemConstants.LSP_OBJECT_MAPPER_BEAN_NAME)
+	public ObjectMapper lspJacksonObjectMapper() {
 		SimpleModule module = new SimpleModule();
 		module.addSerializer(ServerCapabilities.class, new ServerCapabilitiesJsonSerializer());
 		module.addDeserializer(ServerCapabilities.class, new ServerCapabilitiesJsonDeserializer());
@@ -55,5 +62,4 @@ public class LspDomainJacksonConfiguration {
 		mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 		return mapper;
 	}
-
 }

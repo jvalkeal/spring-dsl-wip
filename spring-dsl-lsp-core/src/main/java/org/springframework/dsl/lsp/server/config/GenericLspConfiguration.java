@@ -15,11 +15,21 @@
  */
 package org.springframework.dsl.lsp.server.config;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.dsl.jsonrpc.support.DispatcherJsonRpcHandler;
+import org.springframework.dsl.lsp.server.jsonrpc.LspClientArgumentResolver;
+import org.springframework.dsl.lsp.server.jsonrpc.LspDomainArgumentResolver;
 import org.springframework.dsl.lsp.server.jsonrpc.ReactorJsonRpcHandlerAdapter;
 import org.springframework.dsl.lsp.server.jsonrpc.RpcJsonRpcHandlerAdapter;
+import org.springframework.dsl.service.reconcile.DefaultReconciler;
+import org.springframework.dsl.service.reconcile.Linter;
+import org.springframework.dsl.service.reconcile.Reconciler;
 
 /**
  * Generic configurations among {@code LSP} features.
@@ -28,7 +38,23 @@ import org.springframework.dsl.lsp.server.jsonrpc.RpcJsonRpcHandlerAdapter;
  *
  */
 @Configuration
+@Import(LspDomainJacksonConfiguration.class)
 public class GenericLspConfiguration {
+
+	@Bean
+	public Reconciler reconciler(Optional<List<Linter>> linters) {
+		return new DefaultReconciler(linters.orElseGet(ArrayList::new));
+	}
+
+	@Bean
+	public LspDomainArgumentResolver lspDomainArgumentResolver() {
+		return new LspDomainArgumentResolver();
+	}
+
+	@Bean
+	public LspClientArgumentResolver lspClientArgumentResolver() {
+		return new LspClientArgumentResolver();
+	}
 
 	@Bean
 	public RpcJsonRpcHandlerAdapter rpcJsonRpcHandlerAdapter(DispatcherJsonRpcHandler dispatcherJsonRpcHandler) {

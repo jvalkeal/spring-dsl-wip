@@ -22,4 +22,7 @@ package org.springframework.dsl;
  *
  */
 public final class DslSystemConstants {
+
+	/** Bean name for lsp jackson object mapper */
+	public final static String LSP_OBJECT_MAPPER_BEAN_NAME = "lspJacksonObjectMapper";
 }

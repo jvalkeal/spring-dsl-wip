@@ -17,7 +17,6 @@ package org.springframework.dsl.lsp.server.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.dsl.lsp.server.jsonrpc.NettyTcpServer;
 import org.springframework.dsl.lsp.server.jsonrpc.ReactorJsonRpcHandlerAdapter;
 import org.springframework.dsl.lsp.server.support.StdioSocketBridge;
@@ -25,13 +24,12 @@ import org.springframework.dsl.lsp.server.support.StdioSocketBridge;
 import reactor.ipc.netty.tcp.TcpServer;
 
 /**
- *
+ * Generic {@code LSP} configuration for a stdio integration.
  *
  * @author Janne Valkealahti
  *
  */
 @Configuration
-@Import(GenericLspConfiguration.class)
 public class LspServerStdioConfiguration {
 
 	@Bean(initMethod = "start", destroyMethod = "stop")

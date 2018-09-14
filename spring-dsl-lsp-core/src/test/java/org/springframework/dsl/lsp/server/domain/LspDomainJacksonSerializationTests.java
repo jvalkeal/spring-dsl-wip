@@ -62,7 +62,7 @@ public class LspDomainJacksonSerializationTests {
 	@Before
 	public void setup() {
 		LspDomainJacksonConfiguration configuration = new LspDomainJacksonConfiguration();
-		this.mapper = configuration.lspObjectMapper();
+		this.mapper = configuration.lspJacksonObjectMapper();
 	}
 
 	@After

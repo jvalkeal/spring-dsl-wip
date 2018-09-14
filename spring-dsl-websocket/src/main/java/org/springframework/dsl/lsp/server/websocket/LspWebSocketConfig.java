@@ -20,9 +20,7 @@ import java.util.Map;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.core.Ordered;
-import org.springframework.dsl.lsp.server.config.GenericLspConfiguration;
 import org.springframework.dsl.lsp.server.jsonrpc.RpcHandler;
 import org.springframework.web.reactive.HandlerMapping;
 import org.springframework.web.reactive.handler.SimpleUrlHandlerMapping;
@@ -36,7 +34,6 @@ import org.springframework.web.reactive.socket.server.support.WebSocketHandlerAd
  *
  */
 @Configuration
-@Import(GenericLspConfiguration.class)
 public class LspWebSocketConfig {
 
 	@Bean
