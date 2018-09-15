@@ -41,3 +41,5 @@ a _Spring WebFlux_.
 include::samples/org/springframework/dsl/jsonrpc/docs/ControllerDocs.java[tags=snippet3]
 ----
 
+include::dsl-jsonrpc-session.adoc[]
+

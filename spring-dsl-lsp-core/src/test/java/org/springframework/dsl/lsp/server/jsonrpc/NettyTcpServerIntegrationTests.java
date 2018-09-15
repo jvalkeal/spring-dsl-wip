@@ -38,6 +38,7 @@ import org.springframework.dsl.jsonrpc.JsonRpcResponse;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcController;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcNotification;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcRequestMapping;
+import org.springframework.dsl.jsonrpc.annotation.JsonRpcRequestParams;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcResponseBody;
 import org.springframework.dsl.jsonrpc.config.EnableJsonRpc;
 import org.springframework.dsl.jsonrpc.config.JsonRpcJacksonConfiguration;
@@ -80,6 +81,7 @@ public class NettyTcpServerIntegrationTests {
 	private static final byte[] CONTENT15 = createContent("{\"jsonrpc\": \"2.0\",\"id\": 4, \"method\": \"delay\", \"params\":\"1000\"}");
 	private static final byte[] CONTENT16 = createContent("{\"jsonrpc\": \"2.0\",\"id\": 4, \"method\": \"$/cancelRequest\", \"params\":{\"id\": 4}}");
 	private static final byte[] CONTENT17 = createContent("{\"jsonrpc\": \"2.0\",\"id\": 2, \"method\": \"counter\"}");
+	private static final byte[] CONTENT18 = createContent("{\"jsonrpc\": \"2.0\",\"id\": 4, \"method\": \"pojo2\", \"params\":{\"message\": \"hi\"}}}");
 
 	private static byte[] createContent(String... lines) {
 		StringBuilder buf = new StringBuilder();
@@ -213,7 +215,7 @@ public class NettyTcpServerIntegrationTests {
 	}
 
 	@Test
-	public void testOk2() throws InterruptedException {
+	public void testPojo1() throws InterruptedException {
 		context = new AnnotationConfigApplicationContext();
 		context.register(JsonRpcConfig.class, JsonRpcServerConfig.class, TestServerJsonRpcController.class);
 		context.refresh();
@@ -233,6 +235,38 @@ public class NettyTcpServerIntegrationTests {
 
 					return out
 							.send(Flux.just(Unpooled.copiedBuffer(CONTENT5)))
+							.neverComplete();
+				})
+				.block(Duration.ofSeconds(30));
+
+		assertThat(dataLatch.await(1, TimeUnit.SECONDS)).isTrue();
+
+		String response = "Content-Length: 52\r\n\r\n{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":{\"message\":\"hi\"}}";
+
+		assertThat(responses).containsExactlyInAnyOrder(response);
+	}
+
+	@Test
+	public void testPojo2() throws InterruptedException {
+		context = new AnnotationConfigApplicationContext();
+		context.register(JsonRpcConfig.class, JsonRpcServerConfig.class, TestServerJsonRpcController.class);
+		context.refresh();
+		NettyTcpServer server = context.getBean(NettyTcpServer.class);
+
+		CountDownLatch dataLatch = new CountDownLatch(1);
+		final List<String> responses = new ArrayList<>();
+
+		TcpClient.create(server.getPort())
+				.newHandler((in, out) -> {
+					in
+					.receive()
+					.subscribe(c -> {
+						responses.add(c.retain().duplicate().toString(Charset.defaultCharset()));
+						dataLatch.countDown();
+					});
+
+					return out
+							.send(Flux.just(Unpooled.copiedBuffer(CONTENT18)))
 							.neverComplete();
 				})
 				.block(Duration.ofSeconds(30));
@@ -743,6 +777,14 @@ public class NettyTcpServerIntegrationTests {
 			return new Pojo1();
 		}
 
+		@JsonRpcRequestMapping(method = "pojo2")
+		@JsonRpcResponseBody
+		public Pojo2 pojo2(@JsonRpcRequestParams Pojo2 pojo) {
+			Pojo2 pojo2 = new Pojo2();
+			pojo2.setMessage(pojo.getMessage());
+			return pojo2;
+		}
+
 		@JsonRpcRequestMapping(method = "methodparams")
 		@JsonRpcResponseBody
 		public String methodparams(String params) {
@@ -813,6 +855,20 @@ public class NettyTcpServerIntegrationTests {
 		@SuppressWarnings("unused")
 		public String getMessage() {
 			return message;
+		}
+	}
+
+	private static class Pojo2 {
+		private String message = "";
+
+		@SuppressWarnings("unused")
+		public String getMessage() {
+			return message;
+		}
+
+		@SuppressWarnings("unused")
+		public void setMessage(String message) {
+			this.message = message;
 		}
 	}
 }

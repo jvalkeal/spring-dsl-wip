@@ -1,5 +1,4 @@
 [[dsl-lsp]]
-
 == LSP
 Traditionally a _Language Server_ and a _Language Client_ implementations
 are just arbitry components following a contract defined a <<glossary-lsp, LSP>>
@@ -10,13 +9,9 @@ works. We think that integrating a more higher level services described in
 <<dsl-core>> into a generic controllers handling _LSP_ traffic is much more
 user friendly way to implement language services.
 
-=== Language Server
-This section describes how a _Language Server_ is created using _Spring Dsl_.
-
-==== With Language Services
-If you rely solely on services from <<dsl-core>> there is not that much you
-need to understand about _LSP_ itself.
-
-=== Language Client
-TBD.
+include::dsl-lsp-services.adoc[]
+include::dsl-lsp-server.adoc[]
+include::dsl-lsp-client.adoc[]
+include::dsl-lsp-extension.adoc[]
+include::dsl-lsp-controller.adoc[]
 

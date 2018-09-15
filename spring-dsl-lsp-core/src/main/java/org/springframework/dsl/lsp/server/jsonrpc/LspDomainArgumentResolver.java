@@ -51,15 +51,16 @@ import reactor.core.publisher.Mono;
 
 /**
  * A {@link JsonRpcHandlerMethodArgumentResolver} implementation resolving
- * {@code LSP} domain objects based on a {@code params} in a
- * {@code message}. Dispatches conversion of an argument type to
- * {@link ConversionService}.
+ * {@code LSP} domain objects based on a {@code params} in a {@code message}.
+ * Dispatches conversion of an argument type to {@link ConversionService}.
+ * <p>
+ * NOTE: We fully control this class and existing domain classes in a
+ * {@code LSP} space so we can blindly resolve and deserialize those.
  *
  * @author Janne Valkealahti
  *
  */
 public class LspDomainArgumentResolver implements JsonRpcHandlerMethodArgumentResolver {
-
 
 	private Set<Class<?>> supportedClasses = Arrays.asList(
 			InitializeParams.class,

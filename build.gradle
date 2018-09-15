@@ -373,6 +373,7 @@ configure(rootProject) {
         copy {
             from 'spring-dsl-core/src/test/java'
             from 'spring-dsl-jsonrpc/src/test/java'
+            from 'spring-dsl-lsp-core/src/test/java'
 		    include '**/docs/*.java'
 		    into 'docs/src/reference/asciidoc/samples'
         }
