@@ -14,3 +14,11 @@ We need to get started from one concept until we get to next one and then glue a
 these together.
 ====
 
+Other interface for _reconciliation_ is a _Reconciler_ which is similar than _Linter_
+but works on a LSP's `PublishDiagnosticsParams`. Together these two interfaces allow
+flexible ways to choose how different documents are reconciled.
+
+[source,java,indent=0]
+----
+include::samples/org/springframework/dsl/docs/ReconcileDocs.java[tags=snippet2]
+----

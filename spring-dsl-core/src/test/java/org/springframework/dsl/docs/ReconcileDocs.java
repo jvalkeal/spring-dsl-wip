@@ -16,8 +16,10 @@
 package org.springframework.dsl.docs;
 
 import org.springframework.dsl.document.Document;
+import org.springframework.dsl.domain.PublishDiagnosticsParams;
 import org.springframework.dsl.service.reconcile.Linter;
 import org.springframework.dsl.service.reconcile.ReconcileProblem;
+import org.springframework.dsl.service.reconcile.Reconciler;
 
 import reactor.core.publisher.Flux;
 
@@ -31,4 +33,11 @@ public class ReconcileDocs {
 // end::snippet1[]
 	}
 
+	interface DocsReconciler extends Reconciler {
+
+		@Override
+// tag::snippet2[]
+		Flux<PublishDiagnosticsParams> reconcile(Document document);
+// end::snippet2[]
+	}
 }
