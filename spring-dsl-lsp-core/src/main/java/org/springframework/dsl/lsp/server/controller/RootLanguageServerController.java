@@ -31,6 +31,7 @@ import org.springframework.dsl.lsp.LspVersionDetector;
 import org.springframework.dsl.lsp.LspVersionDetector.LspVersion;
 import org.springframework.dsl.lsp.server.LspServerSystemConstants;
 import org.springframework.dsl.lsp.server.config.DslConfigurationProperties;
+import org.springframework.dsl.lsp.server.jsonrpc.LspSessionState;
 import org.springframework.dsl.lsp.server.support.LspExiter;
 import org.springframework.dsl.service.DefaultDocumentStateTracker;
 import org.springframework.dsl.service.DslServiceRegistry;
@@ -102,7 +103,7 @@ public class RootLanguageServerController {
 				.build();
 		}).doOnSuccess(result -> {
 			// TODO: just a conceptual tweak now to see how session is used
-			session.getAttributes().put(LspServerSystemConstants.SESSION_ATTRIBUTE_SESSION_INITIALIZED, true);
+			session.getAttributes().put(LspServerSystemConstants.SESSION_ATTRIBUTE_LSP_SESSION_STATE, LspSessionState.CREATED);
 			session.getAttributes().put(LspServerSystemConstants.SESSION_ATTRIBUTE_DOCUMENT_STATE_TRACKER,
 					new DefaultDocumentStateTracker());
 			session.getAttributes().put(LspServerSystemConstants.SESSION_ATTRIBUTE_LSP_VERSION, lspVersion);
@@ -111,8 +112,9 @@ public class RootLanguageServerController {
 
 	@JsonRpcRequestMapping(method = "initialized")
 	@JsonRpcNotification
-	public void initialized(InitializedParams params) {
+	public void initialized(InitializedParams params, JsonRpcSession session) {
 		log.debug("initialized {}", params);
+		session.getAttributes().put(LspServerSystemConstants.SESSION_ATTRIBUTE_LSP_SESSION_STATE, LspSessionState.INITIALIZED);
 	}
 
 	@JsonRpcRequestMapping(method = "shutdown")

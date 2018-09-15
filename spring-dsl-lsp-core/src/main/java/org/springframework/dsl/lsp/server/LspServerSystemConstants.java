@@ -28,7 +28,7 @@ public abstract class LspServerSystemConstants {
 	/**
 	 * Session attribute if set to {@code TRUE} indicates that session has been initialized.
 	 */
-	public final static String SESSION_ATTRIBUTE_SESSION_INITIALIZED = "initialized";
+	public final static String SESSION_ATTRIBUTE_LSP_SESSION_STATE = "lspSessionState";
 
 	/**
 	 * Session attribute containing access to {@link DocumentStateTracker}.
