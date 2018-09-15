@@ -57,7 +57,7 @@ public class LspNettySocketLspServerIntegrationTests extends AbstractLspIntegrat
 			.build();
 
 		JsonRpcResponse response = client.request()
-				.id(1)
+				.id("1")
 				.method("initialize")
 				.params(initializeParams)
 				.exchange().block();

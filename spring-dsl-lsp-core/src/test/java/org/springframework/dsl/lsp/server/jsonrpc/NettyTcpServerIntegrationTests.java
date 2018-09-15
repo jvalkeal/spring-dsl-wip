@@ -174,7 +174,7 @@ public class NettyTcpServerIntegrationTests {
 
 		assertThat(dataLatch.await(1, TimeUnit.SECONDS)).isTrue();
 
-		String response = "{\"jsonrpc\":\"2.0\",\"id\":2,\"result\":\"hi\"}";
+		String response = "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":\"hi\"}";
 		assertThat(responses).hasSize(10);
 		assertThat(responses).allMatch(c -> c.equals(response));
 	}
@@ -206,8 +206,8 @@ public class NettyTcpServerIntegrationTests {
 				.block(Duration.ofSeconds(30));
 
 		assertThat(dataLatch.await(1, TimeUnit.SECONDS)).isTrue();
-		String response1 = "{\"jsonrpc\":\"2.0\",\"id\":2,\"result\":\"hi\"}";
-		String response2 = "{\"jsonrpc\":\"2.0\",\"id\":3,\"result\":\"bye\"}";
+		String response1 = "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":\"hi\"}";
+		String response2 = "{\"jsonrpc\":\"2.0\",\"id\":\"3\",\"result\":\"bye\"}";
 
 		assertThat(responses).containsExactlyInAnyOrder(response1, response2);
 	}
@@ -239,7 +239,7 @@ public class NettyTcpServerIntegrationTests {
 
 		assertThat(dataLatch.await(1, TimeUnit.SECONDS)).isTrue();
 
-		String response = "Content-Length: 50\r\n\r\n{\"jsonrpc\":\"2.0\",\"id\":4,\"result\":{\"message\":\"hi\"}}";
+		String response = "Content-Length: 52\r\n\r\n{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":{\"message\":\"hi\"}}";
 
 		assertThat(responses).containsExactlyInAnyOrder(response);
 	}
@@ -327,7 +327,7 @@ public class NettyTcpServerIntegrationTests {
 
 		assertThat(dataLatch.await(1, TimeUnit.SECONDS)).isTrue();
 
-		String response = "Content-Length: 38\r\n\r\n{\"jsonrpc\":\"2.0\",\"id\":4,\"result\":\"hi\"}";
+		String response = "Content-Length: 40\r\n\r\n{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":\"hi\"}";
 
 		assertThat(responses).containsExactlyInAnyOrder(response);
 	}
@@ -359,7 +359,7 @@ public class NettyTcpServerIntegrationTests {
 
 		assertThat(dataLatch.await(1, TimeUnit.SECONDS)).isTrue();
 
-		String response = "Content-Length: 180\r\n\r\n{\"jsonrpc\":\"2.0\",\"id\":4,\"result\":{\"processId\":1,\"rootUri\":\"rootUri\",\"initializationOptions\":\"initializationOptions\",\"capabilities\":{\"experimental\":\"experimental\"},\"trace\":\"trace\"}}";
+		String response = "Content-Length: 182\r\n\r\n{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":{\"processId\":1,\"rootUri\":\"rootUri\",\"initializationOptions\":\"initializationOptions\",\"capabilities\":{\"experimental\":\"experimental\"},\"trace\":\"trace\"}}";
 
 		assertThat(responses).containsExactlyInAnyOrder(response);
 	}
@@ -491,7 +491,7 @@ public class NettyTcpServerIntegrationTests {
 
 		assertThat(dataLatch.await(1, TimeUnit.SECONDS)).isTrue();
 
-		String response = "Content-Length: 38\r\n\r\n{\"jsonrpc\":\"2.0\",\"id\":4,\"result\":null}";
+		String response = "Content-Length: 40\r\n\r\n{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":null}";
 
 		assertThat(responses).containsExactlyInAnyOrder(response);
 	}
@@ -553,14 +553,14 @@ public class NettyTcpServerIntegrationTests {
 				.build();
 		lspClient.start();
 
-		Mono<JsonRpcResponse> lspClientResponseMono = lspClient.request().id(1).method("methodparams").params("hi").exchange();
+		Mono<JsonRpcResponse> lspClientResponseMono = lspClient.request().id("1").method("methodparams").params("hi").exchange();
 		lspClientResponseMono.doOnNext(r -> {
 			responses.add(r);
 			dataLatch.countDown();
 		}).subscribe();
 
 		assertThat(dataLatch.await(2, TimeUnit.SECONDS)).isTrue();
-		assertThat(responses.get(0).getId()).isEqualTo(1);
+		assertThat(responses.get(0).getId()).isEqualTo("1");
 		assertThat(responses.get(0).getResult()).isEqualTo("hi");
 	}
 
@@ -588,14 +588,14 @@ public class NettyTcpServerIntegrationTests {
 				.build();
 		lspClient.start();
 
-		Mono<JsonRpcResponse> lspClientResponseMono = lspClient.request().id(1).method("serverhi").exchange();
+		Mono<JsonRpcResponse> lspClientResponseMono = lspClient.request().id("1").method("serverhi").exchange();
 		lspClientResponseMono.doOnNext(r -> {
 			responses.add(r);
 			dataLatch.countDown();
 		}).subscribe();
 
 		assertThat(dataLatch.await(2, TimeUnit.SECONDS)).isTrue();
-		assertThat(responses.get(0).getId()).isEqualTo(1);
+		assertThat(responses.get(0).getId()).isEqualTo("1");
 		assertThat(responses.get(0).getError()).isNull();
 		assertThat(responses.get(0).getResult()).isEqualTo("clienthi");
 	}
@@ -642,8 +642,8 @@ public class NettyTcpServerIntegrationTests {
 
 		assertThat(dataLatch.await(1, TimeUnit.SECONDS)).isTrue();
 
-		String response1 = "Content-Length: 37\r\n\r\n{\"jsonrpc\":\"2.0\",\"id\":2,\"result\":\"0\"}";
-		String response2 = "Content-Length: 37\r\n\r\n{\"jsonrpc\":\"2.0\",\"id\":2,\"result\":\"1\"}";
+		String response1 = "Content-Length: 39\r\n\r\n{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":\"0\"}";
+		String response2 = "Content-Length: 39\r\n\r\n{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":\"1\"}";
 
 		assertThat(responses).containsExactlyInAnyOrder(response1, response2);
 	}
@@ -715,7 +715,7 @@ public class NettyTcpServerIntegrationTests {
 		@JsonRpcResponseBody
 		public Mono<String> serverhi(LspClient lspClient) {
 			return lspClient
-					.request().id(10).method("clienthi").exchange()
+					.request().id("10").method("clienthi").exchange()
 					.map(r -> r.getResult());
 		}
 

@@ -88,7 +88,7 @@ public class MockJsonRpcInputMessage implements JsonRpcInputMessage {
 	}
 
 	@Override
-	public Mono<Integer> getId() {
+	public Mono<String> getId() {
 		return null;
 	}
 

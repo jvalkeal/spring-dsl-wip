@@ -20,7 +20,7 @@ import reactor.core.publisher.Mono;
 public interface JsonRpcInputMessage/* extends JsonRpcMessage*/ {
 
 	Mono<String> getJsonrpc();
-	Mono<Integer> getId();
+	Mono<String> getId();
 	Mono<String> getMethod();
 	Mono<String> getParams();
 	Mono<String> getSessionId();

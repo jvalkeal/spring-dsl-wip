@@ -40,7 +40,7 @@ public class DefaultJsonRpcResponseJsonDeserializer extends JsonDeserializer<Def
 		response.setJsonrpc(jsonrpcNode.asText());
 		JsonNode idNode = node.get("id");
 		if (idNode != null) {
-			response.setId(idNode.asInt());
+			response.setId(idNode.asText());
 		}
 		JsonNode resultsNode = node.get("result");
 		if (resultsNode != null) {

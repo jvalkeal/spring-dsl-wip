@@ -87,7 +87,7 @@ public class LspWebSocketHandler implements WebSocketHandler {
 					}
 
 					@Override
-					public Mono<Integer> getId() {
+					public Mono<String> getId() {
 						return Mono.justOrEmpty(bb.getId());
 					}
 

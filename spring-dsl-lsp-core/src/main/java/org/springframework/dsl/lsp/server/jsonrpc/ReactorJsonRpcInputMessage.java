@@ -38,7 +38,7 @@ public class ReactorJsonRpcInputMessage extends AbstractJsonRpcInputMessage {
 	}
 
 	@Override
-	public Mono<Integer> getId() {
+	public Mono<String> getId() {
 		// TODO Auto-generated method stub
 		return null;
 	}

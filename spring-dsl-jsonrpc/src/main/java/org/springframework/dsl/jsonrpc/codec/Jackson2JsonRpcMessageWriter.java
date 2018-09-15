@@ -20,16 +20,6 @@ import java.io.OutputStream;
 import java.lang.reflect.Type;
 import java.util.Map;
 
-import com.fasterxml.jackson.core.JsonEncoding;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.exc.InvalidDefinitionException;
-import com.fasterxml.jackson.databind.type.TypeFactory;
-
-
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,6 +34,15 @@ import org.springframework.dsl.jsonrpc.JsonRpcOutputMessage;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+
+import com.fasterxml.jackson.core.JsonEncoding;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.exc.InvalidDefinitionException;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -125,11 +124,11 @@ public class Jackson2JsonRpcMessageWriter implements JsonRpcMessageWriter<Object
 			generator.writeStringField("jsonrpc", request.getJsonrpc().block());
 			// if request id is missing, it's a notification
 			if (request.getId() != null) {
-				Integer block = request.getId().block();
+				String block = request.getId().block();
 				if (block != null) {
 					log.trace("id {}", block);
 					log.trace("result {}", value);
-					generator.writeNumberField("id", block);
+					generator.writeStringField("id", block);
 					generator.writeObjectField("result", value);
 				} else {
 					String method = (String) hints.get("method");

@@ -32,7 +32,7 @@ public abstract class AbstractJsonRpcObject implements JsonRpcMessage {
 
 	public static String DEFAULT_JSONRPC = "2.0";
 	private String jsonrpc;
-	private Integer id;
+	private String id;
 
 	/**
 	 * Instantiates a new abstract json rpc object.
@@ -46,7 +46,7 @@ public abstract class AbstractJsonRpcObject implements JsonRpcMessage {
 	 *
 	 * @param id the id
 	 */
-	public AbstractJsonRpcObject(Integer id) {
+	public AbstractJsonRpcObject(String id) {
 		this(null, id);
 	}
 
@@ -56,7 +56,7 @@ public abstract class AbstractJsonRpcObject implements JsonRpcMessage {
 	 * @param jsonrpc the jsonrpc
 	 * @param id the id
 	 */
-	public AbstractJsonRpcObject(String jsonrpc, Integer id) {
+	public AbstractJsonRpcObject(String jsonrpc, String id) {
 		this.jsonrpc = jsonrpc != null ? jsonrpc : DEFAULT_JSONRPC;
 		this.id = id;
 	}
@@ -86,7 +86,7 @@ public abstract class AbstractJsonRpcObject implements JsonRpcMessage {
 	 * @return the id
 	 */
 	@Override
-	public final Integer getId() {
+	public final String getId() {
 		return id;
 	}
 
@@ -95,7 +95,7 @@ public abstract class AbstractJsonRpcObject implements JsonRpcMessage {
 	 *
 	 * @param id the new id
 	 */
-	public void setId(Integer id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 

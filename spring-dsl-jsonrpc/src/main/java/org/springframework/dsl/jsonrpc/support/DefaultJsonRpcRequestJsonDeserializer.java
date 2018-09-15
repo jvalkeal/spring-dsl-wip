@@ -48,7 +48,7 @@ public class DefaultJsonRpcRequestJsonDeserializer extends JsonDeserializer<Defa
 		    }
 	    }
 	    JsonNode jsonNodeId = node.get("id");
-	    Integer id = jsonNodeId != null ? jsonNodeId.asInt() : null;
+	    String id = jsonNodeId != null ? jsonNodeId.asText() : null;
 	    JsonNode jsonNodeMethod = node.get("method");
 	    String method = jsonNodeMethod != null ? jsonNodeMethod.asText() : null;
 		return new DefaultJsonRpcRequest(jsonrpc, id, method, params);

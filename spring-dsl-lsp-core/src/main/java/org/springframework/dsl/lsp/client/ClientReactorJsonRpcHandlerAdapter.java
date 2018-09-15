@@ -170,7 +170,7 @@ public class ClientReactorJsonRpcHandlerAdapter
 					}
 
 					@Override
-					public Mono<Integer> getId() {
+					public Mono<String> getId() {
 						return Mono.justOrEmpty(bb.getId());
 					}
 

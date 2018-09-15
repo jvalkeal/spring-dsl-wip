@@ -42,7 +42,7 @@ public class DefaultJsonRpcRequest extends AbstractJsonRpcObject implements Json
 	 * @param method the method
 	 * @param params the params
 	 */
-	public DefaultJsonRpcRequest(Integer id, String method, Object params) {
+	public DefaultJsonRpcRequest(String id, String method, Object params) {
 		this(null, id, method, params);
 	}
 
@@ -54,7 +54,7 @@ public class DefaultJsonRpcRequest extends AbstractJsonRpcObject implements Json
 	 * @param method the method
 	 * @param params the params
 	 */
-	public DefaultJsonRpcRequest(String jsonrpc, Integer id, String method, Object params) {
+	public DefaultJsonRpcRequest(String jsonrpc, String id, String method, Object params) {
 		super(jsonrpc, id);
 		this.method = method;
 		this.params = params;

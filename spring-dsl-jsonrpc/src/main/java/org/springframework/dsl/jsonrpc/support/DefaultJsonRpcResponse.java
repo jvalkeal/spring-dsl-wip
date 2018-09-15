@@ -40,7 +40,7 @@ public class DefaultJsonRpcResponse extends AbstractJsonRpcObject implements Jso
 	 *
 	 * @param id the id
 	 */
-	public DefaultJsonRpcResponse(Integer id) {
+	public DefaultJsonRpcResponse(String id) {
 		this(id, null, null);
 	}
 
@@ -51,7 +51,7 @@ public class DefaultJsonRpcResponse extends AbstractJsonRpcObject implements Jso
 	 * @param result the result
 	 * @param error the error
 	 */
-	public DefaultJsonRpcResponse(Integer id, String result, String error) {
+	public DefaultJsonRpcResponse(String id, String result, String error) {
 		this(null, id, result, error);
 	}
 
@@ -63,7 +63,7 @@ public class DefaultJsonRpcResponse extends AbstractJsonRpcObject implements Jso
 	 * @param result the result
 	 * @param error the error
 	 */
-	public DefaultJsonRpcResponse(String jsonrpc, Integer id, String result, String error) {
+	public DefaultJsonRpcResponse(String jsonrpc, String id, String result, String error) {
 		super(jsonrpc, id);
 		this.result = result;
 		this.error = error;

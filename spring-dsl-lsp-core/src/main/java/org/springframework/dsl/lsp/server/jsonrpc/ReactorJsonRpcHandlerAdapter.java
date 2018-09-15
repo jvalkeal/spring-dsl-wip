@@ -123,7 +123,7 @@ public class ReactorJsonRpcHandlerAdapter implements BiFunction<NettyInbound, Ne
 					}
 
 					@Override
-					public Mono<Integer> getId() {
+					public Mono<String> getId() {
 						return Mono.justOrEmpty(bb.getId());
 					}
 

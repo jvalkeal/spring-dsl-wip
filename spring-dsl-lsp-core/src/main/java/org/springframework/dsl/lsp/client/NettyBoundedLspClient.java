@@ -65,12 +65,12 @@ public class NettyBoundedLspClient implements LspClient {
 
 	private class DefaultRequestSpec implements RequestSpec {
 
-		private Integer id;
+		private String id;
 		private String method;
 		private Object params;
 
 		@Override
-		public RequestSpec id(Integer id) {
+		public RequestSpec id(String id) {
 			this.id = id;
 			return this;
 		}

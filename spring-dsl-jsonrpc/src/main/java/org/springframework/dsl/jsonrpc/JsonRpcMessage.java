@@ -31,9 +31,9 @@ public interface JsonRpcMessage {
 	String getJsonrpc();
 
 	/**
-	 * Gets the id fiels.
+	 * Gets the id field.
 	 *
 	 * @return the id
 	 */
-	Integer getId();
+	String getId();
 }

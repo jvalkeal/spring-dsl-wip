@@ -108,7 +108,7 @@ public interface LspClient {
 		 * @param id the id
 		 * @return the request spec
 		 */
-		RequestSpec id(Integer id);
+		RequestSpec id(String id);
 
 		/**
 		 * Sets the message method.
