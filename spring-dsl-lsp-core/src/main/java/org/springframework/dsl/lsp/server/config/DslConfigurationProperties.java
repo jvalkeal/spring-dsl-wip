@@ -58,11 +58,25 @@ public class DslConfigurationProperties {
 		}
 	}
 
+	public static class WebSocketProperties {
+
+		String path = "/ws";
+
+		public String getPath() {
+			return path;
+		}
+
+		public void setPath(String path) {
+			this.path = path;
+		}
+	}
+
 	public static class LspServerProperties {
 
 		private Integer port;
 		private LspServerSocketMode mode = LspServerSocketMode.PROCESS;
 		private boolean forceJvmExitOnShutdown;
+		private WebSocketProperties websocket = new WebSocketProperties();
 
 		public LspServerSocketMode getMode() {
 			return mode;
@@ -86,6 +100,14 @@ public class DslConfigurationProperties {
 
 		public void setForceJvmExitOnShutdown(boolean forceJvmExitOnShutdown) {
 			this.forceJvmExitOnShutdown = forceJvmExitOnShutdown;
+		}
+
+		public WebSocketProperties getWebsocket() {
+			return websocket;
+		}
+
+		public void setWebsocket(WebSocketProperties websocket) {
+			this.websocket = websocket;
 		}
 	}
 
