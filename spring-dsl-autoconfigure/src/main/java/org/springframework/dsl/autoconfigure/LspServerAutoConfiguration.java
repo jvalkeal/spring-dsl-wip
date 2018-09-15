@@ -17,6 +17,7 @@ package org.springframework.dsl.autoconfigure;
 
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -45,6 +46,12 @@ import org.springframework.web.reactive.socket.WebSocketHandler;
 @Import({ RootLanguageServerController.class, TextDocumentLanguageServerController.class })
 public class LspServerAutoConfiguration {
 
+	@Bean
+	@ConditionalOnMissingBean(ReactiveAdapterRegistry.class)
+	public ReactiveAdapterRegistry jsonRpcAdapterRegistry() {
+		return new ReactiveAdapterRegistry();
+	}
+
 	@ConditionalOnProperty(prefix = "spring.dsl.lsp.server", name = "mode", havingValue = "WEBSOCKET")
 	@ConditionalOnClass(value = WebSocketHandler.class)
 	@Import({ LspWebSocketConfig.class })
@@ -54,20 +61,10 @@ public class LspServerAutoConfiguration {
 	@ConditionalOnProperty(prefix = "spring.dsl.lsp.server", name = "mode", havingValue = "PROCESS")
 	@Import({ LspServerStdioConfiguration.class })
 	public static class LspServerProcessConfig {
-
-		@Bean
-		public ReactiveAdapterRegistry jsonRpcAdapterRegistry() {
-			return new ReactiveAdapterRegistry();
-		}
 	}
 
 	@ConditionalOnProperty(prefix = "spring.dsl.lsp.server", name = "mode", havingValue = "SOCKET")
 	@Import({ LspServerSocketConfiguration.class })
 	public static class LspServerSocketConfig {
-
-		@Bean
-		public ReactiveAdapterRegistry jsonRpcAdapterRegistry() {
-			return new ReactiveAdapterRegistry();
-		}
 	}
 }
