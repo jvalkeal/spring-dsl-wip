@@ -26,6 +26,8 @@ import org.springframework.dsl.jsonrpc.annotation.JsonRpcNotification;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcRequestMapping;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcResponseBody;
 import org.springframework.dsl.jsonrpc.session.JsonRpcSession;
+import org.springframework.dsl.lsp.LspVersionDetector;
+import org.springframework.dsl.lsp.LspVersionDetector.LspVersion;
 import org.springframework.dsl.lsp.server.LspServerSystemConstants;
 import org.springframework.dsl.service.DefaultDocumentStateTracker;
 import org.springframework.dsl.service.DslServiceRegistry;
@@ -58,19 +60,19 @@ public class RootLanguageServerController {
 	@JsonRpcResponseBody
 	Mono<InitializeResult> initialize(InitializeParams params, JsonRpcSession session) {
 		log.debug("initialize {}", params);
+		LspVersion lspVersion = LspVersionDetector.detect(params);
+		log.info("Negotiated lsp version to {}", lspVersion);
 		// initialize is a first request from a lsp client, thus we return response having
 		// capabilities and also create a session what further communication can use.
 		return Mono.fromSupplier(() -> {
-			boolean oldFormat = params.getCapabilities().getTextDocument().getSynchronization()
-					.getDidSave() == null;
 			return InitializeResult.initializeResult()
 				.capabilities()
 					.hoverProvider(!registry.getHoverers().isEmpty())
 					.completionProvider(!registry.getCompletioners().isEmpty())
 						.resolveProvider(false)
 						.and()
-					.textDocumentSyncKind(oldFormat ? TextDocumentSyncKind.Incremental : null)
-					.textDocumentSyncOptions(!oldFormat)
+					.textDocumentSyncKind(lspVersion.is2x() ? TextDocumentSyncKind.Incremental : null)
+					.textDocumentSyncOptions(lspVersion.is3x())
 						.openClose(true)
 						// TODO: think how to use sync kind None
 						.change(TextDocumentSyncKind.Incremental)
@@ -84,6 +86,7 @@ public class RootLanguageServerController {
 			session.getAttributes().put(LspServerSystemConstants.SESSION_ATTRIBUTE_SESSION_INITIALIZED, true);
 			session.getAttributes().put(LspServerSystemConstants.SESSION_ATTRIBUTE_DOCUMENT_STATE_TRACKER,
 					new DefaultDocumentStateTracker());
+			session.getAttributes().put(LspServerSystemConstants.SESSION_ATTRIBUTE_LSP_VERSION, lspVersion);
 		});
 	}
 

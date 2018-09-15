@@ -34,4 +34,9 @@ public abstract class LspServerSystemConstants {
 	 * Session attribute containing access to {@link DocumentStateTracker}.
 	 */
 	public final static String SESSION_ATTRIBUTE_DOCUMENT_STATE_TRACKER = "documentStateTracker";
+
+	/**
+	 * Session attribute containing negotiated lsp version.
+	 */
+	public final static String SESSION_ATTRIBUTE_LSP_VERSION = "lspVersion";
 }
