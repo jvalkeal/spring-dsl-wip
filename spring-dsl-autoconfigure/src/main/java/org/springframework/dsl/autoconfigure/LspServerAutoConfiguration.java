@@ -30,6 +30,8 @@ import org.springframework.dsl.lsp.server.config.LspServerSocketConfiguration;
 import org.springframework.dsl.lsp.server.config.LspServerStdioConfiguration;
 import org.springframework.dsl.lsp.server.controller.RootLanguageServerController;
 import org.springframework.dsl.lsp.server.controller.TextDocumentLanguageServerController;
+import org.springframework.dsl.lsp.server.support.JvmLspExiter;
+import org.springframework.dsl.lsp.server.support.LspExiter;
 import org.springframework.dsl.lsp.server.websocket.LspWebSocketConfig;
 import org.springframework.web.reactive.socket.WebSocketHandler;
 
@@ -43,8 +45,13 @@ import org.springframework.web.reactive.socket.WebSocketHandler;
 @ConditionalOnProperty(prefix = "spring.dsl.lsp.server", name = "mode")
 @EnableConfigurationProperties(DslConfigurationProperties.class)
 @EnableLanguageServer
-@Import({ RootLanguageServerController.class, TextDocumentLanguageServerController.class })
 public class LspServerAutoConfiguration {
+
+	@Bean
+	@ConditionalOnProperty(prefix = "spring.dsl.lsp.server", name = "force-jvm-exit-on-shutdown", havingValue = "true")
+	public LspExiter lspExiter() {
+		return new JvmLspExiter();
+	}
 
 	@Bean
 	@ConditionalOnMissingBean(ReactiveAdapterRegistry.class)
@@ -52,18 +59,26 @@ public class LspServerAutoConfiguration {
 		return new ReactiveAdapterRegistry();
 	}
 
+	@Configuration
+	@Import({ RootLanguageServerController.class, TextDocumentLanguageServerController.class })
+	public static class BuiltInControllerConfig {
+	}
+
 	@ConditionalOnProperty(prefix = "spring.dsl.lsp.server", name = "mode", havingValue = "WEBSOCKET")
 	@ConditionalOnClass(value = WebSocketHandler.class)
+	@Configuration
 	@Import({ LspWebSocketConfig.class })
 	public static class LspServerWebsocketConfig {
 	}
 
 	@ConditionalOnProperty(prefix = "spring.dsl.lsp.server", name = "mode", havingValue = "PROCESS")
+	@Configuration
 	@Import({ LspServerStdioConfiguration.class })
 	public static class LspServerProcessConfig {
 	}
 
 	@ConditionalOnProperty(prefix = "spring.dsl.lsp.server", name = "mode", havingValue = "SOCKET")
+	@Configuration
 	@Import({ LspServerSocketConfiguration.class })
 	public static class LspServerSocketConfig {
 	}

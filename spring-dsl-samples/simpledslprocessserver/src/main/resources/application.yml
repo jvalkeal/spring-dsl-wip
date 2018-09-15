@@ -1,7 +1,7 @@
 logging:
   file: simpledslprocessserver.log
   level:
-    org.springframework.dsl: debug
+    org.springframework.dsl: trace
 spring:
   main:
     banner-mode: "off"
@@ -9,4 +9,4 @@ spring:
     lsp:
       server:
         mode: PROCESS
-        force-jvm-exit-on-shutdown: true
+        force-jvm-exit-on-shutdown: false

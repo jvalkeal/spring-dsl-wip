@@ -17,6 +17,7 @@ package org.springframework.dsl.lsp.server.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dsl.domain.InitializeParams;
 import org.springframework.dsl.domain.InitializeResult;
 import org.springframework.dsl.domain.InitializedParams;
@@ -29,8 +30,11 @@ import org.springframework.dsl.jsonrpc.session.JsonRpcSession;
 import org.springframework.dsl.lsp.LspVersionDetector;
 import org.springframework.dsl.lsp.LspVersionDetector.LspVersion;
 import org.springframework.dsl.lsp.server.LspServerSystemConstants;
+import org.springframework.dsl.lsp.server.config.DslConfigurationProperties;
+import org.springframework.dsl.lsp.server.support.LspExiter;
 import org.springframework.dsl.service.DefaultDocumentStateTracker;
 import org.springframework.dsl.service.DslServiceRegistry;
+import org.springframework.util.Assert;
 
 import reactor.core.publisher.Mono;
 
@@ -46,14 +50,29 @@ public class RootLanguageServerController {
 
 	private static final Logger log = LoggerFactory.getLogger(RootLanguageServerController.class);
 	private final DslServiceRegistry registry;
+	private LspExiter lspExiter = LspExiter.NOOP_LSPEXITER;
+	private DslConfigurationProperties properties;
 
 	/**
 	 * Instantiate a base language server controller.
 	 *
 	 * @param dslServiceRegistry the dsl service registry
+	 * @param properties the properties
 	 */
-	public RootLanguageServerController(DslServiceRegistry dslServiceRegistry) {
+	public RootLanguageServerController(DslServiceRegistry dslServiceRegistry, DslConfigurationProperties properties) {
 		this.registry = dslServiceRegistry;
+		this.properties = properties;
+	}
+
+	/**
+	 * Sets the lsp exiter.
+	 *
+	 * @param lspExiter the new lsp exiter
+	 */
+	@Autowired(required = false)
+	public void setLspExiter(LspExiter lspExiter) {
+		Assert.notNull(lspExiter, "lspExiter cannot be null");
+		this.lspExiter = lspExiter;
 	}
 
 	@JsonRpcRequestMapping(method = "initialize")
@@ -100,6 +119,19 @@ public class RootLanguageServerController {
 	@JsonRpcResponseBody
 	public Mono<Object> shutdown() {
 		log.debug("shutdown");
+		if (properties.getLsp().getServer().isForceJvmExitOnShutdown()) {
+			return Mono.defer(() -> {
+				lspExiter.exit(0);
+				return Mono.empty();
+			});
+		}
 		return Mono.empty();
+	}
+
+	@JsonRpcRequestMapping(method = "exit")
+	@JsonRpcNotification
+	public void exit() {
+		log.debug("exit");
+		lspExiter.exit(0);
 	}
 }
