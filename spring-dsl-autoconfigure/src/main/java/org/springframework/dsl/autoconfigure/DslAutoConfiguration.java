@@ -16,6 +16,8 @@
 package org.springframework.dsl.autoconfigure;
 
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dsl.service.DefaultDslServiceRegistry;
@@ -28,9 +30,11 @@ import org.springframework.dsl.service.DslServiceRegistry;
  *
  */
 @Configuration
+@ConditionalOnClass(DslServiceRegistry.class)
 public class DslAutoConfiguration {
 
 	@Bean
+	@ConditionalOnMissingBean(DslServiceRegistry.class)
 	public DslServiceRegistry dslServiceRegistry() {
 		return new DefaultDslServiceRegistry();
 	}
