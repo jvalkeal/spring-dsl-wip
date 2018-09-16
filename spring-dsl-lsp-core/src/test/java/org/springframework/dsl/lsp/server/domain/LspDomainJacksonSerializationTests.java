@@ -42,6 +42,8 @@ import org.springframework.dsl.domain.MessageActionItem;
 import org.springframework.dsl.domain.MessageParams;
 import org.springframework.dsl.domain.MessageType;
 import org.springframework.dsl.domain.PublishDiagnosticsParams;
+import org.springframework.dsl.domain.Registration;
+import org.springframework.dsl.domain.RegistrationParams;
 import org.springframework.dsl.domain.ServerCapabilities;
 import org.springframework.dsl.domain.ShowMessageRequestParams;
 import org.springframework.dsl.domain.Synchronization;
@@ -49,6 +51,7 @@ import org.springframework.dsl.domain.TextDocumentClientCapabilities;
 import org.springframework.dsl.domain.TextDocumentSyncKind;
 import org.springframework.dsl.domain.TextDocumentSyncOptions;
 import org.springframework.dsl.domain.TextEdit;
+import org.springframework.dsl.domain.Unregistration;
 import org.springframework.dsl.jsonrpc.jackson.JsonRpcJackson2ObjectMapperBuilder;
 import org.springframework.dsl.lsp.server.config.LspDomainJacksonConfiguration;
 import org.springframework.util.StreamUtils;
@@ -595,6 +598,99 @@ public class LspDomainJacksonSerializationTests {
 
 		expect = loadResourceAsString("ShowMessageRequestParams2.json");
 		to = mapper.readValue(expect, ShowMessageRequestParams.class);
+		assertObjects(from, to);
+	}
+
+	@Test
+	public void testRegistration() throws Exception {
+		Registration from = new Registration();
+		String json = mapper.writeValueAsString(from);
+		Registration to = mapper.readValue(json, Registration.class);
+		assertObjects(from, to);
+
+		from = Registration.registration()
+				.id("id")
+				.method("method")
+				.registerOptions("registerOptions")
+				.build();
+
+		json = mapper.writeValueAsString(from);
+		to = mapper.readValue(json, Registration.class);
+		assertObjects(from, to);
+
+		String expect = loadResourceAsString("Registration1.json");
+		to = mapper.readValue(expect, Registration.class);
+		assertObjects(from, to);
+
+		from = Registration.registration()
+				.id("id")
+				.method("method")
+				.build();
+
+		json = mapper.writeValueAsString(from);
+		to = mapper.readValue(json, Registration.class);
+		assertObjects(from, to);
+
+		expect = loadResourceAsString("Registration2.json");
+		to = mapper.readValue(expect, Registration.class);
+		assertObjects(from, to);
+	}
+
+	@Test
+	public void testRegistrationParams() throws Exception {
+		RegistrationParams from = new RegistrationParams();
+		String json = mapper.writeValueAsString(from);
+		RegistrationParams to = mapper.readValue(json, RegistrationParams.class);
+		assertObjects(from, to);
+
+		from = RegistrationParams.registrationParams()
+				.registration()
+					.id("id")
+					.method("method")
+					.registerOptions("registerOptions")
+					.and()
+				.registration()
+					.id("id")
+					.method("method")
+					.and()
+				.build();
+
+		json = mapper.writeValueAsString(from);
+		to = mapper.readValue(json, RegistrationParams.class);
+		assertObjects(from, to);
+
+		String expect = loadResourceAsString("RegistrationParams1.json");
+		to = mapper.readValue(expect, RegistrationParams.class);
+		assertObjects(from, to);
+	}
+
+	@Test
+	public void testUnregistration() throws Exception {
+		Unregistration from = new Unregistration();
+		String json = mapper.writeValueAsString(from);
+		Unregistration to = mapper.readValue(json, Unregistration.class);
+		assertObjects(from, to);
+
+		from = Unregistration.unregistration()
+				.id("id")
+				.method("method")
+				.build();
+
+		json = mapper.writeValueAsString(from);
+		to = mapper.readValue(json, Unregistration.class);
+		assertObjects(from, to);
+
+		String expect = loadResourceAsString("Unregistration1.json");
+		to = mapper.readValue(expect, Unregistration.class);
+		assertObjects(from, to);
+
+		from = Unregistration.unregistration()
+				.id("id")
+				.method("method")
+				.build();
+
+		json = mapper.writeValueAsString(from);
+		to = mapper.readValue(json, Unregistration.class);
 		assertObjects(from, to);
 	}
 
