@@ -19,6 +19,15 @@ project('spring-dsl-samples-wordcheckdsl') {
 	}
 }
 
+project('spring-dsl-samples-showcase') {
+	description = 'Spring Dsl Showcase Sample'
+	dependencies {
+		compile project(':spring-dsl-samples-common:spring-dsl-samples-wordcheckdsl')
+		testCompile 'junit:junit'
+		testCompile 'org.springframework.boot:spring-boot-starter-test'
+	}
+}
+
 project('spring-dsl-samples-spring-dsl-editor-lib') {
 	apply plugin: 'com.moowork.node'
 	
