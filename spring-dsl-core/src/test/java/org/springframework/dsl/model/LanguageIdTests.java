@@ -38,5 +38,9 @@ public class LanguageIdTests {
 		assertThat(LanguageId.TXT.isCompatibleWith(LanguageId.BAT)).isFalse();
 		assertThat(LanguageId.TXT.isCompatibleWith(LanguageId.ALL)).isFalse();
 		assertThat(LanguageId.ALL.isCompatibleWith(LanguageId.TXT)).isTrue();
+		assertThat(LanguageId.PERL.isCompatibleWith(LanguageId.PERL6)).isTrue();
+		assertThat(LanguageId.PERL6.isCompatibleWith(LanguageId.PERL)).isTrue();
+		assertThat(LanguageId.GIT_COMMIT.isCompatibleWith(LanguageId.GIT_REBASE)).isTrue();
+		assertThat(LanguageId.GIT_REBASE.isCompatibleWith(LanguageId.GIT_COMMIT)).isTrue();
 	}
 }

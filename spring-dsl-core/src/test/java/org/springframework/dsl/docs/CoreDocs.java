@@ -25,8 +25,14 @@ public class CoreDocs {
 
 	public void languageIds() {
 // tag::snippet1[]
-		LanguageId myLanguageId = LanguageId.languageId("mylanguage", "My Language Description");
+		LanguageId myLanguageId1 = LanguageId.languageId("mylanguage1", "My Language1 Description");
 // end::snippet1[]
+// tag::snippet3[]
+		LanguageId myLanguageId2 = LanguageId.languageId("mylanguage2", "My Language2 Description",
+				new String[] { "mylanguage1" });
+		// myLanguageId2 is compatible with myLanguageId1
+		myLanguageId2.isCompatibleWith(myLanguageId1);
+// end::snippet3[]
 	}
 
 	interface DocsDslService extends DslService {
