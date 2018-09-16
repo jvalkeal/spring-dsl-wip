@@ -369,37 +369,32 @@ configure(rootProject) {
 	}
 
 	task copyDocsSamples(/*type: Copy*/) {
-
-        copy {
-            from 'spring-dsl-core/src/test/java'
-            from 'spring-dsl-jsonrpc/src/test/java'
-            from 'spring-dsl-lsp-core/src/test/java'
-		    include '**/docs/*.java'
-		    into 'docs/src/reference/asciidoc/samples'
-        }
-
-        copy {
-		    from 'spring-dsl-samples/src/main/java'
-		    include '**/*.java'
-		    into 'docs/src/reference/asciidoc/samples'
-        }
-
-        copy {
-		    from 'spring-dsl-samples/simpledsleditor/src/main/java'
-		    from 'spring-dsl-samples/wordcheckdsl/src/main/java'
-		    from 'spring-dsl-samples/wordcheckdsleditor/src/main/java'
-		    include '**/*.java'
-		    into 'docs/src/reference/asciidoc/samples'
-        }
-
-        copy {
-		    from 'spring-dsl-samples'
-		    include 'src/**/*.yml'
-		    include 'simpledsleditor/src/**/*.yml'
-		    include 'wordcheckdsleditor/src/**/*.yml'
-		    into 'docs/src/reference/asciidoc/samples'
-        }
-
+		copy {
+			from 'spring-dsl-core/src/test/java'
+			from 'spring-dsl-jsonrpc/src/test/java'
+			from 'spring-dsl-lsp-core/src/test/java'
+			include '**/docs/*.java'
+			into 'docs/src/reference/asciidoc/samples'
+		}
+		copy {
+			from 'spring-dsl-samples/src/main/java'
+			include '**/*.java'
+			into 'docs/src/reference/asciidoc/samples'
+		}
+		copy {
+			from 'spring-dsl-samples/simpledsleditor/src/main/java'
+			from 'spring-dsl-samples/wordcheckdsl/src/main/java'
+			from 'spring-dsl-samples/wordcheckdsleditor/src/main/java'
+			include '**/*.java'
+			into 'docs/src/reference/asciidoc/samples'
+		}
+		copy {
+			from 'spring-dsl-samples'
+			include 'src/**/*.yml'
+			include 'simpledsleditor/src/**/*.yml'
+			include 'wordcheckdsleditor/src/**/*.yml'
+			into 'docs/src/reference/asciidoc/samples'
+		}
 	}
 
 	asciidoctor.dependsOn copyDocsSamples
@@ -432,7 +427,6 @@ configure(rootProject) {
 		maxMemory = '1024m'
 	}
 
-
 	task docsZip(type: Zip) {
 		group = 'Distribution'
 		classifier = 'docs'
@@ -447,7 +441,6 @@ configure(rootProject) {
 			into 'reference'
 		}
 	}
-
 
 	artifacts {
 		archives docsZip
