@@ -13,13 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.lsp.server.jsonrpc;
+package org.springframework.dsl.jsonrpc.result.method;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.Arrays;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.core.MethodParameter;
@@ -27,16 +24,8 @@ import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferFactory;
 import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.core.io.buffer.DefaultDataBufferFactory;
-import org.springframework.dsl.domain.CompletionParams;
-import org.springframework.dsl.domain.DidChangeTextDocumentParams;
-import org.springframework.dsl.domain.DidCloseTextDocumentParams;
-import org.springframework.dsl.domain.DidOpenTextDocumentParams;
-import org.springframework.dsl.domain.DidSaveTextDocumentParams;
-import org.springframework.dsl.domain.InitializeParams;
-import org.springframework.dsl.domain.InitializedParams;
-import org.springframework.dsl.domain.TextDocumentPositionParams;
 import org.springframework.dsl.jsonrpc.ServerJsonRpcExchange;
-import org.springframework.dsl.jsonrpc.result.method.JsonRpcHandlerMethodArgumentResolver;
+import org.springframework.dsl.jsonrpc.annotation.JsonRpcRequestParams;
 import org.springframework.util.Assert;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -50,37 +39,17 @@ import reactor.core.publisher.Mono;
 
 /**
  * A {@link JsonRpcHandlerMethodArgumentResolver} implementation resolving
- * {@code LSP} domain objects based on a {@code params} in a {@code message}.
- * <p>
- * NOTE: We fully control this class and existing domain classes in a
- * {@code LSP} space so we can blindly resolve and deserialize those.
- *
+ * resolving generic classes annotated with {@link JsonRpcRequestParams} by
+ * mapping a {@code params} from a {@code message}.
+ * 
  * @author Janne Valkealahti
  *
  */
-public class LspDomainArgumentResolver implements JsonRpcHandlerMethodArgumentResolver {
-
-	private Set<Class<?>> supportedClasses = Arrays.asList(
-			InitializeParams.class,
-			InitializedParams.class,
-			DidChangeTextDocumentParams.class,
-			DidCloseTextDocumentParams.class,
-			DidOpenTextDocumentParams.class,
-			DidSaveTextDocumentParams.class,
-			CompletionParams.class,
-			TextDocumentPositionParams.class
-			).stream().collect(Collectors.toSet());
-
-	/**
-	 * Instantiates a new lsp domain argument resolver.
-	 */
-	public LspDomainArgumentResolver() {
-	}
+public class JsonRpcRequestParamsArgumentResolver implements JsonRpcHandlerMethodArgumentResolver {
 
 	@Override
 	public boolean supportsParameter(MethodParameter parameter) {
-		Class<?> type = parameter.getParameterType();
-		return supportedClasses.contains(type);
+		return parameter.hasParameterAnnotation(JsonRpcRequestParams.class);
 	}
 
 	@Override
@@ -88,31 +57,18 @@ public class LspDomainArgumentResolver implements JsonRpcHandlerMethodArgumentRe
 		Class<?> type = parameter.getParameterType();
 		Class<?> contextClass = (parameter != null ? parameter.getContainingClass() : null);
 
-//		Flux<DataBuffer> body = exchange.getRequest().getBody();
-//		Mono<String> bodyAsString = getBodyAsString(body);
-
 		Mono<String> bodyAsString = exchange.getRequest().getParams();
 
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-//		ObjectWriter writer = objectMapper.writer();
-//		ObjectReader reader = objectMapper.reader();
 		TypeFactory typeFactory = objectMapper.getTypeFactory();
 		JavaType javaType = typeFactory.constructType(GenericTypeResolver.resolveType(type, contextClass));
 		ObjectReader forType = objectMapper.readerFor(javaType);
 		try {
 			return Mono.just(forType.readValue(bodyAsString.block().toString()));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 			return Mono.error(e);
 		}
-//		return Mono.just(BeanUtils.instantiateClass(type));
-//		Object body = null;
-//		if (exchange.getRequest() != null) {
-//		}
-//		Class<?> clazz = parameter.getParameterType();
-//		return Mono.just(conversionService.convert(body, clazz));
 	}
 
 	public Mono<String> getBodyAsString(Flux<DataBuffer> body) {
@@ -133,12 +89,5 @@ public class LspDomainArgumentResolver implements JsonRpcHandlerMethodArgumentRe
 		buffer.read(bytes);
 		return new String(bytes, charset);
 	}
-
-
-//	private Flux<TokenBuffer> tokenize(Publisher<DataBuffer> input, boolean tokenizeArrayElements) {
-//		Flux<DataBuffer> inputFlux = Flux.from(input);
-//		JsonFactory factory = getObjectMapper().getFactory();
-//		return Jackson2Tokenizer.tokenize(inputFlux, factory, tokenizeArrayElements);
-//	}
 
 }

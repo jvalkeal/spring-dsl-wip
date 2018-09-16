@@ -26,6 +26,7 @@ import org.springframework.dsl.jsonrpc.codec.Jackson2JsonRpcMessageWriter;
 import org.springframework.dsl.jsonrpc.codec.JsonRpcMessageWriter;
 import org.springframework.dsl.jsonrpc.result.method.JsonRpcHandlerMethodArgumentResolver;
 import org.springframework.dsl.jsonrpc.result.method.JsonRpcMethodParamsArgumentResolver;
+import org.springframework.dsl.jsonrpc.result.method.JsonRpcRequestParamsArgumentResolver;
 import org.springframework.dsl.jsonrpc.result.method.annotation.JsonRpcNotificationResultHandler;
 import org.springframework.dsl.jsonrpc.result.method.annotation.JsonRpcRequestMappingHandlerAdapter;
 import org.springframework.dsl.jsonrpc.result.method.annotation.JsonRpcRequestMappingHandlerMapping;
@@ -80,5 +81,10 @@ public class DelegatingJsonRpcConfiguration {
 	@Bean
 	public JsonRpcMethodParamsArgumentResolver jsonRpcMethodParamsArgumentResolver() {
 		return new JsonRpcMethodParamsArgumentResolver();
+	}
+	
+	@Bean
+	public JsonRpcRequestParamsArgumentResolver jsonRpcRequestParamsArgumentResolver() {
+		return new JsonRpcRequestParamsArgumentResolver();
 	}
 }
