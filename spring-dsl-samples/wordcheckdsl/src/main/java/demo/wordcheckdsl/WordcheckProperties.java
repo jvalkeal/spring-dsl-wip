@@ -27,6 +27,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author Kris De Volder
  *
  */
+//tag::snippet1[]
 @ConfigurationProperties("demo.wordcheckdsl")
 public class WordcheckProperties {
 
@@ -40,3 +41,4 @@ public class WordcheckProperties {
 		this.words = words;
 	}
 }
+//end::snippet1[]

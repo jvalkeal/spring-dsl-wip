@@ -29,16 +29,18 @@ import org.springframework.dsl.service.reconcile.Linter;
  * @see EnableWordcheckLanguage
  *
  */
+//tag::snippet1[]
 @Configuration
 public class WordcheckLanguageConfiguration {
 
 	@Bean
-	public Completioner simpleLanguageCompletioner() {
+	public Completioner wordcheckLanguageCompletioner() {
 		return new WordcheckLanguageCompletioner();
 	}
 
 	@Bean
-	public Linter simpleLanguageLinter() {
+	public Linter wordcheckLanguageLinter() {
 		return new WordcheckLanguageLinter();
 	}
 }
+//end::snippet1[]

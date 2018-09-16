@@ -1,0 +1,5 @@
+[[dsl-jsonrpc-session]]
+=== JSONRPC Session
+`JsonRpcSession` can be used to store variables and other information between requests until
+particular session is kept alive.
+
