@@ -17,15 +17,32 @@ package org.springframework.dsl.domain;
 
 import org.springframework.dsl.domain.MarkupContent.MarkupContentBuilder;
 import org.springframework.dsl.domain.Range.RangeBuilder;
+import org.springframework.dsl.support.AbstractDomainBuilder;
+import org.springframework.dsl.support.DomainBuilder;
 
+/**
+ * {@code LSP} domain object for a specification {@code Hover}.
+ *
+ * @author Janne Valkealahti
+ *
+ */
 public class Hover {
 
 	private MarkupContent contents;
 	private Range range;
 
+	/**
+	 * Instantiates a new hover.
+	 */
 	public Hover() {
 	}
 
+	/**
+	 * Instantiates a new hover.
+	 *
+	 * @param contents the contents
+	 * @param range the range
+	 */
 	public Hover(MarkupContent contents, Range range) {
 		this.contents = contents;
 		this.range = range;
@@ -78,13 +95,33 @@ public class Hover {
 		return true;
 	}
 
-	public interface HoverBuilder<P> {
+	/**
+	 * Builder interface for {@link Hover}.
+	 *
+	 * @param <P> the parent builder type
+	 */
+	public interface HoverBuilder<P> extends DomainBuilder<Hover, P> {
+
+		/**
+		 * Gets a builder for a {@link MarkupContent}.
+		 *
+		 * @return the builder for chaining
+		 */
 		MarkupContentBuilder<HoverBuilder<P>> contents();
+
+		/**
+		 * Gets a builder for a {@link Range}.
+		 *
+		 * @return the builder for chaining
+		 */
 		RangeBuilder<HoverBuilder<P>> range();
-		P and();
-		Hover build();
 	}
 
+	/**
+	 * Gets a builder for {@link Hover}
+	 *
+	 * @return the position builder
+	 */
 	public static <P> HoverBuilder<P> hover() {
 		return new InternalHoverBuilder<>(null);
 	}
@@ -93,14 +130,13 @@ public class Hover {
 		return new InternalHoverBuilder<>(parent);
 	}
 
-	private static class InternalHoverBuilder<P> implements HoverBuilder<P> {
+	private static class InternalHoverBuilder<P> extends AbstractDomainBuilder<Hover, P> implements HoverBuilder<P> {
 
-		private final P parent;
 		MarkupContentBuilder<HoverBuilder<P>> markupContent;
 		RangeBuilder<HoverBuilder<P>> range;
 
 		InternalHoverBuilder(P parent) {
-			this.parent = parent;
+			super(parent);
 		}
 
 		@Override
@@ -113,11 +149,6 @@ public class Hover {
 		public MarkupContentBuilder<HoverBuilder<P>> contents() {
 			this.markupContent = MarkupContent.markupContent(this);
 			return markupContent;
-		}
-
-		@Override
-		public P and() {
-			return parent;
 		}
 
 		@Override

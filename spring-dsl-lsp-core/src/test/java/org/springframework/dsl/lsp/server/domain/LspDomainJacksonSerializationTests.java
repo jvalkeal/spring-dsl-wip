@@ -34,6 +34,7 @@ import org.springframework.dsl.domain.CompletionOptions;
 import org.springframework.dsl.domain.Diagnostic;
 import org.springframework.dsl.domain.DiagnosticSeverity;
 import org.springframework.dsl.domain.DynamicRegistration;
+import org.springframework.dsl.domain.Hover;
 import org.springframework.dsl.domain.InitializeResult;
 import org.springframework.dsl.domain.InsertTextFormat;
 import org.springframework.dsl.domain.MarkupContent;
@@ -691,6 +692,54 @@ public class LspDomainJacksonSerializationTests {
 
 		json = mapper.writeValueAsString(from);
 		to = mapper.readValue(json, Unregistration.class);
+		assertObjects(from, to);
+	}
+
+	@Test
+	public void testHover() throws Exception {
+		Hover from = new Hover();
+		String json = mapper.writeValueAsString(from);
+		Hover to = mapper.readValue(json, Hover.class);
+		assertObjects(from, to);
+
+		from = Hover.hover()
+				.contents()
+					.kind(MarkupKind.plaintext)
+					.value("value")
+					.and()
+				.range()
+					.start()
+						.line(1)
+						.character(1)
+						.and()
+					.end()
+						.line(2)
+						.character(2)
+						.and()
+					.and()
+				.build();
+
+		json = mapper.writeValueAsString(from);
+		to = mapper.readValue(json, Hover.class);
+		assertObjects(from, to);
+
+		String expect = loadResourceAsString("Hover1.json");
+		to = mapper.readValue(expect, Hover.class);
+		assertObjects(from, to);
+
+		from = Hover.hover()
+				.contents()
+					.kind(MarkupKind.markdown)
+					.value("value")
+					.and()
+				.build();
+
+		json = mapper.writeValueAsString(from);
+		to = mapper.readValue(json, Hover.class);
+		assertObjects(from, to);
+
+		expect = loadResourceAsString("Hover2.json");
+		to = mapper.readValue(expect, Hover.class);
 		assertObjects(from, to);
 	}
 

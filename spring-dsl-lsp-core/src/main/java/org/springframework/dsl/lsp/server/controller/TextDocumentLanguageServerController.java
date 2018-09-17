@@ -211,9 +211,11 @@ public class TextDocumentLanguageServerController {
 		Document document = documentStateTracker.getDocument(params.getTextDocument().getUri());
 		Position position = params.getPosition();
 
-		return Flux.fromIterable(registry.getHoverers(document.languageId()))
-				.concatMap(hoverer -> hoverer.hover(document, position))
-				.next();
+		return Flux.fromIterable(registry.getHoverers())
+			.filter(hoverer -> hoverer.getSupportedLanguageIds().stream()
+					.anyMatch(l -> l.isCompatibleWith(document.languageId())))
+			.next()
+			.flatMap(hoverer -> hoverer.hover(document, position));
 	}
 
 	/**

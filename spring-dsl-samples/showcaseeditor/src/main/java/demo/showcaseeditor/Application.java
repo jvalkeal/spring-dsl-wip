@@ -20,6 +20,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;
 
 import demo.common.SampleRedirectConfiguration;
+import demo.showcase.EnableShowcaseFeatures;
 import demo.wordcheckdsl.EnableWordcheckLanguage;
 
 /**
@@ -30,6 +31,7 @@ import demo.wordcheckdsl.EnableWordcheckLanguage;
  */
 //tag::snippet1[]
 @EnableWordcheckLanguage
+@EnableShowcaseFeatures
 @SpringBootApplication
 @Import(SampleRedirectConfiguration.class)
 public class Application {

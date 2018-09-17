@@ -29,9 +29,18 @@ public class MarkupContent {
 	private MarkupKind kind;
 	private String value;
 
+	/**
+	 * Instantiates a new markup content.
+	 */
 	public MarkupContent() {
 	}
 
+	/**
+	 * Instantiates a new markup content.
+	 *
+	 * @param kind the kind
+	 * @param value the value
+	 */
 	public MarkupContent(MarkupKind kind, String value) {
 		this.kind = kind;
 		this.value = value;
@@ -81,12 +90,35 @@ public class MarkupContent {
 		return true;
 	}
 
+	/**
+	 * Builder interface for {@link MarkupContent}.
+	 *
+	 * @param <P> the parent builder type
+	 */
 	public interface MarkupContentBuilder<P> extends DomainBuilder<MarkupContent, P> {
 
+		/**
+		 * Sets a markup kind.
+		 *
+		 * @param kind the kind
+		 * @return the builder for chaining
+		 */
 		MarkupContentBuilder<P> kind(MarkupKind kind);
+
+		/**
+		 * Sets a value.
+		 *
+		 * @param value the value
+		 * @return the builder for chaining
+		 */
 		MarkupContentBuilder<P> value(String value);
 	}
 
+	/**
+	 * Gets a builder for {@link MarkupContent}
+	 *
+	 * @return the position builder
+	 */
 	public static <P> MarkupContentBuilder<P> markupContent() {
 		return new InternalMarkupContentBuilder<>(null);
 	}
