@@ -22,6 +22,12 @@ import org.springframework.dsl.jsonrpc.ServerJsonRpcExchange;
 
 import reactor.core.publisher.Mono;
 
+/**
+ * Request-based {@link JsonRpcSessionIdResolver}.
+ *
+ * @author Janne Valkealahti
+ *
+ */
 public class RequestSessionIdJsonRpcSessionIdResolver implements JsonRpcSessionIdResolver {
 
 	@Override

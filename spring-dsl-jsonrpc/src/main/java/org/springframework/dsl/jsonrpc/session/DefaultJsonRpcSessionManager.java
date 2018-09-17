@@ -16,12 +16,15 @@
 package org.springframework.dsl.jsonrpc.session;
 
 import org.springframework.dsl.jsonrpc.ServerJsonRpcExchange;
+import org.springframework.util.Assert;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
- * Default implementation of a {@link JsonRpcSessionManager}.
+ * Default implementation of a {@link JsonRpcSessionManager} delegating to a
+ * {@link JsonRpcSessionIdResolver} for session id and to a
+ * {@link JsonRpcSessionStore}.
  *
  * @author Janne Valkealahti
  *
@@ -38,8 +41,46 @@ public class DefaultJsonRpcSessionManager implements JsonRpcSessionManager {
 				.doOnNext(session -> exchange.getResponse().beforeCommit(() -> save(exchange, session))));
 	}
 
+	/**
+	 * Sets the session id resolver.
+	 * <p>
+	 * By default an instance of {@link RequestSessionIdJsonRpcSessionIdResolver}.
+	 *
+	 * @param sessionIdResolver the new session id resolver
+	 */
+	public void setSessionIdResolver(JsonRpcSessionIdResolver sessionIdResolver) {
+		Assert.notNull(sessionIdResolver, "JsonRpcSessionIdResolver is required");
+		this.sessionIdResolver = sessionIdResolver;
+	}
+
+	/**
+	 * Gets the session id resolver.
+	 *
+	 * @return the session id resolver
+	 */
 	public JsonRpcSessionIdResolver getSessionIdResolver() {
 		return this.sessionIdResolver;
+	}
+
+	/**
+	 * Sets the session store.
+	 * <p>
+	 * By default an instance of {@link InMemoryJsonRpcSessionStore}.
+	 *
+	 * @param sessionStore the new session store
+	 */
+	public void setSessionStore(JsonRpcSessionStore sessionStore) {
+		Assert.notNull(sessionStore, "JsonRpcSessionStore is required");
+		this.sessionStore = sessionStore;
+	}
+
+	/**
+	 * Gets the session store.
+	 *
+	 * @return the session store
+	 */
+	public JsonRpcSessionStore getSessionStore() {
+		return sessionStore;
 	}
 
 	private Mono<JsonRpcSession> retrieveSession(ServerJsonRpcExchange exchange) {
@@ -52,7 +93,6 @@ public class DefaultJsonRpcSessionManager implements JsonRpcSessionManager {
 		if (!session.isStarted() || session.isExpired()) {
 			return Mono.empty();
 		}
-
 		return session.save();
 	}
 }
