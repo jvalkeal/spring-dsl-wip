@@ -26,5 +26,13 @@
   "additionalTextEdits": null,
   "commitCharacters": null,
   "command": null,
-  "data": null
+  "data": null,
+  "command": {
+    "title": "title",
+    "command": "command",
+    "arguments": [
+      "arg1",
+      "arg2"
+    ]
+  }
 }

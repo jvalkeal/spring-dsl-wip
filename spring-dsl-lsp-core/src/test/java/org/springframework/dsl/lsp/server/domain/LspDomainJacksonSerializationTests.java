@@ -27,6 +27,7 @@ import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.dsl.domain.ClientCapabilities;
+import org.springframework.dsl.domain.Command;
 import org.springframework.dsl.domain.CompletionItem;
 import org.springframework.dsl.domain.CompletionItemKind;
 import org.springframework.dsl.domain.CompletionList;
@@ -485,6 +486,11 @@ public class LspDomainJacksonSerializationTests {
 						.and()
 					.newText("newText")
 					.and()
+				.command()
+					.title("title")
+					.command("command")
+					.arguments(Arrays.asList("arg1", "arg2"))
+					.and()
 				.build();
 
 		json = mapper.writeValueAsString(from);
@@ -740,6 +746,55 @@ public class LspDomainJacksonSerializationTests {
 
 		expect = loadResourceAsString("Hover2.json");
 		to = mapper.readValue(expect, Hover.class);
+		assertObjects(from, to);
+	}
+
+	@Test
+	public void testCommand() throws Exception {
+		Command from = new Command();
+		String json = mapper.writeValueAsString(from);
+		Command to = mapper.readValue(json, Command.class);
+		assertObjects(from, to);
+
+		from = Command.command()
+				.title("title")
+				.command("command")
+				.arguments(Arrays.asList("arg1", "arg2"))
+				.build();
+
+		json = mapper.writeValueAsString(from);
+		to = mapper.readValue(json, Command.class);
+		assertObjects(from, to);
+
+		String expect = loadResourceAsString("Command1.json");
+		to = mapper.readValue(expect, Command.class);
+		assertObjects(from, to);
+
+		from = Command.command()
+				.title("title")
+				.command("command")
+				.build();
+
+		json = mapper.writeValueAsString(from);
+		to = mapper.readValue(json, Command.class);
+		assertObjects(from, to);
+
+		expect = loadResourceAsString("Command2.json");
+		to = mapper.readValue(expect, Command.class);
+		assertObjects(from, to);
+
+		from = Command.command()
+				.title("title")
+				.command("command")
+				.argument("arg1")
+				.build();
+
+		json = mapper.writeValueAsString(from);
+		to = mapper.readValue(json, Command.class);
+		assertObjects(from, to);
+
+		expect = loadResourceAsString("Command3.json");
+		to = mapper.readValue(expect, Command.class);
 		assertObjects(from, to);
 	}
 

@@ -17,6 +17,7 @@ package org.springframework.dsl.domain;
 
 import java.util.List;
 
+import org.springframework.dsl.domain.Command.CommandBuilder;
 import org.springframework.dsl.domain.MarkupContent.MarkupContentBuilder;
 import org.springframework.dsl.domain.TextEdit.TextEditBuilder;
 import org.springframework.dsl.support.AbstractDomainBuilder;
@@ -247,20 +248,96 @@ public class CompletionItem {
 		return true;
 	}
 
+	/**
+	 * Builder interface for {@link CompletionItem}.
+	 *
+	 * @param <P> the parent builder type
+	 */
 	public interface CompletionItemBuilder<P> extends DomainBuilder<CompletionItem, P>{
 
+		/**
+		 * Sets a label.
+		 *
+		 * @param label the label
+		 * @return the builder for chaining
+		 */
 		CompletionItemBuilder<P> label(String label);
+
+		/**
+		 * Sets a completion item kind
+		 *
+		 * @param kind the kind
+		 * @return the builder for chaining
+		 */
 		CompletionItemBuilder<P> kind(CompletionItemKind kind);
+
+		/**
+		 * Sets a detail.
+		 *
+		 * @param detail the detail
+		 * @return the builder for chaining
+		 */
 		CompletionItemBuilder<P> detail(String detail);
+
+		/**
+		 * Gets a builder for {@link MarkupContent}.
+		 *
+		 * @return the builder for chaining
+		 */
 		MarkupContentBuilder<CompletionItemBuilder<P>> documentation();
+
+		/**
+		 * Sets a sort text.
+		 *
+		 * @param sortText the sortText
+		 * @return the builder for chaining
+		 */
 		CompletionItemBuilder<P> sortText(String sortText);
+
+		/**
+		 * Sets a filter text.
+		 *
+		 * @param filterText the filterText
+		 * @return the builder for chaining
+		 */
 		CompletionItemBuilder<P> filterText(String filterText);
+
+		/**
+		 * Sets an insert text.
+		 *
+		 * @param insertText the insertText
+		 * @return the builder for chaining
+		 */
 		CompletionItemBuilder<P> insertText(String insertText);
+
+		/**
+		 * Sets an insert text format.
+		 *
+		 * @param insertTextFormat the insertTextFormat
+		 * @return the builder for chaining
+		 */
 		CompletionItemBuilder<P> insertTextFormat(InsertTextFormat insertTextFormat);
 
+		/**
+		 * Gets a builder for {@link TextEdit}.
+		 *
+		 * @return the builder for chaining
+		 */
 		TextEditBuilder<CompletionItemBuilder<P>> textEdit();
+
+		/**
+		 * Gets a builder for {@link Command}.
+		 *
+		 * @return the builder for chaining
+		 */
+		CommandBuilder<CompletionItemBuilder<P>> command();
 	}
 
+	/**
+	 * Gets a builder for {@link CompletionItem}
+	 *
+	 * @return the completion list builder
+	 */
 	public static <P> CompletionItemBuilder<P> completionItem() {
 		return new InternalCompletionItemBuilder<>(null);
 	}
@@ -284,8 +361,8 @@ public class CompletionItem {
 		// TODO: support vvv
 //		private List<TextEdit> additionalTextEdits;
 //		private List<String> commitCharacters;
-//		private Command command;
 //		private Object data;
+		private CommandBuilder<CompletionItemBuilder<P>> command;
 
 		InternalCompletionItemBuilder(P parent) {
 			super(parent);
@@ -346,6 +423,12 @@ public class CompletionItem {
 		}
 
 		@Override
+		public CommandBuilder<CompletionItemBuilder<P>> command() {
+			this.command = Command.command(this);
+			return this.command;
+		}
+
+		@Override
 		public CompletionItem build() {
 			CompletionItem completionItem = new CompletionItem();
 			completionItem.setLabel(label);
@@ -361,6 +444,9 @@ public class CompletionItem {
 			completionItem.setFilterText(filterText);
 			completionItem.setInsertText(insertText);
 			completionItem.setInsertTextFormat(insertTextFormat);
+			if (command != null) {
+				completionItem.setCommand(command.build());
+			}
 			return completionItem;
 		}
 	}

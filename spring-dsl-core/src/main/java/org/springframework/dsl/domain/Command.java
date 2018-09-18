@@ -15,15 +15,52 @@
  */
 package org.springframework.dsl.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.dsl.support.AbstractDomainBuilder;
+import org.springframework.dsl.support.DomainBuilder;
+
+/**
+ * {@code LSP} domain object for a specification {@code Command}.
+ *
+ * @author Janne Valkealahti
+ *
+ */
 public class Command {
 
 	private String title;
 	private String command;
 	private List<Object> arguments;
 
+	/**
+	 * Instantiates a new command.
+	 */
 	public Command() {
+	}
+
+	/**
+	 * Instantiates a new command.
+	 *
+	 * @param title the title
+	 * @param command the command
+	 */
+	public Command(String title, String command) {
+		this(title, command, null);
+	}
+
+	/**
+	 * Instantiates a new command.
+	 *
+	 * @param title the title
+	 * @param command the command
+	 * @param arguments the arguments
+	 */
+	public Command(String title, String command, List<Object> arguments) {
+		super();
+		this.title = title;
+		this.command = command;
+		this.arguments = arguments;
 	}
 
 	public String getTitle() {
@@ -85,5 +122,102 @@ public class Command {
 		} else if (!title.equals(other.title))
 			return false;
 		return true;
+	}
+
+	/**
+	 * Builder interface for {@link Command}.
+	 *
+	 * @param <P> the parent builder type
+	 */
+	public interface CommandBuilder<P> extends DomainBuilder<Command, P> {
+
+		/**
+		 * Sets a title.
+		 *
+		 * @param title the title
+		 * @return the builder for chaining
+		 */
+		CommandBuilder<P> title(String title);
+
+		/**
+		 * Sets a command.
+		 *
+		 * @param command the command
+		 * @return the builder for chaining
+		 */
+		CommandBuilder<P> command(String command);
+
+		/**
+		 * Adds an argument.
+		 *
+		 * @param argument the argument
+		 * @return the builder for chaining
+		 */
+		CommandBuilder<P> argument(Object argument);
+
+		/**
+		 * Sets an arguments.
+		 *
+		 * @param arguments the arguments
+		 * @return the builder for chaining
+		 */
+		CommandBuilder<P> arguments(List<Object> arguments);
+	}
+
+	/**
+	 * Gets a builder for {@link Command}
+	 *
+	 * @return the command builder
+	 */
+	public static <P> CommandBuilder<P> command() {
+		return new InternalCommandBuilder<>(null);
+	}
+
+	protected static <P> CommandBuilder<P> command(P parent) {
+		return new InternalCommandBuilder<>(parent);
+	}
+
+	private static class InternalCommandBuilder<P>
+			extends AbstractDomainBuilder<Command, P> implements CommandBuilder<P> {
+
+		private String title;
+		private String command;
+		private List<Object> arguments;
+
+		InternalCommandBuilder(P parent) {
+			super(parent);
+		}
+
+		@Override
+		public CommandBuilder<P> title(String title) {
+			this.title = title;
+			return this;
+		}
+
+		@Override
+		public CommandBuilder<P> command(String command) {
+			this.command = command;
+			return this;
+		}
+
+		@Override
+		public CommandBuilder<P> argument(Object argument) {
+			if (arguments == null) {
+				arguments = new ArrayList<>();
+			}
+			arguments.add(argument);
+			return this;
+		}
+
+		@Override
+		public CommandBuilder<P> arguments(List<Object> arguments) {
+			this.arguments = arguments;
+			return this;
+		}
+
+		@Override
+		public Command build() {
+			return new Command(title, command, arguments);
+		}
 	}
 }
