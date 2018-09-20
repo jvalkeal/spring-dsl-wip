@@ -21,6 +21,7 @@ import org.springframework.context.annotation.Import;
 
 import demo.common.SampleRedirectConfiguration;
 import demo.showcase.EnableShowcaseFeatures;
+import demo.simpledsl.EnableSimpleLanguage;
 import demo.wordcheckdsl.EnableWordcheckLanguage;
 
 /**
@@ -31,6 +32,7 @@ import demo.wordcheckdsl.EnableWordcheckLanguage;
  */
 //tag::snippet1[]
 @EnableWordcheckLanguage
+@EnableSimpleLanguage
 @EnableShowcaseFeatures
 @SpringBootApplication
 @Import(SampleRedirectConfiguration.class)
