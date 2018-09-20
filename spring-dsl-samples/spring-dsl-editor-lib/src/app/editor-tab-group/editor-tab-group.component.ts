@@ -16,6 +16,10 @@
 import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
+export class TabInfo {
+  constructor(public name: string, public language: string) {}
+}
+
 /**
  * Component wrapping logic handling editors in tabs.
  *
@@ -28,23 +32,27 @@ import { FormControl } from '@angular/forms';
 })
 export class EditorTabGroupComponent {
 
-  public tabs = [];
+  public tabs: TabInfo[] = [];
   public selected = new FormControl(0);
 
-  public openTab(name: string) {
-    const index = this.tabs.indexOf(name, 0);
+  public openTab(name: string, language?: string) {
+    const index = this.findTabIndex(name);
     if (index > -1) {
       this.selected.setValue(index);
     } else {
-      this.tabs.push(name);
+      this.tabs.push(new TabInfo(name, language));
       this.selected.setValue(this.tabs.length - 1);
     }
   }
 
   public closeTab(name: string) {
-    const index = this.tabs.indexOf(name, 0);
+    const index = this.findTabIndex(name);
     if (index > -1) {
       this.tabs.splice(index, 1);
     }
+  }
+
+  private findTabIndex(name: string): number {
+    return this.tabs.findIndex(item => item.name === name);
   }
 }

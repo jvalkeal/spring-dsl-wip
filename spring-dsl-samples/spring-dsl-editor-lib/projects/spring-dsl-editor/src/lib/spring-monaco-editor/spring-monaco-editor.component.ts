@@ -18,7 +18,9 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { fromEvent } from 'rxjs';
 import { BaseEditor } from './base-editor';
 import { SPRING_MONACO_EDITOR_CONFIG, SpringMonacoEditorConfig } from './config';
-import { SpringMonacoEditorModel } from './types';
+import {MonacoLoaderService} from "./monaco-loader.service";
+import {MonacoEditorService} from "./monaco-editor.service";
+// import { SpringMonacoEditorModel } from './types';
 
 /**
  * Component handling low level integration with a monaco editor.
@@ -50,8 +52,11 @@ export class SpringMonacoEditorComponent extends BaseEditor implements ControlVa
   //   }
   // }
 
-  constructor(private zone: NgZone, @Inject(SPRING_MONACO_EDITOR_CONFIG) private editorConfig: SpringMonacoEditorConfig) {
-    super(editorConfig);
+  constructor(private zone: NgZone,
+              @Inject(SPRING_MONACO_EDITOR_CONFIG) private editorConfig: SpringMonacoEditorConfig,
+              monacoLoaderService: MonacoLoaderService,
+              private monacoEditorService: MonacoEditorService) {
+    super(editorConfig, monacoLoaderService);
   }
 
   writeValue(value: any): void {
@@ -79,7 +84,8 @@ export class SpringMonacoEditorComponent extends BaseEditor implements ControlVa
     if (hasModel) {
       options.model = monaco.editor.createModel(options.model.value, options.model.language, options.model.uri);
     }
-    this.editor = monaco.editor.create(this.editorContainer.nativeElement, options);
+    // this.editor = monaco.editor.create(this.editorContainer.nativeElement, options);
+    this.editor = this.monacoEditorService.create(this.editorContainer.nativeElement, options);
 
     if (!hasModel) {
       this.editor.setValue(this._value);

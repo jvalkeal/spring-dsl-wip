@@ -24,14 +24,17 @@ import { EditorTabGroupComponent } from './editor-tab-group/editor-tab-group.com
 
 const springMonacoEditorConfig: SpringMonacoEditorConfig = {
   defaultOptions: {
-    language: 'simple'
+    theme: 'vs',
+    automaticLayout: true,
+    fixedOverflowWidgets: true
   },
   onMonacoLoad: () => {
     (<any>window).monaco.languages.register({ id: 'simple' });
+    (<any>window).monaco.languages.register({ id: 'wordcheck' });
   }
 };
 const springDslEditorConfig: SpringDslEditorConfig = {
-  documentSelector: ['simple']
+  documentSelector: ['simple', 'wordcheck']
 };
 
 @NgModule({

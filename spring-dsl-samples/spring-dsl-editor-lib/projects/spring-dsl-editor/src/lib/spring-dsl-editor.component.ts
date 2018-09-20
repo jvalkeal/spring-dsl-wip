@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Output, Input } from '@angular/core';
 import { SpringDslEditorService } from './spring-dsl-editor.service';
 
-const normalizeUrl = require('normalize-url');
+// const normalizeUrl = require('normalize-url');
 
 /**
  * Component handling high level integration with a monaco editor.
@@ -30,10 +30,15 @@ const normalizeUrl = require('normalize-url');
 })
 export class SpringDslEditorComponent implements OnInit, OnDestroy {
 
-  editorOptions = {theme: 'vs', automaticLayout: true, fixedOverflowWidgets: true};
-  // editorOptions = {theme: 'vs', language: 'simple', automaticLayout: true, fixedOverflowWidgets: true};
-  // code = '';
-  private editor: any;
+  @Output('editorOptions')
+  editorOptions = {};
+  // editorOptions = {theme: 'vs', automaticLayout: true, fixedOverflowWidgets: true};
+
+  @Input('language')
+  set language(language: string) {
+    this.editorOptions['language'] = language;
+  }
+
   private editorService: SpringDslEditorService;
 
   constructor(editorService: SpringDslEditorService) {
