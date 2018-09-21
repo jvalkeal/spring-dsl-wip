@@ -47,14 +47,26 @@ public class LogMessageParams {
 	}
 
 	/**
-	 * Get {@link LogMessageParams} from a {@link MessageType} and a {@code message}.
+	 * Get {@link LogMessageParams} from a {@code message} with a
+	 * {@link MessageType}}.
 	 *
-	 * @param type the type
+	 * @param type    the type
 	 * @param message the message
 	 * @return the log message params
 	 */
 	public static LogMessageParams from(MessageType type, String message) {
 		return new LogMessageParams(type, message);
+	}
+
+	/**
+	 * Get {@link LogMessageParams} from a {@code message} with a
+	 * {@link MessageType#Log}}
+	 *
+	 * @param message the message
+	 * @return the log message params
+	 */
+	public static LogMessageParams from(String message) {
+		return new LogMessageParams(MessageType.Log, message);
 	}
 
 	public MessageType getType() {
