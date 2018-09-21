@@ -16,6 +16,11 @@
 import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
+/**
+ * Wrapping tab name and language together.
+ *
+ * @author Janne Valkealahti
+ */
 export class TabInfo {
   constructor(public name: string, public language: string) {}
 }

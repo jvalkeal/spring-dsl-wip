@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Component, OnInit, forwardRef, Inject, Input, NgZone } from '@angular/core';
+import {Component, OnInit, forwardRef, Inject, Input, NgZone, Optional} from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { fromEvent } from 'rxjs';
 import { BaseEditor } from './base-editor';
-import { SPRING_MONACO_EDITOR_CONFIG, SpringMonacoEditorConfig } from './config';
-import {MonacoLoaderService} from "./monaco-loader.service";
-import {MonacoEditorService} from "./monaco-editor.service";
+import { SPRING_DSL_ACTION, SPRING_MONACO_EDITOR_CONFIG, SpringDslAction, SpringMonacoEditorConfig } from './config';
+import { MonacoLoaderService } from "./monaco-loader.service";
+import { MonacoEditorService } from "./monaco-editor.service";
 // import { SpringMonacoEditorModel } from './types';
 
 /**
@@ -54,6 +54,7 @@ export class SpringMonacoEditorComponent extends BaseEditor implements ControlVa
 
   constructor(private zone: NgZone,
               @Inject(SPRING_MONACO_EDITOR_CONFIG) private editorConfig: SpringMonacoEditorConfig,
+              @Inject(SPRING_DSL_ACTION) @Optional() private actions: SpringDslAction[],
               monacoLoaderService: MonacoLoaderService,
               private monacoEditorService: MonacoEditorService) {
     super(editorConfig, monacoLoaderService);
@@ -86,6 +87,13 @@ export class SpringMonacoEditorComponent extends BaseEditor implements ControlVa
     }
     // this.editor = monaco.editor.create(this.editorContainer.nativeElement, options);
     this.editor = this.monacoEditorService.create(this.editorContainer.nativeElement, options);
+
+
+    if (this.actions) {
+      this.actions.forEach( (action) => {
+        this.editor.addAction(action);
+      });
+    }
 
     if (!hasModel) {
       this.editor.setValue(this._value);

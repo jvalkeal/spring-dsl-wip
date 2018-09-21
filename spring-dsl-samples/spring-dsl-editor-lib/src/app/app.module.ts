@@ -21,6 +21,7 @@ import { MatTabsModule, MatIconModule } from '@angular/material';
 import { AppComponent } from './app.component';
 import { SpringDslEditorModule, SpringMonacoEditorConfig, SpringDslEditorConfig } from 'spring-dsl-editor';
 import { EditorTabGroupComponent } from './editor-tab-group/editor-tab-group.component';
+import { ACTIONS } from './actions';
 
 const springMonacoEditorConfig: SpringMonacoEditorConfig = {
   defaultOptions: {
@@ -51,7 +52,9 @@ const springDslEditorConfig: SpringDslEditorConfig = {
     NoopAnimationsModule,
     SpringDslEditorModule.forRoot(springMonacoEditorConfig, springDslEditorConfig)
   ],
-  providers: [],
+  providers: [
+    ...ACTIONS
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

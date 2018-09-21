@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {Inject, Injectable, OnDestroy} from '@angular/core';
+import {Inject, Injectable, OnDestroy, Optional} from '@angular/core';
 import { BaseLanguageClient, CloseAction, createConnection, ErrorAction, MonacoLanguageClient,
   MonacoServices} from 'monaco-languageclient';
 import { listen, MessageConnection } from 'vscode-ws-jsonrpc';
@@ -31,6 +31,7 @@ export class SpringDslEditorService implements OnDestroy {
 
   private initialised: boolean;
   private editorConfig: SpringDslEditorConfig;
+  private languageClient: BaseLanguageClient;
 
   constructor(@Inject(SPRING_DSL_EDITOR_CONFIG) editorConfig: SpringDslEditorConfig) {
     this.initialised = false;
@@ -38,6 +39,10 @@ export class SpringDslEditorService implements OnDestroy {
   }
 
   ngOnDestroy() {
+  }
+
+  public getLanguageClient(): BaseLanguageClient {
+    return this.languageClient;
   }
 
   public initLanguageClient() {
@@ -53,8 +58,10 @@ export class SpringDslEditorService implements OnDestroy {
       webSocket,
       onConnection: connection => {
         // create and start the language client
-        const languageClient = this.createLanguageClient(connection);
-        const disposable = languageClient.start();
+        // const languageClient = this.createLanguageClient(connection);
+        // const disposable = languageClient.start();
+        this.languageClient = this.createLanguageClient(connection);
+        const disposable = this.languageClient.start();
         connection.onClose(() => disposable.dispose());
       }
     });

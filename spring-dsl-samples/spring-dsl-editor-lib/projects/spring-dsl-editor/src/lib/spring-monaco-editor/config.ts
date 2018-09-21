@@ -16,9 +16,16 @@
 import { InjectionToken } from '@angular/core';
 
 export const SPRING_MONACO_EDITOR_CONFIG = new InjectionToken('SPRING_MONACO_EDITOR_CONFIG');
+export const SPRING_DSL_ACTION = new InjectionToken('SPRING_DSL_ACTION');
 
 export interface SpringMonacoEditorConfig {
   baseUrl?: string;
   defaultOptions?: { [key: string]: any; };
   onMonacoLoad?: Function;
+}
+
+export abstract class SpringDslAction implements monaco.editor.IActionDescriptor {
+  abstract id: string;
+  abstract label: string;
+  abstract run(editor: monaco.editor.ICodeEditor): void | monaco.Promise<void>;
 }
