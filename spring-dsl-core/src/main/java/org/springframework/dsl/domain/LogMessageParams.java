@@ -26,7 +26,7 @@ import org.springframework.dsl.support.DomainBuilder;
  */
 public class LogMessageParams {
 
-	private Long type;
+	private MessageType type;
 	private String message;
 
 	/**
@@ -41,16 +41,27 @@ public class LogMessageParams {
 	 * @param type the type
 	 * @param message the message
 	 */
-	public LogMessageParams(Long type, String message) {
+	public LogMessageParams(MessageType type, String message) {
 		this.type = type;
 		this.message = message;
 	}
 
-	public Long getType() {
+	/**
+	 * Get {@link LogMessageParams} from a {@link MessageType} and a {@code message}.
+	 *
+	 * @param type the type
+	 * @param message the message
+	 * @return the log message params
+	 */
+	public static LogMessageParams from(MessageType type, String message) {
+		return new LogMessageParams(type, message);
+	}
+
+	public MessageType getType() {
 		return type;
 	}
 
-	public void setType(Long type) {
+	public void setType(MessageType type) {
 		this.type = type;
 	}
 
@@ -111,7 +122,7 @@ public class LogMessageParams {
 		 * @param type the type
 		 * @return the builder for chaining
 		 */
-		LogMessageParamsBuilder<P> type(Long type);
+		LogMessageParamsBuilder<P> type(MessageType type);
 
 		/**
 		 * Sets a message.
@@ -137,7 +148,7 @@ public class LogMessageParams {
 
 	private static class InternalLogMessageParamsBuilder<P> extends AbstractDomainBuilder<LogMessageParams, P> implements LogMessageParamsBuilder<P>{
 
-		private Long type;
+		private MessageType type;
 		private String message;
 
 		InternalLogMessageParamsBuilder(P parent) {
@@ -145,7 +156,7 @@ public class LogMessageParams {
 		}
 
 		@Override
-		public LogMessageParamsBuilder<P> type(Long type) {
+		public LogMessageParamsBuilder<P> type(MessageType type) {
 			this.type = type;
 			return this;
 		}

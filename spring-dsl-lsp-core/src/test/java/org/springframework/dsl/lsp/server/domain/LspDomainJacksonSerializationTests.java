@@ -807,7 +807,7 @@ public class LspDomainJacksonSerializationTests {
 		assertObjects(from, to);
 
 		from = LogMessageParams.logMessageParams()
-				.type(1l)
+				.type(MessageType.Error)
 				.message("message")
 				.build();
 
