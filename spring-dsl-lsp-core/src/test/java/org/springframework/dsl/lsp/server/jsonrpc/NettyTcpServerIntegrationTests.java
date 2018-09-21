@@ -634,6 +634,45 @@ public class NettyTcpServerIntegrationTests {
 		assertThat(responses.get(0).getResult()).isEqualTo("clienthi");
 	}
 
+
+	@Test
+	public void testClientServerToClientNotification() throws InterruptedException {
+		context = new AnnotationConfigApplicationContext();
+		context.register(JsonRpcConfig.class, JsonRpcServerConfig.class, TestServerJsonRpcController.class);
+		context.refresh();
+
+		clientContext = new AnnotationConfigApplicationContext();
+		clientContext.register(JsonRpcConfig.class, JsonRpcClientConfig.class, TestClientJsonRpcController.class);
+		clientContext.refresh();
+
+		ClientReactorJsonRpcHandlerAdapter xxx = clientContext.getBean(ClientReactorJsonRpcHandlerAdapter.class);
+		TestClientJsonRpcController controller = clientContext.getBean(TestClientJsonRpcController.class);
+
+		NettyTcpServer server = context.getBean(NettyTcpServer.class);
+		CountDownLatch dataLatch = new CountDownLatch(1);
+		final List<JsonRpcResponse> responses = new ArrayList<>();
+
+		LspClient lspClient = LspClient.builder()
+				.host("0.0.0.0")
+				.port(server.getPort())
+				.function(xxx)
+				.processor(xxx)
+				.build();
+		lspClient.start();
+
+		Mono<JsonRpcResponse> lspClientResponseMono = lspClient.request().id("1").method("serverclientnotification").exchange();
+		lspClientResponseMono.doOnNext(r -> {
+			responses.add(r);
+			dataLatch.countDown();
+		}).subscribe();
+
+		assertThat(dataLatch.await(2, TimeUnit.SECONDS)).isTrue();
+		assertThat(responses.get(0).getId()).isEqualTo("1");
+		assertThat(responses.get(0).getError()).isNull();
+		assertThat(responses.get(0).getResult()).isEqualTo("hi");
+		assertThat(controller.counter.get()).isEqualTo(1);
+	}
+
 	@Test
 	public void testMultipleClients() throws InterruptedException {
 		context = new AnnotationConfigApplicationContext();
@@ -733,10 +772,18 @@ public class NettyTcpServerIntegrationTests {
 	@JsonRpcController
 	private static class TestClientJsonRpcController {
 
+		private AtomicInteger counter = new AtomicInteger();
+
 		@JsonRpcRequestMapping(method = "clienthi")
 		@JsonRpcResponseBody
 		public String clienthi() {
 			return "clienthi";
+		}
+
+		@JsonRpcRequestMapping(method = "clientnotification")
+		@JsonRpcNotification
+		public void clientnotifaction() {
+			counter.incrementAndGet();
 		}
 	}
 
@@ -751,6 +798,14 @@ public class NettyTcpServerIntegrationTests {
 			return lspClient
 					.request().id("10").method("clienthi").exchange()
 					.map(r -> r.getResult());
+		}
+
+		@JsonRpcRequestMapping(method = "serverclientnotification")
+		@JsonRpcResponseBody
+		public Mono<String> serverclientnotification(LspClient lspClient) {
+			return lspClient
+					.notification().method("clientnotification").exchange()
+					.then(Mono.just("hi"));
 		}
 
 		@JsonRpcRequestMapping(method = "counter")

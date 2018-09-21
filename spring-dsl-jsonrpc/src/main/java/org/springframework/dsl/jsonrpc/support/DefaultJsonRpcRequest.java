@@ -94,7 +94,7 @@ public class DefaultJsonRpcRequest extends AbstractJsonRpcObject implements Json
 	 *
 	 * @param params the new params
 	 */
-	public void setParams(String params) {
+	public void setParams(Object params) {
 		this.params = params;
 	}
 

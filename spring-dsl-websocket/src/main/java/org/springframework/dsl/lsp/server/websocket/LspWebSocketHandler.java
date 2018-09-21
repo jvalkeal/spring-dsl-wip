@@ -25,9 +25,11 @@ import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferFactory;
 import org.springframework.dsl.jsonrpc.JsonRpcInputMessage;
 import org.springframework.dsl.jsonrpc.JsonRpcOutputMessage;
+import org.springframework.dsl.jsonrpc.session.JsonRpcSession.JsonRpcSessionCustomizer;
 import org.springframework.dsl.jsonrpc.support.AbstractJsonRpcOutputMessage;
 import org.springframework.dsl.jsonrpc.support.DefaultJsonRpcRequest;
 import org.springframework.dsl.jsonrpc.support.DefaultJsonRpcRequestJsonDeserializer;
+import org.springframework.dsl.lsp.client.LspClient;
 import org.springframework.dsl.lsp.server.jsonrpc.RpcHandler;
 import org.springframework.web.reactive.socket.WebSocketHandler;
 import org.springframework.web.reactive.socket.WebSocketMessage;
@@ -62,6 +64,9 @@ public class LspWebSocketHandler implements WebSocketHandler {
 				throw new RuntimeException(e);
 			}
 		};
+
+		LspClient lspClient = new WebSocketBoundedLspClient(session);
+		JsonRpcSessionCustomizer customizer = s -> s.getAttributes().put("lspClient", lspClient);
 
 		return session.receive()
 			.map(message -> {
@@ -111,7 +116,7 @@ public class LspWebSocketHandler implements WebSocketHandler {
 //				JsonRpcInputMessage adaptedRequest = null;
 				JsonRpcOutputMessage adaptedResponse = new WebSocketJsonRpcOutputMessage(session, session.bufferFactory());
 
-				rpcHandler.handle(i, adaptedResponse)
+				rpcHandler.handle(i, adaptedResponse, customizer)
 					.doOnError(ex -> {
 						log.error("Handling completed with error", ex);
 						String error = "{\"jsonrpc\":\"2.0\", \"id\":" + bb.getId() + ", \"error\":{\"code\":-32603, \"message\": \"internal server error\"}}";

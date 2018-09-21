@@ -93,6 +93,11 @@ public class NettyTcpClientLspClient implements LspClient {
 		return new DefaultRequestSpec(new DefaultExchangeFunction(processor, processor));
 	}
 
+	@Override
+	public NotificationSpec notification() {
+		return new DefaultNotificationSpec(new DefaultExchangeNotificationFunction(processor));
+	}
+
 	private void init() {
 		blockingNettyContext = TcpClient.create(host, port).start(function);
 	}
@@ -133,6 +138,37 @@ public class NettyTcpClientLspClient implements LspClient {
 		}
 	}
 
+	private static class DefaultNotificationSpec implements NotificationSpec {
+
+		private String method;
+		private Object params;
+		private ExchangeNotificationFunction exchangeFunction;
+
+		public DefaultNotificationSpec(ExchangeNotificationFunction exchangeFunction) {
+			this.exchangeFunction = exchangeFunction;
+		}
+
+		@Override
+		public NotificationSpec method(String method) {
+			this.method = method;
+			return this;
+		}
+
+		@Override
+		public NotificationSpec params(Object params) {
+			this.params = params;
+			return this;
+		}
+
+		@Override
+		public Mono<Void> exchange() {
+			DefaultJsonRpcRequest request = new DefaultJsonRpcRequest();
+			request.setMethod(method);
+			request.setParams(params);
+			return exchangeFunction.exchange(request);
+		}
+	}
+
 	private class DefaultExchangeFunction implements ExchangeFunction {
 
 		final Subscriber<ByteBuf> requests;
@@ -166,6 +202,37 @@ public class NettyTcpClientLspClient implements LspClient {
 				.then(Mono.from(Flux.from(responses).filter(r -> {
 					return ObjectUtils.nullSafeEquals(r.getId(), request.getId());
 				})));
+		}
+	}
+
+	private class DefaultExchangeNotificationFunction implements ExchangeNotificationFunction {
+
+		final Subscriber<ByteBuf> requests;
+		ObjectMapper mapper;
+
+		public DefaultExchangeNotificationFunction(Subscriber<ByteBuf> requests) {
+			this.requests = requests;
+
+			SimpleModule module = new SimpleModule();
+			module.addDeserializer(DefaultJsonRpcResponse.class, new DefaultJsonRpcResponseJsonDeserializer());
+			mapper = new ObjectMapper();
+			mapper.registerModule(module);
+		}
+
+		@Override
+		public Mono<Void> exchange(JsonRpcRequest request) {
+
+			return Mono.defer(() -> {
+					String r = null;
+					try {
+						r = mapper.writeValueAsString(request);
+					} catch (JsonProcessingException e) {
+						log.error("Mapper error", e);
+						throw new RuntimeException(e);
+					}
+					requests.onNext(Unpooled.copiedBuffer(r.getBytes()));
+					return Mono.empty();
+				});
 		}
 	}
 }

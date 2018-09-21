@@ -13,24 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package demo.showcase;
+package org.springframework.dsl.lsp.client;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
+import org.springframework.dsl.jsonrpc.JsonRpcRequest;
 
-/**
- * Configuration for all {@code showcase} features.
- *
- * @author Janne Valkealahti
- *
- */
-@Configuration
-@Import(ShowcaseCommandsController.class)
-public class ShowcaseConfiguration {
+import reactor.core.publisher.Mono;
 
-	@Bean
-	public ShowcaseHoverer showcaseHoverer() {
-		return new ShowcaseHoverer();
-	}
+public interface ExchangeNotificationFunction {
+
+	Mono<Void> exchange(JsonRpcRequest request);
+
 }

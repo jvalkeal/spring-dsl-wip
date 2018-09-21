@@ -15,11 +15,36 @@
  */
 package demo.showcase;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.dsl.domain.LogMessageParams;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcController;
+import org.springframework.dsl.jsonrpc.annotation.JsonRpcNotification;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcRequestMapping;
+import org.springframework.dsl.lsp.client.LspClient;
+
+import reactor.core.publisher.Mono;
 
 @JsonRpcController
 @JsonRpcRequestMapping(method = "showcase/")
 public class ShowcaseCommandsController {
 
+	private static final Logger log = LoggerFactory.getLogger(ShowcaseCommandsController.class);
+
+	@JsonRpcRequestMapping(method = "ping")
+	@JsonRpcNotification
+	public void ping() {
+		log.info("ping");
+	}
+
+	@JsonRpcRequestMapping(method = "log")
+	@JsonRpcNotification
+	public Mono<Void> sendLogNotification(LspClient lspClient) {
+		return lspClient.notification()
+			.method("window/logMessage")
+			.params(LogMessageParams.logMessageParams().type(1l).message("hi").build())
+			.exchange()
+			.then();
+//		return Mono.empty();
+	}
 }

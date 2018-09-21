@@ -56,6 +56,13 @@ public interface LspClient {
 	RequestSpec request();
 
 	/**
+	 * Prepare a {@code JSONRCP} notification.
+	 *
+	 * @return a spec for specifying the notification
+	 */
+	NotificationSpec notification();
+
+	/**
 	 * Gets a builder for instances of a {@link LspClient}s.
 	 *
 	 * @return the builder for building lsp clients
@@ -133,4 +140,34 @@ public interface LspClient {
 		 */
 		Mono<JsonRpcResponse> exchange();
 	}
+
+	/**
+	 * Defines a contract for a notification.
+	 */
+	interface NotificationSpec {
+
+		/**
+		 * Sets the message method.
+		 *
+		 * @param method the method
+		 * @return the request spec
+		 */
+		NotificationSpec method(String method);
+
+		/**
+		 * Sets the message params.
+		 *
+		 * @param params the params
+		 * @return the request spec
+		 */
+		NotificationSpec params(Object params);
+
+		/**
+		 * Gets the exchange.
+		 *
+		 * @return the mono of a response
+		 */
+		Mono<Void> exchange();
+	}
 }
+
