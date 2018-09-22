@@ -21,7 +21,11 @@ import org.springframework.dsl.domain.DiagnosticSeverity;
 import org.springframework.dsl.domain.MarkupKind;
 import org.springframework.dsl.domain.MessageType;
 import org.springframework.dsl.domain.ServerCapabilities;
+import org.springframework.dsl.jsonrpc.JsonRpcRequest;
+import org.springframework.dsl.jsonrpc.JsonRpcResponse;
 import org.springframework.dsl.jsonrpc.jackson.JsonRpcJackson2ObjectMapperBuilderCustomizer;
+import org.springframework.dsl.jsonrpc.support.JsonRpcRequestJsonDeserializer;
+import org.springframework.dsl.jsonrpc.support.JsonRpcResponseJsonDeserializer;
 import org.springframework.dsl.lsp.server.domain.DiagnosticSeverityDeserializer;
 import org.springframework.dsl.lsp.server.domain.DiagnosticSeveritySerializer;
 import org.springframework.dsl.lsp.server.domain.MarkupKindDeserializer;
@@ -46,6 +50,8 @@ public class LspDomainJacksonConfiguration {
 	@Bean
 	public JsonRpcJackson2ObjectMapperBuilderCustomizer lspJackson2ObjectMapperBuilderCustomizer() {
 		return builder -> {
+			builder.deserializerByType(JsonRpcRequest.class, new JsonRpcRequestJsonDeserializer());
+			builder.deserializerByType(JsonRpcResponse.class, new JsonRpcResponseJsonDeserializer());
 			builder.serializerByType(ServerCapabilities.class, new ServerCapabilitiesJsonSerializer());
 			builder.deserializerByType(ServerCapabilities.class, new ServerCapabilitiesJsonDeserializer());
 			builder.serializerByType(DiagnosticSeverity.class, new DiagnosticSeveritySerializer());

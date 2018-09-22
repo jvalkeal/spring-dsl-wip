@@ -27,7 +27,8 @@ import reactor.ipc.netty.NettyOutbound;
 
 /**
  * A non-blocking, reactive client for performing {@code LSP} related
- * {@code JSONRCP} requests with Reactive Streams back pressure.
+ * {@code JSONRCP} {@code requests} and {@code notification} with Reactive
+ * Streams back pressure.
  *
  * @author Janne Valkealahti
  *
@@ -36,29 +37,29 @@ public interface LspClient {
 
 	/**
 	 * Starts the lsp client. Calling this method on an already started client has
-	 * no effect. Some client implementations may discard this method if there is
-	 * nothing to start.
+	 * no effect. Some client implementations may discard this method altogether if
+	 * there is nothing to start.
 	 */
 	void start();
 
 	/**
 	 * Stops the lsp client. Calling this method on an already stopped client has no
-	 * effect. Some client implementations may discard this method if there is
-	 * nothing to stop.
+	 * effect. Some client implementations may discard this method altogether if
+	 * there is nothing to stop.
 	 */
 	void stop();
 
 	/**
 	 * Prepare a {@code JSONRCP} request.
 	 *
-	 * @return a spec for specifying the request
+	 * @return a {@link RequestSpec} for specifying the request
 	 */
 	RequestSpec request();
 
 	/**
 	 * Prepare a {@code JSONRCP} notification.
 	 *
-	 * @return a spec for specifying the notification
+	 * @return a {@link NotificationSpec} for specifying the notification
 	 */
 	NotificationSpec notification();
 
@@ -74,7 +75,7 @@ public interface LspClient {
 	/**
 	 * Interface for building {@link LspClient}.
 	 */
-	interface Builder {
+	public interface Builder {
 
 		/**
 		 * Sets a host address where client should connect to.
@@ -105,9 +106,9 @@ public interface LspClient {
 	}
 
 	/**
-	 * Defines a contract for a request.
+	 * Defines a contract for a {@code JSONRPC request}.
 	 */
-	interface RequestSpec {
+	public interface RequestSpec {
 
 		/**
 		 * Sets the message id.
@@ -135,6 +136,9 @@ public interface LspClient {
 
 		/**
 		 * Gets the exchange.
+		 * <p>
+		 * Calling this method doesn't cause any exchange to happen until returned
+		 * {@link Mono} is consumed.
 		 *
 		 * @return the mono of a response
 		 */
@@ -142,7 +146,7 @@ public interface LspClient {
 	}
 
 	/**
-	 * Defines a contract for a notification.
+	 * Defines a contract for a {@code JSONRPC notification}.
 	 */
 	interface NotificationSpec {
 
@@ -164,10 +168,12 @@ public interface LspClient {
 
 		/**
 		 * Gets the exchange.
+		 * <p>
+		 * Calling this method doesn't cause any exchange to happen until returned
+		 * {@link Mono} is consumed.
 		 *
-		 * @return the mono of a response
+		 * @return the mono of a completion for a notification
 		 */
 		Mono<Void> exchange();
 	}
 }
-

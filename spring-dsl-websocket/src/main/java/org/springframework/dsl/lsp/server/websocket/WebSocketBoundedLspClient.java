@@ -21,20 +21,18 @@ import java.util.function.Function;
 import org.reactivestreams.Publisher;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferFactory;
+import org.springframework.dsl.DslException;
 import org.springframework.dsl.jsonrpc.JsonRpcOutputMessage;
+import org.springframework.dsl.jsonrpc.JsonRpcRequest;
 import org.springframework.dsl.jsonrpc.support.AbstractJsonRpcOutputMessage;
-import org.springframework.dsl.jsonrpc.support.DefaultJsonRpcRequest;
-import org.springframework.dsl.jsonrpc.support.DefaultJsonRpcRequestJsonDeserializer;
-import org.springframework.dsl.jsonrpc.support.DefaultJsonRpcResponse;
-import org.springframework.dsl.jsonrpc.support.DefaultJsonRpcResponseJsonDeserializer;
+import org.springframework.dsl.lsp.client.AbstractLspClient;
+import org.springframework.dsl.lsp.client.ExchangeNotificationFunction;
 import org.springframework.dsl.lsp.client.LspClient;
 import org.springframework.util.Assert;
 import org.springframework.web.reactive.socket.WebSocketMessage;
 import org.springframework.web.reactive.socket.WebSocketSession;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -45,26 +43,28 @@ import reactor.core.publisher.Mono;
  * @author Janne Valkealahti
  *
  */
-public class WebSocketBoundedLspClient implements LspClient {
+public class WebSocketBoundedLspClient extends AbstractLspClient {
 
 	private WebSocketSession session;
+	private final Function<JsonRpcRequest, String> jsonDecoder;
 
 	/**
 	 * Instantiates a new web socket bounded lsp client.
 	 *
 	 * @param session the session
+	 * @param objectMapper the object mapper
 	 */
-	public WebSocketBoundedLspClient(WebSocketSession session) {
+	public WebSocketBoundedLspClient(WebSocketSession session, ObjectMapper objectMapper) {
 		Assert.notNull(session, "WebSocketSession must be set");
+		Assert.notNull(objectMapper, "ObjectMapper must be set");
 		this.session = session;
-	}
-
-	@Override
-	public void start() {
-	}
-
-	@Override
-	public void stop() {
+		this.jsonDecoder = s -> {
+			try {
+				return objectMapper.writeValueAsString(s);
+			} catch (Exception e) {
+				throw new DslException("Unable to convert json rpc request", e);
+			}
+		};
 	}
 
 	@Override
@@ -74,71 +74,25 @@ public class WebSocketBoundedLspClient implements LspClient {
 
 	@Override
 	public NotificationSpec notification() {
-		return new DefaultNotificationSpec();
+		return new DefaultNotificationSpec(new DefaultExchangeNotificationFunction());
 	}
 
-	private class DefaultNotificationSpec implements NotificationSpec {
-
-		private String method;
-		private Object params;
+	private class DefaultExchangeNotificationFunction implements ExchangeNotificationFunction {
 
 		@Override
-		public NotificationSpec method(String method) {
-			this.method = method;
-			return this;
+		public Mono<Void> exchange(JsonRpcRequest request) {
+			return Mono.defer(() -> {
+				JsonRpcOutputMessage adaptedResponse = new WebSocketJsonRpcOutputMessage(session, session.bufferFactory());
+				return Mono.just(request)
+					.map(jsonDecoder)
+					.map(r -> session.bufferFactory().wrap(r.getBytes(Charset.defaultCharset())))
+					.doOnNext(r -> {
+						adaptedResponse.writeWith(Mono.just(r)).subscribe();
+						adaptedResponse.setComplete().subscribe();
+					})
+					.then();
+			});
 		}
-
-		@Override
-		public NotificationSpec params(Object params) {
-			this.params = params;
-			return this;
-		}
-
-		@Override
-		public Mono<Void> exchange() {
-
-			SimpleModule module = new SimpleModule();
-			module.addDeserializer(DefaultJsonRpcRequest.class, new DefaultJsonRpcRequestJsonDeserializer());
-			module.addDeserializer(DefaultJsonRpcResponse.class, new DefaultJsonRpcResponseJsonDeserializer());
-			ObjectMapper mapper = new ObjectMapper();
-			mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-			mapper.registerModule(module);
-
-//			Function<String, DefaultJsonRpcRequest> jsonDecoder = s -> {
-//				try {
-//					return mapper.readValue(s, DefaultJsonRpcRequest.class);
-//				} catch(Exception e) {
-//					e.printStackTrace();
-//					throw new RuntimeException(e);
-//				}
-//			};
-
-			Function<DefaultJsonRpcRequest, String> jsonDecoder = s -> {
-				try {
-					return mapper.writeValueAsString(s);
-				} catch (Exception e) {
-					e.printStackTrace();
-					throw new RuntimeException(e);
-				}
-			};
-
-			DefaultJsonRpcRequest r = new DefaultJsonRpcRequest();
-			r.setMethod(method);
-			r.setParams(params);
-
-			String error = jsonDecoder.apply(r);
-
-
-			JsonRpcOutputMessage adaptedResponse = new WebSocketJsonRpcOutputMessage(session, session.bufferFactory());
-//			String error = "{\"jsonrpc\":\"2.0\", \"method\":\"" + method + "\"}";
-			DataBuffer buffer = session.bufferFactory().wrap(error.getBytes(Charset.defaultCharset()));
-			Flux<DataBuffer> body = Flux.just(buffer);
-			adaptedResponse.writeWith(body).subscribe();
-			adaptedResponse.setComplete().subscribe();
-
-			return Mono.empty();
-		}
-
 	}
 
 	private static class WebSocketJsonRpcOutputMessage extends AbstractJsonRpcOutputMessage {

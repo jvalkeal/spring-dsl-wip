@@ -45,9 +45,11 @@ public class LspWebSocketHandler implements WebSocketHandler {
 
 	private static final Logger log = LoggerFactory.getLogger(LspWebSocketHandler.class);
 	private final RpcHandler rpcHandler;
+	private final ObjectMapper objectMapper;
 
-	public LspWebSocketHandler(RpcHandler rpcHandler) {
+	public LspWebSocketHandler(RpcHandler rpcHandler, ObjectMapper objectMapper) {
 		this.rpcHandler = rpcHandler;
+		this.objectMapper = objectMapper;
 	}
 
 	@Override
@@ -65,7 +67,7 @@ public class LspWebSocketHandler implements WebSocketHandler {
 			}
 		};
 
-		LspClient lspClient = new WebSocketBoundedLspClient(session);
+		LspClient lspClient = new WebSocketBoundedLspClient(session, objectMapper);
 		JsonRpcSessionCustomizer customizer = s -> s.getAttributes().put("lspClient", lspClient);
 
 		return session.receive()

@@ -90,7 +90,7 @@ public class NettyTcpClientLspClient implements LspClient {
 
 	@Override
 	public RequestSpec request() {
-		return new DefaultRequestSpec(new DefaultExchangeFunction(processor, processor));
+		return new DefaultRequestSpec(new DefaultExchangeRequestFunction(processor, processor));
 	}
 
 	@Override
@@ -107,9 +107,9 @@ public class NettyTcpClientLspClient implements LspClient {
 		private String id;
 		private String method;
 		private Object params;
-		private ExchangeFunction exchangeFunction;
+		private ExchangeRequestFunction exchangeFunction;
 
-		public DefaultRequestSpec(ExchangeFunction exchangeFunction) {
+		public DefaultRequestSpec(ExchangeRequestFunction exchangeFunction) {
 			this.exchangeFunction = exchangeFunction;
 		}
 
@@ -169,13 +169,13 @@ public class NettyTcpClientLspClient implements LspClient {
 		}
 	}
 
-	private class DefaultExchangeFunction implements ExchangeFunction {
+	private class DefaultExchangeRequestFunction implements ExchangeRequestFunction {
 
 		final Subscriber<ByteBuf> requests;
 		final Publisher<JsonRpcResponse> responses;
 		ObjectMapper mapper;
 
-		public DefaultExchangeFunction(Subscriber<ByteBuf> requests, Publisher<JsonRpcResponse> responses) {
+		public DefaultExchangeRequestFunction(Subscriber<ByteBuf> requests, Publisher<JsonRpcResponse> responses) {
 			this.requests = requests;
 			this.responses = responses;
 

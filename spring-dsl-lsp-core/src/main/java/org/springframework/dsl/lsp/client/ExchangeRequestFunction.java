@@ -20,8 +20,20 @@ import org.springframework.dsl.jsonrpc.JsonRpcResponse;
 
 import reactor.core.publisher.Mono;
 
-public interface ExchangeFunction {
+/**
+ * Contract to handle exchange for a {@code JSONRPC request}.
+ *
+ * @author Janne Valkealahti
+ *
+ */
+@FunctionalInterface
+public interface ExchangeRequestFunction {
 
+	/**
+	 * Handle exchange and return a {@link Mono} for completion.
+	 *
+	 * @param request the json rpc request
+	 * @return the mono having a response
+	 */
 	Mono<JsonRpcResponse> exchange(JsonRpcRequest request);
-
 }
