@@ -21,10 +21,21 @@ include::samples/org/springframework/dsl/lsp/docs/ClientDocs.java[tags=snippet1]
 On a server side there is no need to build a _Language Client_ as internal component
 is automatically created which can be used to hook into same communication channel
 established from a client side. In your controller it is simple as define
-`LspClient` parameter in you method and then use it.
+`LspClient` parameter in you method and then use it. In a below example
+`Example1CommandsController` maps rpc notification to path `example/log` and
+when that method is consumed, notification is send to a client to ask
+it to log a message.
 
 [source,java,indent=0]
 ----
 include::samples/org/springframework/dsl/lsp/docs/ClientDocs.java[tags=snippet2]
+----
+
+Sample below is very similar seen above except that rpc request is used
+instead of a notification.
+
+[source,java,indent=0]
+----
+include::samples/org/springframework/dsl/lsp/docs/ClientDocs.java[tags=snippet3]
 ----
 

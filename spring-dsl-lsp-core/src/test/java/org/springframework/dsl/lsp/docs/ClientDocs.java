@@ -15,8 +15,12 @@
  */
 package org.springframework.dsl.lsp.docs;
 
+import java.util.UUID;
+
 import org.springframework.context.ApplicationContext;
 import org.springframework.dsl.domain.LogMessageParams;
+import org.springframework.dsl.domain.MessageType;
+import org.springframework.dsl.domain.ShowMessageRequestParams;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcController;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcNotification;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcRequestMapping;
@@ -61,4 +65,24 @@ public class ClientDocs {
 	}
 // end::snippet2[]
 
+// tag::snippet3[]
+	@JsonRpcController
+	@JsonRpcRequestMapping(method = "example/")
+	public class Example2CommandsController {
+
+		@JsonRpcRequestMapping(method = "message")
+		@JsonRpcNotification
+		public Mono<Void> showMessage(LspClient lspClient) {
+			return lspClient.request()
+				.id(UUID.randomUUID().toString())
+				.method("window/showMessageRequest")
+				.params(ShowMessageRequestParams.showMessageRequestParams()
+					.type(MessageType.Info)
+					.message("message")
+					.build())
+				.exchange()
+				.then();
+		}
+	}
+// end::snippet3[]
 }
