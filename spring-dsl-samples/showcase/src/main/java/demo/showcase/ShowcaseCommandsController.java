@@ -15,6 +15,8 @@
  */
 package demo.showcase;
 
+import java.util.UUID;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dsl.domain.LogMessageParams;
@@ -27,6 +29,13 @@ import org.springframework.dsl.lsp.client.LspClient;
 
 import reactor.core.publisher.Mono;
 
+/**
+ * {@link JsonRpcController} for {@code showcase} features used to map custom
+ * requests send from an editor.
+ *
+ * @author Janne Valkealahti
+ *
+ */
 @JsonRpcController
 @JsonRpcRequestMapping(method = "showcase/")
 public class ShowcaseCommandsController {
@@ -53,14 +62,15 @@ public class ShowcaseCommandsController {
 	@JsonRpcNotification
 	public Mono<Void> showMessage(LspClient lspClient) {
 		return lspClient.request()
+			.id(UUID.randomUUID().toString())
 			.method("window/showMessageRequest")
 			.params(ShowMessageRequestParams.showMessageRequestParams()
 				.type(MessageType.Info)
 				.message("message")
 				.build())
 			.exchange()
-			.doOnEach(r -> {
-				log.info("XXXX {}", r);
+			.doOnSuccess(r -> {
+				log.info("Response for window/showMessageRequest: {}", r);
 			})
 			.then();
 	}

@@ -118,6 +118,7 @@ public class LspWebSocketHandler implements WebSocketHandler {
 //
 //			})
 			.map(jsonDecoder)
+			.filter(request -> request.getMethod() != null)
 			.doOnNext(bb -> {
 
 				JsonRpcInputMessage i = new JsonRpcInputMessage() {
