@@ -30,9 +30,11 @@ import org.springframework.context.annotation.Import;
  * @author Janne Valkealahti
  *
  */
+//tag::snippet1[]
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Documented
 @Import(ShowcaseConfiguration.class)
 public @interface EnableShowcaseFeatures {
 }
+//end::snippet1[]

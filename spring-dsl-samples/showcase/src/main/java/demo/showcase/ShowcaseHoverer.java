@@ -33,6 +33,7 @@ import reactor.core.publisher.Mono;
  * @author Janne Valkealahti
  *
  */
+//tag::snippet1[]
 public class ShowcaseHoverer extends AbstractDslService implements Hoverer {
 
 	public ShowcaseHoverer() {
@@ -50,3 +51,4 @@ public class ShowcaseHoverer extends AbstractDslService implements Hoverer {
 				.build()));
 	}
 }
+//end::snippet1[]

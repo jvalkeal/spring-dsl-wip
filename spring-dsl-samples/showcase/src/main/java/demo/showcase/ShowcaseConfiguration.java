@@ -25,6 +25,7 @@ import org.springframework.context.annotation.Import;
  * @author Janne Valkealahti
  *
  */
+//tag::snippet1[]
 @Configuration
 @Import(ShowcaseCommandsController.class)
 public class ShowcaseConfiguration {
@@ -34,3 +35,4 @@ public class ShowcaseConfiguration {
 		return new ShowcaseHoverer();
 	}
 }
+//end::snippet1[]

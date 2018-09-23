@@ -36,18 +36,23 @@ import reactor.core.publisher.Mono;
  * @author Janne Valkealahti
  *
  */
+//tag::snippet1[]
 @JsonRpcController
 @JsonRpcRequestMapping(method = "showcase/")
 public class ShowcaseCommandsController {
+//end::snippet1[]
 
 	private static final Logger log = LoggerFactory.getLogger(ShowcaseCommandsController.class);
 
+//tag::snippet2[]
 	@JsonRpcRequestMapping(method = "ping")
 	@JsonRpcNotification
 	public void ping() {
 		log.info("ping");
 	}
+//end::snippet2[]
 
+//tag::snippet3[]
 	@JsonRpcRequestMapping(method = "log")
 	@JsonRpcNotification
 	public Mono<Void> sendLogNotification(LspClient lspClient) {
@@ -57,7 +62,9 @@ public class ShowcaseCommandsController {
 			.exchange()
 			.then();
 	}
+//end::snippet3[]
 
+//tag::snippet4[]
 	@JsonRpcRequestMapping(method = "message")
 	@JsonRpcNotification
 	public Mono<Void> showMessage(LspClient lspClient) {
@@ -74,4 +81,5 @@ public class ShowcaseCommandsController {
 			})
 			.then();
 	}
+//end::snippet4[]
 }
