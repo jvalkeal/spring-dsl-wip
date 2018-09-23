@@ -24,16 +24,20 @@ import org.springframework.core.io.buffer.DataBufferFactory;
 import org.springframework.dsl.DslException;
 import org.springframework.dsl.jsonrpc.JsonRpcOutputMessage;
 import org.springframework.dsl.jsonrpc.JsonRpcRequest;
+import org.springframework.dsl.jsonrpc.JsonRpcResponse;
 import org.springframework.dsl.jsonrpc.support.AbstractJsonRpcOutputMessage;
 import org.springframework.dsl.lsp.client.AbstractLspClient;
 import org.springframework.dsl.lsp.client.ExchangeNotificationFunction;
+import org.springframework.dsl.lsp.client.ExchangeRequestFunction;
 import org.springframework.dsl.lsp.client.LspClient;
 import org.springframework.util.Assert;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.reactive.socket.WebSocketMessage;
 import org.springframework.web.reactive.socket.WebSocketSession;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import reactor.core.publisher.EmitterProcessor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -47,6 +51,7 @@ public class WebSocketBoundedLspClient extends AbstractLspClient {
 
 	private WebSocketSession session;
 	private final Function<JsonRpcRequest, String> jsonDecoder;
+	private final EmitterProcessor<JsonRpcResponse> responses = EmitterProcessor.create();
 
 	/**
 	 * Instantiates a new web socket bounded lsp client.
@@ -69,12 +74,39 @@ public class WebSocketBoundedLspClient extends AbstractLspClient {
 
 	@Override
 	public RequestSpec request() {
-		return null;
+		return new DefaultRequestSpec(new DefaultExchangeRequestFunction());
 	}
 
 	@Override
 	public NotificationSpec notification() {
 		return new DefaultNotificationSpec(new DefaultExchangeNotificationFunction());
+	}
+
+	public EmitterProcessor<JsonRpcResponse> getResponses() {
+		return responses;
+	}
+
+	private class DefaultExchangeRequestFunction implements ExchangeRequestFunction {
+
+		@Override
+		public Mono<JsonRpcResponse> exchange(JsonRpcRequest request) {
+			return Mono.defer(() -> {
+				JsonRpcOutputMessage adaptedResponse = new WebSocketJsonRpcOutputMessage(session, session.bufferFactory());
+				Mono.just(request)
+					.map(jsonDecoder)
+					.map(r -> session.bufferFactory().wrap(r.getBytes(Charset.defaultCharset())))
+					.doOnNext(r -> {
+						adaptedResponse.writeWith(Mono.just(r)).subscribe();
+						adaptedResponse.setComplete().subscribe();
+					})
+					.subscribe();
+				return Mono.from(responses)
+						.doOnNext(r -> {
+							System.out.println("XXXX4 " + r);
+						})
+						.filter(r -> ObjectUtils.nullSafeEquals(r.getId(), request.getId()));
+			});
+		}
 	}
 
 	private class DefaultExchangeNotificationFunction implements ExchangeNotificationFunction {

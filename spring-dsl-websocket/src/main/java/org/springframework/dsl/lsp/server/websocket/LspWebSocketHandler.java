@@ -29,7 +29,8 @@ import org.springframework.dsl.jsonrpc.session.JsonRpcSession.JsonRpcSessionCust
 import org.springframework.dsl.jsonrpc.support.AbstractJsonRpcOutputMessage;
 import org.springframework.dsl.jsonrpc.support.DefaultJsonRpcRequest;
 import org.springframework.dsl.jsonrpc.support.DefaultJsonRpcRequestJsonDeserializer;
-import org.springframework.dsl.lsp.client.LspClient;
+import org.springframework.dsl.jsonrpc.support.DefaultJsonRpcResponse;
+import org.springframework.dsl.jsonrpc.support.DefaultJsonRpcResponseJsonDeserializer;
 import org.springframework.dsl.lsp.server.jsonrpc.RpcHandler;
 import org.springframework.web.reactive.socket.WebSocketHandler;
 import org.springframework.web.reactive.socket.WebSocketMessage;
@@ -56,6 +57,7 @@ public class LspWebSocketHandler implements WebSocketHandler {
 	public Mono<Void> handle(WebSocketSession session) {
 		SimpleModule module = new SimpleModule();
 		module.addDeserializer(DefaultJsonRpcRequest.class, new DefaultJsonRpcRequestJsonDeserializer());
+		module.addDeserializer(DefaultJsonRpcResponse.class, new DefaultJsonRpcResponseJsonDeserializer());
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.registerModule(module);
 
@@ -67,22 +69,54 @@ public class LspWebSocketHandler implements WebSocketHandler {
 			}
 		};
 
-		LspClient lspClient = new WebSocketBoundedLspClient(session, objectMapper);
+		Function<String, DefaultJsonRpcResponse> jsonDecoder2 = s -> {
+			try {
+				return mapper.readValue(s, DefaultJsonRpcResponse.class);
+			} catch(Exception e) {
+				e.printStackTrace();
+				throw new RuntimeException(e);
+			}
+		};
+
+		WebSocketBoundedLspClient lspClient = new WebSocketBoundedLspClient(session, objectMapper);
 		JsonRpcSessionCustomizer customizer = s -> s.getAttributes().put("lspClient", lspClient);
 
-		return session.receive()
-			.map(message -> {
-				String payload = message.getPayloadAsText();
-				log.debug("Message {}", message);
-				log.debug("Message payload {}", payload);
-				String split[] = payload.split("\\r?\\n", 2);
-				if (split.length == 1) {
-					return split[0];
-				} else {
-					return split[1];
-				}
+		//
+		Flux<String> shared = session
+				.receive()
+				.map(WebSocketMessage::getPayloadAsText)
+				.share();
+//
+		shared
+//			.map(message -> {
+//				String payload = message.getPayloadAsText();
+//				log.debug("Message2 {}", message);
+//				log.debug("Message3 payload {}", payload);
+//				return payload;
+//			})
+			.map(jsonDecoder2)
+			.filter(response -> response.getResult() != null || response.getError() != null)
+			.subscribe(bb -> {
+				lspClient.getResponses().onNext(bb);
+			});
 
-			})
+		//
+
+
+		return shared
+//		return session.receive()
+//			.map(message -> {
+//				String payload = message.getPayloadAsText();
+//				log.debug("Message1 {}", message);
+//				log.debug("Message1 payload {}", payload);
+//				String split[] = payload.split("\\r?\\n", 2);
+//				if (split.length == 1) {
+//					return split[0];
+//				} else {
+//					return split[1];
+//				}
+//
+//			})
 			.map(jsonDecoder)
 			.doOnNext(bb -> {
 

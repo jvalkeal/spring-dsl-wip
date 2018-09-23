@@ -607,6 +607,22 @@ public class LspDomainJacksonSerializationTests {
 		expect = loadResourceAsString("ShowMessageRequestParams2.json");
 		to = mapper.readValue(expect, ShowMessageRequestParams.class);
 		assertObjects(from, to);
+
+		from = ShowMessageRequestParams.showMessageRequestParams()
+				.type(MessageType.Info)
+				.message("message")
+				.action()
+					.title("title")
+					.and()
+				.build();
+
+		json = mapper.writeValueAsString(from);
+		to = mapper.readValue(json, ShowMessageRequestParams.class);
+		assertObjects(from, to);
+
+		expect = loadResourceAsString("ShowMessageRequestParams3.json");
+		to = mapper.readValue(expect, ShowMessageRequestParams.class);
+		assertObjects(from, to);
 	}
 
 	@Test

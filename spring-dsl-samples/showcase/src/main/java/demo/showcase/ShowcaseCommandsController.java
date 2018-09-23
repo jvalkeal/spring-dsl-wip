@@ -18,6 +18,8 @@ package demo.showcase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dsl.domain.LogMessageParams;
+import org.springframework.dsl.domain.MessageType;
+import org.springframework.dsl.domain.ShowMessageRequestParams;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcController;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcNotification;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcRequestMapping;
@@ -44,6 +46,22 @@ public class ShowcaseCommandsController {
 			.method("window/logMessage")
 			.params(LogMessageParams.from("hi"))
 			.exchange()
+			.then();
+	}
+
+	@JsonRpcRequestMapping(method = "message")
+	@JsonRpcNotification
+	public Mono<Void> showMessage(LspClient lspClient) {
+		return lspClient.request()
+			.method("window/showMessageRequest")
+			.params(ShowMessageRequestParams.showMessageRequestParams()
+				.type(MessageType.Info)
+				.message("message")
+				.build())
+			.exchange()
+			.doOnEach(r -> {
+				log.info("XXXX {}", r);
+			})
 			.then();
 	}
 }
