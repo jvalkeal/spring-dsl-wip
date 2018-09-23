@@ -30,6 +30,7 @@ import org.springframework.dsl.jsonrpc.JsonRpcRequest;
 import org.springframework.dsl.jsonrpc.JsonRpcResponse;
 import org.springframework.dsl.jsonrpc.session.JsonRpcSession.JsonRpcSessionCustomizer;
 import org.springframework.dsl.jsonrpc.support.AbstractJsonRpcOutputMessage;
+import org.springframework.dsl.lsp.LspSystemConstants;
 import org.springframework.dsl.lsp.server.jsonrpc.RpcHandler;
 import org.springframework.util.Assert;
 import org.springframework.web.reactive.socket.WebSocketHandler;
@@ -85,7 +86,8 @@ public class LspWebSocketHandler implements WebSocketHandler {
 	@Override
 	public Mono<Void> handle(WebSocketSession session) {
 		WebSocketBoundedLspClient lspClient = new WebSocketBoundedLspClient(session, objectMapper);
-		JsonRpcSessionCustomizer customizer = s -> s.getAttributes().put("lspClient", lspClient);
+		JsonRpcSessionCustomizer customizer = s -> s.getAttributes()
+				.put(LspSystemConstants.SESSION_ATTRIBUTE_LSP_CLIENT, lspClient);
 
 		// can read payload only once so need to share it
 		Flux<String> shared = session

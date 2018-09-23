@@ -38,7 +38,7 @@ import org.springframework.dsl.jsonrpc.annotation.JsonRpcNotification;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcRequestMapping;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcResponseBody;
 import org.springframework.dsl.jsonrpc.session.JsonRpcSession;
-import org.springframework.dsl.lsp.server.LspServerSystemConstants;
+import org.springframework.dsl.lsp.LspSystemConstants;
 import org.springframework.dsl.service.Completioner;
 import org.springframework.dsl.service.DocumentStateTracker;
 import org.springframework.dsl.service.DslServiceRegistry;
@@ -250,6 +250,6 @@ public class TextDocumentLanguageServerController {
 	}
 
 	private static DocumentStateTracker getTracker(JsonRpcSession session) {
-		return session.getRequiredAttribute(LspServerSystemConstants.SESSION_ATTRIBUTE_DOCUMENT_STATE_TRACKER);
+		return session.getRequiredAttribute(LspSystemConstants.SESSION_ATTRIBUTE_DOCUMENT_STATE_TRACKER);
 	}
 }

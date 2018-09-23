@@ -27,9 +27,9 @@ import org.springframework.dsl.jsonrpc.annotation.JsonRpcNotification;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcRequestMapping;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcResponseBody;
 import org.springframework.dsl.jsonrpc.session.JsonRpcSession;
+import org.springframework.dsl.lsp.LspSystemConstants;
 import org.springframework.dsl.lsp.LspVersionDetector;
 import org.springframework.dsl.lsp.LspVersionDetector.LspVersion;
-import org.springframework.dsl.lsp.server.LspServerSystemConstants;
 import org.springframework.dsl.lsp.server.config.DslConfigurationProperties;
 import org.springframework.dsl.lsp.server.jsonrpc.LspSessionState;
 import org.springframework.dsl.lsp.server.support.LspExiter;
@@ -103,10 +103,10 @@ public class RootLanguageServerController {
 				.build();
 		}).doOnSuccess(result -> {
 			// TODO: just a conceptual tweak now to see how session is used
-			session.getAttributes().put(LspServerSystemConstants.SESSION_ATTRIBUTE_LSP_SESSION_STATE, LspSessionState.CREATED);
-			session.getAttributes().put(LspServerSystemConstants.SESSION_ATTRIBUTE_DOCUMENT_STATE_TRACKER,
+			session.getAttributes().put(LspSystemConstants.SESSION_ATTRIBUTE_LSP_SESSION_STATE, LspSessionState.CREATED);
+			session.getAttributes().put(LspSystemConstants.SESSION_ATTRIBUTE_DOCUMENT_STATE_TRACKER,
 					new DefaultDocumentStateTracker());
-			session.getAttributes().put(LspServerSystemConstants.SESSION_ATTRIBUTE_LSP_VERSION, lspVersion);
+			session.getAttributes().put(LspSystemConstants.SESSION_ATTRIBUTE_LSP_VERSION, lspVersion);
 		});
 	}
 
@@ -114,7 +114,7 @@ public class RootLanguageServerController {
 	@JsonRpcNotification
 	public void initialized(InitializedParams params, JsonRpcSession session) {
 		log.debug("initialized {}", params);
-		session.getAttributes().put(LspServerSystemConstants.SESSION_ATTRIBUTE_LSP_SESSION_STATE, LspSessionState.INITIALIZED);
+		session.getAttributes().put(LspSystemConstants.SESSION_ATTRIBUTE_LSP_SESSION_STATE, LspSessionState.INITIALIZED);
 	}
 
 	@JsonRpcRequestMapping(method = "shutdown")
