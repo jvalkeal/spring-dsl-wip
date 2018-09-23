@@ -20,6 +20,8 @@ import { SpringMonacoEditorComponent } from './spring-monaco-editor/spring-monac
 import { SpringDslEditorService } from './spring-dsl-editor.service';
 import { SPRING_MONACO_EDITOR_CONFIG, SpringMonacoEditorConfig } from './spring-monaco-editor/config';
 import { SPRING_DSL_EDITOR_CONFIG, SpringDslEditorConfig } from './config';
+import { MonacoLoaderService } from "./spring-monaco-editor/monaco-loader.service";
+import { DefaultMonacoEditorService, MonacoEditorService } from "./spring-monaco-editor/monaco-editor.service";
 
 /**
  * Main module definition for Spring Dsl Editor.
@@ -39,7 +41,9 @@ import { SPRING_DSL_EDITOR_CONFIG, SpringDslEditorConfig } from './config';
     SpringMonacoEditorComponent
   ],
   providers: [
-    SpringDslEditorService
+    SpringDslEditorService,
+    MonacoLoaderService,
+    { provide: MonacoEditorService, useClass: DefaultMonacoEditorService }
   ]
 })
 export class SpringDslEditorModule {

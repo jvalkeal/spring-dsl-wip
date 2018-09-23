@@ -21,17 +21,21 @@ import { MatTabsModule, MatIconModule } from '@angular/material';
 import { AppComponent } from './app.component';
 import { SpringDslEditorModule, SpringMonacoEditorConfig, SpringDslEditorConfig } from 'spring-dsl-editor';
 import { EditorTabGroupComponent } from './editor-tab-group/editor-tab-group.component';
+import { ACTIONS } from './actions';
 
 const springMonacoEditorConfig: SpringMonacoEditorConfig = {
   defaultOptions: {
-    language: 'simple'
+    theme: 'vs',
+    automaticLayout: true,
+    fixedOverflowWidgets: true
   },
   onMonacoLoad: () => {
     (<any>window).monaco.languages.register({ id: 'simple' });
+    (<any>window).monaco.languages.register({ id: 'wordcheck' });
   }
 };
 const springDslEditorConfig: SpringDslEditorConfig = {
-  documentSelector: ['simple']
+  documentSelector: ['simple', 'wordcheck']
 };
 
 @NgModule({
@@ -48,7 +52,9 @@ const springDslEditorConfig: SpringDslEditorConfig = {
     NoopAnimationsModule,
     SpringDslEditorModule.forRoot(springMonacoEditorConfig, springDslEditorConfig)
   ],
-  providers: [],
+  providers: [
+    ...ACTIONS
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
