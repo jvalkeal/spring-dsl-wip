@@ -50,7 +50,7 @@ import reactor.core.publisher.Mono;
 public class WebSocketBoundedLspClient extends AbstractLspClient {
 
 	private WebSocketSession session;
-	private final Function<JsonRpcRequest, String> jsonDecoder;
+	private final Function<JsonRpcRequest, String> requestDecoder;
 	private final EmitterProcessor<JsonRpcResponse> responses = EmitterProcessor.create();
 
 	/**
@@ -63,7 +63,7 @@ public class WebSocketBoundedLspClient extends AbstractLspClient {
 		Assert.notNull(session, "WebSocketSession must be set");
 		Assert.notNull(objectMapper, "ObjectMapper must be set");
 		this.session = session;
-		this.jsonDecoder = s -> {
+		this.requestDecoder = s -> {
 			try {
 				return objectMapper.writeValueAsString(s);
 			} catch (Exception e) {
@@ -93,7 +93,7 @@ public class WebSocketBoundedLspClient extends AbstractLspClient {
 			return Mono.defer(() -> {
 				JsonRpcOutputMessage adaptedResponse = new WebSocketJsonRpcOutputMessage(session, session.bufferFactory());
 				Mono.just(request)
-					.map(jsonDecoder)
+					.map(requestDecoder)
 					.map(r -> session.bufferFactory().wrap(r.getBytes(Charset.defaultCharset())))
 					.doOnNext(r -> {
 						adaptedResponse.writeWith(Mono.just(r)).subscribe();
@@ -116,7 +116,7 @@ public class WebSocketBoundedLspClient extends AbstractLspClient {
 			return Mono.defer(() -> {
 				JsonRpcOutputMessage adaptedResponse = new WebSocketJsonRpcOutputMessage(session, session.bufferFactory());
 				return Mono.just(request)
-					.map(jsonDecoder)
+					.map(requestDecoder)
 					.map(r -> session.bufferFactory().wrap(r.getBytes(Charset.defaultCharset())))
 					.doOnNext(r -> {
 						adaptedResponse.writeWith(Mono.just(r)).subscribe();

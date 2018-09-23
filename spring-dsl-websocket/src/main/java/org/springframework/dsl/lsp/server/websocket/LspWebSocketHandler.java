@@ -23,101 +23,87 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferFactory;
+import org.springframework.dsl.DslException;
 import org.springframework.dsl.jsonrpc.JsonRpcInputMessage;
 import org.springframework.dsl.jsonrpc.JsonRpcOutputMessage;
+import org.springframework.dsl.jsonrpc.JsonRpcRequest;
+import org.springframework.dsl.jsonrpc.JsonRpcResponse;
 import org.springframework.dsl.jsonrpc.session.JsonRpcSession.JsonRpcSessionCustomizer;
 import org.springframework.dsl.jsonrpc.support.AbstractJsonRpcOutputMessage;
-import org.springframework.dsl.jsonrpc.support.DefaultJsonRpcRequest;
-import org.springframework.dsl.jsonrpc.support.DefaultJsonRpcRequestJsonDeserializer;
-import org.springframework.dsl.jsonrpc.support.DefaultJsonRpcResponse;
-import org.springframework.dsl.jsonrpc.support.DefaultJsonRpcResponseJsonDeserializer;
 import org.springframework.dsl.lsp.server.jsonrpc.RpcHandler;
+import org.springframework.util.Assert;
 import org.springframework.web.reactive.socket.WebSocketHandler;
 import org.springframework.web.reactive.socket.WebSocketMessage;
 import org.springframework.web.reactive.socket.WebSocketSession;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+/**
+ * {@link WebSocketHandler} dispatching messages to a {@link RpcHandler}.
+ *
+ * @author jvalkealahti
+ *
+ */
 public class LspWebSocketHandler implements WebSocketHandler {
 
 	private static final Logger log = LoggerFactory.getLogger(LspWebSocketHandler.class);
 	private final RpcHandler rpcHandler;
 	private final ObjectMapper objectMapper;
+	private final Function<String, JsonRpcRequest> requestDecoder;
+	private final Function<String, JsonRpcResponse> responseDecoder;
 
+	/**
+	 * Instantiates a new lsp web socket handler.
+	 *
+	 * @param rpcHandler the rpc handler
+	 * @param objectMapper the object mapper
+	 */
 	public LspWebSocketHandler(RpcHandler rpcHandler, ObjectMapper objectMapper) {
+		Assert.notNull(rpcHandler, "RpcHandler must be set");
+		Assert.notNull(objectMapper, "ObjectMapper must be set");
 		this.rpcHandler = rpcHandler;
 		this.objectMapper = objectMapper;
+		this.requestDecoder = s -> {
+			try {
+				return objectMapper.readValue(s, JsonRpcRequest.class);
+			} catch (Exception e) {
+				throw new DslException("Unable to convert json to rpc request", e);
+			}
+		};
+		this.responseDecoder = s -> {
+			try {
+				return objectMapper.readValue(s, JsonRpcResponse.class);
+			} catch (Exception e) {
+				throw new DslException("Unable to convert json to rpc response", e);
+			}
+		};
 	}
 
 	@Override
 	public Mono<Void> handle(WebSocketSession session) {
-		SimpleModule module = new SimpleModule();
-		module.addDeserializer(DefaultJsonRpcRequest.class, new DefaultJsonRpcRequestJsonDeserializer());
-		module.addDeserializer(DefaultJsonRpcResponse.class, new DefaultJsonRpcResponseJsonDeserializer());
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.registerModule(module);
-
-		Function<String, DefaultJsonRpcRequest> jsonDecoder = s -> {
-			try {
-				return mapper.readValue(s, DefaultJsonRpcRequest.class);
-			} catch(Exception e) {
-				throw new RuntimeException(e);
-			}
-		};
-
-		Function<String, DefaultJsonRpcResponse> jsonDecoder2 = s -> {
-			try {
-				return mapper.readValue(s, DefaultJsonRpcResponse.class);
-			} catch(Exception e) {
-				e.printStackTrace();
-				throw new RuntimeException(e);
-			}
-		};
-
 		WebSocketBoundedLspClient lspClient = new WebSocketBoundedLspClient(session, objectMapper);
 		JsonRpcSessionCustomizer customizer = s -> s.getAttributes().put("lspClient", lspClient);
 
-		//
+		// can read payload only once so need to share it
 		Flux<String> shared = session
 				.receive()
 				.map(WebSocketMessage::getPayloadAsText)
 				.share();
-//
+
+		// push stuff to lsp client
 		shared
-//			.map(message -> {
-//				String payload = message.getPayloadAsText();
-//				log.debug("Message2 {}", message);
-//				log.debug("Message3 payload {}", payload);
-//				return payload;
-//			})
-			.map(jsonDecoder2)
+			.map(responseDecoder)
 			.filter(response -> response.getResult() != null || response.getError() != null)
 			.subscribe(bb -> {
 				lspClient.getResponses().onNext(bb);
 			});
 
-		//
-
-
+		// return normal rpc handling
 		return shared
-//		return session.receive()
-//			.map(message -> {
-//				String payload = message.getPayloadAsText();
-//				log.debug("Message1 {}", message);
-//				log.debug("Message1 payload {}", payload);
-//				String split[] = payload.split("\\r?\\n", 2);
-//				if (split.length == 1) {
-//					return split[0];
-//				} else {
-//					return split[1];
-//				}
-//
-//			})
-			.map(jsonDecoder)
+			.map(requestDecoder)
 			.filter(request -> request.getMethod() != null)
 			.doOnNext(bb -> {
 
@@ -150,7 +136,6 @@ public class LspWebSocketHandler implements WebSocketHandler {
 					}
 				};
 
-//				JsonRpcInputMessage adaptedRequest = null;
 				JsonRpcOutputMessage adaptedResponse = new WebSocketJsonRpcOutputMessage(session, session.bufferFactory());
 
 				rpcHandler.handle(i, adaptedResponse, customizer)
@@ -166,7 +151,6 @@ public class LspWebSocketHandler implements WebSocketHandler {
 					.subscribe();
 			})
 			.then();
-
 	}
 
 	private static class WebSocketJsonRpcOutputMessage extends AbstractJsonRpcOutputMessage {
@@ -190,7 +174,8 @@ public class LspWebSocketHandler implements WebSocketHandler {
 
 		@Override
 		protected Mono<Void> writeAndFlushWithInternal(Publisher<? extends Publisher<? extends DataBuffer>> body) {
-			return null;
+			// TODO: not sure if this is needed right now
+			return Mono.empty();
 		}
 	}
 }
