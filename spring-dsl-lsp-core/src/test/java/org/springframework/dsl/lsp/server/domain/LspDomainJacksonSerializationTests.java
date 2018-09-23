@@ -38,6 +38,7 @@ import org.springframework.dsl.domain.DynamicRegistration;
 import org.springframework.dsl.domain.Hover;
 import org.springframework.dsl.domain.InitializeResult;
 import org.springframework.dsl.domain.InsertTextFormat;
+import org.springframework.dsl.domain.LogMessageParams;
 import org.springframework.dsl.domain.MarkupContent;
 import org.springframework.dsl.domain.MarkupKind;
 import org.springframework.dsl.domain.MessageActionItem;
@@ -606,6 +607,22 @@ public class LspDomainJacksonSerializationTests {
 		expect = loadResourceAsString("ShowMessageRequestParams2.json");
 		to = mapper.readValue(expect, ShowMessageRequestParams.class);
 		assertObjects(from, to);
+
+		from = ShowMessageRequestParams.showMessageRequestParams()
+				.type(MessageType.Info)
+				.message("message")
+				.action()
+					.title("title")
+					.and()
+				.build();
+
+		json = mapper.writeValueAsString(from);
+		to = mapper.readValue(json, ShowMessageRequestParams.class);
+		assertObjects(from, to);
+
+		expect = loadResourceAsString("ShowMessageRequestParams3.json");
+		to = mapper.readValue(expect, ShowMessageRequestParams.class);
+		assertObjects(from, to);
 	}
 
 	@Test
@@ -795,6 +812,27 @@ public class LspDomainJacksonSerializationTests {
 
 		expect = loadResourceAsString("Command3.json");
 		to = mapper.readValue(expect, Command.class);
+		assertObjects(from, to);
+	}
+
+	@Test
+	public void testLogMessageParams() throws Exception {
+		LogMessageParams from = new LogMessageParams();
+		String json = mapper.writeValueAsString(from);
+		LogMessageParams to = mapper.readValue(json, LogMessageParams.class);
+		assertObjects(from, to);
+
+		from = LogMessageParams.logMessageParams()
+				.type(MessageType.Error)
+				.message("message")
+				.build();
+
+		json = mapper.writeValueAsString(from);
+		to = mapper.readValue(json, LogMessageParams.class);
+		assertObjects(from, to);
+
+		String expect = loadResourceAsString("LogMessageParams1.json");
+		to = mapper.readValue(expect, LogMessageParams.class);
 		assertObjects(from, to);
 	}
 

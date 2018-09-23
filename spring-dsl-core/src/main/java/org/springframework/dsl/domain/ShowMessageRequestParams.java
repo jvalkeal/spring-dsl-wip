@@ -104,6 +104,22 @@ public class ShowMessageRequestParams extends MessageParams {
 		 * @return the builder for chaining
 		 */
 		MessageActionItemBuilder<ShowMessageRequestParamsBuilder<P>> action();
+
+		/**
+		 * Sets a message.
+		 *
+		 * @param message the message
+		 * @return the builder for chaining
+		 */
+		ShowMessageRequestParamsBuilder<P> message(String message);
+
+		/**
+		 * Sets a type.
+		 *
+		 * @param type the type
+		 * @return the builder for chaining
+		 */
+		ShowMessageRequestParamsBuilder<P> type(MessageType type);
 	}
 
 	/**
@@ -122,10 +138,24 @@ public class ShowMessageRequestParams extends MessageParams {
 	private static class InternalShowMessageRequestParamsBuilder<P>
 			extends AbstractDomainBuilder<ShowMessageRequestParams, P> implements ShowMessageRequestParamsBuilder<P> {
 
+		private MessageType type;
+		private String message;
 		private List<MessageActionItemBuilder<ShowMessageRequestParamsBuilder<P>>> actions = new ArrayList<>();
 
 		InternalShowMessageRequestParamsBuilder(P parent) {
 			super(parent);
+		}
+
+		@Override
+		public ShowMessageRequestParamsBuilder<P> message(String message) {
+			this.message = message;
+			return this;
+		}
+
+		@Override
+		public ShowMessageRequestParamsBuilder<P> type(MessageType type) {
+			this.type = type;
+			return this;
 		}
 
 		@Override
@@ -138,6 +168,8 @@ public class ShowMessageRequestParams extends MessageParams {
 		@Override
 		public ShowMessageRequestParams build() {
 			ShowMessageRequestParams showMessageRequestParams = new ShowMessageRequestParams();
+			showMessageRequestParams.setType(type);
+			showMessageRequestParams.setMessage(message);
 			if (!actions.isEmpty()) {
 				List<MessageActionItem> messageActionItems = new ArrayList<>();
 				for (MessageActionItemBuilder<ShowMessageRequestParamsBuilder<P>> d : actions) {

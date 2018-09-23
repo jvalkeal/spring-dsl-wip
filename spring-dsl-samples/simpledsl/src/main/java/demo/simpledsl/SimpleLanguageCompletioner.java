@@ -48,9 +48,15 @@ public class SimpleLanguageCompletioner extends AbstractDslService implements Co
 			Collection<TokenType> tokens = simpleLanguage.resolveLegalTokens(position);
 			return Flux.fromIterable(tokens)
 					.filter(tokenType -> tokenType != TokenType.VALUE)
-					.flatMap(tt -> {
-						return Mono.just(CompletionItem.completionItem().label(tt.toString().toLowerCase()).build());
-					});
+					.flatMap(tokenType ->
+						Mono.just(CompletionItem.completionItem()
+								.label(tokenType.toString().toLowerCase())
+//								.command()
+//									.title("command")
+//									.command("command")
+//									.and()
+								.build())
+					);
 		});
 	}
 }

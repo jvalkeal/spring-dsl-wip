@@ -18,15 +18,19 @@ package org.springframework.dsl.lsp.server.websocket;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
+import org.springframework.dsl.jsonrpc.JsonRpcSystemConstants;
 import org.springframework.dsl.lsp.server.config.DslConfigurationProperties;
 import org.springframework.dsl.lsp.server.jsonrpc.RpcHandler;
 import org.springframework.web.reactive.HandlerMapping;
 import org.springframework.web.reactive.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.reactive.socket.WebSocketHandler;
 import org.springframework.web.reactive.socket.server.support.WebSocketHandlerAdapter;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Generic {@code LSP} configuration for a websocket integration.
@@ -44,9 +48,11 @@ public class LspWebSocketConfig {
 	}
 
 	@Bean
-	public HandlerMapping handlerMapping(RpcHandler rpcHandler) {
+	public HandlerMapping handlerMapping(RpcHandler rpcHandler,
+			@Qualifier(JsonRpcSystemConstants.JSONRPC_OBJECT_MAPPER_BEAN_NAME) ObjectMapper objectMapper) {
 		Map<String, WebSocketHandler> map = new HashMap<>();
-		map.put(properties.getLsp().getServer().getWebsocket().getPath(), new LspWebSocketHandler(rpcHandler));
+		map.put(properties.getLsp().getServer().getWebsocket().getPath(),
+				new LspWebSocketHandler(rpcHandler, objectMapper));
 
 		SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
 		mapping.setUrlMap(map);

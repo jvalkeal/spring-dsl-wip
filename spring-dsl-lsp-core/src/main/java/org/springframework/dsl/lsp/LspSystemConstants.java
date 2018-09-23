@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.lsp.server;
+package org.springframework.dsl.lsp;
 
 import org.springframework.dsl.service.DocumentStateTracker;
 
@@ -23,7 +23,7 @@ import org.springframework.dsl.service.DocumentStateTracker;
  * @author Janne Valkealahti
  *
  */
-public abstract class LspServerSystemConstants {
+public abstract class LspSystemConstants {
 
 	/**
 	 * Session attribute if set to {@code TRUE} indicates that session has been initialized.
@@ -39,4 +39,9 @@ public abstract class LspServerSystemConstants {
 	 * Session attribute containing negotiated lsp version.
 	 */
 	public final static String SESSION_ATTRIBUTE_LSP_VERSION = "lspVersion";
+
+	/**
+	 * Session attribute containing added lsp client
+	 */
+	public final static String SESSION_ATTRIBUTE_LSP_CLIENT = "lspClient";
 }

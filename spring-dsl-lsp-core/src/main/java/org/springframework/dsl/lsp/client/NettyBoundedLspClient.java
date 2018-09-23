@@ -59,6 +59,11 @@ public class NettyBoundedLspClient implements LspClient {
 		return new DefaultRequestSpec();
 	}
 
+	@Override
+	public NotificationSpec notification() {
+		return new DefaultNotificationSpec();
+	}
+
 	public EmitterProcessor<JsonRpcResponse> getResponses() {
 		return responses;
 	}
@@ -111,6 +116,50 @@ public class NettyBoundedLspClient implements LspClient {
 					.filter(r -> ObjectUtils.nullSafeEquals(r.getId(), id));
 
 //			return Mono.empty();
+		}
+	}
+
+	private class DefaultNotificationSpec implements NotificationSpec {
+
+		private String method;
+		private Object params;
+
+		@Override
+		public NotificationSpec method(String method) {
+			this.method = method;
+			return this;
+		}
+
+		@Override
+		public NotificationSpec params(Object params) {
+			this.params = params;
+			return this;
+		}
+
+		@Override
+		public Mono<Void> exchange() {
+			NettyDataBufferFactory bufferFactory = new NettyDataBufferFactory(out.alloc());
+
+			JsonRpcOutputMessage adaptedResponse = new ReactorJsonRpcOutputMessage(out, bufferFactory);
+
+			System.out.println("XXXX2");
+			String error = "{\"jsonrpc\":\"2.0\", \"method\":\"" + method + "\"}";
+			DataBuffer buffer = bufferFactory.wrap(error.getBytes(Charset.defaultCharset()));
+			Flux<DataBuffer> body = Flux.just(buffer);
+
+			adaptedResponse.writeWith(body).subscribe();
+			adaptedResponse.setComplete().subscribe();
+
+//			DefaultJsonRpcResponse xxx = new DefaultJsonRpcResponse("2.0", 10, "clienthi", null);
+//			return Mono.just(xxx);
+
+//			return Mono.from(responses)
+//					.doOnNext(r -> {
+//						System.out.println("XXXX4 " + r);
+//					})
+//					.filter(r -> ObjectUtils.nullSafeEquals(r.getId(), id));
+
+			return Mono.empty();
 		}
 	}
 }
