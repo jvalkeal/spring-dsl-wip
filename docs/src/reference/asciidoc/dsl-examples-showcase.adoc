@@ -1,0 +1,10 @@
+[[dsl-examples-showcase]]
+== Showcase
+_Showcase_ is a sample module not adding any new language
+definitions, but instead using languages from <<dsl-examples-simple>>
+and <<dsl-examples-wordcheck>> and adding some other additional
+features for interactions between a client and a server.
+
+=== UI Editor
+_UI Editor_ is and example using websockets for a transport.
+
