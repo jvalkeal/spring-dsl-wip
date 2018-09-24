@@ -19,9 +19,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.dsl.jsonrpc.JsonRpcSystemConstants;
 import org.springframework.dsl.jsonrpc.config.JsonRpcJacksonConfiguration;
 import org.springframework.dsl.jsonrpc.support.DispatcherJsonRpcHandler;
 import org.springframework.dsl.lsp.server.jsonrpc.LspClientArgumentResolver;
@@ -31,6 +33,8 @@ import org.springframework.dsl.lsp.server.jsonrpc.RpcJsonRpcHandlerAdapter;
 import org.springframework.dsl.service.reconcile.DefaultReconciler;
 import org.springframework.dsl.service.reconcile.Linter;
 import org.springframework.dsl.service.reconcile.Reconciler;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Generic configurations among {@code LSP} features.
@@ -63,7 +67,8 @@ public class GenericLspConfiguration {
 	}
 
 	@Bean
-	public ReactorJsonRpcHandlerAdapter reactorJsonRpcHandlerAdapter(RpcJsonRpcHandlerAdapter rpcJsonRpcHandlerAdapter) {
-		return new ReactorJsonRpcHandlerAdapter(rpcJsonRpcHandlerAdapter);
+	public ReactorJsonRpcHandlerAdapter reactorJsonRpcHandlerAdapter(RpcJsonRpcHandlerAdapter rpcJsonRpcHandlerAdapter,
+			@Qualifier(JsonRpcSystemConstants.JSONRPC_OBJECT_MAPPER_BEAN_NAME) ObjectMapper objectMapper) {
+		return new ReactorJsonRpcHandlerAdapter(rpcJsonRpcHandlerAdapter, objectMapper);
 	}
 }

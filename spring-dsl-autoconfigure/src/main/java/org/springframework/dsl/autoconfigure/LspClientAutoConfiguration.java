@@ -15,12 +15,14 @@
  */
 package org.springframework.dsl.autoconfigure;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.ReactiveAdapterRegistry;
+import org.springframework.dsl.jsonrpc.JsonRpcSystemConstants;
 import org.springframework.dsl.jsonrpc.support.DispatcherJsonRpcHandler;
 import org.springframework.dsl.lsp.client.ClientReactorJsonRpcHandlerAdapter;
 import org.springframework.dsl.lsp.client.config.EnableLanguageClient;
@@ -28,6 +30,8 @@ import org.springframework.dsl.lsp.server.config.LspDomainJacksonConfiguration;
 import org.springframework.dsl.lsp.server.jsonrpc.ReactorJsonRpcHandlerAdapter;
 import org.springframework.dsl.lsp.server.jsonrpc.RpcHandler;
 import org.springframework.dsl.lsp.server.jsonrpc.RpcJsonRpcHandlerAdapter;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * {@link EnableAutoConfiguration Auto-configuration} integrating into {@code LSP Client} features.
@@ -52,8 +56,9 @@ public class LspClientAutoConfiguration {
 	}
 
 	@Bean
-	public ClientReactorJsonRpcHandlerAdapter clientReactorJsonRpcHandlerAdapter(RpcHandler rpcHandler) {
-		return new ClientReactorJsonRpcHandlerAdapter(rpcHandler);
+	public ClientReactorJsonRpcHandlerAdapter clientReactorJsonRpcHandlerAdapter(RpcHandler rpcHandler,
+			@Qualifier(JsonRpcSystemConstants.JSONRPC_OBJECT_MAPPER_BEAN_NAME) ObjectMapper objectMapper) {
+		return new ClientReactorJsonRpcHandlerAdapter(rpcHandler, objectMapper);
 	}
 
 	@Bean
@@ -62,8 +67,8 @@ public class LspClientAutoConfiguration {
 	}
 
 	@Bean
-	public ReactorJsonRpcHandlerAdapter reactorJsonRpcHandlerAdapter(RpcJsonRpcHandlerAdapter rpcJsonRpcHandlerAdapter) {
-		return new ReactorJsonRpcHandlerAdapter(rpcJsonRpcHandlerAdapter);
+	public ReactorJsonRpcHandlerAdapter reactorJsonRpcHandlerAdapter(RpcJsonRpcHandlerAdapter rpcJsonRpcHandlerAdapter,
+			@Qualifier(JsonRpcSystemConstants.JSONRPC_OBJECT_MAPPER_BEAN_NAME) ObjectMapper objectMapper) {
+		return new ReactorJsonRpcHandlerAdapter(rpcJsonRpcHandlerAdapter, objectMapper);
 	}
-
 }

@@ -25,18 +25,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.NettyDataBufferFactory;
+import org.springframework.dsl.DslException;
 import org.springframework.dsl.jsonrpc.JsonRpcInputMessage;
 import org.springframework.dsl.jsonrpc.JsonRpcOutputMessage;
+import org.springframework.dsl.jsonrpc.JsonRpcRequest;
+import org.springframework.dsl.jsonrpc.JsonRpcResponse;
 import org.springframework.dsl.jsonrpc.session.JsonRpcSession.JsonRpcSessionCustomizer;
-import org.springframework.dsl.jsonrpc.support.DefaultJsonRpcRequest;
-import org.springframework.dsl.jsonrpc.support.DefaultJsonRpcRequestJsonDeserializer;
-import org.springframework.dsl.jsonrpc.support.DefaultJsonRpcResponse;
-import org.springframework.dsl.jsonrpc.support.DefaultJsonRpcResponseJsonDeserializer;
 import org.springframework.dsl.lsp.client.NettyBoundedLspClient;
+import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 
 import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
@@ -46,6 +45,7 @@ import reactor.ipc.netty.NettyOutbound;
 import reactor.ipc.netty.NettyPipeline;
 
 /**
+ * Adapter to hook into netty's channels to dispatch messages into {@link RpcHandler}.
  *
  * @author Janne Valkealahti
  *
@@ -54,45 +54,48 @@ public class ReactorJsonRpcHandlerAdapter implements BiFunction<NettyInbound, Ne
 
 	private static final Logger log = LoggerFactory.getLogger(ReactorJsonRpcHandlerAdapter.class);
 	private final RpcHandler rpcHandler;
+	private final ObjectMapper objectMapper;
+	private final Function<String, JsonRpcRequest> requestDecoder;
+	private final Function<String, JsonRpcResponse> responseDecoder;
 
-	public ReactorJsonRpcHandlerAdapter(RpcHandler rpcHandler) {
+	/**
+	 * Instantiates a new reactor json rpc handler adapter.
+	 *
+	 * @param rpcHandler the rpc handler
+	 * @param objectMapper the object mapper
+	 */
+	public ReactorJsonRpcHandlerAdapter(RpcHandler rpcHandler, ObjectMapper objectMapper) {
+		Assert.notNull(rpcHandler, "RpcHandler must be set");
+		Assert.notNull(objectMapper, "ObjectMapper must be set");
 		this.rpcHandler = rpcHandler;
+		this.objectMapper = objectMapper;
+		this.requestDecoder = s -> {
+			try {
+				return objectMapper.readValue(s, JsonRpcRequest.class);
+			} catch (Exception e) {
+				throw new DslException("Unable to convert json to rpc request", e);
+			}
+		};
+		this.responseDecoder = s -> {
+			try {
+				return objectMapper.readValue(s, JsonRpcResponse.class);
+			} catch (Exception e) {
+				throw new DslException("Unable to convert json to rpc response", e);
+			}
+		};
 	}
 
 	@Override
 	public Mono<Void> apply(NettyInbound in, NettyOutbound out) {
-		Map<String, Disposable> disposables = new HashMap<>();
-		SimpleModule module = new SimpleModule();
-		module.addDeserializer(DefaultJsonRpcRequest.class, new DefaultJsonRpcRequestJsonDeserializer());
-		module.addDeserializer(DefaultJsonRpcResponse.class, new DefaultJsonRpcResponseJsonDeserializer());
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.registerModule(module);
 		NettyDataBufferFactory bufferFactory = new NettyDataBufferFactory(out.alloc());
-
-		Function<String, DefaultJsonRpcRequest> jsonDecoder = s -> {
-			try {
-				return mapper.readValue(s, DefaultJsonRpcRequest.class);
-			} catch(Exception e) {
-				e.printStackTrace();
-				throw new RuntimeException(e);
-			}
-		};
-
-		Function<String, DefaultJsonRpcResponse> jsonDecoder2 = s -> {
-			try {
-				return mapper.readValue(s, DefaultJsonRpcResponse.class);
-			} catch(Exception e) {
-				e.printStackTrace();
-				throw new RuntimeException(e);
-			}
-		};
+		Map<String, Disposable> disposables = new HashMap<>();
 
 		in.context().addHandlerLast(new LspJsonRpcDecoder());
 		out.context().addHandlerLast(new LspJsonRpcEncoder());
 
 		// we can only have one subscriber to NettyInbound, so need to dispatch
 		// relevant responses to client.
-		NettyBoundedLspClient lspClient = new NettyBoundedLspClient(out);
+		NettyBoundedLspClient lspClient = new NettyBoundedLspClient(out, objectMapper);
 		JsonRpcSessionCustomizer customizer = session -> session.getAttributes().put("lspClient", lspClient);
 
 		Flux<String> shared = in.receiveObject()
@@ -100,17 +103,14 @@ public class ReactorJsonRpcHandlerAdapter implements BiFunction<NettyInbound, Ne
 			.share();
 
 		shared
-			.map(jsonDecoder2)
+			.map(responseDecoder)
 			.filter(response -> response.getResult() != null || response.getError() != null)
 			.subscribe(bb -> {
 				lspClient.getResponses().onNext(bb);
 			});
 
-//		in.receiveObject()
-//		.ofType(String.class)
-//		.map(jsonDecoder)
 		shared
-			.map(jsonDecoder)
+			.map(requestDecoder)
 			.filter(request -> request.getMethod() != null)
 			.subscribe(bb -> {
 				log.info("Receive request {}", bb);
@@ -187,7 +187,6 @@ public class ReactorJsonRpcHandlerAdapter implements BiFunction<NettyInbound, Ne
 					disposables.put(disposableId, disposable);
 				}
 			});
-
 
 		return out.options(NettyPipeline.SendOptions::flushOnEach)
 				.neverComplete();

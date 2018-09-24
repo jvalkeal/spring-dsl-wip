@@ -16,16 +16,19 @@
 package org.springframework.dsl.lsp.client;
 
 import java.nio.charset.Charset;
+import java.util.function.Function;
 
-import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.NettyDataBufferFactory;
+import org.springframework.dsl.DslException;
 import org.springframework.dsl.jsonrpc.JsonRpcOutputMessage;
+import org.springframework.dsl.jsonrpc.JsonRpcRequest;
 import org.springframework.dsl.jsonrpc.JsonRpcResponse;
 import org.springframework.dsl.lsp.server.jsonrpc.ReactorJsonRpcOutputMessage;
 import org.springframework.util.ObjectUtils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import reactor.core.publisher.EmitterProcessor;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.ipc.netty.NettyOutbound;
 
@@ -35,131 +38,74 @@ import reactor.ipc.netty.NettyOutbound;
  * @author Janne Valkealahti
  *
  */
-public class NettyBoundedLspClient implements LspClient {
+public class NettyBoundedLspClient extends AbstractLspClient {
 
 	private NettyOutbound out;
+	private final Function<JsonRpcRequest, String> requestDecoder;
 	private EmitterProcessor<JsonRpcResponse> responses = EmitterProcessor.create();
 
-	public NettyBoundedLspClient(NettyOutbound out) {
+	public NettyBoundedLspClient(NettyOutbound out, ObjectMapper objectMapper) {
 		this.out = out;
-	}
-
-	@Override
-	public void start() {
-		// no-op
-	}
-
-	@Override
-	public void stop() {
-		// no-op
+		this.requestDecoder = s -> {
+			try {
+				return objectMapper.writeValueAsString(s);
+			} catch (Exception e) {
+				throw new DslException("Unable to convert json rpc request", e);
+			}
+		};
 	}
 
 	@Override
 	public RequestSpec request() {
-		return new DefaultRequestSpec();
+		return new DefaultRequestSpec(new DefaultExchangeRequestFunction());
 	}
 
 	@Override
 	public NotificationSpec notification() {
-		return new DefaultNotificationSpec();
+		return new DefaultNotificationSpec(new DefaultExchangeNotificationFunction());
 	}
 
 	public EmitterProcessor<JsonRpcResponse> getResponses() {
 		return responses;
 	}
 
-	private class DefaultRequestSpec implements RequestSpec {
-
-		private String id;
-		private String method;
-		private Object params;
+	private class DefaultExchangeRequestFunction implements ExchangeRequestFunction {
 
 		@Override
-		public RequestSpec id(String id) {
-			this.id = id;
-			return this;
-		}
-
-		@Override
-		public RequestSpec method(String method) {
-			this.method = method;
-			return this;
-		}
-
-		@Override
-		public RequestSpec params(Object params) {
-			this.params = params;
-			return this;
-		}
-
-		@Override
-		public Mono<JsonRpcResponse> exchange() {
-			NettyDataBufferFactory bufferFactory = new NettyDataBufferFactory(out.alloc());
-
-			JsonRpcOutputMessage adaptedResponse = new ReactorJsonRpcOutputMessage(out, bufferFactory);
-
-			System.out.println("XXXX2");
-			String error = "{\"jsonrpc\":\"2.0\", \"id\":" + id + ", \"method\":\"" + method + "\"}";
-			DataBuffer buffer = bufferFactory.wrap(error.getBytes(Charset.defaultCharset()));
-			Flux<DataBuffer> body = Flux.just(buffer);
-
-			adaptedResponse.writeWith(body).subscribe();
-			adaptedResponse.setComplete().subscribe();
-
-//			DefaultJsonRpcResponse xxx = new DefaultJsonRpcResponse("2.0", 10, "clienthi", null);
-//			return Mono.just(xxx);
-
-			return Mono.from(responses)
-					.doOnNext(r -> {
-						System.out.println("XXXX4 " + r);
-					})
-					.filter(r -> ObjectUtils.nullSafeEquals(r.getId(), id));
-
-//			return Mono.empty();
+		public Mono<JsonRpcResponse> exchange(JsonRpcRequest request) {
+			return Mono.defer(() -> {
+				NettyDataBufferFactory bufferFactory = new NettyDataBufferFactory(out.alloc());
+				JsonRpcOutputMessage adaptedResponse = new ReactorJsonRpcOutputMessage(out, bufferFactory);
+				Mono.just(request)
+					.map(requestDecoder)
+					.map(r -> bufferFactory.wrap(r.getBytes(Charset.defaultCharset())))
+				.doOnNext(r -> {
+					adaptedResponse.writeWith(Mono.just(r)).subscribe();
+					adaptedResponse.setComplete().subscribe();
+				})
+				.subscribe();
+				return Mono.from(responses)
+					.filter(r -> ObjectUtils.nullSafeEquals(r.getId(), request.getId()));
+			});
 		}
 	}
 
-	private class DefaultNotificationSpec implements NotificationSpec {
-
-		private String method;
-		private Object params;
+	private class DefaultExchangeNotificationFunction implements ExchangeNotificationFunction {
 
 		@Override
-		public NotificationSpec method(String method) {
-			this.method = method;
-			return this;
-		}
-
-		@Override
-		public NotificationSpec params(Object params) {
-			this.params = params;
-			return this;
-		}
-
-		@Override
-		public Mono<Void> exchange() {
-			NettyDataBufferFactory bufferFactory = new NettyDataBufferFactory(out.alloc());
-
-			JsonRpcOutputMessage adaptedResponse = new ReactorJsonRpcOutputMessage(out, bufferFactory);
-
-			System.out.println("XXXX2");
-			String error = "{\"jsonrpc\":\"2.0\", \"method\":\"" + method + "\"}";
-			DataBuffer buffer = bufferFactory.wrap(error.getBytes(Charset.defaultCharset()));
-			Flux<DataBuffer> body = Flux.just(buffer);
-
-			adaptedResponse.writeWith(body).subscribe();
-			adaptedResponse.setComplete().subscribe();
-
-//			DefaultJsonRpcResponse xxx = new DefaultJsonRpcResponse("2.0", 10, "clienthi", null);
-//			return Mono.just(xxx);
-
-//			return Mono.from(responses)
-//					.doOnNext(r -> {
-//						System.out.println("XXXX4 " + r);
-//					})
-//					.filter(r -> ObjectUtils.nullSafeEquals(r.getId(), id));
-
-			return Mono.empty();
+		public Mono<Void> exchange(JsonRpcRequest request) {
+			return Mono.defer(() -> {
+				NettyDataBufferFactory bufferFactory = new NettyDataBufferFactory(out.alloc());
+				JsonRpcOutputMessage adaptedResponse = new ReactorJsonRpcOutputMessage(out, bufferFactory);
+				return Mono.just(request)
+					.map(requestDecoder)
+					.map(r -> bufferFactory.wrap(r.getBytes(Charset.defaultCharset())))
+					.doOnNext(r -> {
+						adaptedResponse.writeWith(Mono.just(r)).subscribe();
+						adaptedResponse.setComplete().subscribe();
+					})
+					.then();
+			});
 		}
 	}
 }

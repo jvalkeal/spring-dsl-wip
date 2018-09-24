@@ -24,7 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dsl.jsonrpc.JsonRpcRequest;
 import org.springframework.dsl.jsonrpc.JsonRpcResponse;
-import org.springframework.dsl.jsonrpc.support.DefaultJsonRpcRequest;
 import org.springframework.dsl.jsonrpc.support.DefaultJsonRpcResponse;
 import org.springframework.dsl.jsonrpc.support.DefaultJsonRpcResponseJsonDeserializer;
 import org.springframework.util.ObjectUtils;
@@ -48,7 +47,7 @@ import reactor.ipc.netty.tcp.TcpClient;
  * @author Janne Valkealahti
  *
  */
-public class NettyTcpClientLspClient implements LspClient {
+public class NettyTcpClientLspClient extends AbstractLspClient {
 
 	private static final Logger log = LoggerFactory.getLogger(NettyTcpClientLspClient.class);
 	private final String host;
@@ -74,14 +73,14 @@ public class NettyTcpClientLspClient implements LspClient {
 	}
 
 	@Override
-	public void start() {
+	public void doStart() {
 		if (blockingNettyContext == null) {
 			init();
 		}
 	}
 
 	@Override
-	public void stop() {
+	public void doStop() {
 		if (blockingNettyContext != null) {
 			blockingNettyContext.shutdown();
 		}
@@ -100,73 +99,6 @@ public class NettyTcpClientLspClient implements LspClient {
 
 	private void init() {
 		blockingNettyContext = TcpClient.create(host, port).start(function);
-	}
-
-	private static class DefaultRequestSpec implements RequestSpec {
-
-		private String id;
-		private String method;
-		private Object params;
-		private ExchangeRequestFunction exchangeFunction;
-
-		public DefaultRequestSpec(ExchangeRequestFunction exchangeFunction) {
-			this.exchangeFunction = exchangeFunction;
-		}
-
-		@Override
-		public RequestSpec id(String id) {
-			this.id = id;
-			return this;
-		}
-
-		@Override
-		public RequestSpec method(String method) {
-			this.method = method;
-			return this;
-		}
-
-		@Override
-		public RequestSpec params(Object params) {
-			this.params = params;
-			return this;
-		}
-
-		@Override
-		public Mono<JsonRpcResponse> exchange() {
-			JsonRpcRequest request = new DefaultJsonRpcRequest(id, method, params);
-			return exchangeFunction.exchange(request);
-		}
-	}
-
-	private static class DefaultNotificationSpec implements NotificationSpec {
-
-		private String method;
-		private Object params;
-		private ExchangeNotificationFunction exchangeFunction;
-
-		public DefaultNotificationSpec(ExchangeNotificationFunction exchangeFunction) {
-			this.exchangeFunction = exchangeFunction;
-		}
-
-		@Override
-		public NotificationSpec method(String method) {
-			this.method = method;
-			return this;
-		}
-
-		@Override
-		public NotificationSpec params(Object params) {
-			this.params = params;
-			return this;
-		}
-
-		@Override
-		public Mono<Void> exchange() {
-			DefaultJsonRpcRequest request = new DefaultJsonRpcRequest();
-			request.setMethod(method);
-			request.setParams(params);
-			return exchangeFunction.exchange(request);
-		}
 	}
 
 	private class DefaultExchangeRequestFunction implements ExchangeRequestFunction {

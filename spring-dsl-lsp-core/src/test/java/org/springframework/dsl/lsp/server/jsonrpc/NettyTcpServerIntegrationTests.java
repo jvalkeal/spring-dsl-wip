@@ -29,12 +29,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.ReactiveAdapterRegistry;
 import org.springframework.dsl.domain.InitializeParams;
 import org.springframework.dsl.jsonrpc.JsonRpcResponse;
+import org.springframework.dsl.jsonrpc.JsonRpcSystemConstants;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcController;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcNotification;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcRequestMapping;
@@ -47,6 +49,8 @@ import org.springframework.dsl.jsonrpc.support.DispatcherJsonRpcHandler;
 import org.springframework.dsl.lsp.client.ClientReactorJsonRpcHandlerAdapter;
 import org.springframework.dsl.lsp.client.LspClient;
 import org.springframework.dsl.lsp.server.config.LspDomainJacksonConfiguration;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.netty.buffer.Unpooled;
 import reactor.core.publisher.Flux;
@@ -746,8 +750,10 @@ public class NettyTcpServerIntegrationTests {
 		}
 
 		@Bean
-		public ReactorJsonRpcHandlerAdapter reactorJsonRpcHandlerAdapter(RpcJsonRpcHandlerAdapter rpcJsonRpcHandlerAdapter) {
-			return new ReactorJsonRpcHandlerAdapter(rpcJsonRpcHandlerAdapter);
+		public ReactorJsonRpcHandlerAdapter reactorJsonRpcHandlerAdapter(
+				RpcJsonRpcHandlerAdapter rpcJsonRpcHandlerAdapter,
+				@Qualifier(JsonRpcSystemConstants.JSONRPC_OBJECT_MAPPER_BEAN_NAME) ObjectMapper objectMapper) {
+			return new ReactorJsonRpcHandlerAdapter(rpcJsonRpcHandlerAdapter, objectMapper);
 		}
 	}
 
@@ -764,8 +770,9 @@ public class NettyTcpServerIntegrationTests {
 	static class JsonRpcClientConfig {
 
 		@Bean
-		public ClientReactorJsonRpcHandlerAdapter clientReactorJsonRpcHandlerAdapter(RpcHandler rpcHandler) {
-			return new ClientReactorJsonRpcHandlerAdapter(rpcHandler);
+		public ClientReactorJsonRpcHandlerAdapter clientReactorJsonRpcHandlerAdapter(RpcHandler rpcHandler,
+				@Qualifier(JsonRpcSystemConstants.JSONRPC_OBJECT_MAPPER_BEAN_NAME) ObjectMapper objectMapper) {
+			return new ClientReactorJsonRpcHandlerAdapter(rpcHandler, objectMapper);
 		}
 	}
 
