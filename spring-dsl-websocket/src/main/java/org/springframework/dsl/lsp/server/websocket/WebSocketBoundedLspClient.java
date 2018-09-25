@@ -24,12 +24,12 @@ import org.springframework.core.io.buffer.DataBufferFactory;
 import org.springframework.dsl.DslException;
 import org.springframework.dsl.jsonrpc.JsonRpcOutputMessage;
 import org.springframework.dsl.jsonrpc.JsonRpcRequest;
-import org.springframework.dsl.jsonrpc.JsonRpcResponse;
 import org.springframework.dsl.jsonrpc.support.AbstractJsonRpcOutputMessage;
 import org.springframework.dsl.lsp.client.AbstractLspClient;
 import org.springframework.dsl.lsp.client.ExchangeNotificationFunction;
 import org.springframework.dsl.lsp.client.ExchangeRequestFunction;
 import org.springframework.dsl.lsp.client.LspClient;
+import org.springframework.dsl.lsp.client.LspClientResponse;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.reactive.socket.WebSocketMessage;
@@ -51,7 +51,7 @@ public class WebSocketBoundedLspClient extends AbstractLspClient {
 
 	private WebSocketSession session;
 	private final Function<JsonRpcRequest, String> requestDecoder;
-	private final EmitterProcessor<JsonRpcResponse> responses = EmitterProcessor.create();
+	private final EmitterProcessor<LspClientResponse> responses = EmitterProcessor.create();
 
 	/**
 	 * Instantiates a new web socket bounded lsp client.
@@ -82,14 +82,14 @@ public class WebSocketBoundedLspClient extends AbstractLspClient {
 		return new DefaultNotificationSpec(new DefaultExchangeNotificationFunction());
 	}
 
-	public EmitterProcessor<JsonRpcResponse> getResponses() {
+	public EmitterProcessor<LspClientResponse> getResponses() {
 		return responses;
 	}
 
 	private class DefaultExchangeRequestFunction implements ExchangeRequestFunction {
 
 		@Override
-		public Mono<JsonRpcResponse> exchange(JsonRpcRequest request) {
+		public Mono<LspClientResponse> exchange(JsonRpcRequest request) {
 			return Mono.defer(() -> {
 				JsonRpcOutputMessage adaptedResponse = new WebSocketJsonRpcOutputMessage(session, session.bufferFactory());
 				Mono.just(request)
@@ -101,10 +101,7 @@ public class WebSocketBoundedLspClient extends AbstractLspClient {
 					})
 					.subscribe();
 				return Mono.from(responses)
-						.doOnNext(r -> {
-							System.out.println("XXXX4 " + r);
-						})
-						.filter(r -> ObjectUtils.nullSafeEquals(r.getId(), request.getId()));
+						.filter(r -> ObjectUtils.nullSafeEquals(r.response().getId(), request.getId()));
 			});
 		}
 	}

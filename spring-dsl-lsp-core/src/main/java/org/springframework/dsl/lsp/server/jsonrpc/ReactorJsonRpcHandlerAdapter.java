@@ -31,6 +31,7 @@ import org.springframework.dsl.jsonrpc.JsonRpcOutputMessage;
 import org.springframework.dsl.jsonrpc.JsonRpcRequest;
 import org.springframework.dsl.jsonrpc.JsonRpcResponse;
 import org.springframework.dsl.jsonrpc.session.JsonRpcSession.JsonRpcSessionCustomizer;
+import org.springframework.dsl.lsp.client.LspClientResponse;
 import org.springframework.dsl.lsp.client.NettyBoundedLspClient;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
@@ -106,7 +107,7 @@ public class ReactorJsonRpcHandlerAdapter implements BiFunction<NettyInbound, Ne
 			.map(responseDecoder)
 			.filter(response -> response.getResult() != null || response.getError() != null)
 			.subscribe(bb -> {
-				lspClient.getResponses().onNext(bb);
+				lspClient.getResponses().onNext(LspClientResponse.create().response(bb).build());
 			});
 
 		shared

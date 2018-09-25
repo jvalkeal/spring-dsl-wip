@@ -29,6 +29,8 @@ public interface LspClientResponse {
 
 	<T> T result(JsonRpcExtractor<T, JsonRpcResponse> extractor);
 
+	JsonRpcResponse response();
+
 	static Builder create() {
 		return new DefaultLspClientResponseBuilder(JsonRpcExtractorStrategies.withDefaults());
 	}
@@ -39,6 +41,7 @@ public interface LspClientResponse {
 
 	interface Builder {
 
+		Builder response(JsonRpcResponse response);
 		LspClientResponse build();
 	}
 }

@@ -61,12 +61,12 @@ import reactor.ipc.netty.NettyPipeline;
  *
  */
 public class ClientReactorJsonRpcHandlerAdapter
-		implements BiFunction<NettyInbound, NettyOutbound, Mono<Void>>, Processor<ByteBuf, JsonRpcResponse> {
+		implements BiFunction<NettyInbound, NettyOutbound, Mono<Void>>, Processor<ByteBuf, LspClientResponse> {
 
 	private static final Logger log = LoggerFactory.getLogger(ClientReactorJsonRpcHandlerAdapter.class);
 	private final RpcHandler rpcHandler;
 	private final EmitterProcessor<ByteBuf> requests = EmitterProcessor.create();
-	private final EmitterProcessor<JsonRpcResponse> responses = EmitterProcessor.create();
+	private final EmitterProcessor<LspClientResponse> responses = EmitterProcessor.create();
 	private final ObjectMapper objectMapper;
 	private final Function<String, JsonRpcRequest> requestDecoder;
 	private final Function<String, JsonRpcResponse> responseDecoder;
@@ -118,7 +118,7 @@ public class ClientReactorJsonRpcHandlerAdapter
 	}
 
 	@Override
-	public void subscribe(Subscriber<? super JsonRpcResponse> s) {
+	public void subscribe(Subscriber<? super LspClientResponse> s) {
 		responses.subscribe(s);
 	}
 
@@ -148,8 +148,8 @@ public class ClientReactorJsonRpcHandlerAdapter
 			.map(responseDecoder)
 			.filter(response -> response.getResult() != null || response.getError() != null)
 			.subscribe(bb -> {
-				lspClient.getResponses().onNext(bb);
-				responses.onNext(bb);
+				lspClient.getResponses().onNext(LspClientResponse.create().response(bb).build());
+				responses.onNext(LspClientResponse.create().response(bb).build());
 			});
 
 		shared

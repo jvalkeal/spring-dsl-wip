@@ -35,6 +35,11 @@ public class DefaultLspClientResponse implements LspClientResponse {
 	}
 
 	@Override
+	public JsonRpcResponse response() {
+		return response;
+	}
+
+	@Override
 	public JsonRpcExtractorStrategies strategies() {
 		return strategies;
 	}
@@ -63,16 +68,17 @@ public class DefaultLspClientResponse implements LspClientResponse {
 		return toMono(ResolvableType.forClass(elementClass));
 	}
 
+	@SuppressWarnings("unchecked")
 	private <T> JsonRpcExtractor<Mono<T>, JsonRpcResponse> toMono(ResolvableType elementType) {
 		return (response, context) -> {
 			try {
-				Object xxx = null;
+				Object jsonRpcResponse = null;
 				if (elementType.isAssignableFrom(String.class)) {
-					xxx = response.getResult();
+					jsonRpcResponse = response.getResult();
 				} else {
-					xxx = context.objectMapper().readValue(response.getResult(), elementType.resolve());
+					jsonRpcResponse = context.objectMapper().readValue(response.getResult(), elementType.resolve());
 				}
-				return Mono.just((T)xxx);
+				return Mono.justOrEmpty((T)jsonRpcResponse);
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}

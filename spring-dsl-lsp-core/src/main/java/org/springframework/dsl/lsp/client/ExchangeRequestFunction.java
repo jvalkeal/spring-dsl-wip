@@ -16,7 +16,6 @@
 package org.springframework.dsl.lsp.client;
 
 import org.springframework.dsl.jsonrpc.JsonRpcRequest;
-import org.springframework.dsl.jsonrpc.JsonRpcResponse;
 
 import reactor.core.publisher.Mono;
 
@@ -35,5 +34,5 @@ public interface ExchangeRequestFunction {
 	 * @param request the json rpc request
 	 * @return the mono having a response
 	 */
-	Mono<JsonRpcResponse> exchange(JsonRpcRequest request);
+	Mono<LspClientResponse> exchange(JsonRpcRequest request);
 }

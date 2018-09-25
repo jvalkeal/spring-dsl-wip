@@ -17,6 +17,7 @@ package org.springframework.dsl.lsp.client;
 
 import org.springframework.dsl.jsonrpc.JsonRpcResponse;
 import org.springframework.dsl.jsonrpc.codec.JsonRpcExtractorStrategies;
+import org.springframework.dsl.lsp.client.LspClientResponse.Builder;
 
 public class DefaultLspClientResponseBuilder implements LspClientResponse.Builder {
 
@@ -25,6 +26,12 @@ public class DefaultLspClientResponseBuilder implements LspClientResponse.Builde
 
 	public DefaultLspClientResponseBuilder(JsonRpcExtractorStrategies strategies) {
 		this.strategies = strategies;
+	}
+
+	@Override
+	public Builder response(JsonRpcResponse response) {
+		this.response = response;
+		return this;
 	}
 
 	@Override

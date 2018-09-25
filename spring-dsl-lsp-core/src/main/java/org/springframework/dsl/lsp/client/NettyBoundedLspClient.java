@@ -22,7 +22,6 @@ import org.springframework.core.io.buffer.NettyDataBufferFactory;
 import org.springframework.dsl.DslException;
 import org.springframework.dsl.jsonrpc.JsonRpcOutputMessage;
 import org.springframework.dsl.jsonrpc.JsonRpcRequest;
-import org.springframework.dsl.jsonrpc.JsonRpcResponse;
 import org.springframework.dsl.lsp.server.jsonrpc.ReactorJsonRpcOutputMessage;
 import org.springframework.util.ObjectUtils;
 
@@ -42,7 +41,7 @@ public class NettyBoundedLspClient extends AbstractLspClient {
 
 	private NettyOutbound out;
 	private final Function<JsonRpcRequest, String> requestDecoder;
-	private EmitterProcessor<JsonRpcResponse> responses = EmitterProcessor.create();
+	private EmitterProcessor<LspClientResponse> responses = EmitterProcessor.create();
 
 	public NettyBoundedLspClient(NettyOutbound out, ObjectMapper objectMapper) {
 		this.out = out;
@@ -65,14 +64,14 @@ public class NettyBoundedLspClient extends AbstractLspClient {
 		return new DefaultNotificationSpec(new DefaultExchangeNotificationFunction());
 	}
 
-	public EmitterProcessor<JsonRpcResponse> getResponses() {
+	public EmitterProcessor<LspClientResponse> getResponses() {
 		return responses;
 	}
 
 	private class DefaultExchangeRequestFunction implements ExchangeRequestFunction {
 
 		@Override
-		public Mono<JsonRpcResponse> exchange(JsonRpcRequest request) {
+		public Mono<LspClientResponse> exchange(JsonRpcRequest request) {
 			return Mono.defer(() -> {
 				NettyDataBufferFactory bufferFactory = new NettyDataBufferFactory(out.alloc());
 				JsonRpcOutputMessage adaptedResponse = new ReactorJsonRpcOutputMessage(out, bufferFactory);
@@ -85,7 +84,7 @@ public class NettyBoundedLspClient extends AbstractLspClient {
 				})
 				.subscribe();
 				return Mono.from(responses)
-					.filter(r -> ObjectUtils.nullSafeEquals(r.getId(), request.getId()));
+					.filter(r -> ObjectUtils.nullSafeEquals(r.response().getId(), request.getId()));
 			});
 		}
 	}
