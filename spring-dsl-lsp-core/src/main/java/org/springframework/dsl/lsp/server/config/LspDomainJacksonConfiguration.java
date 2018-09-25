@@ -47,7 +47,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 @Configuration
 public class LspDomainJacksonConfiguration {
 
-	public static JsonRpcJackson2ObjectMapperBuilderCustomizer DEFAULT = builder -> {
+	public static JsonRpcJackson2ObjectMapperBuilderCustomizer DEFAULT_CUSTOMIZERS = builder -> {
 		builder.deserializerByType(JsonRpcRequest.class, new JsonRpcRequestJsonDeserializer());
 		builder.deserializerByType(JsonRpcResponse.class, new JsonRpcResponseJsonDeserializer());
 		builder.serializerByType(ServerCapabilities.class, new ServerCapabilitiesJsonSerializer());
@@ -62,22 +62,8 @@ public class LspDomainJacksonConfiguration {
 		builder.serializationInclusion(JsonInclude.Include.NON_NULL);
 	};
 
-
 	@Bean
 	public JsonRpcJackson2ObjectMapperBuilderCustomizer lspJackson2ObjectMapperBuilderCustomizer() {
-		return builder -> {
-			builder.deserializerByType(JsonRpcRequest.class, new JsonRpcRequestJsonDeserializer());
-			builder.deserializerByType(JsonRpcResponse.class, new JsonRpcResponseJsonDeserializer());
-			builder.serializerByType(ServerCapabilities.class, new ServerCapabilitiesJsonSerializer());
-			builder.deserializerByType(ServerCapabilities.class, new ServerCapabilitiesJsonDeserializer());
-			builder.serializerByType(DiagnosticSeverity.class, new DiagnosticSeveritySerializer());
-			builder.deserializerByType(DiagnosticSeverity.class, new DiagnosticSeverityDeserializer());
-			builder.serializerByType(MarkupKind.class, new MarkupKindSerializer());
-			builder.deserializerByType(MarkupKind.class, new MarkupKindDeserializer());
-			builder.serializerByType(MessageType.class, new MessageTypeSerializer());
-			builder.deserializerByType(MessageType.class, new MessageTypeDeserializer());
-			builder.featuresToEnable(SerializationFeature.WRITE_ENUMS_USING_INDEX);
-			builder.serializationInclusion(JsonInclude.Include.NON_NULL);
-		};
+		return DEFAULT_CUSTOMIZERS;
 	}
 }

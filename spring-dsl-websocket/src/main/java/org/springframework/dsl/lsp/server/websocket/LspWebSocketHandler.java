@@ -46,7 +46,7 @@ import reactor.core.publisher.Mono;
 /**
  * {@link WebSocketHandler} dispatching messages to a {@link RpcHandler}.
  *
- * @author jvalkealahti
+ * @author Janne Valkealahti
  *
  */
 public class LspWebSocketHandler implements WebSocketHandler {

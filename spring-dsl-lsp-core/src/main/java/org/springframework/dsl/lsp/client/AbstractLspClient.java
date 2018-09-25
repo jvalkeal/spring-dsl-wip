@@ -35,7 +35,7 @@ public abstract class AbstractLspClient implements LspClient {
 
 	public AbstractLspClient() {
 		this.jsonRpcExtractorStrategies = JsonRpcExtractorStrategies.builder()
-				.jackson(LspDomainJacksonConfiguration.DEFAULT)
+				.jackson(LspDomainJacksonConfiguration.DEFAULT_CUSTOMIZERS)
 				.build();
 	}
 
