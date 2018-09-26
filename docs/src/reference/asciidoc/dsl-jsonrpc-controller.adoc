@@ -1,4 +1,4 @@
 [[dsl-jsonrpc-controller]]
-=== JSONRPC Controller Methods
+=== Controller Methods
 TBD.
 
