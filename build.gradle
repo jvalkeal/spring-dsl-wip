@@ -349,7 +349,7 @@ configure(rootProject) {
 
 	asciidoctor {
 		sourceDir = file("docs/src/reference/asciidoc")
-		backends = ['docbook5']
+		backends = ['docbook5','html']
 		options eruby: 'erubis'
 		attributes docinfo: '',
 			copycss : '',
