@@ -17,7 +17,7 @@ package org.springframework.dsl.jsonrpc.docs;
 
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcController;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcRequestMapping;
-import org.springframework.dsl.jsonrpc.annotation.JsonRpcResponseBody;
+import org.springframework.dsl.jsonrpc.annotation.JsonRpcResponseResult;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -29,7 +29,7 @@ public class ControllerDocs {
 	private static class Test1JsonRpcController {
 
 		@JsonRpcRequestMapping(method = "hi")
-		@JsonRpcResponseBody
+		@JsonRpcResponseResult
 		public String hi() {
 			return "hi";
 		}
@@ -42,7 +42,7 @@ public class ControllerDocs {
 	private static class Test2JsonRpcController {
 
 		@JsonRpcRequestMapping(method = "hi")
-		@JsonRpcResponseBody
+		@JsonRpcResponseResult
 		public String hi() {
 			return "hi";
 		}
@@ -54,13 +54,13 @@ public class ControllerDocs {
 	private static class Test3JsonRpcController {
 
 		@JsonRpcRequestMapping(method = "himono")
-		@JsonRpcResponseBody
+		@JsonRpcResponseResult
 		public Mono<String> himono() {
 			return Mono.just("himono");
 		}
 
 		@JsonRpcRequestMapping(method = "hiflux")
-		@JsonRpcResponseBody
+		@JsonRpcResponseResult
 		public Flux<String> hiflux() {
 			return Flux.just("hiflux");
 		}

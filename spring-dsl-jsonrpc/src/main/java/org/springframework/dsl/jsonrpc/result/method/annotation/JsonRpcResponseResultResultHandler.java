@@ -23,22 +23,22 @@ import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.dsl.jsonrpc.JsonRpcHandlerResult;
 import org.springframework.dsl.jsonrpc.JsonRpcHandlerResultHandler;
 import org.springframework.dsl.jsonrpc.ServerJsonRpcExchange;
-import org.springframework.dsl.jsonrpc.annotation.JsonRpcResponseBody;
+import org.springframework.dsl.jsonrpc.annotation.JsonRpcResponseResult;
 import org.springframework.dsl.jsonrpc.codec.JsonRpcMessageWriter;
 
 import reactor.core.publisher.Mono;
 
 /**
  * {@link JsonRpcHandlerResultHandler} which handles result from a methods
- * annotated with {@link JsonRpcResponseBody @JsonRpcResponseBody}.
+ * annotated with {@link JsonRpcResponseResult @JsonRpcResponseBody}.
  *
  * @author Janne Valkealahti
  *
  */
-public class JsonRpcResponseBodyResultHandler extends AbstractMessageWriterResultHandler
+public class JsonRpcResponseResultResultHandler extends AbstractMessageWriterResultHandler
 		implements JsonRpcHandlerResultHandler {
 
-	public JsonRpcResponseBodyResultHandler(List<JsonRpcMessageWriter<?>> messageWriters,
+	public JsonRpcResponseResultResultHandler(List<JsonRpcMessageWriter<?>> messageWriters,
 			ReactiveAdapterRegistry adapterRegistry) {
 		super(messageWriters, adapterRegistry);
 		setOrder(100);
@@ -48,8 +48,8 @@ public class JsonRpcResponseBodyResultHandler extends AbstractMessageWriterResul
 	public boolean supports(JsonRpcHandlerResult result) {
 		MethodParameter parameter = result.getReturnTypeSource();
 		Class<?> containingClass = parameter.getContainingClass();
-		return (AnnotationUtils.findAnnotation(containingClass, JsonRpcResponseBody.class) != null ||
-				parameter.getMethodAnnotation(JsonRpcResponseBody.class) != null);
+		return (AnnotationUtils.findAnnotation(containingClass, JsonRpcResponseResult.class) != null ||
+				parameter.getMethodAnnotation(JsonRpcResponseResult.class) != null);
 	}
 
 	@Override

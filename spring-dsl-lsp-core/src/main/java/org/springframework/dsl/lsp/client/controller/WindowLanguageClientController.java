@@ -23,7 +23,7 @@ import org.springframework.dsl.domain.ShowMessageRequestParams;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcController;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcNotification;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcRequestMapping;
-import org.springframework.dsl.jsonrpc.annotation.JsonRpcResponseBody;
+import org.springframework.dsl.jsonrpc.annotation.JsonRpcResponseResult;
 
 import reactor.core.publisher.Mono;
 
@@ -48,7 +48,7 @@ public class WindowLanguageClientController {
 	}
 
 	@JsonRpcRequestMapping(method = "showMessageRequest")
-	@JsonRpcResponseBody
+	@JsonRpcResponseResult
 	Mono<MessageActionItem> showMessageRequest(ShowMessageRequestParams requestParams) {
 		log.debug("showMessageRequest {}", requestParams);
 		return Mono.empty();

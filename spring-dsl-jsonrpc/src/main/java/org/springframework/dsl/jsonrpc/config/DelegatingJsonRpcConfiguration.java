@@ -30,7 +30,7 @@ import org.springframework.dsl.jsonrpc.result.method.JsonRpcRequestParamsArgumen
 import org.springframework.dsl.jsonrpc.result.method.annotation.JsonRpcNotificationResultHandler;
 import org.springframework.dsl.jsonrpc.result.method.annotation.JsonRpcRequestMappingHandlerAdapter;
 import org.springframework.dsl.jsonrpc.result.method.annotation.JsonRpcRequestMappingHandlerMapping;
-import org.springframework.dsl.jsonrpc.result.method.annotation.JsonRpcResponseBodyResultHandler;
+import org.springframework.dsl.jsonrpc.result.method.annotation.JsonRpcResponseResultResultHandler;
 import org.springframework.dsl.jsonrpc.result.method.annotation.ServerJsonRpcExchangeArgumentResolver;
 import org.springframework.dsl.jsonrpc.support.DispatcherJsonRpcHandler;
 
@@ -51,9 +51,9 @@ public class DelegatingJsonRpcConfiguration {
 	}
 
 	@Bean
-	public JsonRpcResponseBodyResultHandler jsonRpcResponseBodyResultHandler(
+	public JsonRpcResponseResultResultHandler jsonRpcResponseBodyResultHandler(
 			List<JsonRpcMessageWriter<?>> messageWriters, ReactiveAdapterRegistry adapterRegistry) {
-		return new JsonRpcResponseBodyResultHandler(messageWriters, adapterRegistry);
+		return new JsonRpcResponseResultResultHandler(messageWriters, adapterRegistry);
 	}
 
 	@Bean

@@ -36,7 +36,7 @@ import org.springframework.dsl.domain.WillSaveTextDocumentParams;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcController;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcNotification;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcRequestMapping;
-import org.springframework.dsl.jsonrpc.annotation.JsonRpcResponseBody;
+import org.springframework.dsl.jsonrpc.annotation.JsonRpcResponseResult;
 import org.springframework.dsl.jsonrpc.session.JsonRpcSession;
 import org.springframework.dsl.lsp.LspSystemConstants;
 import org.springframework.dsl.service.Completioner;
@@ -190,7 +190,7 @@ public class TextDocumentLanguageServerController {
 	 * @return a flux of textedit's
 	 */
 	@JsonRpcRequestMapping(method = "willSaveWaitUntil")
-	@JsonRpcResponseBody
+	@JsonRpcResponseResult
 	public Flux<TextEdit> clientDocumentWillSaveWaitUntil(WillSaveTextDocumentParams params) {
 		return Flux.empty();
 	}
@@ -204,7 +204,7 @@ public class TextDocumentLanguageServerController {
 	 * @return a mono of hover
 	 */
 	@JsonRpcRequestMapping(method = "hover")
-	@JsonRpcResponseBody
+	@JsonRpcResponseResult
 	public Mono<Hover> hover(TextDocumentPositionParams params, JsonRpcSession session) {
 		log.debug("hover {}", params);
 		DocumentStateTracker documentStateTracker = getTracker(session);
@@ -227,7 +227,7 @@ public class TextDocumentLanguageServerController {
 	 * @return a mono of completion list
 	 */
 	@JsonRpcRequestMapping(method = "completion")
-	@JsonRpcResponseBody
+	@JsonRpcResponseResult
 	public Mono<CompletionList> completion(CompletionParams params, JsonRpcSession session) {
 		// TODO: spec is CompletionItem[] | CompletionList | null
 		//       not sure if there are clients which only supports CompletionItem[]

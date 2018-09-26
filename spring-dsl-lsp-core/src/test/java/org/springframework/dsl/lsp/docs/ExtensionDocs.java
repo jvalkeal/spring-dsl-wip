@@ -19,7 +19,7 @@ import org.springframework.dsl.jsonrpc.annotation.JsonRpcController;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcNotification;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcRequestMapping;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcRequestParams;
-import org.springframework.dsl.jsonrpc.annotation.JsonRpcResponseBody;
+import org.springframework.dsl.jsonrpc.annotation.JsonRpcResponseResult;
 import org.springframework.dsl.jsonrpc.session.JsonRpcSession;
 import org.springframework.dsl.lsp.client.LspClient;
 
@@ -36,7 +36,7 @@ public class ExtensionDocs {
 		}
 
 		@JsonRpcRequestMapping(method = "mymethod")
-		@JsonRpcResponseBody
+		@JsonRpcResponseResult
 		public String mymethod() {
 			return "hi";
 		}
@@ -49,19 +49,19 @@ public class ExtensionDocs {
 	public class MyExtensionController2 {
 
 		@JsonRpcRequestMapping(method = "mymethod1")
-		@JsonRpcResponseBody
+		@JsonRpcResponseResult
 		public String mymethod1(LspClient lspClient) {
 			return "hi";
 		}
 
 		@JsonRpcRequestMapping(method = "mymethod2")
-		@JsonRpcResponseBody
+		@JsonRpcResponseResult
 		public String mymethod2(JsonRpcSession session) {
 			return "hi";
 		}
 
 		@JsonRpcRequestMapping(method = "mymethod3")
-		@JsonRpcResponseBody
+		@JsonRpcResponseResult
 		public MyPojo mymethod3(@JsonRpcRequestParams MyPojo pojo) {
 			return new MyPojo(pojo.getMessage());
 		}

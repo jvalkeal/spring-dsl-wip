@@ -27,24 +27,24 @@ import org.springframework.core.ReactiveAdapterRegistry;
 import org.springframework.dsl.jsonrpc.JsonRpcHandlerResult;
 import org.springframework.dsl.jsonrpc.ResolvableMethod;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcController;
-import org.springframework.dsl.jsonrpc.annotation.JsonRpcResponseBody;
+import org.springframework.dsl.jsonrpc.annotation.JsonRpcResponseResult;
 import org.springframework.dsl.jsonrpc.codec.JsonRpcMessageWriter;
 import org.springframework.dsl.jsonrpc.result.method.HandlerMethod;
 
 /**
- * Tests for {@link JsonRpcResponseBodyResultHandler}.
+ * Tests for {@link JsonRpcResponseResultResultHandler}.
  *
  * @author Janne Valkealahti
  *
  */
-public class JsonRpcResponseBodyResultHandlerTests {
+public class JsonRpcResponseResultResultHandlerTests {
 
-	private JsonRpcResponseBodyResultHandler resultHandler;
+	private JsonRpcResponseResultResultHandler resultHandler;
 
 	@Before
 	public void setup() {
 		List<JsonRpcMessageWriter<?>> messageWriters = new ArrayList<>(1);
-		this.resultHandler = new JsonRpcResponseBodyResultHandler(messageWriters,
+		this.resultHandler = new JsonRpcResponseResultResultHandler(messageWriters,
 				ReactiveAdapterRegistry.getSharedInstance());
 	}
 
@@ -53,7 +53,7 @@ public class JsonRpcResponseBodyResultHandlerTests {
 		Object controller = new TestController();
 		Method method;
 
-		method = ResolvableMethod.on(TestController.class).annotPresent(JsonRpcResponseBody.class).resolveMethod("hi");
+		method = ResolvableMethod.on(TestController.class).annotPresent(JsonRpcResponseResult.class).resolveMethod("hi");
 		testSupports(controller, method);
 	}
 
@@ -70,7 +70,7 @@ public class JsonRpcResponseBodyResultHandlerTests {
 	@JsonRpcController
 	private static class TestController {
 
-		@JsonRpcResponseBody
+		@JsonRpcResponseResult
 		public String hi() {
 			return null;
 		}

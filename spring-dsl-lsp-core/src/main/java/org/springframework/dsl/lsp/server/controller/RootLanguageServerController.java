@@ -25,7 +25,7 @@ import org.springframework.dsl.domain.TextDocumentSyncKind;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcController;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcNotification;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcRequestMapping;
-import org.springframework.dsl.jsonrpc.annotation.JsonRpcResponseBody;
+import org.springframework.dsl.jsonrpc.annotation.JsonRpcResponseResult;
 import org.springframework.dsl.jsonrpc.session.JsonRpcSession;
 import org.springframework.dsl.lsp.LspSystemConstants;
 import org.springframework.dsl.lsp.LspVersionDetector;
@@ -77,7 +77,7 @@ public class RootLanguageServerController {
 	}
 
 	@JsonRpcRequestMapping(method = "initialize")
-	@JsonRpcResponseBody
+	@JsonRpcResponseResult
 	Mono<InitializeResult> initialize(InitializeParams params, JsonRpcSession session) {
 		log.debug("initialize {}", params);
 		LspVersion lspVersion = LspVersionDetector.detect(params);
@@ -118,7 +118,7 @@ public class RootLanguageServerController {
 	}
 
 	@JsonRpcRequestMapping(method = "shutdown")
-	@JsonRpcResponseBody
+	@JsonRpcResponseResult
 	public Mono<Object> shutdown() {
 		log.debug("shutdown");
 		if (properties.getLsp().getServer().isForceJvmExitOnShutdown()) {

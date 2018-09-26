@@ -41,7 +41,7 @@ import org.springframework.dsl.jsonrpc.annotation.JsonRpcController;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcNotification;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcRequestMapping;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcRequestParams;
-import org.springframework.dsl.jsonrpc.annotation.JsonRpcResponseBody;
+import org.springframework.dsl.jsonrpc.annotation.JsonRpcResponseResult;
 import org.springframework.dsl.jsonrpc.config.EnableJsonRpc;
 import org.springframework.dsl.jsonrpc.config.JsonRpcJacksonConfiguration;
 import org.springframework.dsl.jsonrpc.session.JsonRpcSession;
@@ -783,7 +783,7 @@ public class NettyTcpServerIntegrationTests {
 		private AtomicInteger counter = new AtomicInteger();
 
 		@JsonRpcRequestMapping(method = "clienthi")
-		@JsonRpcResponseBody
+		@JsonRpcResponseResult
 		public String clienthi() {
 			return "clienthi";
 		}
@@ -801,7 +801,7 @@ public class NettyTcpServerIntegrationTests {
 		private AtomicInteger counter = new AtomicInteger();
 
 		@JsonRpcRequestMapping(method = "serverhi")
-		@JsonRpcResponseBody
+		@JsonRpcResponseResult
 		public Mono<String> serverhi(LspClient lspClient) {
 			return lspClient
 					.request().id("10").method("clienthi").exchange()
@@ -809,7 +809,7 @@ public class NettyTcpServerIntegrationTests {
 		}
 
 		@JsonRpcRequestMapping(method = "serverclientnotification")
-		@JsonRpcResponseBody
+		@JsonRpcResponseResult
 		public Mono<String> serverclientnotification(LspClient lspClient) {
 			return lspClient
 					.notification().method("clientnotification").exchange()
@@ -817,31 +817,31 @@ public class NettyTcpServerIntegrationTests {
 		}
 
 		@JsonRpcRequestMapping(method = "counter")
-		@JsonRpcResponseBody
+		@JsonRpcResponseResult
 		public String counter() {
 			return Integer.toString(counter.getAndIncrement());
 		}
 
 		@JsonRpcRequestMapping(method = "hi")
-		@JsonRpcResponseBody
+		@JsonRpcResponseResult
 		public String hi() {
 			return "hi";
 		}
 
 		@JsonRpcRequestMapping(method = "bye")
-		@JsonRpcResponseBody
+		@JsonRpcResponseResult
 		public String bye() {
 			return "bye";
 		}
 
 		@JsonRpcRequestMapping(method = "pojo1")
-		@JsonRpcResponseBody
+		@JsonRpcResponseResult
 		public Pojo1 pojo1() {
 			return new Pojo1();
 		}
 
 		@JsonRpcRequestMapping(method = "pojo2")
-		@JsonRpcResponseBody
+		@JsonRpcResponseResult
 		public Pojo2 pojo2(@JsonRpcRequestParams Pojo2 pojo) {
 			Pojo2 pojo2 = new Pojo2();
 			pojo2.setMessage(pojo.getMessage());
@@ -849,25 +849,25 @@ public class NettyTcpServerIntegrationTests {
 		}
 
 		@JsonRpcRequestMapping(method = "methodparams")
-		@JsonRpcResponseBody
+		@JsonRpcResponseResult
 		public String methodparams(String params) {
 			return params;
 		}
 
 		@JsonRpcRequestMapping(method = "monovoid")
-		@JsonRpcResponseBody
+		@JsonRpcResponseResult
 		public Mono<Void> monovoid() {
 			return Mono.empty();
 		}
 
 		@JsonRpcRequestMapping(method = "monoobjectempty")
-		@JsonRpcResponseBody
+		@JsonRpcResponseResult
 		public Mono<Object> monoobjectempty() {
 			return Mono.empty();
 		}
 
 		@JsonRpcRequestMapping(method = "void")
-		@JsonRpcResponseBody
+		@JsonRpcResponseResult
 		public void justvoid() {
 		}
 
@@ -884,26 +884,26 @@ public class NettyTcpServerIntegrationTests {
 		}
 
 		@JsonRpcRequestMapping(method = "initializeparams")
-		@JsonRpcResponseBody
+		@JsonRpcResponseResult
 		public InitializeParams initializeparams(InitializeParams params) {
 			return params;
 		}
 
 		@JsonRpcRequestMapping(method = "session1")
-		@JsonRpcResponseBody
+		@JsonRpcResponseResult
 		public Mono<String> session1(JsonRpcSession session) {
 			session.getAttributes().put("foo", "bar");
 			return Mono.just(session.getId() + session.getAttributes().get("foo"));
 		}
 
 		@JsonRpcRequestMapping(method = "session2")
-		@JsonRpcResponseBody
+		@JsonRpcResponseResult
 		public Mono<String> session2(JsonRpcSession session) {
 			return Mono.just(session.getId() + session.getAttributes().get("foo"));
 		}
 
 		@JsonRpcRequestMapping(method = "delay")
-		@JsonRpcResponseBody
+		@JsonRpcResponseResult
 		public Mono<String> delay(String params) {
 			long delay = Long.parseLong(params);
 			return Mono
