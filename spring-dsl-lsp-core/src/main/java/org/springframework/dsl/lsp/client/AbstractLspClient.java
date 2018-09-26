@@ -16,8 +16,9 @@
 package org.springframework.dsl.lsp.client;
 
 import org.springframework.dsl.jsonrpc.JsonRpcRequest;
-import org.springframework.dsl.jsonrpc.JsonRpcResponse;
+import org.springframework.dsl.jsonrpc.codec.JsonRpcExtractorStrategies;
 import org.springframework.dsl.jsonrpc.support.DefaultJsonRpcRequest;
+import org.springframework.dsl.lsp.server.config.LspDomainJacksonConfiguration;
 import org.springframework.util.Assert;
 
 import reactor.core.publisher.Mono;
@@ -29,6 +30,14 @@ import reactor.core.publisher.Mono;
  *
  */
 public abstract class AbstractLspClient implements LspClient {
+
+	private JsonRpcExtractorStrategies jsonRpcExtractorStrategies;
+
+	public AbstractLspClient() {
+		this.jsonRpcExtractorStrategies = JsonRpcExtractorStrategies.builder()
+				.jackson(LspDomainJacksonConfiguration.DEFAULT_CUSTOMIZERS)
+				.build();
+	}
 
 	@Override
 	public final void start() {
@@ -45,6 +54,14 @@ public abstract class AbstractLspClient implements LspClient {
 
 	@Override
 	public abstract NotificationSpec notification();
+
+	public JsonRpcExtractorStrategies getJsonRpcExtractorStrategies() {
+		return jsonRpcExtractorStrategies;
+	}
+
+	public void setJsonRpcExtractorStrategies(JsonRpcExtractorStrategies jsonRpcExtractorStrategies) {
+		this.jsonRpcExtractorStrategies = jsonRpcExtractorStrategies;
+	}
 
 	/**
 	 * Actual {@link #start()} which a sub-class can override.
@@ -97,7 +114,7 @@ public abstract class AbstractLspClient implements LspClient {
 		}
 
 		@Override
-		public Mono<JsonRpcResponse> exchange() {
+		public Mono<LspClientResponse> exchange() {
 			JsonRpcRequest request = new DefaultJsonRpcRequest(id, method, params);
 			return exchangeFunction.exchange(request);
 		}

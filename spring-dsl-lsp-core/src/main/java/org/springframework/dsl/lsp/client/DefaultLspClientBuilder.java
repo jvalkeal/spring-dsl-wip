@@ -18,7 +18,6 @@ package org.springframework.dsl.lsp.client;
 import java.util.function.BiFunction;
 
 import org.reactivestreams.Processor;
-import org.springframework.dsl.jsonrpc.JsonRpcResponse;
 import org.springframework.dsl.lsp.client.LspClient.Builder;
 
 import io.netty.buffer.ByteBuf;
@@ -38,7 +37,7 @@ public class DefaultLspClientBuilder implements Builder {
 	private String host;
 	private Integer port;
 	private BiFunction<NettyInbound, NettyOutbound, Mono<Void>> function;
-	private Processor<ByteBuf, JsonRpcResponse> processor;
+	private Processor<ByteBuf, LspClientResponse> processor;
 
 	@Override
 	public Builder host(String host) {
@@ -59,7 +58,7 @@ public class DefaultLspClientBuilder implements Builder {
 	}
 
 	@Override
-	public Builder processor(Processor<ByteBuf, JsonRpcResponse> processor) {
+	public Builder processor(Processor<ByteBuf, LspClientResponse> processor) {
 		this.processor = processor;
 		return this;
 	}

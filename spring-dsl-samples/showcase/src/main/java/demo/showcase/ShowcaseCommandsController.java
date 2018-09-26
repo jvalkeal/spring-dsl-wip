@@ -20,6 +20,7 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dsl.domain.LogMessageParams;
+import org.springframework.dsl.domain.MessageActionItem;
 import org.springframework.dsl.domain.MessageType;
 import org.springframework.dsl.domain.ShowMessageRequestParams;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcController;
@@ -76,8 +77,9 @@ public class ShowcaseCommandsController {
 				.message("message")
 				.build())
 			.exchange()
+			.flatMap(r -> r.resultToMono(MessageActionItem.class))
 			.doOnSuccess(r -> {
-				log.info("Response for window/showMessageRequest: {}", r);
+				log.info("Result for window/showMessageRequest: {}", r);
 			})
 			.then();
 	}

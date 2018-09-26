@@ -48,6 +48,7 @@ import org.springframework.dsl.jsonrpc.session.JsonRpcSession;
 import org.springframework.dsl.jsonrpc.support.DispatcherJsonRpcHandler;
 import org.springframework.dsl.lsp.client.ClientReactorJsonRpcHandlerAdapter;
 import org.springframework.dsl.lsp.client.LspClient;
+import org.springframework.dsl.lsp.client.LspClientResponse;
 import org.springframework.dsl.lsp.server.config.LspDomainJacksonConfiguration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -591,9 +592,9 @@ public class NettyTcpServerIntegrationTests {
 				.build();
 		lspClient.start();
 
-		Mono<JsonRpcResponse> lspClientResponseMono = lspClient.request().id("1").method("methodparams").params("hi").exchange();
+		Mono<LspClientResponse> lspClientResponseMono = lspClient.request().id("1").method("methodparams").params("hi").exchange();
 		lspClientResponseMono.doOnNext(r -> {
-			responses.add(r);
+			responses.add(r.response());
 			dataLatch.countDown();
 		}).subscribe();
 
@@ -626,9 +627,9 @@ public class NettyTcpServerIntegrationTests {
 				.build();
 		lspClient.start();
 
-		Mono<JsonRpcResponse> lspClientResponseMono = lspClient.request().id("1").method("serverhi").exchange();
+		Mono<LspClientResponse> lspClientResponseMono = lspClient.request().id("1").method("serverhi").exchange();
 		lspClientResponseMono.doOnNext(r -> {
-			responses.add(r);
+			responses.add(r.response());
 			dataLatch.countDown();
 		}).subscribe();
 
@@ -664,9 +665,9 @@ public class NettyTcpServerIntegrationTests {
 				.build();
 		lspClient.start();
 
-		Mono<JsonRpcResponse> lspClientResponseMono = lspClient.request().id("1").method("serverclientnotification").exchange();
+		Mono<LspClientResponse> lspClientResponseMono = lspClient.request().id("1").method("serverclientnotification").exchange();
 		lspClientResponseMono.doOnNext(r -> {
-			responses.add(r);
+			responses.add(r.response());
 			dataLatch.countDown();
 		}).subscribe();
 
@@ -804,7 +805,7 @@ public class NettyTcpServerIntegrationTests {
 		public Mono<String> serverhi(LspClient lspClient) {
 			return lspClient
 					.request().id("10").method("clienthi").exchange()
-					.map(r -> r.getResult());
+					.map(r -> r.response().getResult());
 		}
 
 		@JsonRpcRequestMapping(method = "serverclientnotification")

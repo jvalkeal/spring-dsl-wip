@@ -34,6 +34,7 @@ import org.springframework.dsl.jsonrpc.JsonRpcOutputMessage;
 import org.springframework.dsl.jsonrpc.JsonRpcRequest;
 import org.springframework.dsl.jsonrpc.JsonRpcResponse;
 import org.springframework.dsl.jsonrpc.session.JsonRpcSession.JsonRpcSessionCustomizer;
+import org.springframework.dsl.lsp.LspSystemConstants;
 import org.springframework.dsl.lsp.server.jsonrpc.LspJsonRpcDecoder;
 import org.springframework.dsl.lsp.server.jsonrpc.LspJsonRpcEncoder;
 import org.springframework.dsl.lsp.server.jsonrpc.ReactorJsonRpcInputMessage;
@@ -61,12 +62,12 @@ import reactor.ipc.netty.NettyPipeline;
  *
  */
 public class ClientReactorJsonRpcHandlerAdapter
-		implements BiFunction<NettyInbound, NettyOutbound, Mono<Void>>, Processor<ByteBuf, JsonRpcResponse> {
+		implements BiFunction<NettyInbound, NettyOutbound, Mono<Void>>, Processor<ByteBuf, LspClientResponse> {
 
 	private static final Logger log = LoggerFactory.getLogger(ClientReactorJsonRpcHandlerAdapter.class);
 	private final RpcHandler rpcHandler;
 	private final EmitterProcessor<ByteBuf> requests = EmitterProcessor.create();
-	private final EmitterProcessor<JsonRpcResponse> responses = EmitterProcessor.create();
+	private final EmitterProcessor<LspClientResponse> responses = EmitterProcessor.create();
 	private final ObjectMapper objectMapper;
 	private final Function<String, JsonRpcRequest> requestDecoder;
 	private final Function<String, JsonRpcResponse> responseDecoder;
@@ -118,7 +119,7 @@ public class ClientReactorJsonRpcHandlerAdapter
 	}
 
 	@Override
-	public void subscribe(Subscriber<? super JsonRpcResponse> s) {
+	public void subscribe(Subscriber<? super LspClientResponse> s) {
 		responses.subscribe(s);
 	}
 
@@ -133,8 +134,8 @@ public class ClientReactorJsonRpcHandlerAdapter
 		// we can only have one subscriber to NettyInbound, so need to dispatch
 		// relevant responses to client.
 		NettyBoundedLspClient lspClient = new NettyBoundedLspClient(out, objectMapper);
-		JsonRpcSessionCustomizer customizer = session -> session.getAttributes().put("lspClient", lspClient);
-
+		JsonRpcSessionCustomizer customizer = session -> session.getAttributes()
+				.put(LspSystemConstants.SESSION_ATTRIBUTE_LSP_CLIENT, lspClient);
 
 		requests.doOnNext(bb -> {
 			out.sendObject(bb).then().subscribe();
@@ -148,8 +149,9 @@ public class ClientReactorJsonRpcHandlerAdapter
 			.map(responseDecoder)
 			.filter(response -> response.getResult() != null || response.getError() != null)
 			.subscribe(bb -> {
-				lspClient.getResponses().onNext(bb);
-				responses.onNext(bb);
+					lspClient.getResponses().onNext(
+							LspClientResponse.create(lspClient.getJsonRpcExtractorStrategies()).response(bb).build());
+					responses.onNext(LspClientResponse.create().response(bb).build());
 			});
 
 		shared

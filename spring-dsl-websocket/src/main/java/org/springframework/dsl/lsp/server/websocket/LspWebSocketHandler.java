@@ -31,6 +31,7 @@ import org.springframework.dsl.jsonrpc.JsonRpcResponse;
 import org.springframework.dsl.jsonrpc.session.JsonRpcSession.JsonRpcSessionCustomizer;
 import org.springframework.dsl.jsonrpc.support.AbstractJsonRpcOutputMessage;
 import org.springframework.dsl.lsp.LspSystemConstants;
+import org.springframework.dsl.lsp.client.LspClientResponse;
 import org.springframework.dsl.lsp.server.jsonrpc.RpcHandler;
 import org.springframework.util.Assert;
 import org.springframework.web.reactive.socket.WebSocketHandler;
@@ -45,7 +46,7 @@ import reactor.core.publisher.Mono;
 /**
  * {@link WebSocketHandler} dispatching messages to a {@link RpcHandler}.
  *
- * @author jvalkealahti
+ * @author Janne Valkealahti
  *
  */
 public class LspWebSocketHandler implements WebSocketHandler {
@@ -100,8 +101,9 @@ public class LspWebSocketHandler implements WebSocketHandler {
 			.map(responseDecoder)
 			.filter(response -> response.getResult() != null || response.getError() != null)
 			.subscribe(bb -> {
-				lspClient.getResponses().onNext(bb);
-			});
+					lspClient.getResponses().onNext(
+							LspClientResponse.create(lspClient.getJsonRpcExtractorStrategies()).response(bb).build());
+				});
 
 		// return normal rpc handling
 		return shared

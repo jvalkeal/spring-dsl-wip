@@ -13,26 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.lsp.client;
+package org.springframework.dsl.jsonrpc.codec;
 
-import org.springframework.dsl.jsonrpc.JsonRpcRequest;
+import org.springframework.dsl.jsonrpc.JsonRpcMessage;
 
-import reactor.core.publisher.Mono;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-/**
- * Contract to handle exchange for a {@code JSONRPC request}.
- *
- * @author Janne Valkealahti
- *
- */
 @FunctionalInterface
-public interface ExchangeRequestFunction {
+public interface JsonRpcExtractor<T, M extends JsonRpcMessage> {
 
-	/**
-	 * Handle exchange and return a {@link Mono} for completion.
-	 *
-	 * @param request the json rpc request
-	 * @return the mono having a response
-	 */
-	Mono<LspClientResponse> exchange(JsonRpcRequest request);
+	T extract(M message, Context context);
+
+	interface Context {
+
+		ObjectMapper objectMapper();
+	}
 }

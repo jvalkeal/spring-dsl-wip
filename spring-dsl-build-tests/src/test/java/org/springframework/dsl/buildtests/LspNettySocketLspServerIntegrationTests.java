@@ -60,7 +60,7 @@ public class LspNettySocketLspServerIntegrationTests extends AbstractLspIntegrat
 				.id("1")
 				.method("initialize")
 				.params(initializeParams)
-				.exchange().block();
+				.exchange().block().response();
 		assertThat(response).isNotNull();
 		assertThat(response.getError()).isNull();
 		assertThat(response.getResult()).contains("textDocumentSync");

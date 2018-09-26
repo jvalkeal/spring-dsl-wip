@@ -18,7 +18,6 @@ package org.springframework.dsl.lsp.client;
 import java.util.function.BiFunction;
 
 import org.reactivestreams.Processor;
-import org.springframework.dsl.jsonrpc.JsonRpcResponse;
 
 import io.netty.buffer.ByteBuf;
 import reactor.core.publisher.Mono;
@@ -94,7 +93,7 @@ public interface LspClient {
 		Builder port(Integer port);
 
 		Builder function(BiFunction<NettyInbound, NettyOutbound, Mono<Void>> function);
-		Builder processor(Processor<ByteBuf, JsonRpcResponse> processor);
+		Builder processor(Processor<ByteBuf, LspClientResponse> processor);
 
 
 		/**
@@ -142,7 +141,7 @@ public interface LspClient {
 		 *
 		 * @return the mono of a response
 		 */
-		Mono<JsonRpcResponse> exchange();
+		Mono<LspClientResponse> exchange();
 	}
 
 	/**

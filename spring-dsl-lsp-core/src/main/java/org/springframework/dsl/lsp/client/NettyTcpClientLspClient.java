@@ -23,7 +23,6 @@ import org.reactivestreams.Subscriber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dsl.jsonrpc.JsonRpcRequest;
-import org.springframework.dsl.jsonrpc.JsonRpcResponse;
 import org.springframework.dsl.jsonrpc.support.DefaultJsonRpcResponse;
 import org.springframework.dsl.jsonrpc.support.DefaultJsonRpcResponseJsonDeserializer;
 import org.springframework.util.ObjectUtils;
@@ -54,7 +53,7 @@ public class NettyTcpClientLspClient extends AbstractLspClient {
 	private final Integer port;
 	private BlockingNettyContext blockingNettyContext;
 	private BiFunction<NettyInbound, NettyOutbound, Mono<Void>> function;
-	private Processor<ByteBuf, JsonRpcResponse> processor;
+	private Processor<ByteBuf, LspClientResponse> processor;
 
 	/**
 	 * Instantiates a new netty tcp client lsp client.
@@ -65,7 +64,7 @@ public class NettyTcpClientLspClient extends AbstractLspClient {
 	 * @param processor the processor
 	 */
 	public NettyTcpClientLspClient(String host, int port, BiFunction<NettyInbound, NettyOutbound, Mono<Void>> function,
-			Processor<ByteBuf, JsonRpcResponse> processor) {
+			Processor<ByteBuf, LspClientResponse> processor) {
 		this.host = host;
 		this.port = port;
 		this.function = function;
@@ -104,10 +103,10 @@ public class NettyTcpClientLspClient extends AbstractLspClient {
 	private class DefaultExchangeRequestFunction implements ExchangeRequestFunction {
 
 		final Subscriber<ByteBuf> requests;
-		final Publisher<JsonRpcResponse> responses;
+		final Publisher<LspClientResponse> responses;
 		ObjectMapper mapper;
 
-		public DefaultExchangeRequestFunction(Subscriber<ByteBuf> requests, Publisher<JsonRpcResponse> responses) {
+		public DefaultExchangeRequestFunction(Subscriber<ByteBuf> requests, Publisher<LspClientResponse> responses) {
 			this.requests = requests;
 			this.responses = responses;
 
@@ -118,7 +117,7 @@ public class NettyTcpClientLspClient extends AbstractLspClient {
 		}
 
 		@Override
-		public Mono<JsonRpcResponse> exchange(JsonRpcRequest request) {
+		public Mono<LspClientResponse> exchange(JsonRpcRequest request) {
 
 			return Mono.defer(() -> {
 					String r = null;
@@ -132,7 +131,7 @@ public class NettyTcpClientLspClient extends AbstractLspClient {
 					return Mono.empty();
 				})
 				.then(Mono.from(Flux.from(responses).filter(r -> {
-					return ObjectUtils.nullSafeEquals(r.getId(), request.getId());
+					return ObjectUtils.nullSafeEquals(r.response().getId(), request.getId());
 				})));
 		}
 	}
