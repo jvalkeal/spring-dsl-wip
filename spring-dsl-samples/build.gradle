@@ -117,6 +117,20 @@ project('spring-dsl-samples-simpledslprocessserver') {
 	install.dependsOn bootJar
 }
 
+project('spring-dsl-samples-wordcheckdslprocessserver') {
+	apply plugin: 'org.springframework.boot'
+	description = 'Spring Dsl Wordcheck Lsp Process Server Sample'
+	dependencies {
+		compile project(':spring-dsl-lsp-core')
+		compile project(':spring-dsl-autoconfigure')
+		compile project(':spring-dsl-samples-common:spring-dsl-samples-wordcheckdsl')
+		compile 'org.springframework.boot:spring-boot-starter'
+		testCompile 'junit:junit'
+	}
+	build.dependsOn bootJar
+	install.dependsOn bootJar
+}
+
 project('spring-dsl-samples-simpledslsocketserver') {
 	apply plugin: 'org.springframework.boot'
 	description = 'Spring Dsl Simple Lsp Socket Server Sample'
