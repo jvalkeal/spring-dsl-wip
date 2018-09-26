@@ -33,14 +33,6 @@ For example in a below sample _hi_ method would be actually mapped to _prefix/hi
 include::samples/org/springframework/dsl/jsonrpc/docs/ControllerDocs.java[tags=snippet2]
 ----
 
-You can also return any other reactive type similarly as it is possible in
-a _Spring WebFlux_.
-
-[source,java,indent=0]
-----
-include::samples/org/springframework/dsl/jsonrpc/docs/ControllerDocs.java[tags=snippet3]
-----
-
 include::dsl-jsonrpc-controller.adoc[]
 include::dsl-jsonrpc-session.adoc[]
 

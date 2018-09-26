@@ -1,5 +1,5 @@
 [[dsl-lsp-controller]]
-=== Lsp Controller Methods
+=== Controller Methods
 TBD.
 
 [NOTE]

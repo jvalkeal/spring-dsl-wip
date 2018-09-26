@@ -16,8 +16,10 @@
 package org.springframework.dsl.jsonrpc.docs;
 
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcController;
+import org.springframework.dsl.jsonrpc.annotation.JsonRpcNotification;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcRequestMapping;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcResponseResult;
+import org.springframework.dsl.jsonrpc.session.JsonRpcSession;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -66,4 +68,41 @@ public class ControllerDocs {
 		}
 	}
 // end::snippet3[]
+
+// tag::snippet4[]
+	@JsonRpcController
+	private static class Test4JsonRpcController {
+
+		@JsonRpcRequestMapping(method = "himono")
+		@JsonRpcNotification
+		public Mono<Void> himono() {
+			return Mono.empty();
+		}
+	}
+// end::snippet4[]
+
+// tag::snippet5[]
+	@JsonRpcController
+	private static class Test5JsonRpcController {
+
+		@JsonRpcRequestMapping(method = "hiflux")
+		@JsonRpcNotification(method = "hinotifications")
+		public Flux<String> hiflux() {
+			return Flux.just("hiflux");
+		}
+	}
+// end::snippet5[]
+
+// tag::snippet6[]
+	@JsonRpcController
+	private static class Test6JsonRpcController {
+
+		@JsonRpcRequestMapping(method = "session")
+		@JsonRpcResponseResult
+		public Mono<String> session(JsonRpcSession session) {
+			return Mono.just(session.getId());
+		}
+	}
+// end::snippet6[]
+
 }
