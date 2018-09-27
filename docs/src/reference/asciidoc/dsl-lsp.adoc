@@ -9,7 +9,6 @@ works. We think that integrating a more higher level services described in
 <<dsl-core>> into a generic controllers handling _LSP_ traffic is much more
 user friendly way to implement language services.
 
-include::dsl-lsp-services.adoc[]
 include::dsl-lsp-server.adoc[]
 include::dsl-lsp-client.adoc[]
 include::dsl-lsp-extension.adoc[]

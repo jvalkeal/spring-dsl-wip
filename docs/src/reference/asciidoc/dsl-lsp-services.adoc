@@ -1,3 +1,0 @@
-[[dsl-lsp-services]]
-=== Core Services
-There are two server related controllers, `RootLanguageServerController` and `TextDocumentLanguageServerController`.
