@@ -28,8 +28,6 @@ import org.springframework.dsl.lsp.server.config.DslConfigurationProperties;
 import org.springframework.dsl.lsp.server.config.EnableLanguageServer;
 import org.springframework.dsl.lsp.server.config.LspServerSocketConfiguration;
 import org.springframework.dsl.lsp.server.config.LspServerStdioConfiguration;
-import org.springframework.dsl.lsp.server.controller.RootLanguageServerController;
-import org.springframework.dsl.lsp.server.controller.TextDocumentLanguageServerController;
 import org.springframework.dsl.lsp.server.support.JvmLspExiter;
 import org.springframework.dsl.lsp.server.support.LspExiter;
 import org.springframework.dsl.lsp.server.websocket.LspWebSocketConfig;
@@ -57,11 +55,6 @@ public class LspServerAutoConfiguration {
 	@ConditionalOnMissingBean(ReactiveAdapterRegistry.class)
 	public ReactiveAdapterRegistry jsonRpcAdapterRegistry() {
 		return new ReactiveAdapterRegistry();
-	}
-
-	@Configuration
-	@Import({ RootLanguageServerController.class, TextDocumentLanguageServerController.class })
-	public static class BuiltInControllerConfig {
 	}
 
 	@ConditionalOnProperty(prefix = "spring.dsl.lsp.server", name = "mode", havingValue = "WEBSOCKET")
