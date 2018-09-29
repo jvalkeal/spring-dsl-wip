@@ -20,8 +20,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.dsl.document.Document;
-import org.springframework.dsl.lsp.server.support.DefaultReconcileProblem;
 import org.springframework.dsl.service.AbstractDslService;
+import org.springframework.dsl.service.reconcile.DefaultReconcileProblem;
 import org.springframework.dsl.service.reconcile.Linter;
 import org.springframework.dsl.service.reconcile.ProblemSeverity;
 import org.springframework.dsl.service.reconcile.ProblemType;

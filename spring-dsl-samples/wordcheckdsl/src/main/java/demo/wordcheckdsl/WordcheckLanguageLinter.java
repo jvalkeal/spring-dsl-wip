@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 
 import org.springframework.dsl.document.Document;
 import org.springframework.dsl.document.DocumentRegion;
-import org.springframework.dsl.lsp.server.support.DefaultReconcileProblem;
+import org.springframework.dsl.service.reconcile.DefaultReconcileProblem;
 import org.springframework.dsl.service.reconcile.Linter;
 import org.springframework.dsl.service.reconcile.ProblemSeverity;
 import org.springframework.dsl.service.reconcile.ProblemType;
