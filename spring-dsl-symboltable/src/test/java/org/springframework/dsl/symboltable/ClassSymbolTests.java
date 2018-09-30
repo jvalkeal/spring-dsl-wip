@@ -22,7 +22,7 @@ import org.junit.Test;
 public class ClassSymbolTests {
 
 	@Test
-	public void test() {
+	public void testBasicStuff() {
 		ClassSymbol sym1 = new ClassSymbol("sym1");
 		assertThat(sym1.getName()).isEqualTo("sym1");
 		assertThat(sym1.getNestedScopedSymbols()).hasSize(0);
@@ -32,5 +32,21 @@ public class ClassSymbolTests {
 		assertThat(sym1.getNestedScopedSymbols()).hasSize(1);
 		assertThat(sym1.getSymbols()).hasSize(1);
 		assertThat(sym1.getMembers()).hasSize(1);
+	}
+
+	@Test
+	public void testResolveClassFieldClassReference() {
+		PredefinedScope scope = new PredefinedScope();
+
+		ClassSymbol classA = new ClassSymbol("classA");
+		scope.define(classA);
+
+		ClassSymbol classB = new ClassSymbol("classB");
+		scope.define(classB);
+
+		FieldSymbol field1 = new FieldSymbol("classA");
+		classB.define(field1);
+
+		assertThat(classB.resolveField("classA")).isEqualTo(classA);
 	}
 }

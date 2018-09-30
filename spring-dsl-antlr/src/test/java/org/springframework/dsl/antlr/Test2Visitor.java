@@ -21,12 +21,14 @@ import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 import org.springframework.dsl.Test2Grammar.DefinitionsContext;
 import org.springframework.dsl.Test2Grammar.SourceIdContext;
 import org.springframework.dsl.Test2Grammar.TargetIdContext;
-import org.springframework.dsl.service.reconcile.ReconcileProblem;
 import org.springframework.dsl.Test2GrammarBaseVisitor;
+import org.springframework.dsl.domain.Range;
+import org.springframework.dsl.service.reconcile.ReconcileProblem;
 import org.springframework.dsl.symboltable.ClassSymbol;
 import org.springframework.dsl.symboltable.DefaultSymbolTable;
 import org.springframework.dsl.symboltable.FieldSymbol;
 import org.springframework.dsl.symboltable.SymbolTable;
+import org.springframework.dsl.symboltable.TypeAlias;
 
 /**
  * {@link ParseTreeVisitor} for {@code ANTLR test2 language}.
@@ -39,33 +41,44 @@ public class Test2Visitor extends Test2GrammarBaseVisitor<AntlrParseResult<Objec
 	@Override
 	public AntlrParseResult<Object> visitDefinitions(DefinitionsContext ctx) {
 		DefaultSymbolTable symbolTable = new DefaultSymbolTable();
+		ClassSymbol stateMachineClassSymbol = new ClassSymbol("org.springframework.statemachine.StateMachine");
 		ClassSymbol stateClassSymbol = new ClassSymbol("org.springframework.statemachine.state.State");
 		ClassSymbol transitionClassSymbol = new ClassSymbol("org.springframework.statemachine.transition.Transition");
 		symbolTable.defineGlobal(stateClassSymbol);
 		symbolTable.defineGlobal(transitionClassSymbol);
 
-		ctx.machineObjectList().state().forEach(stateContext -> {
-			ClassSymbol classSymbol = new ClassSymbol(stateContext.id().getText());
-			stateClassSymbol.define(classSymbol);
-		});
-
-		ctx.machineObjectList().transition().forEach(transitionContext -> {
-			ClassSymbol classSymbol = new ClassSymbol(transitionContext.id().getText());
-			transitionClassSymbol.define(classSymbol);
-			transitionContext.transitionParameters().transitionParameter().stream().forEach(transitionParameter -> {
-				SourceIdContext sourceId = transitionParameter.transitionType().sourceId();
-				TargetIdContext targetId = transitionParameter.transitionType().targetId();
-
-				if (sourceId != null) {
-					FieldSymbol fieldSymbol = new FieldSymbol(transitionParameter.transitionType().SOURCE().getText());
-					classSymbol.define(fieldSymbol);
-				}
-				if (targetId != null) {
-					FieldSymbol fieldSymbol = new FieldSymbol(transitionParameter.transitionType().TARGET().getText());
-					classSymbol.define(fieldSymbol);
-				}
+		if (ctx.machineObjectList() != null) {
+			ctx.machineObjectList().state().forEach(stateContext -> {
+				ClassSymbol classSymbol = new ClassSymbol(stateContext.id().getText());
+				stateClassSymbol.define(classSymbol);
 			});
-		});
+
+			ctx.machineObjectList().transition().forEach(transitionContext -> {
+				ClassSymbol classSymbol = new ClassSymbol(transitionContext.id().getText());
+				transitionClassSymbol.define(classSymbol);
+				transitionContext.transitionParameters().transitionParameter().stream().forEach(transitionParameter -> {
+					SourceIdContext sourceId = transitionParameter.transitionType().sourceId();
+					TargetIdContext targetId = transitionParameter.transitionType().targetId();
+
+					if (sourceId != null) {
+						FieldSymbol fieldSymbol = new FieldSymbol(sourceId.getText());
+						fieldSymbol.setType(new TypeAlias("source", stateClassSymbol));
+						fieldSymbol.setRange(Range.from(sourceId.getStart().getLine() - 1,
+								sourceId.getStart().getCharPositionInLine(), sourceId.getStop().getLine() - 1,
+								sourceId.getStop().getCharPositionInLine()));
+						classSymbol.define(fieldSymbol);
+					}
+					if (targetId != null) {
+						FieldSymbol fieldSymbol = new FieldSymbol(targetId.getText());
+						fieldSymbol.setType(new TypeAlias("target", stateClassSymbol));
+						fieldSymbol.setRange(Range.from(targetId.getStart().getLine() - 1,
+								targetId.getStart().getCharPositionInLine(), targetId.getStop().getLine() - 1,
+								targetId.getStop().getCharPositionInLine()));
+						classSymbol.define(fieldSymbol);
+					}
+				});
+			});
+		}
 
 
 		return new AntlrParseResult<Object>() {

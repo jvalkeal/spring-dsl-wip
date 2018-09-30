@@ -16,19 +16,20 @@
 package org.springframework.dsl.symboltable;
 
 /**
- * 
+ * {@code VariableSymbol} is just a {@link Symbol} and a {@link TypedSymbol}.
+ *
  * @author Original ANTLR Authors
  * @author Janne Valkealahti
  *
  */
 public class VariableSymbol extends BaseSymbol implements TypedSymbol {
 
+	/**
+	 * Instantiates a new variable symbol.
+	 *
+	 * @param name the name
+	 */
 	public VariableSymbol(String name) {
 		super(name);
-	}
-
-	@Override
-	public void setType(Type type) {
-		super.setType(type);
 	}
 }

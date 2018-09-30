@@ -13,29 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.symboltable;
+package org.springframework.dsl.antlr;
 
-/**
- *
- *
- * @author Original ANTLR Authors
- * @author Janne Valkealahti
- *
- */
-public class PrimitiveType extends BaseSymbol implements Type {
+import java.util.List;
 
-	protected int typeIndex;
+import org.springframework.dsl.service.reconcile.ReconcileProblem;
 
-	public PrimitiveType(String name) {
-		super(name);
+public class Test2ErrorListener extends AbstractAntlrErrorListener {
+
+	public Test2ErrorListener(List<ReconcileProblem> errors) {
+		super(errors);
 	}
 
-	@Override
-	public int getTypeIndex() {
-		return typeIndex;
-	}
-
-	public void setTypeIndex(int typeIndex) {
-		this.typeIndex = typeIndex;
-	}
 }

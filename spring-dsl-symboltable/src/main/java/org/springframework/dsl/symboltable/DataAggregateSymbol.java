@@ -35,12 +35,17 @@ public abstract class DataAggregateSymbol extends SymbolWithScope implements Mem
 	protected int nextFreeFieldSlot = 0; // next slot to allocate
 	protected int typeIndex;
 
+	/**
+	 * Instantiates a new data aggregate symbol.
+	 *
+	 * @param name the name
+	 */
 	public DataAggregateSymbol(String name) {
 		super(name);
 	}
 
 	@Override
-	public void define(Symbol sym) throws IllegalArgumentException {
+	public void define(Symbol sym) {
 		if (!(sym instanceof MemberSymbol)) {
 			throw new SymbolTableException("sym is " + sym.getClass().getSimpleName() + " not MemberSymbol");
 		}
@@ -76,8 +81,11 @@ public abstract class DataAggregateSymbol extends SymbolWithScope implements Mem
 	}
 
 	/**
-	 * Look for a field with this name in this scope only. Return null if no field
-	 * found.
+	 * Look for a field with this name in this scope only. Return {@code null} if no
+	 * field found.
+	 *
+	 * @param name the field name
+	 * @return the symbol
 	 */
 	public Symbol resolveField(String name) {
 		Symbol s = resolveMember(name);
@@ -98,7 +106,11 @@ public abstract class DataAggregateSymbol extends SymbolWithScope implements Mem
 		return n;
 	}
 
-	/** Get the total number of fields visible to this class */
+	/**
+	 * Gets the total number of fields.
+	 *
+	 * @return the number of fields
+	 */
 	public int getNumberOfFields() {
 		return getNumberOfDefinedFields();
 	}
@@ -121,7 +133,7 @@ public abstract class DataAggregateSymbol extends SymbolWithScope implements Mem
 	public void setSlotNumber(Symbol sym) {
 		if (sym instanceof FieldSymbol) {
 			FieldSymbol fsym = (FieldSymbol) sym;
-			fsym.slot = nextFreeFieldSlot++;
+			fsym.setSlotNumber(nextFreeFieldSlot++);
 		}
 	}
 

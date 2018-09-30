@@ -40,6 +40,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.dsl.antlr.AntlrCompletionEngine;
 import org.springframework.dsl.antlr.AntlrCompletionResult;
 import org.springframework.dsl.domain.Position;
+import org.springframework.util.ObjectUtils;
 
 /**
  * Default implementation of a {@link AntlrCompletionEngine}.
@@ -393,7 +394,7 @@ public class DefaultAntlrCompletionEngine implements AntlrCompletionEngine {
 																						// set.
 								else {
 									// More than one following list for the same symbol.
-									if (!this.candidates.tokens.get(symbol).equals(set.following)) {
+									if (!ObjectUtils.nullSafeEquals(this.candidates.tokens.get(symbol), set.following)) {
 										this.candidates.tokens.put(symbol, new LinkedList<Integer>());
 									}
 								}

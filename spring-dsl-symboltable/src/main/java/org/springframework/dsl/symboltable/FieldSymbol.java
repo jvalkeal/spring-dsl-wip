@@ -25,14 +25,28 @@ package org.springframework.dsl.symboltable;
  */
 public class FieldSymbol extends VariableSymbol implements MemberSymbol {
 
-	protected int slot;
+	private int slotNumber;
 
+	/**
+	 * Instantiates a new field symbol.
+	 *
+	 * @param name the name
+	 */
 	public FieldSymbol(String name) {
 		super(name);
 	}
 
 	@Override
 	public int getSlotNumber() {
-		return slot;
+		return slotNumber;
+	}
+
+	/**
+	 * Sets the slot number.
+	 *
+	 * @param slotNumber the new slot number
+	 */
+	public void setSlotNumber(int slotNumber) {
+		this.slotNumber = slotNumber;
 	}
 }

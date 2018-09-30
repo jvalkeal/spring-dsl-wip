@@ -32,21 +32,24 @@ import java.util.stream.Collectors;
  */
 public abstract class BaseScope implements Scope {
 
-	private Scope enclosingScope; // null if this scope is the root of the scope tree
+	/**
+	 * null if this scope is the root of the scope tree
+	 */
+	private Scope enclosingScope;
 
 	/**
 	 * All symbols defined in this scope; can include classes, functions, variables,
 	 * or anything else that is a Symbol impl. It does NOT include non-Symbol-based
 	 * things like LocalScope. See nestedScopes.
 	 */
-	protected Map<String, Symbol> symbols = new LinkedHashMap<>();
+	protected final Map<String, Symbol> symbols = new LinkedHashMap<>();
 
 	/**
 	 * All directly contained scopes, typically LocalScopes within a LocalScope or a
 	 * LocalScope within a FunctionSymbol. This does not include SymbolWithScope
 	 * objects.
 	 */
-	protected List<Scope> nestedScopesNotSymbols = new ArrayList<>();
+	protected final List<Scope> nestedScopesNotSymbols = new ArrayList<>();
 
 	/**
 	 * Instantiates a new base scope.
@@ -63,10 +66,6 @@ public abstract class BaseScope implements Scope {
 		setEnclosingScope(enclosingScope);
 	}
 
-	public Map<String, ? extends Symbol> getMembers() {
-		return symbols;
-	}
-
 	@Override
 	public Symbol getSymbol(String name) {
 		return symbols.get(name);
@@ -75,12 +74,6 @@ public abstract class BaseScope implements Scope {
 	@Override
 	public void setEnclosingScope(Scope enclosingScope) {
 		this.enclosingScope = enclosingScope;
-	}
-
-	public List<Scope> getAllNestedScopedSymbols() {
-		List<Scope> scopes = new ArrayList<Scope>();
-		Utils.getAllNestedScopedSymbols(this, scopes);
-		return scopes;
 	}
 
 	@Override
@@ -138,6 +131,16 @@ public abstract class BaseScope implements Scope {
 	@Override
 	public Scope getEnclosingScope() {
 		return enclosingScope;
+	}
+
+	public Map<String, ? extends Symbol> getMembers() {
+		return symbols;
+	}
+
+	public List<Scope> getAllNestedScopedSymbols() {
+		List<Scope> scopes = new ArrayList<Scope>();
+		Utils.getAllNestedScopedSymbols(this, scopes);
+		return scopes;
 	}
 
 	/**

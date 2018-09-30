@@ -16,16 +16,22 @@
 package org.springframework.dsl.symboltable;
 
 /**
- * A "typedef int I;" in C results in a TypeAlias("I", ptrToIntegerType)
- * 
+ * A "typedef int I;" in C results in a TypeAlias("I", ptrToIntegerType).
+ *
  * @author Original ANTLR Authors
  * @author Janne Valkealahti
- * 
+ *
  */
 public class TypeAlias extends BaseSymbol implements Type {
 
-	protected Type targetType;
+	private Type targetType;
 
+	/**
+	 * Instantiates a new type alias.
+	 *
+	 * @param name the name
+	 * @param targetType the target type
+	 */
 	public TypeAlias(String name, Type targetType) {
 		super(name);
 		this.targetType = targetType;
@@ -36,6 +42,11 @@ public class TypeAlias extends BaseSymbol implements Type {
 		return -1;
 	}
 
+	/**
+	 * Gets the target type.
+	 *
+	 * @return the target type
+	 */
 	public Type getTargetType() {
 		return targetType;
 	}

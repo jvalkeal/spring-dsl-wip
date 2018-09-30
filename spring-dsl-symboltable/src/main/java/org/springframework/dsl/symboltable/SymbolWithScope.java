@@ -19,6 +19,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.springframework.dsl.domain.Range;
+import org.springframework.util.Assert;
+
 /**
  * An abstract base class that houses common functionality for symbols like
  * classes and functions that are both symbols and scopes. There is some common
@@ -31,9 +34,10 @@ import java.util.List;
  */
 public abstract class SymbolWithScope extends BaseScope implements Symbol, Scope {
 
-	protected final String name; // All symbols at least have a name
-	protected int index; // insertion order from 0; compilers often need this
+	private final String name;
 	private final ArrayList<Modifier> modifiers = new ArrayList<>();
+	private int index;
+	private Range range;
 
 	/**
 	 * Instantiates a new symbol with scope.
@@ -41,6 +45,7 @@ public abstract class SymbolWithScope extends BaseScope implements Symbol, Scope
 	 * @param name the name
 	 */
 	public SymbolWithScope(String name) {
+		Assert.notNull(name, "Symbol name must be set");
 		this.name = name;
 	}
 
@@ -57,6 +62,20 @@ public abstract class SymbolWithScope extends BaseScope implements Symbol, Scope
 	@Override
 	public void setScope(Scope scope) {
 		setEnclosingScope(scope);
+	}
+
+	@Override
+	public Range getRange() {
+		return range;
+	}
+
+	/**
+	 * Sets the range.
+	 *
+	 * @param range the new range
+	 */
+	public void setRange(Range range) {
+		this.range = range;
 	}
 
 	/**

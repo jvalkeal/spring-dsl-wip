@@ -15,6 +15,8 @@
  */
 package org.springframework.dsl.antlr;
 
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Parser;
 import org.springframework.dsl.antlr.support.AntlrObjectSupport;
@@ -51,4 +53,11 @@ public abstract class AbstractAntlrLinter<L extends Lexer, P extends Parser> ext
 	}
 
 	public abstract Flux<ReconcileProblem> lintInternal(Document document);
+
+	protected P getParser(String input) {
+		L lexer = getAntlrFactory().createLexer(CharStreams.fromString(input));
+		P parser = getAntlrFactory().createParser(new CommonTokenStream(lexer));
+		return parser;
+	}
+
 }

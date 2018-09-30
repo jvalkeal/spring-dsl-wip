@@ -31,9 +31,21 @@ import java.util.Set;
  */
 public class ClassSymbol extends DataAggregateSymbol {
 
-	protected String superClassName; // null if this is Object
-	protected int nextFreeMethodSlot = 0; // next slot to allocate
+	/**
+	 * null if this is Object
+	 */
+	protected String superClassName;
 
+	/**
+	 * next slot to allocate
+	 */
+	protected int nextFreeMethodSlot = 0;
+
+	/**
+	 * Instantiates a new class symbol.
+	 *
+	 * @param name the name
+	 */
 	public ClassSymbol(String name) {
 		super(name);
 	}
@@ -47,9 +59,11 @@ public class ClassSymbol extends DataAggregateSymbol {
 		// if not a member, check any enclosing scope. it might be a global variable for
 		// example
 		Scope parent = getEnclosingScope();
-		if (parent != null)
+		if (parent != null) {
 			return parent.resolve(name);
-		return null; // not found
+		}
+		// not found
+		return null;
 	}
 
 	/**
@@ -71,19 +85,6 @@ public class ClassSymbol extends DataAggregateSymbol {
 					return s;
 				}
 			}
-		}
-		return null;
-	}
-
-	/**
-	 * Look for a field with this name in this scope or any super class. Return null
-	 * if no field found.
-	 */
-	@Override
-	public Symbol resolveField(String name) {
-		Symbol s = resolveMember(name);
-		if (s instanceof FieldSymbol) {
-			return s;
 		}
 		return null;
 	}
@@ -224,6 +225,6 @@ public class ClassSymbol extends DataAggregateSymbol {
 
 	@Override
 	public String toString() {
-		return name + ":" + super.toString();
+		return getName() + ":" + super.toString();
 	}
 }

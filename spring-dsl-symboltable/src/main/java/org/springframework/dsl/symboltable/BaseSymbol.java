@@ -19,6 +19,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.springframework.dsl.domain.Range;
+import org.springframework.util.Assert;
+
 /**
  * An abstract base class used to house common functionality. You can associate
  * a node in the parse tree that is responsible for defining this symbol.
@@ -29,13 +32,20 @@ import java.util.List;
  */
 public abstract class BaseSymbol implements Symbol {
 
-	protected final String name; // All symbols at least have a name
-	protected Type type; // If language statically typed, record type
-	protected Scope scope; // All symbols know what scope contains them.
-	protected int lexicalOrder; // order seen or insertion order from 0; compilers often need this
+	private final String name;
 	private final ArrayList<Modifier> modifiers = new ArrayList<>();
+	private Type type; // If language statically typed, record type
+	private Scope scope; // All symbols know what scope contains them.
+	private int lexicalOrder; // order seen or insertion order from 0; compilers often need this
+	private Range range;
 
+	/**
+	 * Instantiates a new base symbol.
+	 *
+	 * @param name the name
+	 */
 	public BaseSymbol(String name) {
+		Assert.notNull(name, "Symbol name must be set");
 		this.name = name;
 	}
 
@@ -54,10 +64,34 @@ public abstract class BaseSymbol implements Symbol {
 		this.scope = scope;
 	}
 
+	@Override
+	public Range getRange() {
+		return range;
+	}
+
+	/**
+	 * Sets the range.
+	 *
+	 * @param range the new range
+	 */
+	public void setRange(Range range) {
+		this.range = range;
+	}
+
+	/**
+	 * Adds the modifier.
+	 *
+	 * @param modifier the modifier
+	 */
 	public void addModifier(Modifier modifier) {
 		this.modifiers.add(modifier);
 	}
 
+	/**
+	 * Gets the modifiers.
+	 *
+	 * @return the modifiers
+	 */
 	public List<Modifier> getModifiers() {
 		return modifiers;
 	}

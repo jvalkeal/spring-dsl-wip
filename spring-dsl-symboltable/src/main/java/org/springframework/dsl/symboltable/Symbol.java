@@ -15,6 +15,8 @@
  */
 package org.springframework.dsl.symboltable;
 
+import org.springframework.dsl.domain.Range;
+
 /**
  * A generic programming language symbol. A symbol has to have a name and a
  * scope in which it lives. It also helps to know the order in which symbols are
@@ -61,4 +63,11 @@ public interface Symbol {
 	 * @param order the new insertion order number
 	 */
 	void setInsertionOrderNumber(int order);
+
+	/**
+	 * Gets the range of this symbol in a representing input language.
+	 *
+	 * @return the range
+	 */
+	Range getRange();
 }

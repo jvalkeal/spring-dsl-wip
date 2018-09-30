@@ -57,6 +57,6 @@ public class FunctionSymbol extends SymbolWithScope implements TypedSymbol {
 
 	@Override
 	public String toString() {
-		return name + ":" + super.toString();
+		return getName() + ":" + super.toString();
 	}
 }
