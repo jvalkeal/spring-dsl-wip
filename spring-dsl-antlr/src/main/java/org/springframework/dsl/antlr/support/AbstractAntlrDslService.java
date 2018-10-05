@@ -23,6 +23,7 @@ import org.springframework.dsl.antlr.AntlrParseService;
 import org.springframework.dsl.document.Document;
 import org.springframework.dsl.model.LanguageId;
 import org.springframework.dsl.service.AbstractDslService;
+import org.springframework.dsl.service.DslService;
 import org.springframework.util.Assert;
 
 import reactor.core.publisher.Mono;
