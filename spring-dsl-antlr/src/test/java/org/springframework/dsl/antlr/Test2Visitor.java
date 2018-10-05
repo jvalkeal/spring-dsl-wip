@@ -15,8 +15,6 @@
  */
 package org.springframework.dsl.antlr;
 
-import java.util.List;
-
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 import org.springframework.dsl.Test2Grammar.DefinitionsContext;
 import org.springframework.dsl.Test2Grammar.SourceIdContext;
@@ -30,6 +28,9 @@ import org.springframework.dsl.symboltable.FieldSymbol;
 import org.springframework.dsl.symboltable.SymbolTable;
 import org.springframework.dsl.symboltable.TypeAlias;
 
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
 /**
  * {@link ParseTreeVisitor} for {@code ANTLR test2 language}.
  *
@@ -41,7 +42,7 @@ public class Test2Visitor extends Test2GrammarBaseVisitor<AntlrParseResult<Objec
 	@Override
 	public AntlrParseResult<Object> visitDefinitions(DefinitionsContext ctx) {
 		DefaultSymbolTable symbolTable = new DefaultSymbolTable();
-		ClassSymbol stateMachineClassSymbol = new ClassSymbol("org.springframework.statemachine.StateMachine");
+		// ClassSymbol stateMachineClassSymbol = new ClassSymbol("org.springframework.statemachine.StateMachine");
 		ClassSymbol stateClassSymbol = new ClassSymbol("org.springframework.statemachine.state.State");
 		ClassSymbol transitionClassSymbol = new ClassSymbol("org.springframework.statemachine.transition.Transition");
 		symbolTable.defineGlobal(stateClassSymbol);
@@ -84,18 +85,18 @@ public class Test2Visitor extends Test2GrammarBaseVisitor<AntlrParseResult<Objec
 		return new AntlrParseResult<Object>() {
 
 			@Override
-			public SymbolTable getSymbolTable() {
-				return symbolTable;
+			public Mono<SymbolTable> getSymbolTable() {
+				return Mono.just(symbolTable);
 			}
 
 			@Override
-			public Object getResult() {
-				return null;
+			public Mono<Object> getResult() {
+				return Mono.empty();
 			}
 
 			@Override
-			public List<ReconcileProblem> getReconcileProblems() {
-				return null;
+			public Flux<ReconcileProblem> getReconcileProblems() {
+				return Flux.empty();
 			}
 		};
 	}

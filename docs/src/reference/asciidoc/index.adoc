@@ -12,6 +12,7 @@
 :spring-security-site: http://projects.spring.io/spring-security
 
 = Spring Dsl - Reference Documentation
+Janne Valkealahti;Kris De Volder
 
 include::preface.adoc[]
 include::introduction.adoc[]

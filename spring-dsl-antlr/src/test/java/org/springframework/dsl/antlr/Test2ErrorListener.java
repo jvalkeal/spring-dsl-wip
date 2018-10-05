@@ -17,6 +17,7 @@ package org.springframework.dsl.antlr;
 
 import java.util.List;
 
+import org.springframework.dsl.antlr.support.AbstractAntlrErrorListener;
 import org.springframework.dsl.service.reconcile.ReconcileProblem;
 
 public class Test2ErrorListener extends AbstractAntlrErrorListener {

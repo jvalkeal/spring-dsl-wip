@@ -219,6 +219,8 @@ project('spring-dsl-antlr') {
 		compile project(':spring-dsl-core')
 		compile project(':spring-dsl-symboltable')
 		compile 'org.antlr:antlr4-runtime'
+		compile 'io.projectreactor.addons:reactor-extra'
+		compile 'com.github.ben-manes.caffeine:caffeine'
 		testCompile 'org.antlr:antlr4'
 		testCompile 'org.springframework.boot:spring-boot-starter-test'
 	}
@@ -365,7 +367,7 @@ configure(rootProject) {
 			'spring-dsl-version' : project.version,
 			'spring-version' : springVersion,
 			'spring-boot-version' : springBootVersion,
-            'antlr-version' : antlr4Version,
+			'antlr-version' : antlr4Version,
 			revnumber : project.version
 	}
 

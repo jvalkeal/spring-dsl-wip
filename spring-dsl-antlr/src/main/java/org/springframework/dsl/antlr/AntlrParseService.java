@@ -15,18 +15,29 @@
  */
 package org.springframework.dsl.antlr;
 
-import java.util.Arrays;
 import java.util.function.Function;
 
-import org.springframework.dsl.antlr.support.AbstractAntlrCompletioner;
 import org.springframework.dsl.document.Document;
 
 import reactor.core.publisher.Mono;
 
-public class Test2AntlrCompletioner extends AbstractAntlrCompletioner<Object> {
+/**
+ * Strategy interface parsing a {@link Document} and returning {@link Mono} for
+ * a resulting {@link AntlrParseResult}.
+ *
+ * @author Janne Valkealahti
+ *
+ * @param <T> the type of a result in {@link AntlrParseResult}
+ */
+public interface AntlrParseService<T> {
 
-	public Test2AntlrCompletioner(AntlrParseService<Object> antlrParseService,
-			Function<Document, Mono<? extends AntlrParseResult<Object>>> antlrParseResultSupplier) {
-		super(Arrays.asList(TestAntrlUtils.TEST2_LANGUAGE_ID), antlrParseService, antlrParseResultSupplier);
-	}
+	/**
+	 * Parse a {@link Document} and use given {@link Function} to get a {@link AntlrParseResult}.
+	 *
+	 * @param document the document
+	 * @param supplier the supplier
+	 * @return the mono of a antrl parse result
+	 */
+	Mono<AntlrParseResult<T>> parse(Document document,
+			Function<Document, ? extends Mono<? extends AntlrParseResult<T>>> supplier);
 }

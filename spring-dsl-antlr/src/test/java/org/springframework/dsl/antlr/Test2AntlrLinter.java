@@ -15,80 +15,18 @@
  */
 package org.springframework.dsl.antlr;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.function.Function;
 
-import org.antlr.v4.runtime.atn.PredictionMode;
-import org.antlr.v4.runtime.tree.ParseTree;
-import org.springframework.dsl.Test2Grammar;
-import org.springframework.dsl.Test2Lexer;
+import org.springframework.dsl.antlr.support.AbstractAntlrLinter;
 import org.springframework.dsl.document.Document;
-import org.springframework.dsl.model.LanguageId;
-import org.springframework.dsl.service.reconcile.DefaultReconcileProblem;
-import org.springframework.dsl.service.reconcile.Linter;
-import org.springframework.dsl.service.reconcile.ReconcileProblem;
-import org.springframework.dsl.symboltable.ClassSymbol;
-import org.springframework.dsl.symboltable.SymbolTable;
 
-import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
-/**
- * {@link Linter} for {@code test2} language.
- *
- * @author Janne Valkealahti
- *
- */
-public class Test2AntlrLinter extends AbstractAntlrLinter<Test2Lexer, Test2Grammar> {
+public class Test2AntlrLinter extends AbstractAntlrLinter<Object> {
 
-	public Test2AntlrLinter() {
-		super(TestAntrlUtils.TEST2_ANTRL_FACTORY);
+	public Test2AntlrLinter(AntlrParseService<Object> antlrParseService,
+			Function<Document, Mono<? extends AntlrParseResult<Object>>> antlrParseResultSupplier) {
+		super(Arrays.asList(TestAntrlUtils.TEST2_LANGUAGE_ID), antlrParseService, antlrParseResultSupplier);
 	}
-
-	@Override
-	public List<LanguageId> getSupportedLanguageIds() {
-		return Arrays.asList(TestAntrlUtils.TEST2_LANGUAGE_ID);
-	}
-
-	@Override
-	public Flux<ReconcileProblem> lintInternal(Document document) {
-		List<ReconcileProblem> errors = new ArrayList<>();
-		Test2Grammar parser = getParser(document.content());
-        parser.getInterpreter().setPredictionMode(PredictionMode.LL_EXACT_AMBIG_DETECTION);
-        parser.removeErrorListeners();
-        parser.addErrorListener(new Test2ErrorListener(errors));
-        parser.definitions();
-        return Flux.concat(Flux.fromIterable(errors), lintTransitionStateRefs(document));
-	}
-
-	public Flux<ReconcileProblem> lintTransitionStateRefs(Document document) {
-		List<ReconcileProblem> errors = new ArrayList<>();
-		Test2Grammar parser = getParser(document.content());
-
-		ParseTree tree = parser.definitions();
-		Test2Visitor visitor = new Test2Visitor();
-		AntlrParseResult<Object> result = visitor.visit(tree);
-		SymbolTable symbolTable = result.getSymbolTable();
-
-		List<String> sss = symbolTable.getAllSymbols().stream()
-			.filter(s -> s.getScope().getName() == "org.springframework.statemachine.state.State")
-			.map(s -> s.getName())
-			.collect(Collectors.toList());
-
-		symbolTable.getAllSymbols().stream().forEach(s -> {
-			if (s.getScope().getName() == "org.springframework.statemachine.transition.Transition") {
-				if (s instanceof ClassSymbol) {
-					((ClassSymbol)s).getFields().stream().forEach(f -> {
-						if (!sss.contains(f.getName())) {
-							errors.add(new DefaultReconcileProblem("missing", f.getRange()));
-						}
-					});
-				}
-			}
-		});
-
-		return Flux.fromIterable(errors);
-	}
-
 }

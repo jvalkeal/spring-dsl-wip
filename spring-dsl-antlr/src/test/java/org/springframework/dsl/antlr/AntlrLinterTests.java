@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
+import org.springframework.dsl.antlr.support.DefaultAntlrParseService;
 import org.springframework.dsl.document.TextDocument;
 import org.springframework.dsl.domain.Range;
 import org.springframework.dsl.model.LanguageId;
@@ -41,7 +42,11 @@ public class AntlrLinterTests {
 	public void testShouldNotHaveErrors() throws IOException {
 		String input = TestResourceUtils.resourceAsString(getClass(), "1.test2");
 		TextDocument document = new TextDocument("", LanguageId.TXT, 0, input);
-		Test2AntlrLinter linter = new Test2AntlrLinter();
+
+		DefaultAntlrParseService<Object> antlrParseService = new DefaultAntlrParseService<>();
+		Test2AntlrParseResultFunction antlrParseResultSupplier = new Test2AntlrParseResultFunction();
+
+		Test2AntlrLinter linter = new Test2AntlrLinter(antlrParseService, antlrParseResultSupplier);
 		Flux<ReconcileProblem> lint = linter.lint(document);
 		List<ReconcileProblem> lints = lint.toStream().collect(Collectors.toList());
 		assertThat(lints).isEmpty();
@@ -51,7 +56,12 @@ public class AntlrLinterTests {
 	public void testShouldHaveErrors() throws IOException {
 		String input = TestResourceUtils.resourceAsString(getClass(), "2.test2");
 		TextDocument document = new TextDocument("", LanguageId.TXT, 0, input);
-		Test2AntlrLinter linter = new Test2AntlrLinter();
+
+		DefaultAntlrParseService<Object> antlrParseService = new DefaultAntlrParseService<>();
+		Test2AntlrParseResultFunction antlrParseResultSupplier = new Test2AntlrParseResultFunction();
+
+		Test2AntlrLinter linter = new Test2AntlrLinter(antlrParseService, antlrParseResultSupplier);
+
 		Flux<ReconcileProblem> lint = linter.lint(document);
 		List<ReconcileProblem> lints = lint.toStream().collect(Collectors.toList());
 		assertThat(lints).hasSize(1);
@@ -63,7 +73,12 @@ public class AntlrLinterTests {
 	public void testShouldHaveErrors2() throws IOException {
 		String input = TestResourceUtils.resourceAsString(getClass(), "3.test2");
 		TextDocument document = new TextDocument("", LanguageId.TXT, 0, input);
-		Test2AntlrLinter linter = new Test2AntlrLinter();
+
+		DefaultAntlrParseService<Object> antlrParseService = new DefaultAntlrParseService<>();
+		Test2AntlrParseResultFunction antlrParseResultSupplier = new Test2AntlrParseResultFunction();
+
+		Test2AntlrLinter linter = new Test2AntlrLinter(antlrParseService, antlrParseResultSupplier);
+
 		Flux<ReconcileProblem> lint = linter.lint(document);
 		List<ReconcileProblem> lints = lint.toStream().collect(Collectors.toList());
 		assertThat(lints).hasSize(2);

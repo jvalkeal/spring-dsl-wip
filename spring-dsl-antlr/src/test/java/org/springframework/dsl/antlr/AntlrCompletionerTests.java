@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
+import org.springframework.dsl.antlr.support.AbstractAntlrCompletioner;
+import org.springframework.dsl.antlr.support.DefaultAntlrParseService;
 import org.springframework.dsl.document.TextDocument;
 import org.springframework.dsl.domain.CompletionItem;
 import org.springframework.dsl.domain.Position;
@@ -55,7 +57,11 @@ public class AntlrCompletionerTests {
 
 	private static void assertTest2Completions(String input, Position position, List<String> expect) {
 		TextDocument document = new TextDocument("", LanguageId.TXT, 0, input);
-		Test2AntlrCompletioner completioner = new Test2AntlrCompletioner();
+
+		DefaultAntlrParseService<Object> antlrParseService = new DefaultAntlrParseService<>();
+		Test2AntlrParseResultFunction antlrParseResultSupplier = new Test2AntlrParseResultFunction();
+
+		Test2AntlrCompletioner completioner = new Test2AntlrCompletioner(antlrParseService, antlrParseResultSupplier);
 		Flux<CompletionItem> completions = completioner.complete(document, new Position(9, 8));
 		List<CompletionItem> items = completions.toStream().collect(Collectors.toList());
 		List<String> labels = items.stream().map(item -> item.getLabel()).collect(Collectors.toList());

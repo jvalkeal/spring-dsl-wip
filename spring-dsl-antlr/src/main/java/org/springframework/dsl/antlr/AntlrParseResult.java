@@ -15,12 +15,16 @@
  */
 package org.springframework.dsl.antlr;
 
-import java.util.List;
-
+import org.springframework.dsl.domain.CompletionItem;
+import org.springframework.dsl.domain.Position;
 import org.springframework.dsl.service.reconcile.ReconcileProblem;
 import org.springframework.dsl.symboltable.SymbolTable;
 
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
 /**
+ * Interface representing a parsing result from a {@link AntlrParseService}.
  *
  * @author Janne Valkealahti
  *
@@ -33,19 +37,33 @@ public interface AntlrParseResult<T> {
 	 *
 	 * @return the result
 	 */
-	T getResult();
+	Mono<T> getResult();
 
 	/**
 	 * Gets the symbol table.
 	 *
 	 * @return the symbol table
 	 */
-	SymbolTable getSymbolTable();
+	default Mono<SymbolTable> getSymbolTable() {
+		return Mono.empty();
+	}
 
 	/**
 	 * Gets the reconcile problems.
 	 *
 	 * @return the reconcile problems
 	 */
-	List<ReconcileProblem> getReconcileProblems();
+	default Flux<ReconcileProblem> getReconcileProblems() {
+		return Flux.empty();
+	}
+
+	/**
+	 * Gets the completion items.
+	 *
+	 * @param position the position
+	 * @return the completion items
+	 */
+	default Flux<CompletionItem> getCompletionItems(Position position) {
+		return Flux.empty();
+	}
 }

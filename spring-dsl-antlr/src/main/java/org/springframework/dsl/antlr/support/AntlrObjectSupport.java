@@ -15,6 +15,8 @@
  */
 package org.springframework.dsl.antlr.support;
 
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Parser;
 import org.springframework.dsl.antlr.AntlrFactory;
@@ -50,5 +52,17 @@ public abstract class AntlrObjectSupport<L extends Lexer, P extends Parser> {
 	 */
 	protected AntlrFactory<L, P> getAntlrFactory() {
 		return antlrFactory;
+	}
+
+	/**
+	 * Gets the parser.
+	 *
+	 * @param input the input
+	 * @return the parser
+	 */
+	protected P getParser(CharStream input) {
+		L lexer = getAntlrFactory().createLexer(input);
+		Assert.notNull(lexer, "Lexer must be set in AntlrFactory");
+		return getAntlrFactory().createParser(new CommonTokenStream(lexer));
 	}
 }
