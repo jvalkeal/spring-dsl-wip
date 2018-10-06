@@ -15,6 +15,7 @@
  */
 package org.springframework.dsl.service;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.dsl.model.LanguageId;
@@ -29,6 +30,16 @@ import org.springframework.util.Assert;
 public abstract class AbstractDslService implements DslService {
 
 	private final List<LanguageId> languageIds;
+
+	/**
+	 * Instantiates a new abstract dsl service.
+	 *
+	 * @param languageId the language id
+	 */
+	public AbstractDslService(LanguageId languageId) {
+		Assert.notNull(languageId, "languageId cannot be null");
+		this.languageIds = Arrays.asList(languageId);
+	}
 
 	/**
 	 * Instantiates a new abstract dsl service.

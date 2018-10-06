@@ -44,6 +44,22 @@ public class AbstractAntlrDslService<T> extends AbstractDslService {
 	/**
 	 * Instantiates a new abstract antlr dsl service.
 	 *
+	 * @param languageId the language id
+	 * @param antlrParseService the antlr parse service
+	 * @param antlrParseResultFunction the antlr parse result function
+	 */
+	public AbstractAntlrDslService(LanguageId languageId, AntlrParseService<T> antlrParseService,
+			Function<Document, Mono<? extends AntlrParseResult<T>>> antlrParseResultFunction) {
+		super(languageId);
+		Assert.notNull(antlrParseService, "AntlrParseService cannot be null");
+		Assert.notNull(antlrParseResultFunction, "Function cannot be null");
+		this.antlrParseService = antlrParseService;
+		this.antlrParseResultFunction = antlrParseResultFunction;
+	}
+
+	/**
+	 * Instantiates a new abstract antlr dsl service.
+	 *
 	 * @param languageIds the language ids
 	 * @param antlrParseService the antlr parse service
 	 * @param antlrParseResultFunction the antlr parse result function

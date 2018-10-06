@@ -41,6 +41,18 @@ public abstract class AbstractAntlrLinter<T> extends AbstractAntlrDslService<T> 
 	/**
 	 * Instantiates a new abstract antlr linter.
 	 *
+	 * @param languageId the language id
+	 * @param antlrParseService the antlr parse service
+	 * @param antlrParseResultSupplier the antlr parse result supplier
+	 */
+	public AbstractAntlrLinter(LanguageId languageId, AntlrParseService<T> antlrParseService,
+			Function<Document, Mono<? extends AntlrParseResult<T>>> antlrParseResultSupplier) {
+		super(languageId, antlrParseService, antlrParseResultSupplier);
+	}
+
+	/**
+	 * Instantiates a new abstract antlr linter.
+	 *
 	 * @param languageIds the language ids
 	 * @param antlrParseService the antlr parse service
 	 * @param antlrParseResultSupplier the antlr parse result supplier

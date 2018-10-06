@@ -41,7 +41,7 @@ public abstract class AntlrObjectSupport<L extends Lexer, P extends Parser> {
 	 * @param antlrFactory the antlr factory
 	 */
 	public AntlrObjectSupport(AntlrFactory<L, P> antlrFactory) {
-		Assert.notNull(antlrFactory, "antlrFactory must be set");
+		Assert.notNull(antlrFactory, "AntlrFactory cannot be null");
 		this.antlrFactory = antlrFactory;
 	}
 

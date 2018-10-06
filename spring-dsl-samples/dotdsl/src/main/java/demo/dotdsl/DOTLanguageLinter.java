@@ -15,7 +15,6 @@
  */
 package demo.dotdsl;
 
-import java.util.Arrays;
 import java.util.function.Function;
 
 import org.springframework.dsl.antlr.AntlrParseResult;
@@ -34,9 +33,14 @@ import reactor.core.publisher.Mono;
  */
 public class DOTLanguageLinter extends AbstractAntlrLinter<Object> {
 
+	/**
+	 * Instantiates a new DOT language linter.
+	 *
+	 * @param antlrParseService the antlr parse service
+	 * @param antlrParseResultSupplier the antlr parse result supplier
+	 */
 	public DOTLanguageLinter(AntlrParseService<Object> antlrParseService,
 			Function<Document, Mono<? extends AntlrParseResult<Object>>> antlrParseResultSupplier) {
-		super(Arrays.asList(DOTLanguageConfiguration.LANGUAGEID), antlrParseService, antlrParseResultSupplier);
+		super(DOTLanguageConfiguration.LANGUAGEID, antlrParseService, antlrParseResultSupplier);
 	}
-
 }
