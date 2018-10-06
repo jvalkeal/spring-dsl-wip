@@ -65,7 +65,8 @@ public class DOTLanguageConfiguration {
 
 	@Bean
 	public DOTLanguageLinter dotLanguageLinter() {
-		return new DOTLanguageLinter(dotAntlrParseService(), dotAntlrParseResultFunction());
+		return new DOTLanguageLinter(dotAntlrParseService(),
+				dotAntlrParseResultFunction());
 	}
 }
 //end::snippet1[]

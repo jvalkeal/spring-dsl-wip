@@ -35,7 +35,8 @@ import reactor.core.publisher.Mono;
  *
  */
 //tag::snippet1[]
-public class DOTAntlrParseResultFunction extends AbstractAntlrParseResultFunction<Object, DOTLexer, DOTParser> {
+public class DOTAntlrParseResultFunction
+		extends AbstractAntlrParseResultFunction<Object, DOTLexer, DOTParser> {
 
 	public DOTAntlrParseResultFunction(AntlrFactory<DOTLexer, DOTParser> antlrFactory) {
 		super(antlrFactory);

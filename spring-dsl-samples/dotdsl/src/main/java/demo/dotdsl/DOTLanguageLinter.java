@@ -34,9 +34,9 @@ import reactor.core.publisher.Mono;
 //tag::snippet1[]
 public class DOTLanguageLinter extends AbstractAntlrLinter<Object> {
 
-	public DOTLanguageLinter(AntlrParseService<Object> antlrParseService,
-			Function<Document, Mono<? extends AntlrParseResult<Object>>> antlrParseResultSupplier) {
-		super(DOTLanguageConfiguration.LANGUAGEID, antlrParseService, antlrParseResultSupplier);
+	public DOTLanguageLinter(AntlrParseService<Object> service,
+			Function<Document, Mono<? extends AntlrParseResult<Object>>> function) {
+		super(DOTLanguageConfiguration.LANGUAGEID, service, function);
 	}
 }
 //end::snippet1[]
