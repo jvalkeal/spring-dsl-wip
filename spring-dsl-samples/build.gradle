@@ -23,6 +23,7 @@ project('spring-dsl-samples-showcase') {
 	dependencies {
 		compile project(':spring-dsl-samples-common:spring-dsl-samples-simpledsl')
 		compile project(':spring-dsl-samples-common:spring-dsl-samples-wordcheckdsl')
+		compile project(':spring-dsl-samples-common:spring-dsl-samples-dotdsl')
 		testCompile 'junit:junit'
 		testCompile 'org.springframework.boot:spring-boot-starter-test'
 	}

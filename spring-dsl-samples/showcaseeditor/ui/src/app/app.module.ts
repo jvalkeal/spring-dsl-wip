@@ -50,10 +50,11 @@ const springMonacoEditorConfig: SpringMonacoEditorConfig = {
   onMonacoLoad: () => {
     (<any>window).monaco.languages.register({ id: 'simple' });
     (<any>window).monaco.languages.register({ id: 'wordcheck' });
+    (<any>window).monaco.languages.register({ id: 'dot' });
   }
 };
 const springDslEditorConfig: SpringDslEditorConfig = {
-  documentSelector: ['simple', 'wordcheck']
+  documentSelector: ['simple', 'wordcheck', 'dot']
 };
 
 @NgModule({

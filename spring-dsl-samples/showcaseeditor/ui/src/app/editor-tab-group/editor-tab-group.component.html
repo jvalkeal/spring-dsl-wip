@@ -19,6 +19,11 @@
           (click)="openTab('test1.wordcheck', 'wordcheck')">
     Open test1.wordcheck
   </button>
+  <button mat-raised-button
+          class="editor-open-tab-button"
+          (click)="openTab('test1.dot', 'dot')">
+    Open test1.dot
+  </button>
 </div>
 <mat-tab-group [selectedIndex]="selected.value"
                (selectedIndexChange)="selected.setValue($event)"
