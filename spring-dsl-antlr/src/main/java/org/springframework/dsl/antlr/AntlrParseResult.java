@@ -15,6 +15,8 @@
  */
 package org.springframework.dsl.antlr;
 
+import java.util.List;
+
 import org.springframework.dsl.domain.CompletionItem;
 import org.springframework.dsl.domain.Position;
 import org.springframework.dsl.service.reconcile.ReconcileProblem;
@@ -24,7 +26,11 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
- * Interface representing a parsing result from a {@link AntlrParseService}.
+ * Interface representing a parsing result from a {@link AntlrParseService}. All
+ * methods in this interface are either returning a {@link Mono} or a
+ * {@link Flux} with default implementations as {@link Mono#empty()} or
+ * {@link Flux#empty()} respectively. This allows full extendability for future
+ * needs and implementor can choose what to implement.
  *
  * @author Janne Valkealahti
  *
@@ -37,7 +43,9 @@ public interface AntlrParseResult<T> {
 	 *
 	 * @return the result
 	 */
-	Mono<T> getResult();
+	default Mono<T> getResult() {
+		return Mono.empty();
+	}
 
 	/**
 	 * Gets the symbol table.
@@ -65,5 +73,62 @@ public interface AntlrParseResult<T> {
 	 */
 	default Flux<CompletionItem> getCompletionItems(Position position) {
 		return Flux.empty();
+	}
+
+	/**
+	 * For convenience just return and implement
+	 * {@link AntlrParseResult#getResult()} from a list of problems.
+	 *
+	 * @param problems the problems
+	 * @return the antlr parse result
+	 *
+	 * @param <T> the type of a AntlrParseResult
+	 */
+	public static <T> AntlrParseResult<T> from(T result) {
+		return new AntlrParseResult<T>() {
+
+			@Override
+			public Mono<T> getResult() {
+				return Mono.just(result);
+			}
+		};
+	}
+
+	/**
+	 * For convenience just return and implement
+	 * {@link AntlrParseResult#getSymbolTable()} from a symbolTable.
+	 *
+	 * @param symbolTable the symbolTable
+	 * @return the antlr parse result
+	 *
+	 * @param <T> the type of a AntlrParseResult
+	 */
+	public static <T> AntlrParseResult<T> from(SymbolTable symbolTable) {
+		return new AntlrParseResult<T>() {
+
+			@Override
+			public Mono<SymbolTable> getSymbolTable() {
+				return Mono.just(symbolTable);
+			}
+		};
+	}
+
+	/**
+	 * For convenience just return and implement
+	 * {@link AntlrParseResult#getResult()} from a list of problems.
+	 *
+	 * @param problems the problems
+	 * @return the antlr parse result
+	 *
+	 * @param <T> the type of a AntlrParseResult
+	 */
+	public static <T> AntlrParseResult<T> from(List<ReconcileProblem> problems) {
+		return new AntlrParseResult<T>() {
+
+			@Override
+			public Flux<ReconcileProblem> getReconcileProblems() {
+				return Flux.fromIterable(problems);
+			}
+		};
 	}
 }

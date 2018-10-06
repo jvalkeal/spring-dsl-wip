@@ -26,7 +26,6 @@ import org.springframework.dsl.antlr.support.AbstractAntlrParseResultFunction;
 import org.springframework.dsl.document.Document;
 import org.springframework.dsl.service.reconcile.ReconcileProblem;
 
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
@@ -37,6 +36,11 @@ import reactor.core.publisher.Mono;
  */
 public class DOTAntlrParseResultFunction extends AbstractAntlrParseResultFunction<Object, DOTLexer, DOTParser> {
 
+	/**
+	 * Instantiates a new DOT antlr parse result function.
+	 *
+	 * @param antlrFactory the antlr factory
+	 */
 	public DOTAntlrParseResultFunction(AntlrFactory<DOTLexer, DOTParser> antlrFactory) {
 		super(antlrFactory);
 	}
@@ -49,23 +53,8 @@ public class DOTAntlrParseResultFunction extends AbstractAntlrParseResultFunctio
 			parser.removeErrorListeners();
 			parser.addErrorListener(new DOTErrorListener(errors));
 			parser.graph();
-			return Mono.just(of(errors));
+			return Mono.just(AntlrParseResult.from(errors));
 		});
-	}
-
-	private static AntlrParseResult<Object> of(List<ReconcileProblem> errors) {
-		return new AntlrParseResult<Object>() {
-
-			@Override
-			public Mono<Object> getResult() {
-				return Mono.empty();
-			}
-
-			@Override
-			public Flux<ReconcileProblem> getReconcileProblems() {
-				return Flux.fromIterable(errors);
-			}
-		};
 	}
 
 	private static class DOTErrorListener extends AbstractAntlrErrorListener {

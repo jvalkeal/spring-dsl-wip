@@ -24,4 +24,6 @@ import org.springframework.dsl.antlr.AntlrParseResult;
  *
  */
 public class DOTLanguageVisitor extends DOTBaseVisitor<AntlrParseResult<Object>> {
+	// currently visitor is just used to lint it, so
+	// no actual result is needed, thus just dummy Object type
 }

@@ -24,13 +24,27 @@ import org.springframework.dsl.domain.Position;
 import org.springframework.dsl.domain.Range;
 import org.springframework.dsl.service.reconcile.DefaultReconcileProblem;
 import org.springframework.dsl.service.reconcile.ReconcileProblem;
+import org.springframework.util.Assert;
 
+/**
+ * Base abstract extension to {@code ANTLR} {@link BaseErrorListener} forcing to
+ * pass in a typed list of {@link ReconcileProblem} where syntax errors are
+ * stored.
+ *
+ * @author Janne Valkealahti
+ *
+ */
 public abstract class AbstractAntlrErrorListener extends BaseErrorListener {
 
 	private final List<ReconcileProblem> errors;
 
+    /**
+     * Instantiates a new abstract antlr error listener.
+     *
+     * @param errors the errors
+     */
     public AbstractAntlrErrorListener(List<ReconcileProblem> errors) {
-		super();
+		Assert.notNull(errors, "errors list must be set");
 		this.errors = errors;
 	}
 
