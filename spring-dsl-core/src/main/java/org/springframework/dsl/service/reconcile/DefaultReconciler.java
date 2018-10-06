@@ -88,6 +88,10 @@ public class DefaultReconciler extends AbstractDslService implements Reconciler 
 	}
 
 	protected DiagnosticSeverity getDiagnosticSeverity(ReconcileProblem problem) {
+		if (problem.getType() == null) {
+			// TODO: can we really default to error, check spec?
+			return DiagnosticSeverity.Error;
+		}
 		ProblemSeverity severity = problem.getType().getSeverity();
 		switch (severity) {
 		case ERROR:
