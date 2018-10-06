@@ -3,6 +3,12 @@
 _Dot_ is a language copied as is from a _antlr_ grammar sample sources.
 demonstrating very simplistic way to hook into existing _antlr_ languages.
 
+[NOTE]
+====
+There's no individual sample for _Dot_ as is, look <<dsl-examples-showcase>>
+as it adds it for its supported language. You can try it from there!
+====
+
 Currently `DOTLanguageVisitor` is a dummy implementation to hook into
 correct typed return type.
 
