@@ -6,7 +6,6 @@ buildscript {
 		mooworkVersion = '1.2.0'
 		propdepsVersion = '0.0.8'
 		asciidoctorVersion = '1.5.3'
-		docbookRererenceVersion = '0.3.1'
 		javolutionVersion = '6.0.0'
 		findBugsVersion = '3.0.2'
 	}
@@ -19,7 +18,6 @@ buildscript {
 	dependencies {
 		classpath("io.spring.gradle:propdeps-plugin:${propdepsVersion}")
 		classpath("org.asciidoctor:asciidoctor-gradle-plugin:${asciidoctorVersion}")
-		classpath("io.spring.gradle:docbook-reference-plugin:${docbookRererenceVersion}")
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
 		classpath("com.moowork.gradle:gradle-node-plugin:${mooworkVersion}")
 	}
@@ -331,20 +329,8 @@ project('spring-dsl-build-tests') {
 
 configure(rootProject) {
 	apply plugin: 'org.asciidoctor.gradle.asciidoctor'
-	apply plugin: "docbook-reference"
 	apply from: "${rootProject.projectDir}/publish-maven.gradle"
 	configurations.archives.artifacts.clear()
-
-	reference {
-		sourceDir = new File(asciidoctor.outputDir , 'docbook5')
-		pdfFilename = "spring-dsl-reference.pdf"
-		epubFilename = "spring-dsl-reference.epub"
-		expandPlaceholders = ""
-	}
-
-	afterEvaluate {
-		tasks.findAll { it.name.startsWith("reference") }.each{ it.dependsOn.add("asciidoctor") }
-	}
 
 	asciidoctorj {
 		version = '1.5.2'
@@ -442,7 +428,7 @@ configure(rootProject) {
 		from (api) {
 			into 'api'
 		}
-		from (reference) {
+		from (asciidoctor) {
 			into 'reference'
 		}
 	}
