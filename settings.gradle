@@ -19,6 +19,7 @@ include 'spring-dsl-samples:wordcheckdslprocessserver'
 include 'spring-dsl-samples:wordcheckdsleditor'
 include 'spring-dsl-samples:showcase'
 include 'spring-dsl-samples:showcaseeditor'
+include 'spring-dsl-samples:dotdsl'
 include 'spring-dsl-samples:spring-dsl-editor-lib'
 
 rootProject.children.find {

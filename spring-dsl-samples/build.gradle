@@ -3,7 +3,6 @@ description = 'Spring Dsl Samples Common'
 project('spring-dsl-samples-simpledsl') {
 	description = 'Spring Dsl Simple Dsl Sample'
 	dependencies {
-		compile project(':spring-dsl-antlr')
 		compile project(':spring-dsl-lsp-core')
 		testCompile 'junit:junit'
 		testCompile 'org.springframework.boot:spring-boot-starter-test'
@@ -27,6 +26,37 @@ project('spring-dsl-samples-showcase') {
 		testCompile 'junit:junit'
 		testCompile 'org.springframework.boot:spring-boot-starter-test'
 	}
+}
+
+project('spring-dsl-samples-dotdsl') {
+	apply plugin: 'antlr'
+
+	description = 'Spring Dsl Dot Sample'
+	dependencies {
+		antlr 'org.antlr:antlr4'
+		compile project(':spring-dsl-antlr')
+		testCompile 'junit:junit'
+		testCompile 'org.springframework.boot:spring-boot-starter-test'
+	}
+
+	generateGrammarSource {
+		arguments += ["-visitor", "-long-messages", "-package", "demo.dotdsl"]
+		doLast {
+			def parserFilePattern = '*'
+			def outputPath = generateGrammarSource.outputDirectory.canonicalPath
+			def parserPackagePath = "${outputPath}/demo/dotdsl"
+			file(parserPackagePath).mkdirs()
+			copy {
+				from outputPath
+				into parserPackagePath
+				include parserFilePattern
+			}
+			delete fileTree(outputPath) {
+				include parserFilePattern
+			}
+		}
+	}
+
 }
 
 project('spring-dsl-samples-spring-dsl-editor-lib') {
