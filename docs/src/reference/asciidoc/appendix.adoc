@@ -7,31 +7,12 @@
 == Spring Dsl Concepts
 This appendix provides generic information about Dsl.
 
+include::appendix-concepts-glossary.adoc[]
+include::appendix-concepts-crashcourse.adoc[]
 
-[glossary]
-=== Glossary
+[appendix]
+== IDE Integrations
+This appendix provides generic information about integration into IDE's.
 
-[[glossary-lsp]]
-*LSP*::
-Language Server Protocol (https://microsoft.github.io/language-server-protocol/)
-defines the protocol used between an editor or IDE and a language server that
-provides language features like auto complete, etc.
-
-[[glossary-jsonrpc]]
-*JSONRPC*::
-_JSONRPC_ is a stateless, light-weight remote procedure call (RPC) protocol.
-(https://www.jsonrpc.org/specification)
-
-[[glossary-linter]]
-*Linter*::
-A _linter_ or _lint_ refers to tools that analyze source code to flag programming
-errors, bugs, stylistic errors, etc. 
-+
-Linting is one of a central concepts when working with various programming
-languages to figure out correctness of a language or dsl.
-
-
-[[crashcourse]]
-=== An Dsl Crash Course
-This appendix provides generic crash course to Dsl concepts.
+include::appendix-running-sts.adoc[]
 
