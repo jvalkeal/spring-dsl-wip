@@ -34,13 +34,9 @@ import reactor.core.publisher.Mono;
  * @author Janne Valkealahti
  *
  */
+//tag::snippet1[]
 public class DOTAntlrParseResultFunction extends AbstractAntlrParseResultFunction<Object, DOTLexer, DOTParser> {
 
-	/**
-	 * Instantiates a new DOT antlr parse result function.
-	 *
-	 * @param antlrFactory the antlr factory
-	 */
 	public DOTAntlrParseResultFunction(AntlrFactory<DOTLexer, DOTParser> antlrFactory) {
 		super(antlrFactory);
 	}
@@ -64,3 +60,4 @@ public class DOTAntlrParseResultFunction extends AbstractAntlrParseResultFunctio
 		}
 	}
 }
+//end::snippet1[]

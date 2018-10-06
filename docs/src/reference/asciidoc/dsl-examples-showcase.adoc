@@ -1,9 +1,10 @@
 [[dsl-examples-showcase]]
 == Showcase
 _Showcase_ is a sample module not adding any new language
-definitions, but instead using languages from <<dsl-examples-simple>>
-and <<dsl-examples-wordcheck>> and adding some other additional
-features for interactions between a client and a server.
+definitions, but instead using languages from <<dsl-examples-simple>>,
+<<dsl-examples-wordcheck>> and <<dsl-examples-dot>> and
+adding some other additional features for interactions between
+a client and a server.
 
 We define a new `Hoverer` which simply gives a hardcoded hover. For
 this sample this is mostly done because wordcheck sample doesn't have
@@ -65,8 +66,8 @@ include::samples/demo/showcase/EnableShowcaseFeatures.java[tags=snippet1]
 _UI Editor_ is and example using websockets for a transport.
 
 We create a normal main class and enable all features and languages using
-annotations `EnableWordcheckLanguage`, `EnableSimpleLanguage` and
-`EnableShowcaseFeatures`.
+annotations `EnableWordcheckLanguage`, `EnableSimpleLanguage`,
+`EnableDOTLanguage` and `EnableShowcaseFeatures`.
 
 [source,java,indent=0]
 ----

@@ -31,6 +31,7 @@ import org.springframework.dsl.service.Completioner;
  * @author Janne Valkealahti
  *
  */
+//tag::snippet1[]
 @Configuration
 public class DOTLanguageConfiguration {
 
@@ -67,3 +68,4 @@ public class DOTLanguageConfiguration {
 		return new DOTLanguageLinter(dotAntlrParseService(), dotAntlrParseResultFunction());
 	}
 }
+//end::snippet1[]

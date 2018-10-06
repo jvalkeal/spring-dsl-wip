@@ -31,16 +31,12 @@ import reactor.core.publisher.Mono;
  * @author Janne Valkealahti
  *
  */
+//tag::snippet1[]
 public class DOTLanguageLinter extends AbstractAntlrLinter<Object> {
 
-	/**
-	 * Instantiates a new DOT language linter.
-	 *
-	 * @param antlrParseService the antlr parse service
-	 * @param antlrParseResultSupplier the antlr parse result supplier
-	 */
 	public DOTLanguageLinter(AntlrParseService<Object> antlrParseService,
 			Function<Document, Mono<? extends AntlrParseResult<Object>>> antlrParseResultSupplier) {
 		super(DOTLanguageConfiguration.LANGUAGEID, antlrParseService, antlrParseResultSupplier);
 	}
 }
+//end::snippet1[]

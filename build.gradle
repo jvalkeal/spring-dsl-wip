@@ -374,6 +374,7 @@ configure(rootProject) {
 			from 'spring-dsl-samples/simpledsleditor/src/main/java'
 			from 'spring-dsl-samples/wordcheckdsl/src/main/java'
 			from 'spring-dsl-samples/wordcheckdsleditor/src/main/java'
+			from 'spring-dsl-samples/dotdsl/src/main/java'
 			from 'spring-dsl-samples/showcase/src/main/java'
 			from 'spring-dsl-samples/showcaseeditor/src/main/java'
 			include '**/*.java'

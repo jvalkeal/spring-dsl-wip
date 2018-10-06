@@ -7,5 +7,6 @@ languages are organised to a services provided by a SDSL.
 
 include::dsl-examples-simple.adoc[]
 include::dsl-examples-wordcheck.adoc[]
+include::dsl-examples-dot.adoc[]
 include::dsl-examples-showcase.adoc[]
 

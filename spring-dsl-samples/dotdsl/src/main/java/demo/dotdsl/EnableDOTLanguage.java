@@ -30,9 +30,11 @@ import org.springframework.context.annotation.Import;
  * @author Janne Valkealahti
  *
  */
+//tag::snippet1[]
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Documented
 @Import(DOTLanguageConfiguration.class)
 public @interface EnableDOTLanguage {
 }
+//end::snippet1[]

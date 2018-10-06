@@ -19,11 +19,14 @@ import org.springframework.dsl.antlr.AntlrParseResult;
 
 /**
  * {@code ANTLR} visitor for {@code dot} language;
+ * <p>
+ * currently visitor is just used to lint it, so no actual result is needed,
+ * thus just dummy Object type
  *
  * @author Janne Valkealahti
  *
  */
+//tag::snippet1[]
 public class DOTLanguageVisitor extends DOTBaseVisitor<AntlrParseResult<Object>> {
-	// currently visitor is just used to lint it, so
-	// no actual result is needed, thus just dummy Object type
 }
+//end::snippet1[]
