@@ -4,6 +4,30 @@ _Simple Language_ is a language demonstrating very simplistic way
 to get you familiar with language features without introducing too
 much overhead with additional supported features.
 
+We define a simple `Symbolizer` which simply add all known token keys
+as _String_ symbols with a _range_ and a _selectionRange_ given by
+a language itself.
+
+[source,java,indent=0]
+----
+include::samples/demo/simpledsl/SimpleLanguageSymbolizer.java[tags=snippet1]
+----
+
+Once we have facilities in place, we can create a normal spring @Configuration
+as `SimpleLanguageConfiguration`.
+
+[source,java,indent=0]
+----
+include::samples/demo/simpledsl/SimpleLanguageConfiguration.java[tags=snippet1]
+----
+
+Last we can create a common spring Enable annotation to hook everything into one place.
+
+[source,java,indent=0]
+----
+include::samples/demo/simpledsl/EnableSimpleLanguage.java[tags=snippet1]
+----
+
 === Process Server
 _Process Server_ is used for a _LSP Clients_ using normal _STDIO_.
 

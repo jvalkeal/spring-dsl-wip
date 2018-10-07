@@ -371,6 +371,7 @@ configure(rootProject) {
 			into 'docs/src/reference/asciidoc/samples'
 		}
 		copy {
+			from 'spring-dsl-samples/simpledsl/src/main/java'
 			from 'spring-dsl-samples/simpledsleditor/src/main/java'
 			from 'spring-dsl-samples/wordcheckdsl/src/main/java'
 			from 'spring-dsl-samples/wordcheckdsleditor/src/main/java'
