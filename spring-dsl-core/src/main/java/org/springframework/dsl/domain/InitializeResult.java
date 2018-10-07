@@ -29,9 +29,17 @@ public class InitializeResult {
 
 	private ServerCapabilities capabilities;
 
+	/**
+	 * Instantiates a new initialize result.
+	 */
 	public InitializeResult() {
 	}
 
+	/**
+	 * Instantiates a new initialize result.
+	 *
+	 * @param capabilities the capabilities
+	 */
 	public InitializeResult(ServerCapabilities capabilities) {
 		this.capabilities = capabilities;
 	}
@@ -70,7 +78,7 @@ public class InitializeResult {
 	}
 
 	public interface InitializeResultBuilder<P> extends DomainBuilder<InitializeResult, P> {
-		
+
 		ServerCapabilitiesBuilder<InitializeResultBuilder<P>> capabilities();
 	}
 
@@ -86,11 +94,11 @@ public class InitializeResult {
 			extends AbstractDomainBuilder<InitializeResult, P> implements InitializeResultBuilder<P> {
 
 		private ServerCapabilitiesBuilder<InitializeResultBuilder<P>> capabilities;
-		
+
 		InternalInitializeResultBuilder(P parent) {
 			super(parent);
 		}
-		
+
 		@Override
 		public ServerCapabilitiesBuilder<InitializeResultBuilder<P>> capabilities() {
 			this.capabilities = ServerCapabilities.serverCapabilities(this);

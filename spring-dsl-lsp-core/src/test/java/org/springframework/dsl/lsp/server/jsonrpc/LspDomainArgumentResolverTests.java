@@ -27,6 +27,7 @@ import org.springframework.dsl.domain.DidChangeTextDocumentParams;
 import org.springframework.dsl.domain.DidCloseTextDocumentParams;
 import org.springframework.dsl.domain.DidOpenTextDocumentParams;
 import org.springframework.dsl.domain.DidSaveTextDocumentParams;
+import org.springframework.dsl.domain.DocumentSymbolParams;
 import org.springframework.dsl.domain.InitializeParams;
 import org.springframework.dsl.domain.InitializedParams;
 import org.springframework.dsl.domain.TextDocumentPositionParams;
@@ -71,6 +72,8 @@ public class LspDomainArgumentResolverTests {
 		assertThat(this.resolver.supportsParameter(param)).isTrue();
 		param = this.testMethod.arg(TextDocumentPositionParams.class);
 		assertThat(this.resolver.supportsParameter(param)).isTrue();
+		param = this.testMethod.arg(DocumentSymbolParams.class);
+		assertThat(this.resolver.supportsParameter(param)).isTrue();
 	}
 
 	@Test
@@ -114,6 +117,7 @@ public class LspDomainArgumentResolverTests {
 			DidOpenTextDocumentParams didOpenTextDocumentParams,
 			DidSaveTextDocumentParams didSaveTextDocumentParams,
 			CompletionParams completionParams,
-			TextDocumentPositionParams textDocumentPositionParams
+			TextDocumentPositionParams textDocumentPositionParams,
+			DocumentSymbolParams documentSymbolParams
 			) {}
 }

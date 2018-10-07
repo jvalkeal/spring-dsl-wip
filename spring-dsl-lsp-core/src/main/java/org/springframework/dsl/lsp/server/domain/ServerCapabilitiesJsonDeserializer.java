@@ -17,8 +17,6 @@ package org.springframework.dsl.lsp.server.domain;
 
 import java.io.IOException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.dsl.domain.CompletionOptions;
 import org.springframework.dsl.domain.ServerCapabilities;
 import org.springframework.dsl.domain.TextDocumentSyncKind;
@@ -30,14 +28,17 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 
-public class ServerCapabilitiesJsonDeserializer extends JsonDeserializer<ServerCapabilities>{
+/**
+ * {@link JsonDeserializer} for {@link ServerCapabilities}.
+ *
+ * @author Janne Valkealahti
+ *
+ */
+public class ServerCapabilitiesJsonDeserializer extends JsonDeserializer<ServerCapabilities> {
 
-	private static final Logger log = LoggerFactory.getLogger(ServerCapabilitiesJsonDeserializer.class);
-	
 	@Override
 	public ServerCapabilities deserialize(JsonParser p, DeserializationContext ctxt)
 			throws IOException, JsonProcessingException {
-		log.trace("UUU1");
 		ServerCapabilities object = new ServerCapabilities();
 		JsonNode node = p.getCodec().readTree(p);
 
@@ -54,6 +55,11 @@ public class ServerCapabilitiesJsonDeserializer extends JsonDeserializer<ServerC
 		JsonNode hoverProviderNode = node.get("hoverProvider");
 		if (hoverProviderNode != null && hoverProviderNode.isBoolean()) {
 			object.setHoverProvider(hoverProviderNode.asBoolean());
+		}
+
+		JsonNode documentSymbolProviderNode = node.get("documentSymbolProvider");
+		if (documentSymbolProviderNode != null && documentSymbolProviderNode.isBoolean()) {
+			object.setDocumentSymbolProvider(documentSymbolProviderNode.asBoolean());
 		}
 
 		JsonNode completionProviderNode = node.get("completionProvider");

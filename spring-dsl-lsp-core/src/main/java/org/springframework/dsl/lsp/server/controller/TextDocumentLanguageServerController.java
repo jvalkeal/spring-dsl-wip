@@ -27,6 +27,8 @@ import org.springframework.dsl.domain.DidChangeTextDocumentParams;
 import org.springframework.dsl.domain.DidCloseTextDocumentParams;
 import org.springframework.dsl.domain.DidOpenTextDocumentParams;
 import org.springframework.dsl.domain.DidSaveTextDocumentParams;
+import org.springframework.dsl.domain.DocumentSymbol;
+import org.springframework.dsl.domain.DocumentSymbolParams;
 import org.springframework.dsl.domain.Hover;
 import org.springframework.dsl.domain.Position;
 import org.springframework.dsl.domain.PublishDiagnosticsParams;
@@ -247,6 +249,19 @@ public class TextDocumentLanguageServerController {
 							.build();
 				})
 				.next();
+	}
+
+	/**
+	 * Method handling {@code LSP client documentSymbol} request.
+	 *
+	 * @param params the {@link DocumentSymbolParams}
+	 * @param session the {@link JsonRpcSession}
+	 * @return a mono of document symbol array
+	 */
+	@JsonRpcRequestMapping(method = "documentSymbol")
+	@JsonRpcResponseResult
+	public Mono<DocumentSymbol[]> documentSymbol(DocumentSymbolParams params, JsonRpcSession session) {
+		return Mono.empty();
 	}
 
 	private static DocumentStateTracker getTracker(JsonRpcSession session) {

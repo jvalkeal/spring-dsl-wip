@@ -194,12 +194,57 @@ public class DocumentSymbol {
 	 */
 	public interface DocumentSymbolBuilder<P> extends DomainBuilder<DocumentSymbol, P> {
 
+		/**
+		 * Sets a name.
+		 *
+		 * @param name the name
+		 * @return the builder for chaining
+		 */
 		DocumentSymbolBuilder<P> name(String name);
+
+		/**
+		 * Sets a detail.
+		 *
+		 * @param detail the detail
+		 * @return the builder for chaining
+		 */
 		DocumentSymbolBuilder<P> detail(String detail);
+
+		/**
+		 * Sets a kind.
+		 *
+		 * @param kind the kind
+		 * @return the builder for chaining
+		 */
 		DocumentSymbolBuilder<P> kind(SymbolKind kind);
+
+		/**
+		 * Sets a deprecated.
+		 *
+		 * @param deprecated the deprecated
+		 * @return the builder for chaining
+		 */
 		DocumentSymbolBuilder<P> deprecated(Boolean deprecated);
+
+		/**
+		 * Gets a builder for a {@link Range} for {@code range}.
+		 *
+		 * @return the builder for chaining
+		 */
 		RangeBuilder<DocumentSymbolBuilder<P>> range();
+
+		/**
+		 * Gets a builder for a {@link Range} for {@code selectionRange}.
+		 *
+		 * @return the builder for chaining
+		 */
 		RangeBuilder<DocumentSymbolBuilder<P>> selectionRange();
+
+		/**
+		 * Gets a builder for a {@link DocumentSymbol} for adding a child.
+		 *
+		 * @return the builder for chaining
+		 */
 		DocumentSymbolBuilder<DocumentSymbolBuilder<P>> child();
 	}
 

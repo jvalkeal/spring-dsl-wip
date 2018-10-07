@@ -38,6 +38,7 @@ public class ServerCapabilities {
 	private TextDocumentSyncKind textDocumentSyncKind;
 	private Boolean hoverProvider;
 	private CompletionOptions completionProvider;
+	private Boolean documentSymbolProvider;
 
 	public ServerCapabilities() {
 	}
@@ -74,6 +75,14 @@ public class ServerCapabilities {
 		this.hoverProvider = hoverProvider;
 	}
 
+	public Boolean getDocumentSymbolProvider() {
+		return documentSymbolProvider;
+	}
+
+	public void setDocumentSymbolProvider(Boolean documentSymbolProvider) {
+		this.documentSymbolProvider = documentSymbolProvider;
+	}
+
 	public CompletionOptions getCompletionProvider() {
 		return completionProvider;
 	}
@@ -87,6 +96,7 @@ public class ServerCapabilities {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((completionProvider == null) ? 0 : completionProvider.hashCode());
+		result = prime * result + ((documentSymbolProvider == null) ? 0 : documentSymbolProvider.hashCode());
 		result = prime * result + ((hoverProvider == null) ? 0 : hoverProvider.hashCode());
 		result = prime * result + ((textDocumentSyncKind == null) ? 0 : textDocumentSyncKind.hashCode());
 		result = prime * result + ((textDocumentSyncOptions == null) ? 0 : textDocumentSyncOptions.hashCode());
@@ -95,39 +105,95 @@ public class ServerCapabilities {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		ServerCapabilities other = (ServerCapabilities) obj;
 		if (completionProvider == null) {
-			if (other.completionProvider != null)
+			if (other.completionProvider != null) {
 				return false;
-		} else if (!completionProvider.equals(other.completionProvider))
+			}
+		} else if (!completionProvider.equals(other.completionProvider)) {
 			return false;
+		}
+		if (documentSymbolProvider == null) {
+			if (other.documentSymbolProvider != null) {
+				return false;
+			}
+		} else if (!documentSymbolProvider.equals(other.documentSymbolProvider)) {
+			return false;
+		}
 		if (hoverProvider == null) {
-			if (other.hoverProvider != null)
+			if (other.hoverProvider != null) {
 				return false;
-		} else if (!hoverProvider.equals(other.hoverProvider))
+			}
+		} else if (!hoverProvider.equals(other.hoverProvider)) {
 			return false;
-		if (textDocumentSyncKind != other.textDocumentSyncKind)
+		}
+		if (textDocumentSyncKind != other.textDocumentSyncKind) {
 			return false;
+		}
 		if (textDocumentSyncOptions == null) {
-			if (other.textDocumentSyncOptions != null)
+			if (other.textDocumentSyncOptions != null) {
 				return false;
-		} else if (!textDocumentSyncOptions.equals(other.textDocumentSyncOptions))
+			}
+		} else if (!textDocumentSyncOptions.equals(other.textDocumentSyncOptions)) {
 			return false;
+		}
 		return true;
 	}
 
+	/**
+	 * Builder interface for {@link ServerCapabilities}.
+	 *
+	 * @param <P> the parent builder type
+	 */
 	public interface ServerCapabilitiesBuilder<P> extends DomainBuilder<ServerCapabilities, P> {
 
+		/**
+		 * Gets the TextDocumentSyncOptionsBuilder.
+		 *
+		 * @return the builder for chaining
+		 */
 		TextDocumentSyncOptionsBuilder<ServerCapabilitiesBuilder<P>> textDocumentSyncOptions();
+
+		/**
+		 * Gets the TextDocumentSyncOptionsBuilder.
+		 *
+		 * @param enabled flag if this feature is actually enabled
+		 * @return the builder for chaining
+		 */
 		TextDocumentSyncOptionsBuilder<ServerCapabilitiesBuilder<P>> textDocumentSyncOptions(boolean enabled);
+
+		/**
+		 * Sets the {@link TextDocumentSyncKind}.
+		 *
+		 * @param textDocumentSyncKind the text document sync kind
+		 * @return the builder for chaining
+		 */
 		ServerCapabilitiesBuilder<P> textDocumentSyncKind(TextDocumentSyncKind textDocumentSyncKind);
+
+		/**
+		 * Sets if {@code hoverProvider} is enabled.
+		 *
+		 * @param hoverProvider the provider enabler flag
+		 * @return the builder for chaining
+		 */
 		ServerCapabilitiesBuilder<P> hoverProvider(Boolean hoverProvider);
+
+		/**
+		 * Sets if {@code documentSymbolProvider} is enabled.
+		 *
+		 * @param documentSymbolProvider the provider enabler flag
+		 * @return the builder for chaining
+		 */
+		ServerCapabilitiesBuilder<P> documentSymbolProvider(Boolean documentSymbolProvider);
 
 		/**
 		 * Gets a builder for a {@link CompletionOptions}. Same as calling
@@ -148,6 +214,11 @@ public class ServerCapabilities {
 		CompletionOptionsBuilder<ServerCapabilitiesBuilder<P>> completionProvider(boolean enabled);
 	}
 
+	/**
+	 * Gets a builder for {@link ServerCapabilities}
+	 *
+	 * @return the server capabilities builder
+	 */
 	public static <P> ServerCapabilitiesBuilder<P> serverCapabilities() {
 		return new InternalServerCapabilitiesBuilder<>(null);
 	}
@@ -162,6 +233,7 @@ public class ServerCapabilities {
 		private TextDocumentSyncOptionsBuilder<ServerCapabilitiesBuilder<P>> textDocumentSyncOptions;
 		private TextDocumentSyncKind textDocumentSyncKind;
 		private Boolean hoverProvider;
+		private Boolean documentSymbolProvider;
 		private CompletionOptionsBuilder<ServerCapabilitiesBuilder<P>> completionProvider;
 
 		InternalServerCapabilitiesBuilder(P parent) {
@@ -196,6 +268,12 @@ public class ServerCapabilities {
 		}
 
 		@Override
+		public ServerCapabilitiesBuilder<P> documentSymbolProvider(Boolean documentSymbolProvider) {
+			this.documentSymbolProvider = documentSymbolProvider;
+			return this;
+		}
+
+		@Override
 		public CompletionOptionsBuilder<ServerCapabilitiesBuilder<P>> completionProvider() {
 			return completionProvider(true);
 		}
@@ -219,6 +297,7 @@ public class ServerCapabilities {
 				serverCapabilities.setTextDocumentSyncKind(textDocumentSyncKind);
 			}
 			serverCapabilities.setHoverProvider(hoverProvider);
+			serverCapabilities.setDocumentSymbolProvider(documentSymbolProvider);
 			if (completionProvider != null) {
 				serverCapabilities.setCompletionProvider(completionProvider.build());
 			}

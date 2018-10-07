@@ -5,6 +5,7 @@
     "willSaveWaitUntil": true
   },
   "hoverProvider": true,
+  "documentSymbolProvider": true,
   "completionProvider": {
     "resolveProvider": true,
     "triggerCharacters": [

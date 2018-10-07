@@ -143,6 +143,7 @@ public class LspDomainJacksonSerializationTests {
 					.willSaveWaitUntil(true)
 					.and()
 				.hoverProvider(true)
+				.documentSymbolProvider(true)
 				.completionProvider()
 					.resolveProvider(true)
 					.triggerCharacters(Arrays.asList("a", "b"))

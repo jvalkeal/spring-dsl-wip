@@ -17,22 +17,23 @@ package org.springframework.dsl.lsp.server.domain;
 
 import java.io.IOException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.dsl.domain.ServerCapabilities;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
+/**
+ * {@link JsonSerializer} for {@link ServerCapabilities}.
+ *
+ * @author Janne Valkealahti
+ *
+ */
 public class ServerCapabilitiesJsonSerializer extends JsonSerializer<ServerCapabilities> {
 
-	private static final Logger log = LoggerFactory.getLogger(ServerCapabilitiesJsonSerializer.class);
-	
 	@Override
 	public void serialize(ServerCapabilities value, JsonGenerator gen, SerializerProvider serializers)
 			throws IOException {
-		log.trace("UUU2");
 		gen.writeStartObject();
 
 		if (value.getTextDocumentSyncOptions() != null) {
@@ -40,15 +41,19 @@ public class ServerCapabilitiesJsonSerializer extends JsonSerializer<ServerCapab
 		} else if (value.getTextDocumentSyncKind() != null) {
 			gen.writeNumberField("textDocumentSync", value.getTextDocumentSyncKind().ordinal());
 		}
-		
+
 		if (value.getHoverProvider() != null) {
 			gen.writeBooleanField("hoverProvider", value.getHoverProvider());
 		}
-		
+
+		if (value.getDocumentSymbolProvider() != null) {
+			gen.writeBooleanField("documentSymbolProvider", value.getDocumentSymbolProvider());
+		}
+
 		if (value.getCompletionProvider() != null) {
 			gen.writeObjectField("completionProvider", value.getCompletionProvider());
 		}
-		
+
 		gen.writeEndObject();
 	}
 }
