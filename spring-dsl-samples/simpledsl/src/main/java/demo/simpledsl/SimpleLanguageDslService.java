@@ -15,8 +15,6 @@
  */
 package demo.simpledsl;
 
-import java.util.Arrays;
-
 import org.springframework.dsl.service.AbstractDslService;
 
 /**
@@ -29,7 +27,7 @@ import org.springframework.dsl.service.AbstractDslService;
 public abstract class SimpleLanguageDslService extends AbstractDslService {
 
 	public SimpleLanguageDslService() {
-		super(Arrays.asList(SimpleLanguage.LANGUAGEID));
+		super(SimpleLanguage.LANGUAGEID);
 	}
 }
 //end::snippet1[]
