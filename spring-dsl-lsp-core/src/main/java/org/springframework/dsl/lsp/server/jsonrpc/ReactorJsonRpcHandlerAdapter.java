@@ -113,29 +113,29 @@ public class ReactorJsonRpcHandlerAdapter implements BiFunction<NettyInbound, Ne
 		shared
 			.map(requestDecoder)
 			.filter(request -> request.getMethod() != null)
-			.subscribe(bb -> {
-				log.info("Receive request {}", bb);
+			.subscribe(request -> {
+				log.info("Receive request {}", request);
 
-				JsonRpcInputMessage i = new JsonRpcInputMessage() {
+				JsonRpcInputMessage inputMessage = new JsonRpcInputMessage() {
 
 					@Override
 					public Mono<String> getJsonrpc() {
-						return Mono.justOrEmpty(bb.getJsonrpc());
+						return Mono.justOrEmpty(request.getJsonrpc());
 					}
 
 					@Override
 					public Mono<String> getId() {
-						return Mono.justOrEmpty(bb.getId());
+						return Mono.justOrEmpty(request.getId());
 					}
 
 					@Override
 					public Mono<String> getMethod() {
-						return Mono.justOrEmpty(bb.getMethod());
+						return Mono.justOrEmpty(request.getMethod());
 					}
 
 					@Override
 					public Mono<String> getParams() {
-						return Mono.justOrEmpty(bb.getParams().toString());
+						return Mono.justOrEmpty(request.getParams().toString());
 					}
 
 					@Override
@@ -144,21 +144,20 @@ public class ReactorJsonRpcHandlerAdapter implements BiFunction<NettyInbound, Ne
 					}
 				};
 
-				JsonRpcInputMessage adaptedRequest = new ReactorJsonRpcInputMessage(in, bufferFactory);
 				JsonRpcOutputMessage adaptedResponse = new ReactorJsonRpcOutputMessage(out, bufferFactory);
 
 				String disposableId = null;
 				Disposable disposable = null;
-				if (bb.getId() != null) {
-					disposableId = in.context().channel().id().asLongText() + bb.getId();
+				if (request.getId() != null) {
+					disposableId = in.context().channel().id().asLongText() + request.getId();
 				}
 
-				if (ObjectUtils.nullSafeEquals("$/cancelRequest", bb.getMethod())) {
+				if (ObjectUtils.nullSafeEquals("$/cancelRequest", request.getMethod())) {
 					if (disposableId != null) {
 						disposable = disposables.remove(disposableId);
 						if (disposable != null) {
 							disposable.dispose();
-							String error = "{\"jsonrpc\":\"2.0\", \"id\":" + bb.getId() + ", \"error\":{\"code\":-32800, \"message\": \"cancel\"}}";
+							String error = "{\"jsonrpc\":\"2.0\", \"id\":" + request.getId() + ", \"error\":{\"code\":-32800, \"message\": \"cancel\"}}";
 							DataBuffer buffer = bufferFactory.wrap(error.getBytes(Charset.defaultCharset()));
 							Flux<DataBuffer> body = Flux.just(buffer);
 							adaptedResponse.writeWith(body).subscribe();
@@ -170,11 +169,11 @@ public class ReactorJsonRpcHandlerAdapter implements BiFunction<NettyInbound, Ne
 					return;
 				}
 
-				disposable = rpcHandler.handle(i, adaptedResponse, customizer)
+				disposable = rpcHandler.handle(inputMessage, adaptedResponse, customizer)
 						.doOnError(ex -> {
 							log.error("Handling completed with error", ex);
 
-							String error = "{\"jsonrpc\":\"2.0\", \"id\":" + bb.getId() + ", \"error\":{\"code\":-32603, \"message\": \"internal server error\"}}";
+							String error = "{\"jsonrpc\":\"2.0\", \"id\":" + request.getId() + ", \"error\":{\"code\":-32603, \"message\": \"internal server error\"}}";
 
 							DataBuffer buffer = bufferFactory.wrap(error.getBytes(Charset.defaultCharset()));
 							Flux<DataBuffer> body = Flux.just(buffer);

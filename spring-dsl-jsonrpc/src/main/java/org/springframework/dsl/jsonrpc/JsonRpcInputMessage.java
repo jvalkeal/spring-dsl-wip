@@ -17,11 +17,46 @@ package org.springframework.dsl.jsonrpc;
 
 import reactor.core.publisher.Mono;
 
-public interface JsonRpcInputMessage/* extends JsonRpcMessage*/ {
+/**
+ * A reactive JSONRPC input message.
+ *
+ * @author Janne Valkealahti
+ *
+ */
+public interface JsonRpcInputMessage {
 
+	/**
+	 * Gets the jsonrpc.
+	 *
+	 * @return the jsonrpc
+	 */
 	Mono<String> getJsonrpc();
+
+	/**
+	 * Gets the id.
+	 *
+	 * @return the id
+	 */
 	Mono<String> getId();
+
+	/**
+	 * Gets the method.
+	 *
+	 * @return the method
+	 */
 	Mono<String> getMethod();
+
+	/**
+	 * Gets the params.
+	 *
+	 * @return the params
+	 */
 	Mono<String> getParams();
+
+	/**
+	 * Gets the session id.
+	 *
+	 * @return the session id
+	 */
 	Mono<String> getSessionId();
 }
