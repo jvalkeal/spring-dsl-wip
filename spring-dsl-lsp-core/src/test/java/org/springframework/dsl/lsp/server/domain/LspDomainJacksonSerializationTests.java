@@ -34,10 +34,13 @@ import org.springframework.dsl.domain.CompletionList;
 import org.springframework.dsl.domain.CompletionOptions;
 import org.springframework.dsl.domain.Diagnostic;
 import org.springframework.dsl.domain.DiagnosticSeverity;
+import org.springframework.dsl.domain.DocumentSymbol;
+import org.springframework.dsl.domain.DocumentSymbolParams;
 import org.springframework.dsl.domain.DynamicRegistration;
 import org.springframework.dsl.domain.Hover;
 import org.springframework.dsl.domain.InitializeResult;
 import org.springframework.dsl.domain.InsertTextFormat;
+import org.springframework.dsl.domain.Location;
 import org.springframework.dsl.domain.LogMessageParams;
 import org.springframework.dsl.domain.MarkupContent;
 import org.springframework.dsl.domain.MarkupKind;
@@ -49,6 +52,7 @@ import org.springframework.dsl.domain.Registration;
 import org.springframework.dsl.domain.RegistrationParams;
 import org.springframework.dsl.domain.ServerCapabilities;
 import org.springframework.dsl.domain.ShowMessageRequestParams;
+import org.springframework.dsl.domain.SymbolKind;
 import org.springframework.dsl.domain.Synchronization;
 import org.springframework.dsl.domain.TextDocumentClientCapabilities;
 import org.springframework.dsl.domain.TextDocumentSyncKind;
@@ -833,6 +837,107 @@ public class LspDomainJacksonSerializationTests {
 
 		String expect = loadResourceAsString("LogMessageParams1.json");
 		to = mapper.readValue(expect, LogMessageParams.class);
+		assertObjects(from, to);
+	}
+
+	@Test
+	public void testLocation() throws Exception {
+		Location from = new Location();
+		String json = mapper.writeValueAsString(from);
+		Location to = mapper.readValue(json, Location.class);
+		assertObjects(from, to);
+
+		from = Location.location()
+				.uri("uri")
+				.range()
+					.start()
+						.line(1)
+						.character(1)
+						.and()
+					.end()
+						.line(2)
+						.character(2)
+						.and()
+					.and()
+				.build();
+
+		json = mapper.writeValueAsString(from);
+		to = mapper.readValue(json, Location.class);
+		assertObjects(from, to);
+
+		String expect = loadResourceAsString("Location1.json");
+		to = mapper.readValue(expect, Location.class);
+		assertObjects(from, to);
+	}
+
+	@Test
+	public void testDocumentSymbolParams() throws Exception {
+		DocumentSymbolParams from = new DocumentSymbolParams();
+		String json = mapper.writeValueAsString(from);
+		DocumentSymbolParams to = mapper.readValue(json, DocumentSymbolParams.class);
+		assertObjects(from, to);
+
+		from = DocumentSymbolParams.documentSymbolParams()
+				.textDocument()
+					.uri("uri")
+					.and()
+				.build();
+
+		json = mapper.writeValueAsString(from);
+		to = mapper.readValue(json, DocumentSymbolParams.class);
+		assertObjects(from, to);
+
+		String expect = loadResourceAsString("DocumentSymbolParams1.json");
+		to = mapper.readValue(expect, DocumentSymbolParams.class);
+		assertObjects(from, to);
+	}
+
+	@Test
+	public void testDocumentSymbol() throws Exception {
+		DocumentSymbol from = new DocumentSymbol();
+		String json = mapper.writeValueAsString(from);
+		DocumentSymbol to = mapper.readValue(json, DocumentSymbol.class);
+		assertObjects(from, to);
+
+		from = DocumentSymbol.documentSymbol()
+				.name("name")
+				.detail("detail")
+				.kind(SymbolKind.Array)
+				.deprecated(true)
+				.range()
+					.start()
+						.line(1)
+						.character(1)
+						.and()
+					.end()
+						.line(2)
+						.character(2)
+						.and()
+					.and()
+				.selectionRange()
+					.start()
+						.line(1)
+						.character(1)
+						.and()
+					.end()
+						.line(2)
+						.character(2)
+						.and()
+					.and()
+				.child()
+					.name("name1")
+					.and()
+				.child()
+					.name("name2")
+					.and()
+				.build();
+
+		json = mapper.writeValueAsString(from);
+		to = mapper.readValue(json, DocumentSymbol.class);
+		assertObjects(from, to);
+
+		String expect = loadResourceAsString("DocumentSymbol1.json");
+		to = mapper.readValue(expect, DocumentSymbol.class);
 		assertObjects(from, to);
 	}
 
