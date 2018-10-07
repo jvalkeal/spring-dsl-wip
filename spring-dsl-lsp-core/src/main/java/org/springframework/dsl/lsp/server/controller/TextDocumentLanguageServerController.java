@@ -261,7 +261,14 @@ public class TextDocumentLanguageServerController {
 	@JsonRpcRequestMapping(method = "documentSymbol")
 	@JsonRpcResponseResult
 	public Mono<DocumentSymbol[]> documentSymbol(DocumentSymbolParams params, JsonRpcSession session) {
-		return Mono.empty();
+		log.debug("documentSymbol {}", params);
+		DocumentStateTracker documentStateTracker = getTracker(session);
+		Document document = documentStateTracker.getDocument(params.getTextDocument().getUri());
+
+		return Flux.fromIterable(registry.getSymbolizers(document.languageId()))
+				.concatMap(symbolizer -> symbolizer.symbolize(document))
+				.collectList()
+				.map(list -> list.toArray(new DocumentSymbol[0]));
 	}
 
 	private static DocumentStateTracker getTracker(JsonRpcSession session) {

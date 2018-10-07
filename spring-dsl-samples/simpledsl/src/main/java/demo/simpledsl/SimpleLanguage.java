@@ -55,6 +55,7 @@ import org.springframework.util.StringUtils;
  * @author Janne Valkealahti
  *
  */
+//tag::snippet1[]
 public class SimpleLanguage {
 
 	public final static LanguageId LANGUAGEID = LanguageId.languageId("simple", "Simple Language");
@@ -317,3 +318,4 @@ public class SimpleLanguage {
 		}
 	}
 }
+//end::snippet1[]

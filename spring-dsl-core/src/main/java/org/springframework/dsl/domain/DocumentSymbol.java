@@ -227,11 +227,20 @@ public class DocumentSymbol {
 		DocumentSymbolBuilder<P> deprecated(Boolean deprecated);
 
 		/**
-		 * Gets a builder for a {@link Range} for {@code range}.
+		 * Gets a builder for a {@link Range} for {@code range}. Use
+		 * of @{@link #range(Range)} will take presence of this.
 		 *
 		 * @return the builder for chaining
 		 */
 		RangeBuilder<DocumentSymbolBuilder<P>> range();
+
+		/**
+		 * Sets a range for a {@code range}. Will take presence of range set from
+		 * via @{@link #range()}.
+		 *
+		 * @return the builder for chaining
+		 */
+		DocumentSymbolBuilder<P> range(Range range);
 
 		/**
 		 * Gets a builder for a {@link Range} for {@code selectionRange}.
@@ -239,6 +248,14 @@ public class DocumentSymbol {
 		 * @return the builder for chaining
 		 */
 		RangeBuilder<DocumentSymbolBuilder<P>> selectionRange();
+
+		/**
+		 * Sets a range for a {@code selectionRange}. Will take presence of range set from
+		 * via @{@link #selectionRange()}.
+		 *
+		 * @return the builder for chaining
+		 */
+		DocumentSymbolBuilder<P> selectionRange(Range range);
 
 		/**
 		 * Gets a builder for a {@link DocumentSymbol} for adding a child.
@@ -255,8 +272,10 @@ public class DocumentSymbol {
 		private String detail;
 		private SymbolKind kind;
 		private Boolean deprecated;
-		private RangeBuilder<DocumentSymbolBuilder<P>> range;
-		private RangeBuilder<DocumentSymbolBuilder<P>> selectionRange;
+		private RangeBuilder<DocumentSymbolBuilder<P>> rangeBuilder;
+		private Range range;
+		private RangeBuilder<DocumentSymbolBuilder<P>> selectionRangeBuilder;
+		private Range selectionRange;
 		private List<DocumentSymbolBuilder<DocumentSymbolBuilder<P>>> children = new ArrayList<>();
 
 		InternalDocumentSymbolBuilder(P parent) {
@@ -289,14 +308,26 @@ public class DocumentSymbol {
 
 		@Override
 		public RangeBuilder<DocumentSymbolBuilder<P>> range() {
-			this.range = Range.range(this);
-			return range;
+			this.rangeBuilder = Range.range(this);
+			return rangeBuilder;
+		}
+
+		@Override
+		public DocumentSymbolBuilder<P> range(Range range) {
+			this.range = range;
+			return this;
 		}
 
 		@Override
 		public RangeBuilder<DocumentSymbolBuilder<P>> selectionRange() {
-			this.selectionRange = Range.range(this);
-			return selectionRange;
+			this.selectionRangeBuilder = Range.range(this);
+			return selectionRangeBuilder;
+		}
+
+		@Override
+		public DocumentSymbolBuilder<P> selectionRange(Range selectionRange) {
+			this.selectionRange = selectionRange;
+			return this;
 		}
 
 		@Override
@@ -314,10 +345,14 @@ public class DocumentSymbol {
 			documentSymbol.setKind(kind);
 			documentSymbol.setDeprecated(deprecated);
 			if (range != null) {
-				documentSymbol.setRange(range.build());
+				documentSymbol.setRange(range);
+			} else if (rangeBuilder != null) {
+				documentSymbol.setRange(rangeBuilder.build());
 			}
 			if (selectionRange != null) {
-				documentSymbol.setSelectionRange(selectionRange.build());
+				documentSymbol.setSelectionRange(selectionRange);
+			} else if (selectionRangeBuilder != null) {
+				documentSymbol.setSelectionRange(selectionRangeBuilder.build());
 			}
 			if (!children.isEmpty()) {
 				ArrayList<DocumentSymbol> c = new ArrayList<>();

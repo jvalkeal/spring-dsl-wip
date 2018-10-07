@@ -37,6 +37,7 @@ import reactor.core.publisher.Flux;
  * @author Janne Valkealahti
  *
  */
+//tag::snippet1[]
 public class SimpleLanguageLinter extends AbstractDslService implements Linter {
 
 	public SimpleLanguageLinter() {
@@ -112,3 +113,4 @@ public class SimpleLanguageLinter extends AbstractDslService implements Linter {
 		}
 	};
 }
+//end::snippet1[]

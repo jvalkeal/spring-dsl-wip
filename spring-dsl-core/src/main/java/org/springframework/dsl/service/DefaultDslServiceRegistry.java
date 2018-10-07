@@ -26,6 +26,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.dsl.model.LanguageId;
 import org.springframework.dsl.service.reconcile.Reconciler;
+import org.springframework.dsl.service.symbol.Symbolizer;
 
 /**
  * Default implementation of a {@link DslServiceRegistry} which resolves
@@ -39,6 +40,7 @@ public class DefaultDslServiceRegistry implements DslServiceRegistry, Applicatio
 	private List<Completioner> completioners;
 	private List<Hoverer> hoverers;
 	private List<Reconciler> reconcilers;
+	private List<Symbolizer> symbolizers;
 
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -70,6 +72,14 @@ public class DefaultDslServiceRegistry implements DslServiceRegistry, Applicatio
 	}
 
 	@Override
+	public List<Symbolizer> getSymbolizers(LanguageId languageId) {
+		return symbolizers
+				.stream()
+				.filter(symbolizer -> symbolizer.getSupportedLanguageIds().contains(languageId))
+				.collect(Collectors.toList());
+	}
+
+	@Override
 	public List<Completioner> getCompletioners() {
 		return completioners;
 	}
@@ -84,6 +94,11 @@ public class DefaultDslServiceRegistry implements DslServiceRegistry, Applicatio
 		return hoverers;
 	}
 
+	@Override
+	public List<Symbolizer> getSymbolizers() {
+		return symbolizers;
+	}
+
 	protected void initServices(ApplicationContext applicationContext) {
 		Map<String, Completioner> completionerBeans = BeanFactoryUtils.beansOfTypeIncludingAncestors(applicationContext,
 				Completioner.class, true, false);
@@ -91,8 +106,11 @@ public class DefaultDslServiceRegistry implements DslServiceRegistry, Applicatio
 				Hoverer.class, true, false);
 		Map<String, Reconciler> reconcilerBeans = BeanFactoryUtils.beansOfTypeIncludingAncestors(applicationContext,
 				Reconciler.class, true, false);
+		Map<String, Symbolizer> symbolizerBeans = BeanFactoryUtils.beansOfTypeIncludingAncestors(applicationContext,
+				Symbolizer.class, true, false);
 		this.completioners = new ArrayList<>(completionerBeans.values());
 		this.hoverers = new ArrayList<>(hovererBeans.values());
 		this.reconcilers = new ArrayList<>(reconcilerBeans.values());
+		this.symbolizers = new ArrayList<>(symbolizerBeans.values());
 	}
 }

@@ -88,7 +88,7 @@ public class RootLanguageServerController {
 			return InitializeResult.initializeResult()
 				.capabilities()
 					.hoverProvider(!registry.getHoverers().isEmpty())
-					//.documentSymbolProvider(true)
+					.documentSymbolProvider(!registry.getSymbolizers().isEmpty())
 					.completionProvider(!registry.getCompletioners().isEmpty())
 						.resolveProvider(false)
 						.and()

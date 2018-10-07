@@ -35,6 +35,7 @@ import reactor.core.publisher.Mono;
  * @see EnableSimpleLanguage
  *
  */
+//tag::snippet1[]
 public class SimpleLanguageCompletioner extends AbstractDslService implements Completioner {
 
 	public SimpleLanguageCompletioner() {
@@ -51,12 +52,9 @@ public class SimpleLanguageCompletioner extends AbstractDslService implements Co
 					.flatMap(tokenType ->
 						Mono.just(CompletionItem.completionItem()
 								.label(tokenType.toString().toLowerCase())
-//								.command()
-//									.title("command")
-//									.command("command")
-//									.and()
 								.build())
 					);
 		});
 	}
 }
+//end::snippet1[]

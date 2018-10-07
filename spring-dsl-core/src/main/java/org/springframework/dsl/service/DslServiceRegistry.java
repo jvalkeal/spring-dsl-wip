@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.springframework.dsl.model.LanguageId;
 import org.springframework.dsl.service.reconcile.Reconciler;
+import org.springframework.dsl.service.symbol.Symbolizer;
 
 /**
  * A generic registry for services which can be requested by a {@link LanguageId}.
@@ -57,6 +58,21 @@ public interface DslServiceRegistry {
 	 * @return the hoverers
 	 */
 	List<Hoverer> getHoverers(LanguageId languageId);
+
+	/**
+	 * Gets the symbolizers.
+	 *
+	 * @return the symbolizers
+	 */
+	List<Symbolizer> getSymbolizers();
+
+	/**
+	 * Gets the symbolizers for a language id.
+	 *
+	 * @param languageId the language id
+	 * @return the symbolizers
+	 */
+	List<Symbolizer> getSymbolizers(LanguageId languageId);
 
 	/**
 	 * Gets the reconcilers.

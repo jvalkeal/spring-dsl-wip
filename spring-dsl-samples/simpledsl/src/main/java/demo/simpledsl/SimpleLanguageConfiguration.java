@@ -20,15 +20,17 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.dsl.service.Completioner;
 import org.springframework.dsl.service.Hoverer;
 import org.springframework.dsl.service.reconcile.Linter;
+import org.springframework.dsl.service.symbol.Symbolizer;
 
 /**
  * Configuration for a {@code simple} sample language supporting
- * {@link Hoverer}, {@link Completioner} and {@link Linter}.
+ * {@link Hoverer}, {@link Completioner}, {@link Linter} and {@link Symbolizer}
  *
  * @author Janne Valkealahti
  * @see EnableSimpleLanguage
  *
  */
+//tag::snippet1[]
 @Configuration
 public class SimpleLanguageConfiguration {
 
@@ -46,4 +48,10 @@ public class SimpleLanguageConfiguration {
 	public Linter simpleLanguageLinter() {
 		return new SimpleLanguageLinter();
 	}
+
+	@Bean
+	public Symbolizer simpleLanguageSymbolizer() {
+		return new SimpleLanguageSymbolizer();
+	}
 }
+//end::snippet1[]

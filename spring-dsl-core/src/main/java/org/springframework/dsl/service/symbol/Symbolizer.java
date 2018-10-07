@@ -13,28 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package demo.simpledsl;
+package org.springframework.dsl.service.symbol;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.springframework.dsl.document.Document;
+import org.springframework.dsl.domain.DocumentSymbol;
+import org.springframework.dsl.service.DslService;
 
-import org.springframework.context.annotation.Import;
+import reactor.core.publisher.Flux;
 
 /**
- * Meta annotation for enabling all supported services for a {@code simple} sample
- * language.
+ * Strategy interface providing {@link DocumentSymbol} info for a document.
  *
  * @author Janne Valkealahti
  *
  */
-//tag::snippet1[]
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-@Documented
-@Import(SimpleLanguageConfiguration.class)
-public @interface EnableSimpleLanguage {
+public interface Symbolizer extends DslService {
+
+	/**
+	 * Provide symbol information for a given document.
+	 *
+	 * @param document the document
+	 * @return a {@link Flux} of {@link DocumentSymbol}
+	 */
+	Flux<DocumentSymbol> symbolize(Document document);
 }
-//end::snippet1[]

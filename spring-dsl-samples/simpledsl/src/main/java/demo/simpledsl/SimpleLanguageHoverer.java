@@ -34,6 +34,7 @@ import reactor.core.publisher.Mono;
  * @see EnableSimpleLanguage
  *
  */
+//tag::snippet1[]
 public class SimpleLanguageHoverer extends AbstractDslService implements Hoverer {
 
 	public SimpleLanguageHoverer() {
@@ -66,3 +67,4 @@ public class SimpleLanguageHoverer extends AbstractDslService implements Hoverer
 		});
 	}
 }
+//end::snippet1[]
