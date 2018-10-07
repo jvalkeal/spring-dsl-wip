@@ -4,6 +4,23 @@ _Simple Language_ is a language demonstrating very simplistic way
 to get you familiar with language features without introducing too
 much overhead with additional supported features.
 
+We define a simple `Completioner` which simply tries to complete
+positions having a regognized token.
+
+[NOTE]
+====
+_Simple Language_ is a relatively dummy language implementation in
+terms of how things are done with a language services. We do way too
+much similar calculations with each services but this is mostly to
+not adding tweaks and enhacements to each service type to keep things
+clear and simple.
+====
+
+[source,java,indent=0]
+----
+include::samples/demo/simpledsl/SimpleLanguageCompletioner.java[tags=snippet1]
+----
+
 We define a simple `Symbolizer` which simply add all known token keys
 as _String_ symbols with a _range_ and a _selectionRange_ given by
 a language itself.
