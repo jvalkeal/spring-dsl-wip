@@ -87,6 +87,7 @@ public class NettyTcpServerIntegrationTests {
 	private static final byte[] CONTENT16 = createContent("{\"jsonrpc\": \"2.0\",\"id\": 4, \"method\": \"$/cancelRequest\", \"params\":{\"id\": 4}}");
 	private static final byte[] CONTENT17 = createContent("{\"jsonrpc\": \"2.0\",\"id\": 2, \"method\": \"counter\"}");
 	private static final byte[] CONTENT18 = createContent("{\"jsonrpc\": \"2.0\",\"id\": 4, \"method\": \"pojo2\", \"params\":{\"message\": \"hi\"}}}");
+	private static final byte[] CONTENT19 = createContent("{\"jsonrpc\": \"2.0\", \"method\": \"notificationsinglemonoarrayresponse\"}");
 
 	private static byte[] createContent(String... lines) {
 		StringBuilder buf = new StringBuilder();
@@ -431,6 +432,39 @@ public class NettyTcpServerIntegrationTests {
 		assertThat(dataLatch.await(1, TimeUnit.SECONDS)).isTrue();
 
 		String response = "Content-Length: 57\r\n\r\n{\"jsonrpc\":\"2.0\",\"method\":\"singleresponse\",\"params\":\"hi\"}";
+
+		assertThat(responses).containsExactlyInAnyOrder(response);
+	}
+
+
+	@Test
+	public void testSingleNotificationMonoArray() throws InterruptedException {
+		context = new AnnotationConfigApplicationContext();
+		context.register(JsonRpcConfig.class, JsonRpcServerConfig.class, TestServerJsonRpcController.class);
+		context.refresh();
+		NettyTcpServer server = context.getBean(NettyTcpServer.class);
+
+		CountDownLatch dataLatch = new CountDownLatch(1);
+		final List<String> responses = new ArrayList<>();
+
+		TcpClient.create(server.getPort())
+				.newHandler((in, out) -> {
+					in
+					.receive()
+					.subscribe(c -> {
+						responses.add(c.retain().duplicate().toString(Charset.defaultCharset()));
+						dataLatch.countDown();
+					});
+
+					return out
+							.send(Flux.just(Unpooled.copiedBuffer(CONTENT19)))
+							.neverComplete();
+				})
+				.block(Duration.ofSeconds(30));
+
+		assertThat(dataLatch.await(1, TimeUnit.SECONDS)).isTrue();
+
+		String response = "Content-Length: 66\r\n\r\n{\"jsonrpc\":\"2.0\",\"method\":\"singleresponse\",\"params\":[\"hi1\",\"hi2\"]}";
 
 		assertThat(responses).containsExactlyInAnyOrder(response);
 	}
@@ -875,6 +909,12 @@ public class NettyTcpServerIntegrationTests {
 		@JsonRpcNotification("singleresponse")
 		public String notificationsingleresponse() {
 			return "hi";
+		}
+
+		@JsonRpcRequestMapping(method = "notificationsinglemonoarrayresponse")
+		@JsonRpcNotification("singleresponse")
+		public Mono<String[]> notificationsinglemonoarrayresponse() {
+			return Mono.just(new String[] { "hi1", "hi2" });
 		}
 
 		@JsonRpcRequestMapping(method = "notificationmultiresponse")
