@@ -109,28 +109,28 @@ public class LspWebSocketHandler implements WebSocketHandler {
 		return shared
 			.map(requestDecoder)
 			.filter(request -> request.getMethod() != null)
-			.doOnNext(bb -> {
+			.doOnNext(request -> {
 
-				JsonRpcInputMessage i = new JsonRpcInputMessage() {
+				JsonRpcInputMessage inputMessage = new JsonRpcInputMessage() {
 
 					@Override
 					public Mono<String> getJsonrpc() {
-						return Mono.justOrEmpty(bb.getJsonrpc());
+						return Mono.justOrEmpty(request.getJsonrpc());
 					}
 
 					@Override
 					public Mono<String> getId() {
-						return Mono.justOrEmpty(bb.getId());
+						return Mono.justOrEmpty(request.getId());
 					}
 
 					@Override
 					public Mono<String> getMethod() {
-						return Mono.justOrEmpty(bb.getMethod());
+						return Mono.justOrEmpty(request.getMethod());
 					}
 
 					@Override
 					public Mono<String> getParams() {
-						return Mono.justOrEmpty(bb.getParams().toString());
+						return Mono.justOrEmpty(request.getParams().toString());
 					}
 
 					@Override
@@ -142,10 +142,10 @@ public class LspWebSocketHandler implements WebSocketHandler {
 
 				JsonRpcOutputMessage adaptedResponse = new WebSocketJsonRpcOutputMessage(session, session.bufferFactory());
 
-				rpcHandler.handle(i, adaptedResponse, customizer)
+				rpcHandler.handle(inputMessage, adaptedResponse, customizer)
 					.doOnError(ex -> {
 						log.error("Handling completed with error", ex);
-						String error = "{\"jsonrpc\":\"2.0\", \"id\":" + bb.getId() + ", \"error\":{\"code\":-32603, \"message\": \"internal server error\"}}";
+						String error = "{\"jsonrpc\":\"2.0\", \"id\":" + request.getId() + ", \"error\":{\"code\":-32603, \"message\": \"internal server error\"}}";
 						DataBuffer buffer = session.bufferFactory().wrap(error.getBytes(Charset.defaultCharset()));
 						Flux<DataBuffer> body = Flux.just(buffer);
 						adaptedResponse.writeWith(body).subscribe();
