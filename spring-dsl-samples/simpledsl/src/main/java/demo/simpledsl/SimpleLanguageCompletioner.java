@@ -15,13 +15,11 @@
  */
 package demo.simpledsl;
 
-import java.util.Arrays;
 import java.util.Collection;
 
 import org.springframework.dsl.document.Document;
 import org.springframework.dsl.domain.CompletionItem;
 import org.springframework.dsl.domain.Position;
-import org.springframework.dsl.service.AbstractDslService;
 import org.springframework.dsl.service.Completioner;
 
 import demo.simpledsl.SimpleLanguage.TokenType;
@@ -36,11 +34,7 @@ import reactor.core.publisher.Mono;
  *
  */
 //tag::snippet1[]
-public class SimpleLanguageCompletioner extends AbstractDslService implements Completioner {
-
-	public SimpleLanguageCompletioner() {
-		super(Arrays.asList(SimpleLanguage.LANGUAGEID));
-	}
+public class SimpleLanguageCompletioner extends SimpleLanguageDslService implements Completioner {
 
 	@Override
 	public Flux<CompletionItem> complete(Document document, Position position) {

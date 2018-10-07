@@ -15,13 +15,10 @@
  */
 package demo.simpledsl;
 
-import java.util.Arrays;
-
 import org.springframework.dsl.document.Document;
 import org.springframework.dsl.domain.Hover;
 import org.springframework.dsl.domain.MarkupKind;
 import org.springframework.dsl.domain.Position;
-import org.springframework.dsl.service.AbstractDslService;
 import org.springframework.dsl.service.Hoverer;
 
 import demo.simpledsl.SimpleLanguage.Token;
@@ -35,11 +32,7 @@ import reactor.core.publisher.Mono;
  *
  */
 //tag::snippet1[]
-public class SimpleLanguageHoverer extends AbstractDslService implements Hoverer {
-
-	public SimpleLanguageHoverer() {
-		super(Arrays.asList(SimpleLanguage.LANGUAGEID));
-	}
+public class SimpleLanguageHoverer extends SimpleLanguageDslService implements Hoverer {
 
 	@Override
 	public Mono<Hover> hover(Document document, Position position) {

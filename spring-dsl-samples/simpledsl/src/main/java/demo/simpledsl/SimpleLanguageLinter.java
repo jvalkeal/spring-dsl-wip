@@ -16,11 +16,9 @@
 package demo.simpledsl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.dsl.document.Document;
-import org.springframework.dsl.service.AbstractDslService;
 import org.springframework.dsl.service.reconcile.DefaultReconcileProblem;
 import org.springframework.dsl.service.reconcile.Linter;
 import org.springframework.dsl.service.reconcile.ProblemSeverity;
@@ -38,11 +36,7 @@ import reactor.core.publisher.Flux;
  *
  */
 //tag::snippet1[]
-public class SimpleLanguageLinter extends AbstractDslService implements Linter {
-
-	public SimpleLanguageLinter() {
-		super(Arrays.asList(SimpleLanguage.LANGUAGEID));
-	}
+public class SimpleLanguageLinter extends SimpleLanguageDslService implements Linter {
 
 	@Override
 	public Flux<ReconcileProblem> lint(Document document) {

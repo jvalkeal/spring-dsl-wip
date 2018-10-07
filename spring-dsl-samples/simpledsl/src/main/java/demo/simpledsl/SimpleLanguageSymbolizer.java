@@ -21,7 +21,6 @@ import java.util.List;
 import org.springframework.dsl.document.Document;
 import org.springframework.dsl.domain.DocumentSymbol;
 import org.springframework.dsl.domain.SymbolKind;
-import org.springframework.dsl.service.AbstractDslService;
 import org.springframework.dsl.service.symbol.Symbolizer;
 
 import demo.simpledsl.SimpleLanguage.Line;
@@ -35,11 +34,7 @@ import reactor.core.publisher.Flux;
  *
  */
 //tag::snippet1[]
-public class SimpleLanguageSymbolizer extends AbstractDslService implements Symbolizer {
-
-	public SimpleLanguageSymbolizer() {
-		super(SimpleLanguage.LANGUAGEID);
-	}
+public class SimpleLanguageSymbolizer extends SimpleLanguageDslService implements Symbolizer {
 
 	@Override
 	public Flux<DocumentSymbol> symbolize(Document document) {
