@@ -109,10 +109,6 @@ configure(subprojects) { subproject ->
 		logging.captureStandardOutput LogLevel.INFO  // suppress "## warnings" message
 	}
 
-	dependencies {
-		optional 'com.google.code.findbugs:jsr305'
-	}
-
 	task sourcesJar(type: Jar, dependsOn:classes) {
 		classifier = 'sources'
 		from sourceSets.main.allJava
@@ -139,6 +135,7 @@ project('spring-dsl-core') {
 		compile 'org.slf4j:slf4j-api'
 		compile 'io.projectreactor:reactor-core'
 		compile 'org.javolution:javolution-core-java'
+		optional 'com.google.code.findbugs:jsr305'
 		optional 'com.google.code.gson:gson'
 		testCompile 'org.springframework.boot:spring-boot-starter-test'
 		testRuntime 'org.springframework.boot:spring-boot-starter'
@@ -245,6 +242,7 @@ project('spring-dsl-jsonrpc') {
 		//compile 'io.projectreactor.ipc:reactor-netty'
 		compile 'com.fasterxml.jackson.core:jackson-core'
 		compile 'com.fasterxml.jackson.core:jackson-databind'
+		optional 'com.google.code.findbugs:jsr305'
 		testCompile 'org.hamcrest:hamcrest-core'
 		testCompile 'org.hamcrest:hamcrest-library'
 		testCompile 'junit:junit'
