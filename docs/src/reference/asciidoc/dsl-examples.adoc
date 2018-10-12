@@ -17,6 +17,14 @@ use non-blocking libraries. Sections titled with _UI Editor_
 generally mean that a sample provides a build-in infrastructure
 what you can experiment throught a browser using a _Monaco_ editor.
 
+[NOTE]
+====
+UI monaco editor integration in below samples is currently handled
+as a shared angular component in a samples which we're planning to
+outsource into a separate module at later stages in a in a lifecycle
+of _Spring DSL_ itself. For now it lives in a samples build.
+====
+
 include::dsl-examples-simple.adoc[]
 include::dsl-examples-wordcheck.adoc[]
 include::dsl-examples-dot.adoc[]
