@@ -42,6 +42,18 @@ public class AbstractAntlrCompletioner<T> extends AbstractAntlrDslService<T> imp
 	/**
 	 * Instantiates a new abstract antlr completioner.
 	 *
+	 * @param languageId the language id
+	 * @param antlrParseService the antlr parse service
+	 * @param antlrParseResultSupplier the antlr parse result supplier
+	 */
+	public AbstractAntlrCompletioner(LanguageId languageId, AntlrParseService<T> antlrParseService,
+			Function<Document, Mono<? extends AntlrParseResult<T>>> antlrParseResultSupplier) {
+		super(languageId, antlrParseService, antlrParseResultSupplier);
+	}
+
+	/**
+	 * Instantiates a new abstract antlr completioner.
+	 *
 	 * @param languageIds the language ids
 	 * @param antlrParseService the antlr parse service
 	 * @param antlrParseResultSupplier the antlr parse result supplier
