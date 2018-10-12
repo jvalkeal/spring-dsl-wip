@@ -32,6 +32,7 @@ import org.springframework.dsl.antlr.support.AbstractAntlrParseResultFunction;
 import org.springframework.dsl.antlr.support.DefaultAntlrCompletionEngine;
 import org.springframework.dsl.document.Document;
 import org.springframework.dsl.domain.CompletionItem;
+import org.springframework.dsl.domain.DocumentSymbol;
 import org.springframework.dsl.domain.Position;
 import org.springframework.dsl.service.reconcile.DefaultReconcileProblem;
 import org.springframework.dsl.service.reconcile.ReconcileProblem;
@@ -152,6 +153,13 @@ class Test2AntlrParseResultFunction
 						return Mono.just(item);
 					});
 
+			}
+
+			@Override
+			public Flux<DocumentSymbol> getDocumentSymbols() {
+				SymbolTable symbolTable = result.getSymbolTable().block();
+				return Flux.fromIterable(symbolTable.getAllSymbols())
+					.map(s -> DocumentSymbol.documentSymbol().name(s.getName()).build());
 			}
 		});
 	}

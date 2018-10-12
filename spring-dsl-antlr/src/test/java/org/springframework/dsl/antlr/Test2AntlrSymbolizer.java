@@ -17,14 +17,14 @@ package org.springframework.dsl.antlr;
 
 import java.util.function.Function;
 
-import org.springframework.dsl.antlr.support.AbstractAntlrCompletioner;
+import org.springframework.dsl.antlr.support.AbstractAntlrSymbolizer;
 import org.springframework.dsl.document.Document;
 
 import reactor.core.publisher.Mono;
 
-public class Test2AntlrCompletioner extends AbstractAntlrCompletioner<Object> {
+public class Test2AntlrSymbolizer extends AbstractAntlrSymbolizer<Object> {
 
-	public Test2AntlrCompletioner(AntlrParseService<Object> antlrParseService,
+	public Test2AntlrSymbolizer(AntlrParseService<Object> antlrParseService,
 			Function<Document, Mono<? extends AntlrParseResult<Object>>> antlrParseResultSupplier) {
 		super(TestAntrlUtils.TEST2_LANGUAGE_ID, antlrParseService, antlrParseResultSupplier);
 	}

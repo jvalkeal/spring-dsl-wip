@@ -21,52 +21,51 @@ import java.util.function.Function;
 import org.springframework.dsl.antlr.AntlrParseResult;
 import org.springframework.dsl.antlr.AntlrParseService;
 import org.springframework.dsl.document.Document;
-import org.springframework.dsl.domain.CompletionItem;
-import org.springframework.dsl.domain.Position;
+import org.springframework.dsl.domain.DocumentSymbol;
 import org.springframework.dsl.model.LanguageId;
-import org.springframework.dsl.service.Completioner;
+import org.springframework.dsl.service.symbol.Symbolizer;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
- * Base implementation of a {@link Completioner} for {@code ANTRL} based
+ * Base implementation of a {@link Symbolizer} for {@code ANTRL} based
  * language services.
  *
  * @author Janne Valkealahti
  *
  * @param <T> the type of a result in {@link AntlrParseResult}
  */
-public abstract class AbstractAntlrCompletioner<T> extends AbstractAntlrDslService<T> implements Completioner {
+public abstract class AbstractAntlrSymbolizer<T> extends AbstractAntlrDslService<T> implements Symbolizer {
 
 	/**
-	 * Instantiates a new abstract antlr completioner.
+	 * Instantiates a new abstract antlr symbolizer.
 	 *
 	 * @param languageId the language id
 	 * @param antlrParseService the antlr parse service
-	 * @param antlrParseResultSupplier the antlr parse result supplier
+	 * @param antlrParseResultFunction the antlr parse result function
 	 */
-	public AbstractAntlrCompletioner(LanguageId languageId, AntlrParseService<T> antlrParseService,
-			Function<Document, Mono<? extends AntlrParseResult<T>>> antlrParseResultSupplier) {
-		super(languageId, antlrParseService, antlrParseResultSupplier);
+	public AbstractAntlrSymbolizer(LanguageId languageId, AntlrParseService<T> antlrParseService,
+			Function<Document, Mono<? extends AntlrParseResult<T>>> antlrParseResultFunction) {
+		super(languageId, antlrParseService, antlrParseResultFunction);
 	}
 
 	/**
-	 * Instantiates a new abstract antlr completioner.
+	 * Instantiates a new abstract antlr symbolizer.
 	 *
 	 * @param languageIds the language ids
 	 * @param antlrParseService the antlr parse service
-	 * @param antlrParseResultSupplier the antlr parse result supplier
+	 * @param antlrParseResultFunction the antlr parse result function
 	 */
-	public AbstractAntlrCompletioner(List<LanguageId> languageIds, AntlrParseService<T> antlrParseService,
-			Function<Document, Mono<? extends AntlrParseResult<T>>> antlrParseResultSupplier) {
-		super(languageIds, antlrParseService, antlrParseResultSupplier);
+	public AbstractAntlrSymbolizer(List<LanguageId> languageIds, AntlrParseService<T> antlrParseService,
+			Function<Document, Mono<? extends AntlrParseResult<T>>> antlrParseResultFunction) {
+		super(languageIds, antlrParseService, antlrParseResultFunction);
 	}
 
 	@Override
-	public Flux<CompletionItem> complete(Document document, Position position) {
+	public Flux<DocumentSymbol> symbolize(Document document) {
 		return getAntlrParseService().parse(document, getAntlrParseResultFunction())
-				.map(r -> r.getCompletionItems(position))
+				.map(r -> r.getDocumentSymbols())
 				.flatMapMany(r -> r.cache());
 	}
 }

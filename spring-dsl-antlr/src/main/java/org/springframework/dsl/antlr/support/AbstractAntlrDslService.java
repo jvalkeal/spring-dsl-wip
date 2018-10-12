@@ -36,7 +36,7 @@ import reactor.core.publisher.Mono;
  *
  * @param <T> the type of a result in {@link AntlrParseResult}
  */
-public class AbstractAntlrDslService<T> extends AbstractDslService {
+public abstract class AbstractAntlrDslService<T> extends AbstractDslService {
 
 	private final AntlrParseService<T> antlrParseService;
 	private final Function<Document, Mono<? extends AntlrParseResult<T>>> antlrParseResultFunction;

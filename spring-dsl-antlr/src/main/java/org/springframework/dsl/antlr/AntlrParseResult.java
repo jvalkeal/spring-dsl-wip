@@ -18,6 +18,7 @@ package org.springframework.dsl.antlr;
 import java.util.List;
 
 import org.springframework.dsl.domain.CompletionItem;
+import org.springframework.dsl.domain.DocumentSymbol;
 import org.springframework.dsl.domain.Position;
 import org.springframework.dsl.service.reconcile.ReconcileProblem;
 import org.springframework.dsl.symboltable.SymbolTable;
@@ -72,6 +73,15 @@ public interface AntlrParseResult<T> {
 	 * @return the completion items
 	 */
 	default Flux<CompletionItem> getCompletionItems(Position position) {
+		return Flux.empty();
+	}
+
+	/**
+	 * Gets the document symbols.
+	 *
+	 * @return the document symbols
+	 */
+	default Flux<DocumentSymbol> getDocumentSymbols() {
 		return Flux.empty();
 	}
 
