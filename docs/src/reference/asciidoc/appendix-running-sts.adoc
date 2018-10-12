@@ -1,4 +1,4 @@
-[[sts]]
-=== LSP with STS
+[[appendix-sts]]
+=== STS
 TBD.
 

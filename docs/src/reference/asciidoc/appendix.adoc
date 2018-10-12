@@ -14,5 +14,5 @@ include::appendix-concepts-crashcourse.adoc[]
 == IDE Integrations
 This appendix provides generic information about integration into IDE's.
 
-include::appendix-running-sts.adoc[]
+include::appendix-running-ides.adoc[]
 
