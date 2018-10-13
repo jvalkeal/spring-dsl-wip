@@ -325,6 +325,32 @@ project('spring-dsl-build-tests') {
 	}
 }
 
+project('spring-dsl-starter-lspserver') {
+	description = "Spring Dsl Lsp Server Starter"
+	dependencies {
+		compile project(":spring-dsl-autoconfigure")
+		compile project(":spring-dsl-lsp-core")
+		compile "org.springframework.boot:spring-boot-starter"
+	}
+
+	install {
+		repositories.mavenInstaller {
+			pom.whenConfigured {
+				withXml {
+					asNode().children().first() + {
+						delegate.parent {
+							delegate.groupId('org.springframework.boot')
+							delegate.artifactId('spring-boot-starter-parent')
+							delegate.version("$springBootVersion")
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+
 configure(rootProject) {
 	apply plugin: 'org.asciidoctor.gradle.asciidoctor'
 	apply from: "${rootProject.projectDir}/publish-maven.gradle"
