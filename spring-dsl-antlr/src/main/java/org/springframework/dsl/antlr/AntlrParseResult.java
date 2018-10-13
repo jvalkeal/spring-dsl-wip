@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.springframework.dsl.domain.CompletionItem;
 import org.springframework.dsl.domain.DocumentSymbol;
+import org.springframework.dsl.domain.Hover;
 import org.springframework.dsl.domain.Position;
 import org.springframework.dsl.service.reconcile.ReconcileProblem;
 import org.springframework.dsl.symboltable.SymbolTable;
@@ -74,6 +75,16 @@ public interface AntlrParseResult<T> {
 	 */
 	default Flux<CompletionItem> getCompletionItems(Position position) {
 		return Flux.empty();
+	}
+
+	/**
+	 * Gets the {@link Hover} in a given {@link Position}.
+	 *
+	 * @param position the position
+	 * @return the hover
+	 */
+	default Mono<Hover> getHover(Position position) {
+		return Mono.empty();
 	}
 
 	/**

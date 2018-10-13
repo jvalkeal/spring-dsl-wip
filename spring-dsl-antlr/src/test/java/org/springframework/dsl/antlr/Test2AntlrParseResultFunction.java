@@ -33,6 +33,7 @@ import org.springframework.dsl.antlr.support.DefaultAntlrCompletionEngine;
 import org.springframework.dsl.document.Document;
 import org.springframework.dsl.domain.CompletionItem;
 import org.springframework.dsl.domain.DocumentSymbol;
+import org.springframework.dsl.domain.Hover;
 import org.springframework.dsl.domain.Position;
 import org.springframework.dsl.service.reconcile.DefaultReconcileProblem;
 import org.springframework.dsl.service.reconcile.ReconcileProblem;
@@ -160,6 +161,15 @@ class Test2AntlrParseResultFunction
 				SymbolTable symbolTable = result.getSymbolTable().block();
 				return Flux.fromIterable(symbolTable.getAllSymbols())
 					.map(s -> DocumentSymbol.documentSymbol().name(s.getName()).build());
+			}
+
+			@Override
+			public Mono<Hover> getHover(Position position) {
+				return Mono.just(Hover.hover()
+						.contents()
+							.value("hi")
+							.and()
+						.build());
 			}
 		});
 	}

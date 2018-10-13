@@ -21,53 +21,50 @@ import java.util.function.Function;
 import org.springframework.dsl.antlr.AntlrParseResult;
 import org.springframework.dsl.antlr.AntlrParseService;
 import org.springframework.dsl.document.Document;
-import org.springframework.dsl.domain.CompletionItem;
+import org.springframework.dsl.domain.Hover;
 import org.springframework.dsl.domain.Position;
 import org.springframework.dsl.model.LanguageId;
-import org.springframework.dsl.service.Completioner;
+import org.springframework.dsl.service.Hoverer;
 
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
- * Base implementation of a {@link Completioner} for {@code ANTRL} based
- * language services.
+ * Base implementation of a {@link Hoverer} for {@code ANTRL} based language
+ * services.
  *
  * @author Janne Valkealahti
  *
  * @param <T> the type of a result in {@link AntlrParseResult}
  */
-public abstract class AbstractAntlrCompletioner<T> extends AbstractAntlrDslService<T> implements Completioner {
+public class AbstractAntlrHoverer<T> extends AbstractAntlrDslService<T> implements Hoverer {
 
 	/**
-	 * Instantiates a new abstract antlr completioner.
+	 * Instantiates a new abstract antlr hoverer.
 	 *
 	 * @param languageId the language id
 	 * @param antlrParseService the antlr parse service
-	 * @param antlrParseResultSupplier the antlr parse result supplier
+	 * @param antlrParseResultFunction the antlr parse result function
 	 */
-	public AbstractAntlrCompletioner(LanguageId languageId, AntlrParseService<T> antlrParseService,
-			Function<Document, Mono<? extends AntlrParseResult<T>>> antlrParseResultSupplier) {
-		super(languageId, antlrParseService, antlrParseResultSupplier);
+	public AbstractAntlrHoverer(LanguageId languageId, AntlrParseService<T> antlrParseService,
+			Function<Document, Mono<? extends AntlrParseResult<T>>> antlrParseResultFunction) {
+		super(languageId, antlrParseService, antlrParseResultFunction);
 	}
 
 	/**
-	 * Instantiates a new abstract antlr completioner.
+	 * Instantiates a new abstract antlr hoverer.
 	 *
 	 * @param languageIds the language ids
 	 * @param antlrParseService the antlr parse service
-	 * @param antlrParseResultSupplier the antlr parse result supplier
+	 * @param antlrParseResultFunction the antlr parse result function
 	 */
-	public AbstractAntlrCompletioner(List<LanguageId> languageIds, AntlrParseService<T> antlrParseService,
-			Function<Document, Mono<? extends AntlrParseResult<T>>> antlrParseResultSupplier) {
-		super(languageIds, antlrParseService, antlrParseResultSupplier);
+	public AbstractAntlrHoverer(List<LanguageId> languageIds, AntlrParseService<T> antlrParseService,
+			Function<Document, Mono<? extends AntlrParseResult<T>>> antlrParseResultFunction) {
+		super(languageIds, antlrParseService, antlrParseResultFunction);
 	}
 
 	@Override
-	public Flux<CompletionItem> complete(Document document, Position position) {
+	public Mono<Hover> hover(Document document, Position position) {
 		return getAntlrParseService().parse(document, getAntlrParseResultFunction())
-				.map(r -> r.getCompletionItems(position))
-				// TODO: remove cache
-				.flatMapMany(r -> r.cache());
+			.flatMap(r -> r.getHover(position));
 	}
 }
