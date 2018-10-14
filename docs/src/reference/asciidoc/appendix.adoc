@@ -15,4 +15,5 @@ include::appendix-concepts-crashcourse.adoc[]
 This appendix provides generic information about integration into IDE's.
 
 include::appendix-running-ides.adoc[]
+//include::appendix-paper-ssml.adoc[]
 
