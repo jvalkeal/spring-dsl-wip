@@ -3,7 +3,9 @@
 == Symboltable
 _Symboltable_ is a relatively vague concept of representing various
 internals of a symbol information during a translation of an language
-into an internal representation of a language itself.
+into an internal representation of a language itself. It is vague
+concept because it is essentially a simple repository or a data
+structure not really based on any real world specification.
 
 [quote, wiki]
 ____
@@ -20,4 +22,6 @@ done natively in <<dsl-antlr>> would not be aware of any cross referencing
 symbols and if one needs to have this information, one way to do it
 is through custom symbol tables. Providing a generic custom table
 implementation is one way how _Spring DSL_ can help with these concepts.
+
+include::dsl-symboltable-default.adoc[]
 
