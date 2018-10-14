@@ -113,7 +113,8 @@ public class DefaultAntlrCompletionEngine implements AntlrCompletionEngine {
 			Token token = tokenStream.LT(offset++);
 			this.tokens.add(token);
 			log.debug("TOKEN " + token.getText());
-			if ((token.getLine() == line && token.getCharPositionInLine() >= charPositionInLine) || token.getType() == Token.EOF) {
+			if ((token.getLine() == line && token.getCharPositionInLine() >= charPositionInLine)
+					|| token.getType() == Token.EOF) {
 				break;
 			}
 		}
@@ -123,32 +124,7 @@ public class DefaultAntlrCompletionEngine implements AntlrCompletionEngine {
 		int startRule = context != null ? context.getRuleIndex() : 0;
 		this.processRule(this.atn.ruleToStartState[startRule], 0, callStack, "");
 
-		if (log.isDebugEnabled()) {
-			log.debug("States processed: {}", this.statesProcessed);
-			log.debug("Collected rules:");
-			for (Entry<Integer, List<Integer>> rule : this.candidates.rules.entrySet()) {
-				String path = "";
-				for (Integer token : rule.getValue()) {
-					path += this.ruleNames[token] + " ";
-				}
-				log.debug("{}, path: {}", this.ruleNames[rule.getKey()], path);
-			}
-			Set<String> sortedTokens = new HashSet<>();
-			for (Entry<Integer, List<Integer>> token : this.candidates.tokens.entrySet()) {
-				String value = this.vocabulary.getDisplayName(token.getKey());
-				if (token.getValue() != null) {
-					for (Integer following : token.getValue()) {
-						value += " " + this.vocabulary.getDisplayName(following);
-					}
-				}
-				sortedTokens.add(value);
-			}
-			log.debug("Collected tokens:");
-			for (String symbol : sortedTokens) {
-				log.debug(symbol);
-			}
-		}
-
+		debugPrintResults();
 		return this.candidates;
 	}
 
@@ -581,6 +557,35 @@ public class DefaultAntlrCompletionEngine implements AntlrCompletionEngine {
 			sb.append("  ").append(this.ruleNames[rule]).append("\n");
 		}
 		log.debug(sb.toString());
+	}
+
+	private void debugPrintResults() {
+		if (!log.isDebugEnabled()) {
+			return;
+		}
+		log.debug("States processed: {}", this.statesProcessed);
+		log.debug("Collected rules:");
+		for (Entry<Integer, List<Integer>> rule : this.candidates.rules.entrySet()) {
+			String path = "";
+			for (Integer token : rule.getValue()) {
+				path += this.ruleNames[token] + " ";
+			}
+			log.debug("{}, path: {}", this.ruleNames[rule.getKey()], path);
+		}
+		Set<String> sortedTokens = new HashSet<>();
+		for (Entry<Integer, List<Integer>> token : this.candidates.tokens.entrySet()) {
+			String value = this.vocabulary.getDisplayName(token.getKey());
+			if (token.getValue() != null) {
+				for (Integer following : token.getValue()) {
+					value += " " + this.vocabulary.getDisplayName(following);
+				}
+			}
+			sortedTokens.add(value);
+		}
+		log.debug("Collected tokens:");
+		for (String symbol : sortedTokens) {
+			log.debug(symbol);
+		}
 	}
 
 	private static class FollowSetWithPath {
