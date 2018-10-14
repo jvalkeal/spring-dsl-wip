@@ -55,64 +55,35 @@ import org.springframework.util.ObjectUtils;
 public class DefaultAntlrCompletionEngine implements AntlrCompletionEngine {
 
 	private static final Logger log = LoggerFactory.getLogger(DefaultAntlrCompletionEngine.class);
-
-	private static class CandidatesCollection implements AntlrCompletionResult {
-		Map<Integer, List<Integer>> tokens = new HashMap<>();
-		Map<Integer, List<Integer>> rules = new HashMap<>();
-
-		@Override
-		public Map<Integer, List<Integer>> getTokens() {
-			return tokens;
-		}
-
-		@Override
-		public Map<Integer, List<Integer>> getRules() {
-			return rules;
-		}
-	}
-
-	private static class FollowSetWithPath {
-		public IntervalSet intervals;
-		public List<Integer> path;
-		public List<Integer> following;
-	}
-
-	private static class FollowSetsHolder {
-		public List<FollowSetWithPath> sets;
-		public IntervalSet combined;
-	}
-
-	private static class PipelineEntry {
-		ATNState state;
-		Integer tokenIndex;
-
-		public PipelineEntry(ATNState state, Integer tokenIndex) {
-			this.state = state;
-			this.tokenIndex = tokenIndex;
-		}
-	}
-
+	private final static Map<String, Map<Integer, FollowSetsHolder>> followSetsByATN = new HashMap<>();
 	private final Set<Integer> ignoredTokens;
 	private final Set<Integer> preferredRules;
-
+	private final Map<Integer, Map<Integer, Set<Integer>>> shortcutMap = new HashMap<>();
+	private final CandidatesCollection candidates = new CandidatesCollection();
 	private Parser parser;
 	private ATN atn;
 	private Vocabulary vocabulary;
 	private String[] ruleNames;
 	private List<Token> tokens;
-
 	private int tokenStartIndex = 0;
 	private int statesProcessed = 0;
 
-	private final Map<Integer, Map<Integer, Set<Integer>>> shortcutMap = new HashMap<>();
-	private final CandidatesCollection candidates = new CandidatesCollection(); // The collected candidates (rules and
-																				// tokens).
-	private final static Map<String, Map<Integer, FollowSetsHolder>> followSetsByATN = new HashMap<>();
-
+	/**
+	 * Instantiates a new default antlr completion engine.
+	 *
+	 * @param parser the parser
+	 */
 	public DefaultAntlrCompletionEngine(Parser parser) {
 		this(parser, null, null);
 	}
 
+	/**
+	 * Instantiates a new default antlr completion engine.
+	 *
+	 * @param parser the parser
+	 * @param preferredRules the preferred rules
+	 * @param ignoredTokens the ignored tokens
+	 */
 	public DefaultAntlrCompletionEngine(Parser parser, Set<Integer> preferredRules, Set<Integer> ignoredTokens) {
 		this.parser = parser;
 		this.atn = parser.getATN();
@@ -141,13 +112,10 @@ public class DefaultAntlrCompletionEngine implements AntlrCompletionEngine {
 		while (true) {
 			Token token = tokenStream.LT(offset++);
 			this.tokens.add(token);
-			log.debug("TOKEN: {} {} {} {} {}", token.getTokenIndex(), token.getLine(), token.getCharPositionInLine(), token.getStartIndex(), token.getStopIndex());
+			log.debug("TOKEN " + token.getText());
 			if ((token.getLine() == line && token.getCharPositionInLine() >= charPositionInLine) || token.getType() == Token.EOF) {
 				break;
 			}
-//			if (token.getTokenIndex() >= caretTokenIndex || token.getType() == Token.EOF) {
-//				break;
-//			}
 		}
 		tokenStream.seek(currentIndex);
 
@@ -189,8 +157,9 @@ public class DefaultAntlrCompletionEngine implements AntlrCompletionEngine {
 	}
 
 	private boolean translateToRuleIndex(List<Integer> ruleStack) {
-		if (this.preferredRules.isEmpty())
+		if (this.preferredRules.isEmpty()) {
 			return false;
+		}
 
 		// Loop over the rule stack from highest to lowest rule level. This way we
 		// properly handle the higher rule
@@ -264,8 +233,9 @@ public class DefaultAntlrCompletionEngine implements AntlrCompletionEngine {
 	private void collectFollowSets(ATNState s, ATNState stopState, LinkedList<FollowSetWithPath> followSets,
 			Set<ATNState> seen, LinkedList<Integer> ruleStack) {
 
-		if (seen.contains(s))
+		if (seen.contains(s)) {
 			return;
+		}
 
 		seen.add(s);
 
@@ -439,10 +409,10 @@ public class DefaultAntlrCompletionEngine implements AntlrCompletionEngine {
 
 			boolean atCaret = currentEntry.tokenIndex >= this.tokens.size() - 1;
 			if (log.isDebugEnabled()) {
-				printDescription(indentation, currentEntry.state, this.generateBaseDescription(currentEntry.state),
+				debugPrintDescription(indentation, currentEntry.state, this.debugGenerateBaseDescription(currentEntry.state),
 						currentEntry.tokenIndex);
 				if (log.isTraceEnabled()) {
-					printRuleState(callStack);
+					debugPrintRuleState(callStack);
 				}
 			}
 
@@ -553,16 +523,18 @@ public class DefaultAntlrCompletionEngine implements AntlrCompletionEngine {
 			"plus block start", "star block start", "token start", "rule stop", "block end", "star loop back",
 			"star loop entry", "plus loop back", "loop end" };
 
-	private String generateBaseDescription(ATNState state) {
+	private String debugGenerateBaseDescription(ATNState state) {
 		String stateValue = (state.stateNumber == ATNState.INVALID_STATE_NUMBER) ? "Invalid"
 				: Integer.toString(state.stateNumber);
 		return "[" + stateValue + " " + this.atnStateTypeMap[state.getStateType()] + "] in "
 				+ this.ruleNames[state.ruleIndex];
 	}
 
-	private void printDescription(String currentIndent, ATNState state, String baseDescription, int tokenIndex) {
+	private void debugPrintDescription(String currentIndent, ATNState state, String baseDescription, int tokenIndex) {
 
-		StringBuilder output = new StringBuilder(currentIndent);
+		StringBuilder output = new StringBuilder();
+		output.append("\n");
+		output.append(currentIndent);
 
 		StringBuilder transitionDescription = new StringBuilder();
 		if (log.isDebugEnabled()) {
@@ -599,7 +571,7 @@ public class DefaultAntlrCompletionEngine implements AntlrCompletionEngine {
 		}
 	}
 
-	private void printRuleState(LinkedList<Integer> stack) {
+	private void debugPrintRuleState(LinkedList<Integer> stack) {
 		if (stack.isEmpty()) {
 			log.debug("<empty stack>");
 			return;
@@ -611,4 +583,39 @@ public class DefaultAntlrCompletionEngine implements AntlrCompletionEngine {
 		log.debug(sb.toString());
 	}
 
+	private static class FollowSetWithPath {
+		IntervalSet intervals;
+		List<Integer> path;
+		List<Integer> following;
+	}
+
+	private static class FollowSetsHolder {
+		List<FollowSetWithPath> sets;
+		IntervalSet combined;
+	}
+
+	private static class PipelineEntry {
+		ATNState state;
+		Integer tokenIndex;
+
+		PipelineEntry(ATNState state, Integer tokenIndex) {
+			this.state = state;
+			this.tokenIndex = tokenIndex;
+		}
+	}
+
+	private static class CandidatesCollection implements AntlrCompletionResult {
+		Map<Integer, List<Integer>> tokens = new HashMap<>();
+		Map<Integer, List<Integer>> rules = new HashMap<>();
+
+		@Override
+		public Map<Integer, List<Integer>> getTokens() {
+			return tokens;
+		}
+
+		@Override
+		public Map<Integer, List<Integer>> getRules() {
+			return rules;
+		}
+	}
 }
