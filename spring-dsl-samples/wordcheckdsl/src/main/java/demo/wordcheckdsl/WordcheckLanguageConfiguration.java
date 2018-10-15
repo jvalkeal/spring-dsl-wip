@@ -19,10 +19,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dsl.service.Completioner;
 import org.springframework.dsl.service.reconcile.Linter;
+import org.springframework.dsl.service.symbol.Symbolizer;
 
 /**
  * Configuration for a {@code wordcheck} sample language supporting
- * {@link Completioner} and {@link Linter}.
+ * {@link Completioner}, {@link Symbolizer} and {@link Linter}.
  *
  * @author Janne Valkealahti
  * @author Kris De Volder
@@ -41,6 +42,11 @@ public class WordcheckLanguageConfiguration {
 	@Bean
 	public Linter wordcheckLanguageLinter() {
 		return new WordcheckLanguageLinter();
+	}
+
+	@Bean
+	public Symbolizer wordcheckLanguageSymbolizer() {
+		return new WordcheckLanguageSymbolizer();
 	}
 }
 //end::snippet1[]
