@@ -15,12 +15,16 @@
  */
 package org.springframework.dsl.antlr;
 
+import java.util.List;
+
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 import org.springframework.dsl.Test2Grammar.DefinitionsContext;
 import org.springframework.dsl.Test2Grammar.SourceIdContext;
 import org.springframework.dsl.Test2Grammar.TargetIdContext;
 import org.springframework.dsl.Test2GrammarBaseVisitor;
+import org.springframework.dsl.domain.DocumentSymbol;
 import org.springframework.dsl.domain.Range;
+import org.springframework.dsl.domain.SymbolKind;
 import org.springframework.dsl.service.reconcile.ReconcileProblem;
 import org.springframework.dsl.symboltable.ClassSymbol;
 import org.springframework.dsl.symboltable.DefaultSymbolTable;
@@ -39,11 +43,18 @@ import reactor.core.publisher.Mono;
  */
 public class Test2Visitor extends Test2GrammarBaseVisitor<AntlrParseResult<Object>> {
 
+	private final List<ReconcileProblem> errors;
+
+	public Test2Visitor(List<ReconcileProblem> errors) {
+		this.errors = errors;
+	}
+
 	@Override
 	public AntlrParseResult<Object> visitDefinitions(DefinitionsContext ctx) {
 		DefaultSymbolTable symbolTable = new DefaultSymbolTable();
 		// ClassSymbol stateMachineClassSymbol = new ClassSymbol("org.springframework.statemachine.StateMachine");
 		ClassSymbol stateClassSymbol = new ClassSymbol("org.springframework.statemachine.state.State");
+		stateClassSymbol.setRange(Range.from(0, 0, 0, 0));
 		ClassSymbol transitionClassSymbol = new ClassSymbol("org.springframework.statemachine.transition.Transition");
 		symbolTable.defineGlobal(stateClassSymbol);
 		symbolTable.defineGlobal(transitionClassSymbol);
@@ -90,13 +101,19 @@ public class Test2Visitor extends Test2GrammarBaseVisitor<AntlrParseResult<Objec
 			}
 
 			@Override
-			public Mono<Object> getResult() {
-				return Mono.empty();
+			public Flux<ReconcileProblem> getReconcileProblems() {
+				return Flux.fromIterable(errors);
 			}
 
 			@Override
-			public Flux<ReconcileProblem> getReconcileProblems() {
-				return Flux.empty();
+			public Flux<DocumentSymbol> getDocumentSymbols() {
+				return getSymbolTable()
+					.flatMapMany(st -> Flux.fromIterable(st.getAllSymbols()))
+					.map(s -> DocumentSymbol.documentSymbol()
+							.name(s.getName())
+							.kind(SymbolKind.String)
+							.range(s.getRange())
+							.build());
 			}
 		};
 	}

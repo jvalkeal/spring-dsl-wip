@@ -5,7 +5,7 @@ options {
   tokenVocab=Test2Lexer;
 }
 
-definitions          :   ( statemachine* | machineObjectList) ;
+definitions          :   ( statemachine* | machineObjectList) EOF;
 machineObjectList    :   ( state | transition )* ;
 statemachine         :   STATEMACHINE id LBRACE machineObjectList RBRACE ;
 state                :   STATE id LBRACE stateParameters RBRACE ;

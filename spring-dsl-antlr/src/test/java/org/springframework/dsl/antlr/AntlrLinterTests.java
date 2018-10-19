@@ -86,4 +86,21 @@ public class AntlrLinterTests {
 		assertThat(lints.get(0).getRange()).isEqualTo(Range.from(10, 9, 10, 9));
 		assertThat(lints.get(1).getRange()).isEqualTo(Range.from(14, 9, 14, 9));
 	}
+
+	@Test
+	public void testShouldHaveErrors3() throws IOException {
+		String input = TestResourceUtils.resourceAsString(getClass(), "5.test2");
+		TextDocument document = new TextDocument("", LanguageId.TXT, 0, input);
+
+		DefaultAntlrParseService<Object> antlrParseService = new DefaultAntlrParseService<>();
+		Test2AntlrParseResultFunction antlrParseResultSupplier = new Test2AntlrParseResultFunction();
+
+		Test2AntlrLinter linter = new Test2AntlrLinter(antlrParseService, antlrParseResultSupplier);
+
+		Flux<ReconcileProblem> lint = linter.lint(document);
+		List<ReconcileProblem> lints = lint.toStream().collect(Collectors.toList());
+		assertThat(lints).hasSize(1);
+		assertThat(lints.get(0).getRange()).isEqualTo(Range.from(0, 0, 0, 0));
+		assertThat(lints.get(0).getMessage()).contains("extraneous input", "expecting");
+	}
 }

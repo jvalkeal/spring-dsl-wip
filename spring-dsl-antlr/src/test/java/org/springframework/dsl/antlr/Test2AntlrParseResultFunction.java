@@ -32,8 +32,6 @@ import org.springframework.dsl.antlr.support.AbstractAntlrParseResultFunction;
 import org.springframework.dsl.antlr.support.DefaultAntlrCompletionEngine;
 import org.springframework.dsl.document.Document;
 import org.springframework.dsl.domain.CompletionItem;
-import org.springframework.dsl.domain.DocumentSymbol;
-import org.springframework.dsl.domain.Hover;
 import org.springframework.dsl.domain.Position;
 import org.springframework.dsl.service.reconcile.DefaultReconcileProblem;
 import org.springframework.dsl.service.reconcile.ReconcileProblem;
@@ -52,7 +50,7 @@ class Test2AntlrParseResultFunction
 	}
 
 	@Override
-	public Mono<? extends AntlrParseResult<Object>> apply(Document document) {
+	protected Mono<AntlrParseResult<Object>> parse(Document document) {
 		List<ReconcileProblem> errors = new ArrayList<>();
 		Test2Grammar parser = getParser(CharStreams.fromString(document.content()));
         parser.getInterpreter().setPredictionMode(PredictionMode.LL_EXACT_AMBIG_DETECTION);
@@ -62,116 +60,76 @@ class Test2AntlrParseResultFunction
 
         parser = getParser(CharStreams.fromString(document.content()));
 		ParseTree tree = parser.definitions();
-		Test2Visitor visitor = new Test2Visitor();
+		Test2Visitor visitor = new Test2Visitor(errors);
 		AntlrParseResult<Object> result = visitor.visit(tree);
-
-
-
-        return Mono.just(new AntlrParseResult<Object>() {
-
-			@Override
-			public Mono<Object> getResult() {
-				return Mono.empty();
-			}
-
-			@Override
-			public Mono<SymbolTable> getSymbolTable() {
-				return result.getSymbolTable();
-			}
-
-			@Override
-			public Flux<ReconcileProblem> getReconcileProblems() {
-
-				List<ReconcileProblem> errors2 = new ArrayList<>();
-				Test2Grammar p = getParser(CharStreams.fromString(document.content()));
-
-				ParseTree tree = p.definitions();
-				Test2Visitor visitor = new Test2Visitor();
-				AntlrParseResult<Object> result = visitor.visit(tree);
-				SymbolTable symbolTable = result.getSymbolTable().block();
-
-				List<String> sss = symbolTable.getAllSymbols().stream()
-					.filter(s -> s.getScope().getName() == "org.springframework.statemachine.state.State")
-					.map(s -> s.getName())
-					.collect(Collectors.toList());
-
-				symbolTable.getAllSymbols().stream().forEach(s -> {
-					if (s.getScope().getName() == "org.springframework.statemachine.transition.Transition") {
-						if (s instanceof ClassSymbol) {
-							((ClassSymbol)s).getFields().stream().forEach(f -> {
-								if (!sss.contains(f.getName())) {
-									errors2.add(new DefaultReconcileProblem("missing", f.getRange()));
-								}
-							});
-						}
-					}
-				});
-
-				return Flux.concat(Flux.fromIterable(errors), Flux.fromIterable(errors2));
-			}
-
-			@Override
-			public Flux<CompletionItem> getCompletionItems(Position position) {
-				Test2Grammar p = getParser(CharStreams.fromString(document.content()));
-				HashSet<Integer> preferredRules = new HashSet<>(Arrays.asList(Test2Grammar.RULE_sourceId, Test2Grammar.RULE_targetId));
-		        AntlrCompletionEngine completionEngine = new DefaultAntlrCompletionEngine(p, preferredRules, null);
-				AntlrCompletionResult completionResult = completionEngine.collectResults(position,
-						p.definitions());
-
-				Flux<String> ddd1 = Flux.defer(() -> {
-					ArrayList<String> completions = new ArrayList<String>();
-					for (Entry<Integer, List<Integer>> e : completionResult.getTokens().entrySet()) {
-						if (e.getKey() > 0) {
-							Vocabulary vocabulary = p.getVocabulary();
-							String displayName = vocabulary.getDisplayName(e.getKey());
-							completions.add(displayName);
-						}
-					}
-					return Flux.fromIterable(completions);
-				});
-
-
-				Flux<String> ddd2 = Flux.defer(() -> {
-					SymbolTable symbolTable = getSymbolTable().block();
-					ArrayList<String> completions = new ArrayList<String>();
-					for (Entry<Integer, List<Integer>> e : completionResult.getRules().entrySet()) {
-						if (e.getKey() == Test2Grammar.RULE_sourceId) {
-							symbolTable.getAllSymbols().stream().forEach(s -> {
-								if (ObjectUtils.nullSafeEquals(s.getScope().getName(), "org.springframework.statemachine.state.State")) {
-									completions.add(s.getName());
-								}
-							});
-						}
-					}
-					return Flux.fromIterable(completions);
-				});
-
-
-				return Flux.concat(ddd2, ddd1)
-					.flatMap(c -> {
-						CompletionItem item = new CompletionItem();
-						item.setLabel(c);
-						return Mono.just(item);
-					});
-
-			}
-
-			@Override
-			public Flux<DocumentSymbol> getDocumentSymbols() {
-				SymbolTable symbolTable = result.getSymbolTable().block();
-				return Flux.fromIterable(symbolTable.getAllSymbols())
-					.map(s -> DocumentSymbol.documentSymbol().name(s.getName()).build());
-			}
-
-			@Override
-			public Mono<Hover> getHover(Position position) {
-				return Mono.just(Hover.hover()
-						.contents()
-							.value("hi")
-							.and()
-						.build());
-			}
-		});
+		return Mono.just(result);
 	}
 
+	@Override
+	protected Flux<ReconcileProblem> getReconcileProblems(Mono<AntlrParseResult<Object>> shared, Document document) {
+		Flux<ReconcileProblem> other = Flux.defer(() -> {
+			List<ReconcileProblem> errors = new ArrayList<>();
+			SymbolTable symbolTable = getSymbolTable(shared, document).block();
+			List<String> states = symbolTable.getAllSymbols().stream()
+				.filter(s -> s.getScope().getName() == "org.springframework.statemachine.state.State")
+				.map(s -> s.getName())
+				.collect(Collectors.toList());
+			symbolTable.getAllSymbols().stream().forEach(s -> {
+				if (s.getScope().getName() == "org.springframework.statemachine.transition.Transition") {
+					if (s instanceof ClassSymbol) {
+						((ClassSymbol)s).getFields().stream().forEach(f -> {
+							if (!states.contains(f.getName())) {
+								errors.add(new DefaultReconcileProblem("missing", f.getRange()));
+							}
+						});
+					}
+				}
+			});
+			return Flux.fromIterable(errors);
+		});
+		return Flux.concat(super.getReconcileProblems(shared, document), other);
+	}
+
+	@Override
+	protected Flux<CompletionItem> getCompletionItems(Mono<AntlrParseResult<Object>> shared, Document document, Position position) {
+		Test2Grammar p = getParser(CharStreams.fromString(document.content()));
+		HashSet<Integer> preferredRules = new HashSet<>(
+				Arrays.asList(Test2Grammar.RULE_sourceId, Test2Grammar.RULE_targetId));
+		AntlrCompletionEngine completionEngine = new DefaultAntlrCompletionEngine(p, preferredRules, null);
+		AntlrCompletionResult completionResult = completionEngine.collectResults(position, p.definitions());
+
+		Flux<String> items1 = Flux.defer(() -> {
+			ArrayList<String> completions = new ArrayList<String>();
+			for (Entry<Integer, List<Integer>> e : completionResult.getTokens().entrySet()) {
+				if (e.getKey() > 0) {
+					Vocabulary vocabulary = p.getVocabulary();
+					String displayName = vocabulary.getDisplayName(e.getKey());
+					completions.add(displayName);
+				}
+			}
+			return Flux.fromIterable(completions);
+		});
+
+		Flux<String> items2 = Flux.defer(() -> {
+			SymbolTable symbolTable = getSymbolTable(shared, document).block();
+			ArrayList<String> completions = new ArrayList<String>();
+			for (Entry<Integer, List<Integer>> e : completionResult.getRules().entrySet()) {
+				if (e.getKey() == Test2Grammar.RULE_sourceId) {
+					symbolTable.getAllSymbols().stream().forEach(s -> {
+						if (ObjectUtils.nullSafeEquals(s.getScope().getName(), "org.springframework.statemachine.state.State")) {
+							completions.add(s.getName());
+						}
+					});
+				}
+			}
+			return Flux.fromIterable(completions);
+		});
+
+		return Flux.concat(items2, items1)
+			.flatMap(c -> {
+				CompletionItem item = new CompletionItem();
+				item.setLabel(c);
+				return Mono.just(item);
+			});
+	}
 }

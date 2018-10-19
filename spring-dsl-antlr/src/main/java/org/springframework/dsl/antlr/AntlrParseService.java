@@ -35,9 +35,9 @@ public interface AntlrParseService<T> {
 	 * Parse a {@link Document} and use given {@link Function} to get a {@link AntlrParseResult}.
 	 *
 	 * @param document the document
-	 * @param supplier the supplier
+	 * @param function the function
 	 * @return the mono of a antrl parse result
 	 */
 	Mono<AntlrParseResult<T>> parse(Document document,
-			Function<Document, ? extends Mono<? extends AntlrParseResult<T>>> supplier);
+			Function<Document, ? extends Mono<? extends AntlrParseResult<T>>> function);
 }

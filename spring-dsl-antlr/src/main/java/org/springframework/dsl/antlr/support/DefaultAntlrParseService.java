@@ -49,10 +49,10 @@ public class DefaultAntlrParseService<T> implements AntlrParseService<T> {
 
 	@Override
 	public Mono<AntlrParseResult<T>> parse(Document document,
-			Function<Document, ? extends Mono<? extends AntlrParseResult<T>>> supplier) {
+			Function<Document, ? extends Mono<? extends AntlrParseResult<T>>> function) {
 		return CacheMono
 				.lookup(reader(cache), new CacheKey(document))
-				.onCacheMissResume(Mono.defer(() -> supplier.apply(document)))
+				.onCacheMissResume(Mono.defer(() -> function.apply(document)))
 				.andWriteWith(writer(cache));
 	}
 

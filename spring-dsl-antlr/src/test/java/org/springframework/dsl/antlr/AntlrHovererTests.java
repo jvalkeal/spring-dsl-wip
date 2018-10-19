@@ -33,7 +33,7 @@ public class AntlrHovererTests {
 	@Test
 	public void test() {
 		String input = "";
-		assertTest2Hoverers(input, Position.from(0, 0), "hi");
+		assertTest2Hoverers(input, Position.from(0, 0), "State");
 	}
 
 	private static void assertTest2Hoverers(String input, Position position, String expect) {
@@ -43,9 +43,10 @@ public class AntlrHovererTests {
 		Test2AntlrParseResultFunction antlrParseResultSupplier = new Test2AntlrParseResultFunction();
 
 		Test2AntlrHoverer hoverer = new Test2AntlrHoverer(antlrParseService, antlrParseResultSupplier);
-		Mono<Hover> hover = hoverer.hover(document, new Position(9, 8));
+		Mono<Hover> hover = hoverer.hover(document, new Position(0, 0));
 		Hover h = hover.block();
 		assertThat(h, notNullValue());
+		assertThat(h.getRange(), notNullValue());
 		assertThat(h.getContents().getValue(), containsString(expect));
 	}
 }

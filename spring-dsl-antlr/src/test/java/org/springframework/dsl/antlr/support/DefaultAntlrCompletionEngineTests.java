@@ -102,7 +102,7 @@ public class DefaultAntlrCompletionEngineTests {
 
 		assertThat(candidates).isNotNull();
 		assertThat(candidates.getTokens()).isNotNull();
-		assertThat(candidates.getTokens().size()).isEqualTo(4);
+		assertThat(candidates.getTokens().size()).isEqualTo(5);
 		assertThat(candidates.getTokens().containsKey(Test2Lexer.STATEMACHINE)).isTrue();
 		assertThat(candidates.getTokens().containsKey(Test2Lexer.STATE)).isTrue();
 		assertThat(candidates.getTokens().containsKey(Test2Lexer.TRANSITION)).isTrue();
@@ -203,7 +203,7 @@ public class DefaultAntlrCompletionEngineTests {
 		assertThat(candidates.getTokens().containsKey(Test2Lexer.END)).isTrue();
 	}
 
-//	@Test
+	@Test
 	public void test7() {
 		String input = "s";
 
@@ -217,8 +217,7 @@ public class DefaultAntlrCompletionEngineTests {
 
 		assertThat(candidates).isNotNull();
 		assertThat(candidates.getTokens()).isNotNull();
-		assertThat(candidates.getTokens().size()).isEqualTo(3);
-		assertThat(candidates.getTokens().containsKey(Test2Lexer.STATEMACHINE)).isTrue();
-		assertThat(candidates.getTokens().containsKey(Test2Lexer.STATE)).isTrue();
+		// currently for this plain invalid input we don't get anything
+		assertThat(candidates.getTokens().size()).isEqualTo(0);
 	}
 }

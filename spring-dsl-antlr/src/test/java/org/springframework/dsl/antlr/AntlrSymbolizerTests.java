@@ -51,9 +51,9 @@ public class AntlrSymbolizerTests {
 		TextDocument document = new TextDocument("", LanguageId.TXT, 0, input);
 
 		DefaultAntlrParseService<Object> antlrParseService = new DefaultAntlrParseService<>();
-		Test2AntlrParseResultFunction antlrParseResultSupplier = new Test2AntlrParseResultFunction();
+		Test2AntlrParseResultFunction antlrParseResultFunction = new Test2AntlrParseResultFunction();
 
-		Test2AntlrSymbolizer symbolizer = new Test2AntlrSymbolizer(antlrParseService, antlrParseResultSupplier);
+		Test2AntlrSymbolizer symbolizer = new Test2AntlrSymbolizer(antlrParseService, antlrParseResultFunction);
 		Flux<DocumentSymbol> symbolizes = symbolizer.symbolize(document);
 		List<DocumentSymbol> items = symbolizes.toStream().collect(Collectors.toList());
 		List<String> names = items.stream().map(item -> item.getName()).collect(Collectors.toList());
