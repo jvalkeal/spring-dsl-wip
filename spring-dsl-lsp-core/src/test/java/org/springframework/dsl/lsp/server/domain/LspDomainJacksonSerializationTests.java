@@ -48,6 +48,7 @@ import org.springframework.dsl.domain.MessageActionItem;
 import org.springframework.dsl.domain.MessageParams;
 import org.springframework.dsl.domain.MessageType;
 import org.springframework.dsl.domain.PublishDiagnosticsParams;
+import org.springframework.dsl.domain.Range;
 import org.springframework.dsl.domain.Registration;
 import org.springframework.dsl.domain.RegistrationParams;
 import org.springframework.dsl.domain.ServerCapabilities;
@@ -769,6 +770,31 @@ public class LspDomainJacksonSerializationTests {
 		expect = loadResourceAsString("Hover2.json");
 		to = mapper.readValue(expect, Hover.class);
 		assertObjects(from, to);
+
+		from = Hover.hover()
+				.contents()
+					.kind(MarkupKind.plaintext)
+					.value("value")
+					.and()
+				.range()
+					.start()
+						.line(1)
+						.character(1)
+						.and()
+					.end()
+						.line(2)
+						.character(2)
+						.and()
+					.and()
+				.build();
+		to = Hover.hover()
+				.contents()
+					.kind(MarkupKind.plaintext)
+					.value("value")
+					.and()
+				.range(Range.from(1, 1, 2, 2))
+				.build();
+		assertObjects(from, to);
 	}
 
 	@Test
@@ -939,6 +965,34 @@ public class LspDomainJacksonSerializationTests {
 
 		String expect = loadResourceAsString("DocumentSymbol1.json");
 		to = mapper.readValue(expect, DocumentSymbol.class);
+		assertObjects(from, to);
+	}
+
+
+	@Test
+	public void testRange() throws Exception {
+		Range from = new Range();
+		String json = mapper.writeValueAsString(from);
+		Range to = mapper.readValue(json, Range.class);
+		assertObjects(from, to);
+
+		from = Range.range()
+				.start()
+					.line(1)
+					.character(1)
+					.and()
+				.end()
+					.line(2)
+					.character(2)
+					.and()
+				.build();
+
+		json = mapper.writeValueAsString(from);
+		to = mapper.readValue(json, Range.class);
+		assertObjects(from, to);
+
+		String expect = loadResourceAsString("Range1.json");
+		to = mapper.readValue(expect, Range.class);
 		assertObjects(from, to);
 	}
 

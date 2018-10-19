@@ -115,6 +115,14 @@ public class Hover {
 		 * @return the builder for chaining
 		 */
 		RangeBuilder<HoverBuilder<P>> range();
+
+		/**
+		 * Sets a range for a {@code range}. Will take presence of range set from
+		 * via @{@link #range()}.
+		 *
+		 * @return the builder for chaining
+		 */
+		HoverBuilder<P> range(Range range);
 	}
 
 	/**
@@ -133,7 +141,8 @@ public class Hover {
 	private static class InternalHoverBuilder<P> extends AbstractDomainBuilder<Hover, P> implements HoverBuilder<P> {
 
 		MarkupContentBuilder<HoverBuilder<P>> markupContent;
-		RangeBuilder<HoverBuilder<P>> range;
+		RangeBuilder<HoverBuilder<P>> rangeBuilder;
+		Range range;
 
 		InternalHoverBuilder(P parent) {
 			super(parent);
@@ -141,8 +150,14 @@ public class Hover {
 
 		@Override
 		public RangeBuilder<HoverBuilder<P>> range() {
-			this.range = Range.range(this);
-			return range;
+			this.rangeBuilder = Range.range(this);
+			return rangeBuilder;
+		}
+
+		@Override
+		public HoverBuilder<P> range(Range range) {
+			this.range = range;
+			return this;
 		}
 
 		@Override
@@ -158,7 +173,9 @@ public class Hover {
 				hover.setContents(markupContent.build());
 			}
 			if (range != null) {
-				hover.setRange(range.build());
+				hover.setRange(range);
+			} else if (rangeBuilder != null) {
+				hover.setRange(rangeBuilder.build());
 			}
 			return hover;
 		}
