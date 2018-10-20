@@ -57,6 +57,11 @@ public class ServerCapabilitiesJsonDeserializer extends JsonDeserializer<ServerC
 			object.setHoverProvider(hoverProviderNode.asBoolean());
 		}
 
+		JsonNode renameProviderNode = node.get("renameProvider");
+		if (renameProviderNode != null && renameProviderNode.isBoolean()) {
+			object.setRenameProvider(renameProviderNode.asBoolean());
+		}
+
 		JsonNode documentSymbolProviderNode = node.get("documentSymbolProvider");
 		if (documentSymbolProviderNode != null && documentSymbolProviderNode.isBoolean()) {
 			object.setDocumentSymbolProvider(documentSymbolProviderNode.asBoolean());

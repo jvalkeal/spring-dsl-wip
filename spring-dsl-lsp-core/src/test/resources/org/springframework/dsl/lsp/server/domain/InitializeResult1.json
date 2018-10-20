@@ -12,6 +12,7 @@
         "a",
         "b"
       ]
-    }
+    },
+    "renameProvider": true
   }
 }

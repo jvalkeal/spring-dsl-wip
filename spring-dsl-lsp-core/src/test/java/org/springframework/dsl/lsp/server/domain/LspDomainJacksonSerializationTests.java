@@ -168,6 +168,7 @@ public class LspDomainJacksonSerializationTests {
 					.resolveProvider(true)
 					.triggerCharacters(Arrays.asList("a", "b"))
 					.and()
+				.renameProvider(true)
 				.build();
 		expect = loadResourceAsString("ServerCapabilities2.json");
 		to = mapper.readValue(expect, ServerCapabilities.class);
@@ -189,6 +190,7 @@ public class LspDomainJacksonSerializationTests {
 						.willSaveWaitUntil(true)
 						.and()
 					.hoverProvider(true)
+					.renameProvider(true)
 					.completionProvider()
 						.resolveProvider(true)
 						.triggerCharacters(Arrays.asList("a", "b"))

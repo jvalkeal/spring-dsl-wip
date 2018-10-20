@@ -46,6 +46,10 @@ public class ServerCapabilitiesJsonSerializer extends JsonSerializer<ServerCapab
 			gen.writeBooleanField("hoverProvider", value.getHoverProvider());
 		}
 
+		if (value.getRenameProvider() != null) {
+			gen.writeBooleanField("renameProvider", value.getRenameProvider());
+		}
+
 		if (value.getDocumentSymbolProvider() != null) {
 			gen.writeBooleanField("documentSymbolProvider", value.getDocumentSymbolProvider());
 		}

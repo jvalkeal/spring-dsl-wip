@@ -37,6 +37,7 @@ public class ServerCapabilities {
 	private TextDocumentSyncOptions textDocumentSyncOptions;
 	private TextDocumentSyncKind textDocumentSyncKind;
 	private Boolean hoverProvider;
+	private Boolean renameProvider;
 	private CompletionOptions completionProvider;
 	private Boolean documentSymbolProvider;
 
@@ -91,6 +92,14 @@ public class ServerCapabilities {
 		this.completionProvider = completionProvider;
 	}
 
+	public Boolean getRenameProvider() {
+		return renameProvider;
+	}
+
+	public void setRenameProvider(Boolean renameProvider) {
+		this.renameProvider = renameProvider;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -98,6 +107,7 @@ public class ServerCapabilities {
 		result = prime * result + ((completionProvider == null) ? 0 : completionProvider.hashCode());
 		result = prime * result + ((documentSymbolProvider == null) ? 0 : documentSymbolProvider.hashCode());
 		result = prime * result + ((hoverProvider == null) ? 0 : hoverProvider.hashCode());
+		result = prime * result + ((renameProvider == null) ? 0 : renameProvider.hashCode());
 		result = prime * result + ((textDocumentSyncKind == null) ? 0 : textDocumentSyncKind.hashCode());
 		result = prime * result + ((textDocumentSyncOptions == null) ? 0 : textDocumentSyncOptions.hashCode());
 		return result;
@@ -134,6 +144,13 @@ public class ServerCapabilities {
 				return false;
 			}
 		} else if (!hoverProvider.equals(other.hoverProvider)) {
+			return false;
+		}
+		if (renameProvider == null) {
+			if (other.renameProvider != null) {
+				return false;
+			}
+		} else if (!renameProvider.equals(other.renameProvider)) {
 			return false;
 		}
 		if (textDocumentSyncKind != other.textDocumentSyncKind) {
@@ -188,6 +205,14 @@ public class ServerCapabilities {
 		ServerCapabilitiesBuilder<P> hoverProvider(Boolean hoverProvider);
 
 		/**
+		 * Sets if {@code renameProvider} is enabled.
+		 *
+		 * @param renameProvider the provider enabled flag
+		 * @return the builder for chaining
+		 */
+		ServerCapabilitiesBuilder<P> renameProvider(Boolean renameProvider);
+
+		/**
 		 * Sets if {@code documentSymbolProvider} is enabled.
 		 *
 		 * @param documentSymbolProvider the provider enabler flag
@@ -233,6 +258,7 @@ public class ServerCapabilities {
 		private TextDocumentSyncOptionsBuilder<ServerCapabilitiesBuilder<P>> textDocumentSyncOptions;
 		private TextDocumentSyncKind textDocumentSyncKind;
 		private Boolean hoverProvider;
+		private Boolean renameProvider;
 		private Boolean documentSymbolProvider;
 		private CompletionOptionsBuilder<ServerCapabilitiesBuilder<P>> completionProvider;
 
@@ -268,6 +294,12 @@ public class ServerCapabilities {
 		}
 
 		@Override
+		public ServerCapabilitiesBuilder<P> renameProvider(Boolean renameProvider) {
+			this.renameProvider = renameProvider;
+			return this;
+		}
+
+		@Override
 		public ServerCapabilitiesBuilder<P> documentSymbolProvider(Boolean documentSymbolProvider) {
 			this.documentSymbolProvider = documentSymbolProvider;
 			return this;
@@ -297,6 +329,7 @@ public class ServerCapabilities {
 				serverCapabilities.setTextDocumentSyncKind(textDocumentSyncKind);
 			}
 			serverCapabilities.setHoverProvider(hoverProvider);
+			serverCapabilities.setRenameProvider(renameProvider);
 			serverCapabilities.setDocumentSymbolProvider(documentSymbolProvider);
 			if (completionProvider != null) {
 				serverCapabilities.setCompletionProvider(completionProvider.build());
