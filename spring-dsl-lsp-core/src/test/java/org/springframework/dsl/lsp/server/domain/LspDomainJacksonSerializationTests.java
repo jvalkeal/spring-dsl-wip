@@ -51,6 +51,7 @@ import org.springframework.dsl.domain.PublishDiagnosticsParams;
 import org.springframework.dsl.domain.Range;
 import org.springframework.dsl.domain.Registration;
 import org.springframework.dsl.domain.RegistrationParams;
+import org.springframework.dsl.domain.RenameParams;
 import org.springframework.dsl.domain.ServerCapabilities;
 import org.springframework.dsl.domain.ShowMessageRequestParams;
 import org.springframework.dsl.domain.SymbolKind;
@@ -968,7 +969,6 @@ public class LspDomainJacksonSerializationTests {
 		assertObjects(from, to);
 	}
 
-
 	@Test
 	public void testRange() throws Exception {
 		Range from = new Range();
@@ -993,6 +993,33 @@ public class LspDomainJacksonSerializationTests {
 
 		String expect = loadResourceAsString("Range1.json");
 		to = mapper.readValue(expect, Range.class);
+		assertObjects(from, to);
+	}
+
+	@Test
+	public void testRenameParams() throws Exception {
+		RenameParams from = new RenameParams();
+		String json = mapper.writeValueAsString(from);
+		RenameParams to = mapper.readValue(json, RenameParams.class);
+		assertObjects(from, to);
+
+		from = RenameParams.renameParams()
+				.textDocument()
+					.uri("uri")
+					.and()
+				.position()
+					.line(1)
+					.character(1)
+					.and()
+				.newName("newName")
+				.build();
+
+		json = mapper.writeValueAsString(from);
+		to = mapper.readValue(json, RenameParams.class);
+		assertObjects(from, to);
+
+		String expect = loadResourceAsString("RenameParams1.json");
+		to = mapper.readValue(expect, RenameParams.class);
 		assertObjects(from, to);
 	}
 
