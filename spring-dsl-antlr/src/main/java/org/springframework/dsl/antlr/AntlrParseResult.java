@@ -100,7 +100,7 @@ public interface AntlrParseResult<T> {
 	 * For convenience just return and implement
 	 * {@link AntlrParseResult#getResult()} from a list of problems.
 	 *
-	 * @param problems the problems
+	 * @param result the result
 	 * @return the antlr parse result
 	 *
 	 * @param <T> the type of a AntlrParseResult

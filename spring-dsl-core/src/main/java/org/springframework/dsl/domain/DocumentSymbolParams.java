@@ -90,7 +90,7 @@ public class DocumentSymbolParams {
 	public interface DocumentSymbolParamsBuilder<P> extends DomainBuilder<DocumentSymbolParams, P> {
 
 		/**
-		 * Gets a builder for start {@link textDocument}.
+		 * Gets a builder for start {@code textDocument}.
 		 *
 		 * @return the text document identifier builder
 		 */
