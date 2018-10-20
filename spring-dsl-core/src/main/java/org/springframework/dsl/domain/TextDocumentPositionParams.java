@@ -15,17 +15,26 @@
  */
 package org.springframework.dsl.domain;
 
+import org.springframework.dsl.domain.Position.PositionBuilder;
+import org.springframework.dsl.domain.TextDocumentIdentifier.TextDocumentIdentifierBuilder;
+import org.springframework.dsl.support.AbstractDomainBuilder;
+import org.springframework.dsl.support.DomainBuilder;
+
+/**
+ * {@code LSP} domain object for a specification {@code TextDocumentPositionParams}.
+ *
+ * @author Janne Valkealahti
+ *
+ */
 public class TextDocumentPositionParams {
 
 	private TextDocumentIdentifier textDocument;
 	private Position position;
 
+	/**
+	 * Instantiates a new TextDocumentPositionParams params.
+	 */
 	public TextDocumentPositionParams() {
-	}
-
-	public TextDocumentPositionParams(TextDocumentIdentifier textDocument, Position position) {
-		this.textDocument = textDocument;
-		this.position = position;
 	}
 
 	public TextDocumentIdentifier getTextDocument() {
@@ -55,23 +64,100 @@ public class TextDocumentPositionParams {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		TextDocumentPositionParams other = (TextDocumentPositionParams) obj;
 		if (position == null) {
-			if (other.position != null)
+			if (other.position != null) {
 				return false;
-		} else if (!position.equals(other.position))
+			}
+		} else if (!position.equals(other.position)) {
 			return false;
+		}
 		if (textDocument == null) {
-			if (other.textDocument != null)
+			if (other.textDocument != null) {
 				return false;
-		} else if (!textDocument.equals(other.textDocument))
+			}
+		} else if (!textDocument.equals(other.textDocument)) {
 			return false;
+		}
 		return true;
+	}
+
+	/**
+	 * Builder interface for {@link TextDocumentPositionParams}.
+	 *
+	 * @param <P> the parent builder type
+	 */
+	public interface TextDocumentPositionParamsParamsBuilder<P> extends DomainBuilder<TextDocumentPositionParams, P> {
+
+		/**
+		 * Gets a text document identifier builder.
+		 *
+		 * @return the builder for chaining
+		 */
+		TextDocumentIdentifierBuilder<TextDocumentPositionParamsParamsBuilder<P>> textDocument();
+
+		/**
+		 * Gets a position builder.
+		 *
+		 * @return the builder for chaining
+		 */
+		PositionBuilder<TextDocumentPositionParamsParamsBuilder<P>> position();
+	}
+
+	/**
+	 * Gets a builder for {@link TextDocumentPositionParams}
+	 *
+	 * @return the TextDocumentPositionParams params builder
+	 */
+	public static <P> TextDocumentPositionParamsParamsBuilder<P> textDocumentPositionParams() {
+		return new InternalTextDocumentPositionParamsParamsBuilder<>(null);
+	}
+
+	protected static <P> TextDocumentPositionParamsParamsBuilder<P> textDocumentPositionParams(P parent) {
+		return new InternalTextDocumentPositionParamsParamsBuilder<>(parent);
+	}
+
+	private static class InternalTextDocumentPositionParamsParamsBuilder<P> extends AbstractDomainBuilder<TextDocumentPositionParams, P>
+			implements TextDocumentPositionParamsParamsBuilder<P> {
+
+		private TextDocumentIdentifierBuilder<TextDocumentPositionParamsParamsBuilder<P>> textDocument;
+		private PositionBuilder<TextDocumentPositionParamsParamsBuilder<P>> position;
+
+		InternalTextDocumentPositionParamsParamsBuilder(P parent) {
+			super(parent);
+		}
+
+		@Override
+		public TextDocumentIdentifierBuilder<TextDocumentPositionParamsParamsBuilder<P>> textDocument() {
+			this.textDocument = TextDocumentIdentifier.textDocumentIdentifier(this);
+			return textDocument;
+		}
+
+		@Override
+		public PositionBuilder<TextDocumentPositionParamsParamsBuilder<P>> position() {
+			this.position = Position.position(this);
+			return position;
+		}
+
+		@Override
+		public TextDocumentPositionParams build() {
+			TextDocumentPositionParams textDocumentPositionParamsParams = new TextDocumentPositionParams();
+			if (textDocument != null) {
+				textDocumentPositionParamsParams.setTextDocument(textDocument.build());
+			}
+			if (position != null) {
+				textDocumentPositionParamsParams.setPosition(position.build());
+			}
+			return textDocumentPositionParamsParams;
+		}
 	}
 }

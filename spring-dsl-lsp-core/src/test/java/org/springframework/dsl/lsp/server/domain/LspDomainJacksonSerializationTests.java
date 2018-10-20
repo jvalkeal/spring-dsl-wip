@@ -57,6 +57,7 @@ import org.springframework.dsl.domain.ShowMessageRequestParams;
 import org.springframework.dsl.domain.SymbolKind;
 import org.springframework.dsl.domain.Synchronization;
 import org.springframework.dsl.domain.TextDocumentClientCapabilities;
+import org.springframework.dsl.domain.TextDocumentPositionParams;
 import org.springframework.dsl.domain.TextDocumentSyncKind;
 import org.springframework.dsl.domain.TextDocumentSyncOptions;
 import org.springframework.dsl.domain.TextEdit;
@@ -1020,6 +1021,32 @@ public class LspDomainJacksonSerializationTests {
 
 		String expect = loadResourceAsString("RenameParams1.json");
 		to = mapper.readValue(expect, RenameParams.class);
+		assertObjects(from, to);
+	}
+
+	@Test
+	public void testTextDocumentPositionParams() throws Exception {
+		TextDocumentPositionParams from = new TextDocumentPositionParams();
+		String json = mapper.writeValueAsString(from);
+		TextDocumentPositionParams to = mapper.readValue(json, TextDocumentPositionParams.class);
+		assertObjects(from, to);
+
+		from = TextDocumentPositionParams.textDocumentPositionParams()
+				.textDocument()
+					.uri("uri")
+					.and()
+				.position()
+					.line(1)
+					.character(1)
+					.and()
+				.build();
+
+		json = mapper.writeValueAsString(from);
+		to = mapper.readValue(json, TextDocumentPositionParams.class);
+		assertObjects(from, to);
+
+		String expect = loadResourceAsString("TextDocumentPositionParams1.json");
+		to = mapper.readValue(expect, TextDocumentPositionParams.class);
 		assertObjects(from, to);
 	}
 
