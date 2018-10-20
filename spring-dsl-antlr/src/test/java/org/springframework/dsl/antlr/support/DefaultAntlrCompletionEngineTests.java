@@ -148,6 +148,26 @@ public class DefaultAntlrCompletionEngineTests {
 	}
 
 	@Test
+	public void test41() {
+		String input = "statemachine M1 { state S1 {\n}";
+
+		Test2Lexer lexer = test2AntlrFactory.createLexer(CharStreams.fromString(input));
+		Test2Grammar parser = test2AntlrFactory.createParser(new CommonTokenStream(lexer));
+
+		parser.definitions();
+
+		DefaultAntlrCompletionEngine core = new DefaultAntlrCompletionEngine(parser);
+		AntlrCompletionResult candidates = core.collectResults(new Position(0, 28), null);
+
+		assertThat(candidates).isNotNull();
+		assertThat(candidates.getTokens()).isNotNull();
+		assertThat(candidates.getTokens().size()).isEqualTo(3);
+
+		assertThat(candidates.getTokens().containsKey(Test2Lexer.INITIAL)).isTrue();
+		assertThat(candidates.getTokens().containsKey(Test2Lexer.END)).isTrue();
+	}
+
+	@Test
 	public void test5() {
 		String input = "statemachine M1 { state S1 {} }";
 

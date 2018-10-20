@@ -109,13 +109,29 @@ public class DefaultAntlrCompletionEngine implements AntlrCompletionEngine {
 		tokenStream.seek(this.tokenStartIndex);
 		this.tokens = new LinkedList<>();
 		int offset = 1;
+		boolean lineMatch = false;
 		while (true) {
 			Token token = tokenStream.LT(offset++);
 			this.tokens.add(token);
-			log.debug("TOKEN " + token.getText());
-			if ((token.getLine() == line && token.getCharPositionInLine() >= charPositionInLine)
-					|| token.getType() == Token.EOF) {
+			log.debug("TOKEN {} l {} p {} tl {} tp {}", token.getText(), line, charPositionInLine, token.getLine(),
+					token.getCharPositionInLine());
+			// TODO: polish or rewrite below if/else mess
+			if (token.getType() == Token.EOF) {
 				break;
+			}
+			if (token.getLine() >= line) {
+				lineMatch = true;
+			}
+			if (!lineMatch) {
+				if ((token.getLine() >= line && token.getCharPositionInLine() >= charPositionInLine)) {
+					break;
+				}
+			} else {
+				if (token.getLine() > line ) {
+					break;
+				} else if (token.getCharPositionInLine() >= charPositionInLine) {
+					break;
+				}
 			}
 		}
 		tokenStream.seek(currentIndex);
