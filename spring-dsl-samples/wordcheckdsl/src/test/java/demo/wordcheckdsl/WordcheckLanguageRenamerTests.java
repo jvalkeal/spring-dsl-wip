@@ -34,9 +34,11 @@ import org.springframework.dsl.model.LanguageId;
  */
 public class WordcheckLanguageRenamerTests {
 
+	private final WordcheckLanguageSymbolizer symbolizer = new WordcheckLanguageSymbolizer();
+
 	@Test
 	public void test1() {
-		WordcheckLanguageRenamer renamer = new WordcheckLanguageRenamer();
+		WordcheckLanguageRenamer renamer = new WordcheckLanguageRenamer(symbolizer);
 		renamer.getProperties().setWords(Arrays.asList("jack", "is", "a", "dull", "boy"));
 		Document document = new TextDocument("fakeuri", LanguageId.TXT, 0, "jack is a dull boy");
 		WorkspaceEdit workspaceEdit = renamer.rename(document, Position.from(0, 0), "xxx").block();
@@ -60,7 +62,7 @@ public class WordcheckLanguageRenamerTests {
 
 	@Test
 	public void test2() {
-		WordcheckLanguageRenamer renamer = new WordcheckLanguageRenamer();
+		WordcheckLanguageRenamer renamer = new WordcheckLanguageRenamer(symbolizer);
 		renamer.getProperties().setWords(Arrays.asList("jack", "is", "a", "dull", "boy"));
 		Document document = new TextDocument("fakeuri", LanguageId.TXT, 0, "jack is a dull boy");
 		WorkspaceEdit workspaceEdit = renamer.rename(document, Position.from(0, 6), "xxx").block();

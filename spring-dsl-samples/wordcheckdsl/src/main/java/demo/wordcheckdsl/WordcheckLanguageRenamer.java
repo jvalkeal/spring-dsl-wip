@@ -41,7 +41,11 @@ import reactor.core.publisher.Mono;
 //tag::snippet1[]
 public class WordcheckLanguageRenamer extends WordcheckLanguageSupport implements Renamer {
 
-	private Symbolizer symbolizer = new WordcheckLanguageSymbolizer();
+	private final Symbolizer symbolizer;
+
+	public WordcheckLanguageRenamer(Symbolizer symbolizer) {
+		this.symbolizer = symbolizer;
+	}
 
 	@Override
 	public Mono<WorkspaceEdit> rename(Document document, Position position, String newName) {

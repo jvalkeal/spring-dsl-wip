@@ -35,6 +35,16 @@ code completion, see <<dsl-core-codecompletion>>.
 include::samples/demo/wordcheckdsl/WordcheckLanguageCompletioner.java[tags=snippet1]
 ----
 
+As renaming symbols in highly related to resolving actual symbols, `WordcheckLanguageRenamer`
+is using dependency to `WordcheckLanguageSymbolizer` order to know about
+existing _symbols_ and then decide which which matching symbols should be
+renamed per given `Position`.
+
+[source,java,indent=0]
+----
+include::samples/demo/wordcheckdsl/WordcheckLanguageRenamer.java[tags=snippet1]
+----
+
 You could always component scan your language service beans, but as in this sample
 we define all _wordcheck_ services in a different module we simply create a
 needed beans manually in a `@Configuration` class.

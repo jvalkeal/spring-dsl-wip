@@ -52,7 +52,7 @@ public class WordcheckLanguageConfiguration {
 
 	@Bean
 	public Renamer wordcheckLanguageRenamer() {
-		return new WordcheckLanguageRenamer();
+		return new WordcheckLanguageRenamer(wordcheckLanguageSymbolizer());
 	}
 }
 //end::snippet1[]
