@@ -19,4 +19,5 @@ include::dsl-core-reconcile.adoc[]
 include::dsl-core-codecompletion.adoc[]
 include::dsl-core-hover.adoc[]
 include::dsl-core-symbol.adoc[]
+include::dsl-core-rename.adoc[]
 
