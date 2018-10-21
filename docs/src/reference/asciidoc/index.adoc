@@ -19,6 +19,6 @@ include::introduction.adoc[]
 include::getting-started.adoc[]
 include::dsl.adoc[]
 include::dsl-examples.adoc[]
-include::faq.adoc[]
+//include::faq.adoc[]
 include::appendix.adoc[]
 

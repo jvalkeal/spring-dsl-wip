@@ -12,5 +12,5 @@ user friendly way to implement language services.
 include::dsl-lsp-server.adoc[]
 include::dsl-lsp-client.adoc[]
 include::dsl-lsp-extension.adoc[]
-include::dsl-lsp-controller.adoc[]
+//include::dsl-lsp-controller.adoc[]
 

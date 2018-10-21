@@ -10,10 +10,9 @@ This appendix provides generic information about Dsl.
 include::appendix-concepts-glossary.adoc[]
 include::appendix-concepts-crashcourse.adoc[]
 
-[appendix]
-== IDE Integrations
-This appendix provides generic information about integration into IDE's.
+//[appendix]
+//== IDE Integrations
+//This appendix provides generic information about integration into IDE's.
 
-include::appendix-running-ides.adoc[]
-//include::appendix-paper-ssml.adoc[]
+//include::appendix-running-ides.adoc[]
 
