@@ -41,6 +41,7 @@ public class DefaultDslServiceRegistry implements DslServiceRegistry, Applicatio
 	private List<Hoverer> hoverers;
 	private List<Reconciler> reconcilers;
 	private List<Symbolizer> symbolizers;
+	private List<Renamer> renamers;
 
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -80,6 +81,14 @@ public class DefaultDslServiceRegistry implements DslServiceRegistry, Applicatio
 	}
 
 	@Override
+	public List<Renamer> getRenamers(LanguageId languageId) {
+		return renamers
+				.stream()
+				.filter(renamer -> renamer.getSupportedLanguageIds().contains(languageId))
+				.collect(Collectors.toList());
+	}
+
+	@Override
 	public List<Completioner> getCompletioners() {
 		return completioners;
 	}
@@ -99,6 +108,11 @@ public class DefaultDslServiceRegistry implements DslServiceRegistry, Applicatio
 		return symbolizers;
 	}
 
+	@Override
+	public List<Renamer> getRenamers() {
+		return renamers;
+	}
+
 	protected void initServices(ApplicationContext applicationContext) {
 		Map<String, Completioner> completionerBeans = BeanFactoryUtils.beansOfTypeIncludingAncestors(applicationContext,
 				Completioner.class, true, false);
@@ -108,9 +122,12 @@ public class DefaultDslServiceRegistry implements DslServiceRegistry, Applicatio
 				Reconciler.class, true, false);
 		Map<String, Symbolizer> symbolizerBeans = BeanFactoryUtils.beansOfTypeIncludingAncestors(applicationContext,
 				Symbolizer.class, true, false);
+		Map<String, Renamer> renamerBeans = BeanFactoryUtils.beansOfTypeIncludingAncestors(applicationContext,
+				Renamer.class, true, false);
 		this.completioners = new ArrayList<>(completionerBeans.values());
 		this.hoverers = new ArrayList<>(hovererBeans.values());
 		this.reconcilers = new ArrayList<>(reconcilerBeans.values());
 		this.symbolizers = new ArrayList<>(symbolizerBeans.values());
+		this.renamers = new ArrayList<>(renamerBeans.values());
 	}
 }

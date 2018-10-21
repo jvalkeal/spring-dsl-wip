@@ -19,7 +19,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
@@ -57,11 +59,13 @@ import org.springframework.dsl.domain.ShowMessageRequestParams;
 import org.springframework.dsl.domain.SymbolKind;
 import org.springframework.dsl.domain.Synchronization;
 import org.springframework.dsl.domain.TextDocumentClientCapabilities;
+import org.springframework.dsl.domain.TextDocumentEdit;
 import org.springframework.dsl.domain.TextDocumentPositionParams;
 import org.springframework.dsl.domain.TextDocumentSyncKind;
 import org.springframework.dsl.domain.TextDocumentSyncOptions;
 import org.springframework.dsl.domain.TextEdit;
 import org.springframework.dsl.domain.Unregistration;
+import org.springframework.dsl.domain.WorkspaceEdit;
 import org.springframework.dsl.jsonrpc.jackson.JsonRpcJackson2ObjectMapperBuilder;
 import org.springframework.dsl.lsp.server.config.LspDomainJacksonConfiguration;
 import org.springframework.util.StreamUtils;
@@ -1049,6 +1053,111 @@ public class LspDomainJacksonSerializationTests {
 
 		String expect = loadResourceAsString("TextDocumentPositionParams1.json");
 		to = mapper.readValue(expect, TextDocumentPositionParams.class);
+		assertObjects(from, to);
+	}
+
+	@Test
+	public void testTextDocumentEdit() throws Exception {
+		TextDocumentEdit from = new TextDocumentEdit();
+		String json = mapper.writeValueAsString(from);
+		TextDocumentEdit to = mapper.readValue(json, TextDocumentEdit.class);
+		assertObjects(from, to);
+
+		from = TextDocumentEdit.textDocumentEdit()
+				.textDocument()
+					.uri("uri")
+					.version(1)
+					.and()
+				.edits()
+					.range()
+						.start()
+							.line(0)
+							.character(0)
+							.and()
+						.end()
+							.line(1)
+							.character(1)
+							.and()
+						.and()
+					.newText("newText")
+					.and()
+				.build();
+
+		json = mapper.writeValueAsString(from);
+		to = mapper.readValue(json, TextDocumentEdit.class);
+		assertObjects(from, to);
+
+		String expect = loadResourceAsString("TextDocumentEdit1.json");
+		to = mapper.readValue(expect, TextDocumentEdit.class);
+		assertObjects(from, to);
+	}
+
+	@Test
+	public void testWorkspaceEdit() throws Exception {
+		WorkspaceEdit from = new WorkspaceEdit();
+		String json = mapper.writeValueAsString(from);
+		WorkspaceEdit to = mapper.readValue(json, WorkspaceEdit.class);
+		assertObjects(from, to);
+
+		from = WorkspaceEdit.workspaceEdit()
+				.changes("uri1")
+					.range()
+						.start()
+							.line(0)
+							.character(0)
+							.and()
+						.end()
+							.line(1)
+							.character(1)
+							.and()
+						.and()
+					.newText("newText")
+					.and()
+				.build();
+
+		json = mapper.writeValueAsString(from);
+		to = mapper.readValue(json, WorkspaceEdit.class);
+		assertObjects(from, to);
+
+		from = WorkspaceEdit.workspaceEdit()
+				.changes("uri1")
+					.range(Range.from(0, 0, 1, 1))
+					.newText("newText")
+					.and()
+				.build();
+
+		json = mapper.writeValueAsString(from);
+		to = mapper.readValue(json, WorkspaceEdit.class);
+		assertObjects(from, to);
+
+		String expect = loadResourceAsString("WorkspaceEdit1.json");
+		to = mapper.readValue(expect, WorkspaceEdit.class);
+		assertObjects(from, to);
+
+		from = WorkspaceEdit.workspaceEdit()
+				.build();
+
+		expect = loadResourceAsString("WorkspaceEdit2.json");
+		to = mapper.readValue(expect, WorkspaceEdit.class);
+		assertObjects(from, to);
+
+		List<TextEdit> edits = new ArrayList<>();
+		from = WorkspaceEdit.workspaceEdit()
+				.changes("uri1", edits)
+				.build();
+
+		json = mapper.writeValueAsString(from);
+		to = mapper.readValue(json, WorkspaceEdit.class);
+		assertObjects(from, to);
+
+		edits = new ArrayList<>();
+		edits.add(TextEdit.textEdit().newText("xxx").range(Range.from(1, 1, 1, 1)).build());
+		from = WorkspaceEdit.workspaceEdit()
+				.changes("uri1", edits)
+				.build();
+
+		json = mapper.writeValueAsString(from);
+		to = mapper.readValue(json, WorkspaceEdit.class);
 		assertObjects(from, to);
 	}
 

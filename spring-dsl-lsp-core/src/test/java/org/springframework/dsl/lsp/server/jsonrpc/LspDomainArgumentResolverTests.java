@@ -30,6 +30,7 @@ import org.springframework.dsl.domain.DidSaveTextDocumentParams;
 import org.springframework.dsl.domain.DocumentSymbolParams;
 import org.springframework.dsl.domain.InitializeParams;
 import org.springframework.dsl.domain.InitializedParams;
+import org.springframework.dsl.domain.RenameParams;
 import org.springframework.dsl.domain.TextDocumentPositionParams;
 import org.springframework.dsl.jsonrpc.ResolvableMethod;
 import org.springframework.dsl.jsonrpc.ServerJsonRpcExchange;
@@ -73,6 +74,8 @@ public class LspDomainArgumentResolverTests {
 		param = this.testMethod.arg(TextDocumentPositionParams.class);
 		assertThat(this.resolver.supportsParameter(param)).isTrue();
 		param = this.testMethod.arg(DocumentSymbolParams.class);
+		assertThat(this.resolver.supportsParameter(param)).isTrue();
+		param = this.testMethod.arg(RenameParams.class);
 		assertThat(this.resolver.supportsParameter(param)).isTrue();
 	}
 
@@ -118,6 +121,7 @@ public class LspDomainArgumentResolverTests {
 			DidSaveTextDocumentParams didSaveTextDocumentParams,
 			CompletionParams completionParams,
 			TextDocumentPositionParams textDocumentPositionParams,
-			DocumentSymbolParams documentSymbolParams
+			DocumentSymbolParams documentSymbolParams,
+			RenameParams renameParams
 			) {}
 }

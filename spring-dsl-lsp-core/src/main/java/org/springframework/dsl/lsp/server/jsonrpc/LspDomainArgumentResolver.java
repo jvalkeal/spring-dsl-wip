@@ -35,6 +35,7 @@ import org.springframework.dsl.domain.DidSaveTextDocumentParams;
 import org.springframework.dsl.domain.DocumentSymbolParams;
 import org.springframework.dsl.domain.InitializeParams;
 import org.springframework.dsl.domain.InitializedParams;
+import org.springframework.dsl.domain.RenameParams;
 import org.springframework.dsl.domain.TextDocumentPositionParams;
 import org.springframework.dsl.jsonrpc.ServerJsonRpcExchange;
 import org.springframework.dsl.jsonrpc.result.method.JsonRpcHandlerMethodArgumentResolver;
@@ -70,7 +71,8 @@ public class LspDomainArgumentResolver implements JsonRpcHandlerMethodArgumentRe
 			DidSaveTextDocumentParams.class,
 			CompletionParams.class,
 			DocumentSymbolParams.class,
-			TextDocumentPositionParams.class
+			TextDocumentPositionParams.class,
+			RenameParams.class
 			).stream().collect(Collectors.toSet());
 
 	/**

@@ -19,14 +19,29 @@ import org.springframework.dsl.domain.Range.RangeBuilder;
 import org.springframework.dsl.support.AbstractDomainBuilder;
 import org.springframework.dsl.support.DomainBuilder;
 
+/**
+ * {@code LSP} domain object for a specification {@code TextEdit}.
+ *
+ * @author Janne Valkealahti
+ *
+ */
 public class TextEdit {
 
 	private Range range;
 	private String newText;
 
+	/**
+	 * Instantiates a new text edit.
+	 */
 	public TextEdit() {
 	}
 
+	/**
+	 * Instantiates a new text edit.
+	 *
+	 * @param range the range
+	 * @param newText the new text
+	 */
 	public TextEdit(Range range, String newText) {
 		this.range = range;
 		this.newText = newText;
@@ -79,12 +94,42 @@ public class TextEdit {
 		return true;
 	}
 
+	/**
+	 * Builder interface for {@link TextEdit}.
+	 *
+	 * @param <P> the parent builder type
+	 */
 	public interface TextEditBuilder<P> extends DomainBuilder<TextEdit, P> {
 
+		/**
+		 * Gets a builder for {@link Range}.
+		 *
+		 * @return the range builder
+		 */
 		RangeBuilder<TextEditBuilder<P>> range();
+
+		/**
+		 * Sets a range for a {@code range}. Will take presence of range set from
+		 * via @{@link #range()}.
+		 *
+		 * @return the builder for chaining
+		 */
+		TextEditBuilder<P> range(Range range);
+
+		/**
+		 * Sets a new text.
+		 *
+		 * @param newText the newText
+		 * @return the builder for chaining
+		 */
 		TextEditBuilder<P> newText(String newText);
 	}
 
+	/**
+	 * Gets a builder for {@link TextEdit}.
+	 *
+	 * @return the text edit builder
+	 */
 	public static <P> TextEditBuilder<P> textEdit() {
 		return new InternalTextEditBuilder<>(null);
 	}
@@ -97,7 +142,8 @@ public class TextEdit {
 			extends AbstractDomainBuilder<TextEdit, P> implements TextEditBuilder<P> {
 
 		String newText;
-		RangeBuilder<TextEditBuilder<P>> range;
+		RangeBuilder<TextEditBuilder<P>> rangeBuilder;
+		Range range;
 
 		InternalTextEditBuilder(P parent) {
 			super(parent);
@@ -105,8 +151,14 @@ public class TextEdit {
 
 		@Override
 		public RangeBuilder<TextEditBuilder<P>> range() {
-			this.range = Range.range(this);
-			return range;
+			this.rangeBuilder = Range.range(this);
+			return rangeBuilder;
+		}
+
+		@Override
+		public TextEditBuilder<P> range(Range range) {
+			this.range = range;
+			return this;
 		}
 
 		@Override
@@ -120,7 +172,9 @@ public class TextEdit {
 			TextEdit textEdit = new TextEdit();
 			textEdit.setNewText(newText);
 			if (range != null) {
-				textEdit.setRange(range.build());
+				textEdit.setRange(range);
+			} else if (rangeBuilder != null) {
+				textEdit.setRange(rangeBuilder.build());
 			}
 			return textEdit;
 		}

@@ -88,4 +88,19 @@ public interface DslServiceRegistry {
 	 * @return the reconcilers
 	 */
 	List<Reconciler> getReconcilers(LanguageId languageId);
+
+	/**
+	 * Gets the renamers.
+	 *
+	 * @return the renamers
+	 */
+	List<Renamer> getRenamers();
+
+	/**
+	 * Gets the renamers for a language id.
+	 *
+	 * @param languageId the language id
+	 * @return the renamers
+	 */
+	List<Renamer> getRenamers(LanguageId languageId);
 }

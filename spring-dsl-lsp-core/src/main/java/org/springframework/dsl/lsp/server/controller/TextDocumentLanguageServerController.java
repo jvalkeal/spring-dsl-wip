@@ -32,9 +32,11 @@ import org.springframework.dsl.domain.DocumentSymbolParams;
 import org.springframework.dsl.domain.Hover;
 import org.springframework.dsl.domain.Position;
 import org.springframework.dsl.domain.PublishDiagnosticsParams;
+import org.springframework.dsl.domain.RenameParams;
 import org.springframework.dsl.domain.TextDocumentPositionParams;
 import org.springframework.dsl.domain.TextEdit;
 import org.springframework.dsl.domain.WillSaveTextDocumentParams;
+import org.springframework.dsl.domain.WorkspaceEdit;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcController;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcNotification;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcRequestMapping;
@@ -269,6 +271,25 @@ public class TextDocumentLanguageServerController {
 				.concatMap(symbolizer -> symbolizer.symbolize(document))
 				.collectList()
 				.map(list -> list.toArray(new DocumentSymbol[0]));
+	}
+
+	/**
+	 * Method handling {@code LSP client rename} request.
+	 *
+	 * @param params the {@link RenameParams}
+	 * @param session the {@link JsonRpcSession}
+	 * @return a mono of workspace edit
+	 */
+	@JsonRpcRequestMapping(method = "rename")
+	@JsonRpcResponseResult
+	public Mono<WorkspaceEdit> rename(RenameParams params, JsonRpcSession session) {
+		log.debug("rename {}", params);
+		DocumentStateTracker documentStateTracker = getTracker(session);
+		Document document = documentStateTracker.getDocument(params.getTextDocument().getUri());
+
+		return Flux.fromIterable(registry.getRenamers(document.languageId()))
+				.concatMap(renamer -> renamer.rename(document, params.getPosition(), params.getNewName()))
+				.next();
 	}
 
 	private static DocumentStateTracker getTracker(JsonRpcSession session) {

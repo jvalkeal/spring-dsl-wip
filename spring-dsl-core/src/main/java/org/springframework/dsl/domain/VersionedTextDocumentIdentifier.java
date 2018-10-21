@@ -19,7 +19,8 @@ import org.springframework.dsl.support.AbstractDomainBuilder;
 import org.springframework.dsl.support.DomainBuilder;
 
 /**
- *
+ * {@code LSP} domain object for a specification
+ * {@code VersionedTextDocumentIdentifier}.
  *
  * @author Janne Valkealahti
  *
