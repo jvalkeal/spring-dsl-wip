@@ -105,7 +105,7 @@ public class StdioSocketBridge {
 						.subscribe(c -> {
 							String data = c.retain().duplicate().toString(Charset.defaultCharset());
 							try {
-								log.trace("Writing to client {}", data);
+								log.debug("Writing to client {}", data);
 								writer.write(data);
 								writer.flush();
 							} catch (IOException e) {
