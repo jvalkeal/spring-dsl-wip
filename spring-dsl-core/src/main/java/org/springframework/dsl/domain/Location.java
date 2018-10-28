@@ -136,7 +136,8 @@ public class Location {
 		return new InternalLocationBuilder<>(parent);
 	}
 
-	private static class InternalLocationBuilder<P> extends AbstractDomainBuilder<Location, P> implements LocationBuilder<P> {
+	private static class InternalLocationBuilder<P>
+		extends AbstractDomainBuilder<Location, P> implements LocationBuilder<P> {
 
 		private String uri;
 		private RangeBuilder<LocationBuilder<P>> range;

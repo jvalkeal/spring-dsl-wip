@@ -56,6 +56,7 @@ import org.springframework.dsl.domain.RegistrationParams;
 import org.springframework.dsl.domain.RenameParams;
 import org.springframework.dsl.domain.ServerCapabilities;
 import org.springframework.dsl.domain.ShowMessageRequestParams;
+import org.springframework.dsl.domain.SymbolInformation;
 import org.springframework.dsl.domain.SymbolKind;
 import org.springframework.dsl.domain.Synchronization;
 import org.springframework.dsl.domain.TextDocumentClientCapabilities;
@@ -973,6 +974,42 @@ public class LspDomainJacksonSerializationTests {
 
 		String expect = loadResourceAsString("DocumentSymbol1.json");
 		to = mapper.readValue(expect, DocumentSymbol.class);
+		assertObjects(from, to);
+	}
+
+	@Test
+	public void testSymbolInformation() throws Exception {
+		SymbolInformation from = new SymbolInformation();
+		String json = mapper.writeValueAsString(from);
+		SymbolInformation to = mapper.readValue(json, SymbolInformation.class);
+		assertObjects(from, to);
+
+		from = SymbolInformation.symbolInformation()
+				.name("name")
+				.kind(SymbolKind.Array)
+				.deprecated(true)
+				.location()
+					.uri("uri")
+					.range()
+						.start()
+							.line(1)
+							.character(1)
+							.and()
+						.end()
+							.line(2)
+							.character(2)
+							.and()
+						.and()
+					.and()
+				.containerName("containerName")
+				.build();
+
+		json = mapper.writeValueAsString(from);
+		to = mapper.readValue(json, SymbolInformation.class);
+		assertObjects(from, to);
+
+		String expect = loadResourceAsString("SymbolInformation1.json");
+		to = mapper.readValue(expect, SymbolInformation.class);
 		assertObjects(from, to);
 	}
 
