@@ -57,4 +57,13 @@ public abstract class AbstractSymbolTable implements SymbolTable {
 	public void defineGlobal(Symbol symbol) {
 		globals.define(symbol);
 	}
+
+	/**
+	 * Gets the global scope.
+	 *
+	 * @return the global scope
+	 */
+	public Scope getGlobalScope() {
+		return globals;
+	}
 }

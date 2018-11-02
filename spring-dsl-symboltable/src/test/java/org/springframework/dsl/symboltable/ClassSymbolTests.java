@@ -22,7 +22,7 @@ import org.junit.Test;
 public class ClassSymbolTests {
 
 	@Test
-	public void testBasicStuff() {
+	public void testBasics() {
 		ClassSymbol sym1 = new ClassSymbol("sym1");
 		assertThat(sym1.getName()).isEqualTo("sym1");
 		assertThat(sym1.getNestedScopedSymbols()).hasSize(0);
@@ -35,10 +35,11 @@ public class ClassSymbolTests {
 	}
 
 	@Test
-	public void testResolveClassFieldClassReference() {
+	public void testClassWithClassFields() {
 		PredefinedScope scope = new PredefinedScope();
 
 		ClassSymbol classA = new ClassSymbol("classA");
+		classA.setSuperClass("classAParent");
 		scope.define(classA);
 
 		ClassSymbol classB = new ClassSymbol("classB");
@@ -48,5 +49,33 @@ public class ClassSymbolTests {
 		classB.define(field1);
 
 		assertThat(classB.resolveField("classA")).isEqualTo(classA);
+	}
+
+	@Test
+	public void testSuperClass() {
+		ClassSymbol classA = new ClassSymbol("classA");
+		classA.setSuperClass("classAParent");
+		ClassSymbol superClassScope1 = classA.getSuperClassScope();
+		assertThat(superClassScope1).isNull();
+
+		ClassSymbol classB = new ClassSymbol("classB");
+		ClassSymbol classC = new ClassSymbol("classC");
+		classB.setSuperClass("classC");
+		classB.setEnclosingScope(classC);
+		assertThat(classB.getEnclosingScope()).isSameAs(classC);
+	}
+
+	@Test
+	public void testSuperClassWithRootScope() {
+		PredefinedScope scope = new PredefinedScope();
+
+		ClassSymbol classB = new ClassSymbol("classB");
+		scope.define(classB);
+
+		ClassSymbol classA = new ClassSymbol("classA");
+		classA.setSuperClass("classB");
+		classA.setScope(classB);
+		assertThat(classA.getEnclosingScope()).isSameAs(classB);
+		assertThat(classA.getEnclosingScope().getEnclosingScope()).isSameAs(scope);
 	}
 }

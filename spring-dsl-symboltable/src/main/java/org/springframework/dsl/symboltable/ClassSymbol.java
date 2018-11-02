@@ -32,7 +32,8 @@ import java.util.Set;
 public class ClassSymbol extends DataAggregateSymbol {
 
 	/**
-	 * null if this is Object
+	 * If this is not set then symbol is just an {@code Object} and doesn't have a
+	 * super class.
 	 */
 	protected String superClassName;
 
@@ -199,8 +200,10 @@ public class ClassSymbol extends DataAggregateSymbol {
 	}
 
 	/**
-	 * Return the ClassSymbol associated with superClassName or null if superclass
-	 * is not resolved looking up the enclosing scope chain.
+	 * Gets the {@link ClassSymbol} associated with superClassName or {@code null}
+	 * if superclass is not resolved looking up the enclosing scope chain.
+	 *
+	 * @return the super class scope
 	 */
 	public ClassSymbol getSuperClassScope() {
 		if (superClassName != null) {
