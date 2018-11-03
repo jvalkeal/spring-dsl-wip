@@ -18,6 +18,8 @@ package org.springframework.dsl.symboltable;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.dsl.symboltable.model.BaseScope;
+
 /**
  * {@code Scope} is a dictionary of symbols that are grouped together by some
  * lexical construct in the input language. Examples include {@code structs},

@@ -13,20 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.symboltable;
+package org.springframework.dsl.symboltable.model;
 
 /**
- * A scope to hold predefined symbols of your language. This could be a list of
- * type names like int or methods like print.
- * 
- * @author Original ANTLR Authors
+ *
  * @author Janne Valkealahti
- * 
+ *
  */
-public class PredefinedScope extends BaseScope {
+public class NamedModifier extends BaseModifier {
 
-	@Override
-	public String getName() {
-		return "predefined";
+	public NamedModifier(String name) {
+		super(name);
 	}
 }

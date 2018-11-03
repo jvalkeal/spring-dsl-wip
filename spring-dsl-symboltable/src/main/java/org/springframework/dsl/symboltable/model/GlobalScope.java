@@ -13,23 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.symboltable;
+package org.springframework.dsl.symboltable.model;
+
+import org.springframework.dsl.symboltable.Scope;
 
 /**
- * A scope object typically associated with {...} code blocks
- * 
+ * A {@link Scope} associated with globals.
+ *
  * @author Original ANTLR Authors
  * @author Janne Valkealahti
- * 
+ *
  */
-public class LocalScope extends BaseScope {
+public class GlobalScope extends BaseScope {
 
-	public LocalScope(Scope enclosingScope) {
-		super(enclosingScope);
+	public GlobalScope(Scope scope) {
+		super(scope);
 	}
 
 	@Override
 	public String getName() {
-		return "local";
+		return "global";
 	}
 }

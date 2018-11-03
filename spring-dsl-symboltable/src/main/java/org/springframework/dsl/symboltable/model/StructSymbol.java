@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.symboltable;
+package org.springframework.dsl.symboltable.model;
 
 /**
  * 
@@ -22,15 +22,9 @@ package org.springframework.dsl.symboltable;
  * @author Janne Valkealahti
  * 
  */
-public class InvalidType implements Type {
+public class StructSymbol extends DataAggregateSymbol {
 
-	@Override
-	public String getName() {
-		return "INVALID";
-	}
-
-	@Override
-	public int getTypeIndex() {
-		return -1;
+	public StructSymbol(String name) {
+		super(name);
 	}
 }

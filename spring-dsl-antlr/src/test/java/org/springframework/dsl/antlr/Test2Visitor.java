@@ -26,11 +26,11 @@ import org.springframework.dsl.domain.DocumentSymbol;
 import org.springframework.dsl.domain.Range;
 import org.springframework.dsl.domain.SymbolKind;
 import org.springframework.dsl.service.reconcile.ReconcileProblem;
-import org.springframework.dsl.symboltable.ClassSymbol;
-import org.springframework.dsl.symboltable.DefaultSymbolTable;
-import org.springframework.dsl.symboltable.FieldSymbol;
 import org.springframework.dsl.symboltable.SymbolTable;
-import org.springframework.dsl.symboltable.TypeAlias;
+import org.springframework.dsl.symboltable.model.ClassSymbol;
+import org.springframework.dsl.symboltable.model.FieldSymbol;
+import org.springframework.dsl.symboltable.model.TypeAlias;
+import org.springframework.dsl.symboltable.support.DefaultSymbolTable;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;

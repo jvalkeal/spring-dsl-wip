@@ -13,30 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.symboltable;
+package org.springframework.dsl.symboltable.model;
+
+import java.util.List;
+
+import org.springframework.dsl.symboltable.Type;
 
 /**
- * An element within a type type such is used in C or Java where we need to
- * indicate the type is an array of some element type like float[] or User[]. It
- * also tracks the size as some types indicate the size of the array.
+ * For C types like "void (*)(int)", we need that to be a pointer to a function
+ * taking a single integer argument returning void.
  * 
  * @author Original ANTLR Authors
  * @author Janne Valkealahti
  * 
  */
-public class ArrayType implements Type {
+public class FunctionType implements Type {
 
-	protected final Type elemType;
-	protected final int numElems; // some languages allow you to point at arrays of a specific size
+	protected final Type returnType;
+	protected final List<Type> argumentTypes;
 
-	public ArrayType(Type elemType) {
-		this.elemType = elemType;
-		this.numElems = -1;
-	}
-
-	public ArrayType(Type elemType, int numElems) {
-		this.elemType = elemType;
-		this.numElems = numElems;
+	public FunctionType(Type returnType, List<Type> argumentTypes) {
+		this.returnType = returnType;
+		this.argumentTypes = argumentTypes;
 	}
 
 	@Override
@@ -49,8 +47,12 @@ public class ArrayType implements Type {
 		return -1;
 	}
 
+	public List<Type> getArgumentTypes() {
+		return argumentTypes;
+	}
+
 	@Override
 	public String toString() {
-		return elemType + "[]";
+		return "*" + returnType;
 	}
 }

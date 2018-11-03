@@ -13,9 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.symboltable;
+package org.springframework.dsl.symboltable.support;
 
 import java.util.List;
+
+import org.springframework.dsl.symboltable.Scope;
+import org.springframework.dsl.symboltable.Symbol;
+import org.springframework.dsl.symboltable.SymbolTable;
+import org.springframework.dsl.symboltable.model.BaseScope;
+import org.springframework.dsl.symboltable.model.GlobalScope;
+import org.springframework.dsl.symboltable.model.PredefinedScope;
 
 /**
  * Base implementation of a {@link SymbolTable} meant to provide generic

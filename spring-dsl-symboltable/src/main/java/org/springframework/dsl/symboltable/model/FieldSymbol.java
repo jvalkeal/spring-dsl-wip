@@ -13,44 +13,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.symboltable;
+package org.springframework.dsl.symboltable.model;
 
-import java.util.List;
+import org.springframework.dsl.symboltable.MemberSymbol;
 
 /**
- * For C types like "void (*)(int)", we need that to be a pointer to a function
- * taking a single integer argument returning void.
- * 
+ * A {@code FieldSymbol} is just a {@link VariableSymbol} that lives inside an
+ * aggregate like a {@code class} or {@code struct}.
+ *
  * @author Original ANTLR Authors
  * @author Janne Valkealahti
- * 
+ *
  */
-public class FunctionType implements Type {
+public class FieldSymbol extends VariableSymbol implements MemberSymbol {
 
-	protected final Type returnType;
-	protected final List<Type> argumentTypes;
+	private int slotNumber;
 
-	public FunctionType(Type returnType, List<Type> argumentTypes) {
-		this.returnType = returnType;
-		this.argumentTypes = argumentTypes;
+	/**
+	 * Instantiates a new field symbol.
+	 *
+	 * @param name the name
+	 */
+	public FieldSymbol(String name) {
+		super(name);
 	}
 
 	@Override
-	public String getName() {
-		return toString();
+	public int getSlotNumber() {
+		return slotNumber;
 	}
 
-	@Override
-	public int getTypeIndex() {
-		return -1;
-	}
-
-	public List<Type> getArgumentTypes() {
-		return argumentTypes;
-	}
-
-	@Override
-	public String toString() {
-		return "*" + returnType;
+	/**
+	 * Sets the slot number.
+	 *
+	 * @param slotNumber the new slot number
+	 */
+	public void setSlotNumber(int slotNumber) {
+		this.slotNumber = slotNumber;
 	}
 }

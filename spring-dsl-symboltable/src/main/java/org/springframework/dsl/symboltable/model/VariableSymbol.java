@@ -13,23 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.symboltable;
+package org.springframework.dsl.symboltable.model;
+
+import org.springframework.dsl.symboltable.Symbol;
+import org.springframework.dsl.symboltable.TypedSymbol;
 
 /**
- * A {@link Scope} associated with globals.
+ * {@code VariableSymbol} is just a {@link Symbol} and a {@link TypedSymbol}.
  *
  * @author Original ANTLR Authors
  * @author Janne Valkealahti
  *
  */
-public class GlobalScope extends BaseScope {
+public class VariableSymbol extends BaseSymbol implements TypedSymbol {
 
-	public GlobalScope(Scope scope) {
-		super(scope);
-	}
-
-	@Override
-	public String getName() {
-		return "global";
+	/**
+	 * Instantiates a new variable symbol.
+	 *
+	 * @param name the name
+	 */
+	public VariableSymbol(String name) {
+		super(name);
 	}
 }

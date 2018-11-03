@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.symboltable;
+package org.springframework.dsl.symboltable.support;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -24,6 +24,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
+
+import org.springframework.dsl.symboltable.Scope;
+import org.springframework.dsl.symboltable.Symbol;
 
 /**
  *

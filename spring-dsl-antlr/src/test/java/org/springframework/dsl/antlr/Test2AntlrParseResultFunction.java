@@ -35,8 +35,8 @@ import org.springframework.dsl.domain.CompletionItem;
 import org.springframework.dsl.domain.Position;
 import org.springframework.dsl.service.reconcile.DefaultReconcileProblem;
 import org.springframework.dsl.service.reconcile.ReconcileProblem;
-import org.springframework.dsl.symboltable.ClassSymbol;
 import org.springframework.dsl.symboltable.SymbolTable;
+import org.springframework.dsl.symboltable.model.ClassSymbol;
 import org.springframework.util.ObjectUtils;
 
 import reactor.core.publisher.Flux;

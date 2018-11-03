@@ -13,13 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.symboltable;
+package org.springframework.dsl.symboltable.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import org.springframework.dsl.domain.Range;
+import org.springframework.dsl.symboltable.Modifier;
+import org.springframework.dsl.symboltable.Scope;
+import org.springframework.dsl.symboltable.Symbol;
+import org.springframework.dsl.symboltable.Type;
+import org.springframework.dsl.symboltable.support.Utils;
 import org.springframework.util.Assert;
 
 /**

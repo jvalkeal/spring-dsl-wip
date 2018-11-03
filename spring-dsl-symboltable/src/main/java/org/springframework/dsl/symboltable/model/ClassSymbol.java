@@ -13,13 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.symboltable;
+package org.springframework.dsl.symboltable.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+
+import org.springframework.dsl.symboltable.MemberSymbol;
+import org.springframework.dsl.symboltable.Scope;
+import org.springframework.dsl.symboltable.Symbol;
 
 /**
  * A {@link Symbol} representing a {@code class}. It is a kind of data aggregate

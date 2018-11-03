@@ -13,26 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.symboltable;
+package org.springframework.dsl.symboltable.model;
 
 /**
- * A method symbol is a function that lives within an aggregate/class and has a
- * slot number.
- * 
- * @author Original ANTLR Authors
+ *
  * @author Janne Valkealahti
- * 
+ *
  */
-public class MethodSymbol extends FunctionSymbol implements MemberSymbol {
+public class VisibilityModifier extends NamedModifier {
 
-	protected int slot = -1;
-
-	public MethodSymbol(String name) {
+	public VisibilityModifier(String name) {
 		super(name);
 	}
 
-	@Override
-	public int getSlotNumber() {
-		return slot;
-	}
 }

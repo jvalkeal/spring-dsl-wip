@@ -13,22 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.symboltable;
+package org.springframework.dsl.symboltable.model;
+
+import org.springframework.dsl.symboltable.Type;
 
 /**
- * An element in a type tree that represents a pointer to some type, such as we
- * need for C. "int *" would need a PointerType(intType) object.
+ * An element within a type type such is used in C or Java where we need to
+ * indicate the type is an array of some element type like float[] or User[]. It
+ * also tracks the size as some types indicate the size of the array.
  * 
  * @author Original ANTLR Authors
  * @author Janne Valkealahti
  * 
  */
-public class PointerType implements Type {
+public class ArrayType implements Type {
 
-	protected Type targetType;
+	protected final Type elemType;
+	protected final int numElems; // some languages allow you to point at arrays of a specific size
 
-	public PointerType(Type targetType) {
-		this.targetType = targetType;
+	public ArrayType(Type elemType) {
+		this.elemType = elemType;
+		this.numElems = -1;
+	}
+
+	public ArrayType(Type elemType, int numElems) {
+		this.elemType = elemType;
+		this.numElems = numElems;
 	}
 
 	@Override
@@ -43,6 +53,6 @@ public class PointerType implements Type {
 
 	@Override
 	public String toString() {
-		return "*" + targetType;
+		return elemType + "[]";
 	}
 }

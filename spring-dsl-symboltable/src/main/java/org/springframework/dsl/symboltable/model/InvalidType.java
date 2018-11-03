@@ -13,41 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.symboltable;
+package org.springframework.dsl.symboltable.model;
+
+import org.springframework.dsl.symboltable.Type;
 
 /**
- * A "typedef int I;" in C results in a TypeAlias("I", ptrToIntegerType).
- *
+ * 
+ * 
  * @author Original ANTLR Authors
  * @author Janne Valkealahti
- *
+ * 
  */
-public class TypeAlias extends BaseSymbol implements Type {
+public class InvalidType implements Type {
 
-	private Type targetType;
-
-	/**
-	 * Instantiates a new type alias.
-	 *
-	 * @param name the name
-	 * @param targetType the target type
-	 */
-	public TypeAlias(String name, Type targetType) {
-		super(name);
-		this.targetType = targetType;
+	@Override
+	public String getName() {
+		return "INVALID";
 	}
 
 	@Override
 	public int getTypeIndex() {
 		return -1;
-	}
-
-	/**
-	 * Gets the target type.
-	 *
-	 * @return the target type
-	 */
-	public Type getTargetType() {
-		return targetType;
 	}
 }

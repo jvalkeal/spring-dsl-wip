@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.symboltable;
+package org.springframework.dsl.symboltable.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -22,6 +22,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import org.springframework.dsl.symboltable.Scope;
+import org.springframework.dsl.symboltable.Symbol;
+import org.springframework.dsl.symboltable.SymbolTableException;
+import org.springframework.dsl.symboltable.support.Utils;
 
 /**
  * An abstract base class that houses common functionality for scopes.

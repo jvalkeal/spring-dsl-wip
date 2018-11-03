@@ -13,7 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.symboltable;
+package org.springframework.dsl.symboltable.model;
+
+import org.springframework.dsl.symboltable.Type;
+import org.springframework.dsl.symboltable.TypedSymbol;
+import org.springframework.dsl.symboltable.support.Utils;
 
 /**
  * This symbol represents a function ala C, not a method ala Java. You can

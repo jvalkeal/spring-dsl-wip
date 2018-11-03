@@ -13,24 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.symboltable;
+package org.springframework.dsl.symboltable.support;
 
-/**
- *
- * @author Janne Valkealahti
- *
- */
-public abstract class BaseModifier implements Modifier {
-
-	private String name;
-
-	public BaseModifier(String name) {
-		this.name = name;
-	}
-
-	@Override
-	public String getName() {
-		return name;
-	}
-
+public class DefaultSymbolTable extends AbstractSymbolTable {
 }

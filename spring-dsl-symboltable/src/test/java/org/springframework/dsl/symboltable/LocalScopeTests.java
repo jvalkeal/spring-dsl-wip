@@ -18,6 +18,8 @@ package org.springframework.dsl.symboltable;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
+import org.springframework.dsl.symboltable.model.ClassSymbol;
+import org.springframework.dsl.symboltable.model.LocalScope;
 
 public class LocalScopeTests {
 

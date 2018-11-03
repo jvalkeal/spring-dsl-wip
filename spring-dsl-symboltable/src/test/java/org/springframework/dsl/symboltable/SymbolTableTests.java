@@ -21,6 +21,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
+import org.springframework.dsl.symboltable.model.ClassSymbol;
+import org.springframework.dsl.symboltable.model.FieldSymbol;
+import org.springframework.dsl.symboltable.model.NamedModifier;
+import org.springframework.dsl.symboltable.model.PrimitiveType;
+import org.springframework.dsl.symboltable.model.VisibilityModifier;
+import org.springframework.dsl.symboltable.support.AbstractSymbolTable;
 
 public class SymbolTableTests {
 

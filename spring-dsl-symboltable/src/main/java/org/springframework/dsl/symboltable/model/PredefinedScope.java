@@ -13,23 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.symboltable;
+package org.springframework.dsl.symboltable.model;
 
 /**
- * {@code VariableSymbol} is just a {@link Symbol} and a {@link TypedSymbol}.
- *
+ * A scope to hold predefined symbols of your language. This could be a list of
+ * type names like int or methods like print.
+ * 
  * @author Original ANTLR Authors
  * @author Janne Valkealahti
- *
+ * 
  */
-public class VariableSymbol extends BaseSymbol implements TypedSymbol {
+public class PredefinedScope extends BaseScope {
 
-	/**
-	 * Instantiates a new variable symbol.
-	 *
-	 * @param name the name
-	 */
-	public VariableSymbol(String name) {
-		super(name);
+	@Override
+	public String getName() {
+		return "predefined";
 	}
 }

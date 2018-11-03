@@ -13,29 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.symboltable;
+package org.springframework.dsl.symboltable.model;
 
 /**
- *
- *
+ * A parameter is just kind of variable used as an argument to a function or
+ * method.
+ * 
  * @author Original ANTLR Authors
  * @author Janne Valkealahti
- *
+ * 
  */
-public class PrimitiveType extends BaseSymbol implements Type {
+public class ParameterSymbol extends VariableSymbol {
 
-	protected int typeIndex;
-
-	public PrimitiveType(String name) {
+	public ParameterSymbol(String name) {
 		super(name);
-	}
-
-	@Override
-	public int getTypeIndex() {
-		return typeIndex;
-	}
-
-	public void setTypeIndex(int typeIndex) {
-		this.typeIndex = typeIndex;
 	}
 }

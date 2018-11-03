@@ -18,6 +18,9 @@ package org.springframework.dsl.symboltable;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
+import org.springframework.dsl.symboltable.model.ClassSymbol;
+import org.springframework.dsl.symboltable.model.FieldSymbol;
+import org.springframework.dsl.symboltable.model.PredefinedScope;
 
 public class ClassSymbolTests {
 

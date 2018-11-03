@@ -13,40 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.symboltable;
+package org.springframework.dsl.symboltable.model;
+
+import org.springframework.dsl.symboltable.Modifier;
 
 /**
- * A {@code FieldSymbol} is just a {@link VariableSymbol} that lives inside an
- * aggregate like a {@code class} or {@code struct}.
  *
- * @author Original ANTLR Authors
  * @author Janne Valkealahti
  *
  */
-public class FieldSymbol extends VariableSymbol implements MemberSymbol {
+public abstract class BaseModifier implements Modifier {
 
-	private int slotNumber;
+	private String name;
 
-	/**
-	 * Instantiates a new field symbol.
-	 *
-	 * @param name the name
-	 */
-	public FieldSymbol(String name) {
-		super(name);
+	public BaseModifier(String name) {
+		this.name = name;
 	}
 
 	@Override
-	public int getSlotNumber() {
-		return slotNumber;
+	public String getName() {
+		return name;
 	}
 
-	/**
-	 * Sets the slot number.
-	 *
-	 * @param slotNumber the new slot number
-	 */
-	public void setSlotNumber(int slotNumber) {
-		this.slotNumber = slotNumber;
-	}
 }

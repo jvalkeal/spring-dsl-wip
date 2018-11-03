@@ -13,7 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.symboltable;
+package org.springframework.dsl.symboltable.model;
 
-public class DefaultSymbolTable extends AbstractSymbolTable {
+import org.springframework.dsl.symboltable.Type;
+
+/**
+ *
+ *
+ * @author Original ANTLR Authors
+ * @author Janne Valkealahti
+ *
+ */
+public class PrimitiveType extends BaseSymbol implements Type {
+
+	protected int typeIndex;
+
+	public PrimitiveType(String name) {
+		super(name);
+	}
+
+	@Override
+	public int getTypeIndex() {
+		return typeIndex;
+	}
+
+	public void setTypeIndex(int typeIndex) {
+		this.typeIndex = typeIndex;
+	}
 }

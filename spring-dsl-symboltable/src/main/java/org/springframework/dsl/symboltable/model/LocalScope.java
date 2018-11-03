@@ -13,17 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.symboltable;
+package org.springframework.dsl.symboltable.model;
+
+import org.springframework.dsl.symboltable.Scope;
 
 /**
- *
+ * A scope object typically associated with {...} code blocks
+ * 
+ * @author Original ANTLR Authors
  * @author Janne Valkealahti
- *
+ * 
  */
-public class VisibilityModifier extends NamedModifier {
+public class LocalScope extends BaseScope {
 
-	public VisibilityModifier(String name) {
-		super(name);
+	public LocalScope(Scope enclosingScope) {
+		super(enclosingScope);
 	}
 
+	@Override
+	public String getName() {
+		return "local";
+	}
 }
