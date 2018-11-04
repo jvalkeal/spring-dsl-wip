@@ -5,7 +5,7 @@ integrating those into a _Spring_ world.
 
 [NOTE]
 ====
-This project is an incubation project.
+This project is currently in incubation.
 ====
 
 == Code of Conduct
