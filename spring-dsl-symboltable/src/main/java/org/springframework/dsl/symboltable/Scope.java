@@ -178,4 +178,11 @@ public interface Scope {
 	 * @return the qualifier string
 	 */
 	public String toQualifierString(String separator);
+
+	/**
+	 * Accepts a {@link SymbolTableVisitor}.
+	 *
+	 * @param visitor the visitor
+	 */
+	void accept(SymbolTableVisitor visitor);
 }

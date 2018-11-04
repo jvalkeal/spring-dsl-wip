@@ -36,4 +36,28 @@ public class LocalScopeTests {
 		assertThat(scope2.getAllSymbols()).hasSize(1);
 		assertThat(scope1.getAllSymbols()).hasSize(1);
 	}
+
+	@Test
+	public void testVisitor() {
+		LocalScope scope1 = new LocalScope(null);
+		TestSymbolTableVisitor visitor1 = new TestSymbolTableVisitor();
+		scope1.accept(visitor1);
+		assertThat(visitor1.scopesEnter).hasSize(1);
+		assertThat(visitor1.scopesEnter.get(0)).isSameAs(scope1);
+		assertThat(visitor1.scopesExit).hasSize(1);
+		assertThat(visitor1.scopesExit.get(0)).isSameAs(scope1);
+
+		LocalScope scope2 = new LocalScope(null);
+		LocalScope scope3 = new LocalScope(scope2);
+		scope2.nest(scope3);
+
+		TestSymbolTableVisitor visitor2 = new TestSymbolTableVisitor();
+		scope2.accept(visitor2);
+		assertThat(visitor2.scopesEnter).hasSize(2);
+		assertThat(visitor2.scopesEnter.get(0)).isSameAs(scope2);
+		assertThat(visitor2.scopesEnter.get(1)).isSameAs(scope3);
+		assertThat(visitor2.scopesExit).hasSize(2);
+		assertThat(visitor2.scopesExit.get(0)).isSameAs(scope3);
+		assertThat(visitor2.scopesExit.get(1)).isSameAs(scope2);
+	}
 }

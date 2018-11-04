@@ -70,4 +70,11 @@ public interface Symbol {
 	 * @return the range
 	 */
 	Range getRange();
+
+	/**
+	 * Accepts a {@link SymbolTableVisitor}.
+	 *
+	 * @param visitor the visitor
+	 */
+	void accept(SymbolTableVisitor visitor);
 }

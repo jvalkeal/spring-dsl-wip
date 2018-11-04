@@ -263,6 +263,14 @@ public class DocumentSymbol {
 		 * @return the builder for chaining
 		 */
 		DocumentSymbolBuilder<DocumentSymbolBuilder<P>> child();
+
+		/**
+		 * Adds one {@link DocumentSymbol} to children.
+		 *
+		 * @param child the child
+		 * @return the builder for chaining
+		 */
+		DocumentSymbolBuilder<P> child(DocumentSymbol child);
 	}
 
 	private static class InternalDocumentSymbolBuilder<P>
@@ -276,7 +284,8 @@ public class DocumentSymbol {
 		private Range range;
 		private RangeBuilder<DocumentSymbolBuilder<P>> selectionRangeBuilder;
 		private Range selectionRange;
-		private List<DocumentSymbolBuilder<DocumentSymbolBuilder<P>>> children = new ArrayList<>();
+		private List<DocumentSymbolBuilder<DocumentSymbolBuilder<P>>> childrenBuilders = new ArrayList<>();
+		private List<DocumentSymbol> children = new ArrayList<>();
 
 		InternalDocumentSymbolBuilder(P parent) {
 			super(parent);
@@ -333,8 +342,14 @@ public class DocumentSymbol {
 		@Override
 		public DocumentSymbolBuilder<DocumentSymbolBuilder<P>> child() {
 			DocumentSymbolBuilder<DocumentSymbolBuilder<P>> builder = documentSymbol(this);
-			this.children.add(builder);
+			this.childrenBuilders.add(builder);
 			return builder;
+		}
+
+		@Override
+		public DocumentSymbolBuilder<P> child(DocumentSymbol child) {
+			this.children.add(child);
+			return this;
 		}
 
 		@Override
@@ -354,10 +369,15 @@ public class DocumentSymbol {
 			} else if (selectionRangeBuilder != null) {
 				documentSymbol.setSelectionRange(selectionRangeBuilder.build());
 			}
-			if (!children.isEmpty()) {
+			if (!childrenBuilders.isEmpty() || !children.isEmpty()) {
 				ArrayList<DocumentSymbol> c = new ArrayList<>();
-				for (DocumentSymbolBuilder<DocumentSymbolBuilder<P>> b : children) {
-					c.add(b.build());
+				if (!childrenBuilders.isEmpty()) {
+					for (DocumentSymbolBuilder<DocumentSymbolBuilder<P>> b : childrenBuilders) {
+						c.add(b.build());
+					}
+				}
+				if (!children.isEmpty()) {
+					c.addAll(children);
 				}
 				documentSymbol.setChildren(c);
 			}

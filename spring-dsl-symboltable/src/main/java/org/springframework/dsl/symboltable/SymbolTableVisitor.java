@@ -15,24 +15,39 @@
  */
 package org.springframework.dsl.symboltable;
 
-import java.util.List;
-
 /**
- * Generic interface for accessing information from a {@code symboltable}. By
- * design this interface is currently kept relatively conservative in terms of
- * what is exposed.
+ * Interface defining a contract visiting {@link SymbolTable}.
  *
  * @author Janne Valkealahti
  *
  */
-public interface SymbolTable {
+public interface SymbolTableVisitor {
 
 	/**
-	 * Gets the all symbols known to symbol table.
+	 * Enter visit scope.
 	 *
-	 * @return the all symbols
+	 * @param scope the scope
 	 */
-	List<? extends Symbol> getAllSymbols();
+	void enterVisitScope(Scope scope);
 
-	void visitSymbolTable(SymbolTableVisitor visitor);
+	/**
+	 * Exit visit scope.
+	 *
+	 * @param scope the scope
+	 */
+	void exitVisitScope(Scope scope);
+
+	/**
+	 * Enter visit symbol.
+	 *
+	 * @param symbol the symbol
+	 */
+	void enterVisitSymbol(Symbol symbol);
+
+	/**
+	 * Exit visit symbol.
+	 *
+	 * @param symbol the symbol
+	 */
+	void exitVisitSymbol(Symbol symbol);
 }

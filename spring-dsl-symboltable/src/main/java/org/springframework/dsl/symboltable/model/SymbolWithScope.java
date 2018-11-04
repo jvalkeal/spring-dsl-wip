@@ -23,6 +23,7 @@ import org.springframework.dsl.domain.Range;
 import org.springframework.dsl.symboltable.Modifier;
 import org.springframework.dsl.symboltable.Scope;
 import org.springframework.dsl.symboltable.Symbol;
+import org.springframework.dsl.symboltable.SymbolTableVisitor;
 import org.springframework.dsl.symboltable.support.Utils;
 import org.springframework.util.Assert;
 
@@ -51,6 +52,16 @@ public abstract class SymbolWithScope extends BaseScope implements Symbol, Scope
 	public SymbolWithScope(String name) {
 		Assert.notNull(name, "Symbol name must be set");
 		this.name = name;
+	}
+
+	@Override
+	protected void enterVisitSymbol(SymbolTableVisitor visitor) {
+		visitor.enterVisitSymbol(this);
+	}
+
+	@Override
+	protected void exitVisitSymbol(SymbolTableVisitor visitor) {
+		visitor.exitVisitSymbol(this);
 	}
 
 	@Override

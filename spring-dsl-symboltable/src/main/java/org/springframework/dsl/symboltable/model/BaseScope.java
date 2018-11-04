@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 import org.springframework.dsl.symboltable.Scope;
 import org.springframework.dsl.symboltable.Symbol;
 import org.springframework.dsl.symboltable.SymbolTableException;
+import org.springframework.dsl.symboltable.SymbolTableVisitor;
 import org.springframework.dsl.symboltable.support.Utils;
 
 /**
@@ -70,6 +71,25 @@ public abstract class BaseScope implements Scope {
 	public BaseScope(Scope enclosingScope) {
 		setEnclosingScope(enclosingScope);
 	}
+
+	@Override
+	public void accept(SymbolTableVisitor visitor) {
+		visitor.enterVisitScope(this);
+		enterVisitSymbol(visitor);
+		for (Scope s : getNestedScopes()) {
+			if (!(s instanceof Symbol)) {
+				s.accept(visitor);
+			}
+		}
+		for (Symbol s : getSymbols()) {
+			s.accept(visitor);
+		}
+		exitVisitSymbol(visitor);
+		visitor.exitVisitScope(this);
+	}
+
+	protected void enterVisitSymbol(SymbolTableVisitor visitor) {}
+	protected void exitVisitSymbol(SymbolTableVisitor visitor) {}
 
 	@Override
 	public Symbol getSymbol(String name) {

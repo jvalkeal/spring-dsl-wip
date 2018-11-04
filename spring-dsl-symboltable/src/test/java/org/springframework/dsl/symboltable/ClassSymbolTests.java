@@ -81,4 +81,15 @@ public class ClassSymbolTests {
 		assertThat(classA.getEnclosingScope()).isSameAs(classB);
 		assertThat(classA.getEnclosingScope().getEnclosingScope()).isSameAs(scope);
 	}
+
+	@Test
+	public void testVisitor() {
+		ClassSymbol classA = new ClassSymbol("classA");
+		TestSymbolTableVisitor visitor1 = new TestSymbolTableVisitor();
+		classA.accept(visitor1);
+		assertThat(visitor1.scopesEnter).hasSize(1);
+		assertThat(visitor1.symbolsEnter).hasSize(1);
+		assertThat(visitor1.scopesEnter.get(0)).isSameAs(classA);
+		assertThat(visitor1.symbolsEnter.get(0)).isSameAs(classA);
+	}
 }

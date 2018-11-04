@@ -27,6 +27,7 @@ import org.springframework.dsl.symboltable.model.NamedModifier;
 import org.springframework.dsl.symboltable.model.PrimitiveType;
 import org.springframework.dsl.symboltable.model.VisibilityModifier;
 import org.springframework.dsl.symboltable.support.AbstractSymbolTable;
+import org.springframework.dsl.symboltable.support.DefaultSymbolTable;
 
 public class SymbolTableTests {
 
@@ -114,11 +115,21 @@ public class SymbolTableTests {
 
 		List<? extends Symbol> stateSymbols = table.getAllSymbols().stream()
 				.filter(s -> {
-					System.out.println(s + " / " + s.getName() + " / " + s.getScope().getName());
 					return s.getScope().getName().equals("state");
 				})
 				.collect(Collectors.toList());
 		assertThat(stateSymbols).hasSize(2);
+	}
+
+	@Test
+	public void testVisitor() {
+		DefaultSymbolTable table = new DefaultSymbolTable();
+		ClassSymbol classA = new ClassSymbol("classA");
+		table.defineGlobal(classA);
+		TestSymbolTableVisitor visitor = new TestSymbolTableVisitor();
+		table.visitSymbolTable(visitor);
+		assertThat(visitor.scopesEnter).hasSize(2);
+		assertThat(visitor.symbolsEnter).hasSize(1);
 	}
 
 	private static class StatemachineSymbolTable extends AbstractSymbolTable {

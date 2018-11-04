@@ -20,6 +20,7 @@ import java.util.List;
 import org.springframework.dsl.symboltable.Scope;
 import org.springframework.dsl.symboltable.Symbol;
 import org.springframework.dsl.symboltable.SymbolTable;
+import org.springframework.dsl.symboltable.SymbolTableVisitor;
 import org.springframework.dsl.symboltable.model.BaseScope;
 import org.springframework.dsl.symboltable.model.GlobalScope;
 import org.springframework.dsl.symboltable.model.PredefinedScope;
@@ -72,5 +73,10 @@ public abstract class AbstractSymbolTable implements SymbolTable {
 	 */
 	public Scope getGlobalScope() {
 		return globals;
+	}
+
+	@Override
+	public void visitSymbolTable(SymbolTableVisitor visitor) {
+		getGlobalScope().accept(visitor);
 	}
 }

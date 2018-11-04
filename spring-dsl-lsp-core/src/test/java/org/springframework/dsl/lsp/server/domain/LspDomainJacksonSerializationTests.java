@@ -972,6 +972,39 @@ public class LspDomainJacksonSerializationTests {
 		to = mapper.readValue(json, DocumentSymbol.class);
 		assertObjects(from, to);
 
+		from = DocumentSymbol.documentSymbol()
+				.name("name")
+				.detail("detail")
+				.kind(SymbolKind.Array)
+				.deprecated(true)
+				.range()
+					.start()
+						.line(1)
+						.character(1)
+						.and()
+					.end()
+						.line(2)
+						.character(2)
+						.and()
+					.and()
+				.selectionRange()
+					.start()
+						.line(1)
+						.character(1)
+						.and()
+					.end()
+						.line(2)
+						.character(2)
+						.and()
+					.and()
+				.child(DocumentSymbol.documentSymbol().name("name1").build())
+				.child(DocumentSymbol.documentSymbol().name("name2").build())
+				.build();
+
+		json = mapper.writeValueAsString(from);
+		to = mapper.readValue(json, DocumentSymbol.class);
+		assertObjects(from, to);
+
 		String expect = loadResourceAsString("DocumentSymbol1.json");
 		to = mapper.readValue(expect, DocumentSymbol.class);
 		assertObjects(from, to);
